@@ -1,0 +1,139 @@
+// Written by Jürgen Moßgraber - mossgrabers.de
+// (c) 2017-2018
+// Licensed under LGPLv3 - http://www.gnu.org/licenses/lgpl-3.0.txt
+
+function VAL2DB(x)
+(
+    (x < 0.0000000298023223876953125) ? -150 : max(-150, log(x)* 8.6858896380650365530225783783321);
+);
+
+
+function DB2VAL(x)
+(
+    exp(x*0.11512925464970228420089957273422);
+);
+
+function createMidiClip (trackIndex, beats) local (trackCount, selectedTrackCount, track, item, cursorPos, bpmOut, bpiOut, length)
+(
+    selectedTrackCount = CountSelectedTracks (gProjectID);
+    (selectedTrackCount > 0) ? (
+    
+        Undo_BeginBlock2 (gProjectID);
+        
+        // Stop playback to update the play cursor position
+        Main_OnCommandEx (1016, 0, gProjectID);
+        
+        // Disable recording on all tracks
+        trackCount = CountTracks (gProjectID);
+        idx = 0;
+        loop (trackCount, (
+            track = GetTrack (gProjectID, idx);
+            SetMediaTrackInfo_Value (track, "I_RECARM", 0);
+            idx += 1;
+        ));
+    
+        // Create a new midi clip on the given track
+        track = GetTrack (gProjectID, trackIndex);
+        cursorPos = GetCursorPositionEx (gProjectID);
+        GetProjectTimeSignature2 (gProjectID, bpmOut, bpiOut);
+        // Calculate length in seconds of n beats
+        length = beats * 60 / bpmOut;
+        item = CreateNewMIDIItemInProj (track, cursorPos, cursorPos + length, 0);
+    
+        // Remove all current selections
+        SelectAllMediaItems (gProjectID, 0);
+        SetMediaItemSelected (item, 1);
+        
+        // Set time selection to seleted items
+        Main_OnCommandEx (40290, 0, gProjectID);
+        
+        // Enable Loop
+        GetSetRepeatEx(gProjectID, 1);
+        
+        // Set recording mode to midi overdub
+        SetMediaTrackInfo_Value (track, "I_RECMODE", 7);
+        
+        // Enable Recording
+        SetMediaTrackInfo_Value(track, "I_RECARM", 1);
+
+        // Record
+        Main_OnCommandEx (1013, 0, gProjectID);
+        
+        Undo_EndBlock2 (gProjectID, "Create Midi Clip and Record", 0);
+    );
+);
+
+function enableRepeatPlugin (trackIndex, enable) local (track, position)
+(
+    // Get or insert note midi repeat plugin
+    track = GetTrack (gProjectID, trackIndex);
+    (track > 0) ?
+    (
+        Undo_BeginBlock2 (gProjectID);
+        position = TrackFX_AddByName (track, "midi_note_repeater", 1, 1);
+        (position > -1) ?
+        (
+            // Note: 0x1000000 selects plugins on the record input FX chain
+            TrackFX_SetEnabled (track, 0x1000000 + position, enable);
+        );
+        Undo_EndBlock2 (gProjectID, "Dis-/enable note repeat (inserts plugin)", 0);
+    );
+);
+
+function setRepeatLength (trackIndex, resolution) local (track, position)
+(
+    track = GetTrack (gProjectID, trackIndex);
+    (track > 0) ?
+    (
+        Undo_BeginBlock2 (gProjectID);
+        position = TrackFX_AddByName (track, "midi_note_repeater", 1, 0);
+        (position > -1) ?
+        (
+            // Note: 0x1000000 selects plugins on the record input FX chain
+            TrackFX_SetParam (track, 0x1000000 + position, 0, resolution);
+        );    
+        Undo_EndBlock2 (gProjectID, "Set note repeat length", 0);
+    );
+);
+
+function setColorOfTrack (trackIndex, value) local (track)
+(
+    track = GetTrack (gProjectID, trackIndex);
+    (track > 0) ?
+    (
+        Undo_BeginBlock2 (gProjectID);
+        match ("RGB(%{red}d*,%{green}d*,%{blue}d*)", value, red, green, blue);
+        SetTrackColor (track, ColorToNative(red, green, blue));
+        Undo_EndBlock2 (gProjectID, "Set track color", 0);
+    );
+);
+
+function setColorOfClip (value) local (item, red, green, blue)
+(
+    item = GetSelectedMediaItem (gProjectID, 0);
+    (item > 0) ?
+    (
+        Undo_BeginBlock2 (gProjectID);
+        match ("RGB(%{red}d*,%{green}d*,%{blue}d*)", value, red, green, blue);
+        SetMediaItemInfo_Value (item, "I_CUSTOMCOLOR", ColorToNative(red, green, blue)|0x100000);
+        UpdateItemInProject (item);
+        Undo_EndBlock2 (gProjectID, "Set clip color", 0);
+    );
+);
+
+function quantizeClip ()
+(
+    Main_OnCommand (40153, 0); // MAIN section action 40153: "open selected item in MIDI editor"
+    active_MIDI_editor = MIDIEditor_GetActive ();
+    MIDIEditor_OnCommand (active_MIDI_editor, 40003); // Select all notes
+    MIDIEditor_OnCommand (active_MIDI_editor, 40728); // Quantize all notes
+    MIDIEditor_OnCommand (active_MIDI_editor, 2);     // Close Window
+);
+
+function getTrackLockState (track) local (xmlStr)
+(
+    GetTrackStateChunk (track, xmlStr, false) ?
+    (
+        match ("*?LOCK %{int_value}f*?", xmlStr) ? int_value : 0;
+    ) : 0;
+);

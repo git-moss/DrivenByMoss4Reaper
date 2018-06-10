@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="output" path="bin/default"/>
+	<classpathentry output="bin/main" kind="src" path="src/main/java">
+		<attributes>
+			<attribute name="gradle_scope" value="main"/>
+			<attribute name="gradle_used_by_scope" value="main,test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry output="bin/main" kind="src" path="src/main/resources">
+		<attributes>
+			<attribute name="gradle_scope" value="main"/>
+			<attribute name="gradle_used_by_scope" value="main,test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8/">
+		<accessrules>
+			<accessrule kind="accessible" pattern="javafx/**"/>
+		</accessrules>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/mos/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-transcoder/1.9.1/2387fb68b8a0967985929325c5d7613cb060e7e7/batik-transcoder-1.9.1-sources.jar" kind="lib" path="C:/Users/mos/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-transcoder/1.9.1/e78afa93c19c50663fdee34751b0eea5bd7eb871/batik-transcoder-1.9.1.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="main,test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/mos/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-bridge/1.9.1/4c292f09dffc0aaa27a82312b6905a442d20ec6d/batik-bridge-1.9.1-sources.jar" kind="lib" path="C:/Users/mos/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-bridge/1.9.1/4c063eaf64a724857a46408bbea908d44c4b31cd/batik-bridge-1.9.1.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="main,test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/mos/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-script/1.9.1/63897e55e5afd8f0183ee614e62783a4f50239ac/batik-script-1.9.1-sources.jar" kind="lib" path="C:/Users/mos/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-script/1.9.1/b91ecd0c3c0d534af961e70fe3e64a9ca799c91d/batik-script-1.9.1.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="main,test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/mos/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-anim/1.9.1/1eaeed6cb2c9660f253ad3990dbf0be840c66554/batik-anim-1.9.1-sources.jar" kind="lib" path="C:/Users/mos/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-anim/1.9.1/a5659ca3397248b70b41f3b021b3aa28b608c503/batik-anim-1.9.1.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="main,test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/mos/.gradle/caches/modules-2/files-2.1/org.usb4java/usb4java/1.2.0/7f5450599d865fa88aa6e91d0fe92bc69c0993b6/usb4java-1.2.0-sources.jar" kind="lib" path="C:/Users/mos/.gradle/caches/modules-2/files-2.1/org.usb4java/usb4java/1.2.0/d83b8dd04afc03ee740ac61817fadb21affe9e9c/usb4java-1.2.0.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="main,test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/mos/.gradle/caches/modules-2/files-2.1/com.illposed.osc/javaosc-core/0.4/61f1e24403baaba68c9ae953461deb61eb0c2eb/javaosc-core-0.4-sources.jar" kind="lib" path="C:/Users/mos/.gradle/caches/modules-2/files-2.1/com.illposed.osc/javaosc-core/0.4/265605190fadba3c8ebce6161718d93b095fd16a/javaosc-core-0.4.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="main,test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/mos/.gradle/caches/modules-2/files-2.1/uk.co.xfactory-librarians/coremidi4j/1.1/108be7c5d273fa93021ca96da7a4006c02d1bf61/coremidi4j-1.1-sources.jar" kind="lib" path="C:/Users/mos/.gradle/caches/modules-2/files-2.1/uk.co.xfactory-librarians/coremidi4j/1.1/61a387300e826b917b528ef8407506b10a0397fe/coremidi4j-1.1.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="main,test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/mos/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-svg-dom/1.9.1/66afe1f00c271a0a290beb53a823bfb5a6c3e1d/batik-svg-dom-1.9.1-sources.jar" kind="lib" path="C:/Users/mos/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-svg-dom/1.9.1/8171be3227c620a337c851b5eec7b9f9f69603f2/batik-svg-dom-1.9.1.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="main,test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/mos/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-parser/1.9.1/92a1442056a664577d6c31b14936e84cc3a58145/batik-parser-1.9.1-sources.jar" kind="lib" path="C:/Users/mos/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-parser/1.9.1/26fb6313e0735b9fc5c8cc627662d5ccf0b747f/batik-parser-1.9.1.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="main,test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/mos/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-gvt/1.9.1/23f3f44232357f04f6601ecd6e1b107641837c70/batik-gvt-1.9.1-sources.jar" kind="lib" path="C:/Users/mos/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-gvt/1.9.1/1b131ebceb2c93e56bb47da2e977d90315b776f9/batik-gvt-1.9.1.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="main,test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/mos/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-svggen/1.9.1/5f25647d8dd102baf8126c32b39c74e9ad2c1f0f/batik-svggen-1.9.1-sources.jar" kind="lib" path="C:/Users/mos/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-svggen/1.9.1/2b618174759eebbf16f2797f6fb9cede50ab0a4f/batik-svggen-1.9.1.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="main,test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/mos/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-awt-util/1.9.1/df84da45d4e0ea1785375d3dbc73cdcc9d7646c9/batik-awt-util-1.9.1-sources.jar" kind="lib" path="C:/Users/mos/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-awt-util/1.9.1/7f3d68581febcb4bd62b890d497aae96dede6d3e/batik-awt-util-1.9.1.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="main,test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/mos/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-dom/1.9.1/65b7134413b1e63bb4440f7976b58d044e29e7b8/batik-dom-1.9.1-sources.jar" kind="lib" path="C:/Users/mos/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-dom/1.9.1/b9935c4018774e94e29a32b86bf67f2857e98ca9/batik-dom-1.9.1.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="main,test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/mos/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-css/1.9.1/d1732f017d577e682a89355e4f1b7e2d61b87921/batik-css-1.9.1-sources.jar" kind="lib" path="C:/Users/mos/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-css/1.9.1/e4f2f684387f18994727583c047c6e53d427aac1/batik-css-1.9.1.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="main,test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/mos/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-ext/1.9.1/82f575212e89a8e739319da66330bc70a709296d/batik-ext-1.9.1-sources.jar" kind="lib" path="C:/Users/mos/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-ext/1.9.1/f7cde23deb384677c01cb958ab155097c67577ae/batik-ext-1.9.1.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="main,test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/mos/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-xml/1.9.1/bd15ac54395b6743249f19217296baf2073f1eb2/batik-xml-1.9.1-sources.jar" kind="lib" path="C:/Users/mos/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-xml/1.9.1/d6f8d14a7dcc7d83c13faa7f32c1ee26997e0187/batik-xml-1.9.1.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="main,test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/mos/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-util/1.9.1/f8aa54688d28977af874179d6c888f2f1343277f/batik-util-1.9.1-sources.jar" kind="lib" path="C:/Users/mos/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-util/1.9.1/fe6eb3318c63c32b5177a4de6c60eaa100c58c80/batik-util-1.9.1.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="main,test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/mos/.gradle/caches/modules-2/files-2.1/xml-apis/xml-apis-ext/1.3.04/41a8b86b358e87f3f13cf46069721719105aff66/xml-apis-ext-1.3.04.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="main,test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/mos/.gradle/caches/modules-2/files-2.1/org.usb4java/libusb4java/1.2.0/dfd709cb29ecd4dfee551b3dea27f4acb3c13253/libusb4java-1.2.0-linux-x86.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="main,test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/mos/.gradle/caches/modules-2/files-2.1/org.usb4java/libusb4java/1.2.0/949ddf102f3311110643f4c6ca507b977cd675f5/libusb4java-1.2.0-linux-x86_64.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="main,test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/mos/.gradle/caches/modules-2/files-2.1/org.usb4java/libusb4java/1.2.0/aa5b1be4bdb52dc9c86c08f09d7aad0a43b425c7/libusb4java-1.2.0-linux-arm.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="main,test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/mos/.gradle/caches/modules-2/files-2.1/org.usb4java/libusb4java/1.2.0/ece89016955c79221555d5e452cf5aa7c5e2d209/libusb4java-1.2.0-windows-x86.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="main,test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/mos/.gradle/caches/modules-2/files-2.1/org.usb4java/libusb4java/1.2.0/2cb4cc4df02e0b5fbf2867491c8eee2ee7f19f87/libusb4java-1.2.0-windows-x86_64.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="main,test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/mos/.gradle/caches/modules-2/files-2.1/org.usb4java/libusb4java/1.2.0/98179e848d2b83f9f909d80979230ed8397d3f5b/libusb4java-1.2.0-osx-x86.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="main,test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/mos/.gradle/caches/modules-2/files-2.1/org.usb4java/libusb4java/1.2.0/ca639c580e2d635dd945fe44efce6854ce113274/libusb4java-1.2.0-osx-x86_64.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="main,test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/mos/.gradle/caches/modules-2/files-2.1/org.apache.commons/commons-lang3/3.2.1/77e5da73ecc389bda26f9953fd91e9b53b571a6f/commons-lang3-3.2.1-sources.jar" kind="lib" path="C:/Users/mos/.gradle/caches/modules-2/files-2.1/org.apache.commons/commons-lang3/3.2.1/66f13681add50ca9e4546ffabafaaac7645db3cf/commons-lang3-3.2.1.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="main,test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/mos/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/xmlgraphics-commons/2.2/dff64d41ec575a0479df722a5cd08b1b9f1fa9a5/xmlgraphics-commons-2.2-sources.jar" kind="lib" path="C:/Users/mos/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/xmlgraphics-commons/2.2/89f22650b8b8a5ac91207bf58190df852d97415a/xmlgraphics-commons-2.2.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="main,test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/mos/.gradle/caches/modules-2/files-2.1/xalan/xalan/2.7.2/fe9c3d37a49238fac9d4d6c4f5bbd8c334da787a/xalan-2.7.2-sources.jar" kind="lib" path="C:/Users/mos/.gradle/caches/modules-2/files-2.1/xalan/xalan/2.7.2/d55d3f02a56ec4c25695fe67e1334ff8c2ecea23/xalan-2.7.2.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="main,test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/mos/.gradle/caches/modules-2/files-2.1/xalan/serializer/2.7.2/fe9c3d37a49238fac9d4d6c4f5bbd8c334da787a/serializer-2.7.2-sources.jar" kind="lib" path="C:/Users/mos/.gradle/caches/modules-2/files-2.1/xalan/serializer/2.7.2/24247f3bb052ee068971393bdb83e04512bb1c3c/serializer-2.7.2.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="main,test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/mos/.gradle/caches/modules-2/files-2.1/xml-apis/xml-apis/1.3.04/d89105ccbe3fd823865330fd964233baf2b53e88/xml-apis-1.3.04-sources.jar" kind="lib" path="C:/Users/mos/.gradle/caches/modules-2/files-2.1/xml-apis/xml-apis/1.3.04/90b215f48fe42776c8c7f6e3509ec54e84fd65ef/xml-apis-1.3.04.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="main,test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/mos/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-constants/1.9.1/6f9981f80afaef4b523540b5b2ed75f7bdba4eee/batik-constants-1.9.1-sources.jar" kind="lib" path="C:/Users/mos/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-constants/1.9.1/6b23bc5198799df7105170b9bce589dd381be937/batik-constants-1.9.1.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="main,test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/mos/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-i18n/1.9.1/d022c60da73f7b27ae467797cb84a21b5214e44/batik-i18n-1.9.1-sources.jar" kind="lib" path="C:/Users/mos/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-i18n/1.9.1/5d4cfc4b43f9cc2330533ef3e5fc65ef6e02a43/batik-i18n-1.9.1.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="main,test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/mos/.gradle/caches/modules-2/files-2.1/commons-io/commons-io/1.3.1/10e13eb33d8c2c55a2517ca47d109626520e4e59/commons-io-1.3.1-sources.jar" kind="lib" path="C:/Users/mos/.gradle/caches/modules-2/files-2.1/commons-io/commons-io/1.3.1/b90b6ac57cf27a2858eaa490d02ba7945d18ca7b/commons-io-1.3.1.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="main,test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/mos/.gradle/caches/modules-2/files-2.1/commons-logging/commons-logging/1.0.4/8d3424a318e818f88568dfb3b55c58583364ba9/commons-logging-1.0.4-sources.jar" kind="lib" path="C:/Users/mos/.gradle/caches/modules-2/files-2.1/commons-logging/commons-logging/1.0.4/f029a2aefe2b3e1517573c580f948caac31b1056/commons-logging-1.0.4.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="main,test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/mos/.gradle/caches/modules-2/files-2.1/org.mozilla/rhino/1.7.7/c99484fccc1183de20b5d6bfb66abb10cc0855ba/rhino-1.7.7-sources.jar" kind="lib" path="C:/Users/mos/.gradle/caches/modules-2/files-2.1/org.mozilla/rhino/1.7.7/3a9ea863b86126b0ed8f2fe2230412747cd3c254/rhino-1.7.7.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="main,test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/mos/.gradle/caches/modules-2/files-2.1/org.python/jython/2.7.0/7ffff3853a1c497ea4543849935a5c360d853ee2/jython-2.7.0-sources.jar" kind="lib" path="C:/Users/mos/.gradle/caches/modules-2/files-2.1/org.python/jython/2.7.0/576ac65d2cfca511f82f3a65a3568fefd91884d/jython-2.7.0.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="main,test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Privat/Programming/Reaper/DrivenByMoss4Reaper/libs/jna-4.0.0.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="main,test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Privat/Programming/Reaper/DrivenByMoss4Reaper/libs/purejavahidapi-0.0.11-javadoc.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="main,test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Privat/Programming/Reaper/DrivenByMoss4Reaper/libs/purejavahidapi-0.0.11-sources.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="main,test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Privat/Programming/Reaper/DrivenByMoss4Reaper/libs/purejavahidapi-0.0.11.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="main,test"/>
+		</attributes>
+	</classpathentry>
+</classpath>

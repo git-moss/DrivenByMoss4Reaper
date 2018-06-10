@@ -1,0 +1,78 @@
+1) Unzip the downloaded file "DrivenByMoss4Reaper-X.XX.zip" to your harddisc (choose any 
+   folder you like but make sure you have write access to it or otherwise 
+   the configuration files of the application cannot be stored).
+
+2) Configure Reaper communication
+    a) Install the Reaper SWS extension: http://www.sws-extension.org/
+    b) Start Reaper and open the Action list (Actions -> Show action list...)
+    c) In the right lower corner you see "ReaScript:"; click the "Load..." button next to it.
+    d) Locate the file "DrivenByMoss-Main.eel" in the folder called "EEL", which is part of
+       the DrivenByMoss download, select it and click on "Open".
+    e) In the list a new entry "Script: DrivenByMoss-Main.eel" appeared (if you do not see it 
+       type "script" in the filter slot on the top of the dialog). Right click
+       on the entry. From the appearing menu select "Copy selected action command ID".
+    f) Close the action dialog.
+    g) Open the menu: Extensions -> Startup actions -> Set global startup action
+       Note: The extensions menu is only present if you successfully installed SWS in step a)
+    h) Paste the command ID from step e), e.g. Right-Click on the field and select paste.
+    i) Confirm the dialog and close Reaper. The script for the extended communication will now
+      be automatically started every time you start Reaper.
+
+4) Install the DrivenByMoss4Reaper application
+    This application communicates with Reaper via an UDP port (default 1200) and the Reascript
+    running in Reaper on one side and with the Controllers via MIDI and/or USB on the other.
+
+    If supported by the Java/OS platform the application is run as a tray icon.
+    Closing the app minimizes it to the tray. Double click the tray icon to show it again.
+    Click on the tray icon (Right click on Windows) to show the context menu with the options to
+    show the application or to exit it. If Auto-run is enabled, the app is automatically
+    minimized on startup.
+
+    a) The application is written in Java to run on Windows and Mac. 
+       Therefore, make sure you have the latest Java Runtime installed (at 
+       least 1.8.0_171). OpenJDK will not work since it does not include JavaFX 
+       at the moment! Get it from: 
+       http://www.oracle.com/technetwork/java/javase/downloads/index.html 
+       (see below for which file to choose)
+       
+    b) Installation on Windows
+       For the Java installation choose the file jdk-8u171-windows-x64.exe (or newer). There
+       is a batch file "DrivenByMoss4Reaper.bat" provided to start the application. Make sure 
+       you have the environment variable JAVA_HOME set to the installed Java Runtime, e.g. 
+       C:\Program Files\Java\jdk1.8.0_171 on my system. Alternatively, you can 
+       also replace the path directly in the batch file.
+
+    c) Optional: Add DrivenByMoss4Reaper.bat to the start menu of Windows 10 with the Reaper 
+       icon:
+       - Open the following folder in the Explorer (insert your user name): 
+            C:\Users**\AppData\Roaming\Microsoft\Windows\Start Menu\Programs
+       - Drag and drop "DrivenByMoss4Reaper.bat" to that folder while holding down the Alt-key 
+         to create a link.
+       - Select the link and press F2 to rename it.
+       - Name it something like "Reaper with DrivenByMoss"
+       - Right click on "DrivenByMoss4Reaper.bat" and open the properties dialog
+       - Press the button which allows to select a different icon
+       - In the upcoming dialog click on the file select button
+       - Navigate to the Reaper installation folder (C:\Program Files\REAPER (x64)) 
+         and select the "reaper.exe" file.
+       - Select the Reaper icon and confirm all dialogs.
+       - Open up the start menu by pressing the Windows key
+       - Type Reaper. "Reaper with DrivenByMoss" should appear now in the search results.
+       - Right click on "Reaper with DrivenByMoss4Reaper" and choose to add it to the start menu
+
+    d) Installation on Mac OS X
+       For the Java installation choose the file jdk-8u171-macosx-x64.dmg (or newer). The installation 
+       adds the Java application automatically to the environment. Therefore, no further 
+       configuration is necessary. 
+       You can start the application with "DrivenByMoss" which is included in the folder (see the 
+       Mac OS X issues below!).
+
+       To automatically close the Terminal window, in Terminal app open
+          Preferences > Profiles > (Select a Profile) > Shell
+          and for 'When the shell exits' chosen 'Close the window' or 'Only when error'.
+
+       Issues on Mac OS X:
+       
+       - If you get an error that you do not have access. Open a console and enter
+         the directory which contains the "DrivenByMoss" command. Then execute the command
+         "chmod a+x DrivenByMoss".

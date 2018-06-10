@@ -1,0 +1,63 @@
+import org.gradle.plugins.ide.eclipse.model.AccessRule
+
+plugins {
+    id 'com.github.jk1.dependency-license-report' version '0.7.1'
+    id 'com.github.ben-manes.versions' version '0.17.0'
+    id 'java' 
+    id 'application'
+    id 'eclipse'
+}
+
+version = '2.10'
+mainClassName = 'de.mossgrabers.transformator.Transformator'
+
+jar {
+    manifest {
+        attributes(
+            'Implementation-Title': 'DrivenByMoss4Reaper',
+            'Implementation-Version': version,
+            'Implementation-Vendor': 'Juergen Mossgraber'
+        )
+    }
+}
+
+startScripts {
+    // Remove the Console window after Java has been started
+    doLast {
+        unixScript.text = unixScript.text.replace("exec \"\$JAVACMD\" \"\$@\"", "exec \"\$JAVACMD\" \"\$@\" &")
+        windowsScript.text = windowsScript.text.replace("java.exe", "javaw.exe")
+        windowsScript.text = windowsScript.text.replace("\"%JAVA_EXE%\" %DEFAULT_JVM_OPTS%", "start \"\" \"%JAVA_EXE%\" %DEFAULT_JVM_OPTS%")
+    }
+}
+
+applicationDistribution.from('src/main/eel') {
+    into "eel"
+}
+applicationDistribution.from('build/reports/dependency-license') {
+    into "license/dependency"
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+eclipse.classpath.file {
+	whenMerged { classpath ->
+        /** Define accessrules to allow JavaFX in standard execution environment. */
+        def jre = entries.find { it.path.contains 'org.eclipse.jdt.launching.JRE_CONTAINER' }
+            jre.accessRules.add(new AccessRule('accessible', 'javafx/**'))
+    }
+}
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    compile group: 'org.apache.xmlgraphics', name: 'batik-anim', version: '1.9.1'
+    compile group: 'org.apache.xmlgraphics', name: 'batik-transcoder', version: '1.9.1'
+    compile group: 'org.usb4java', name: 'usb4java', version: '1.2.0'
+    compile group: 'com.illposed.osc', name: 'javaosc-core', version: '0.4'
+    compile group: 'uk.co.xfactory-librarians', name: 'coremidi4j', version: '1.1'
+    compile fileTree(dir: 'libs', include: '*.jar')
+}

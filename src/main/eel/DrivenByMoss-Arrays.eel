@@ -1,0 +1,74 @@
+// Written by Jürgen Moßgraber - mossgrabers.de
+// (c) 2018
+// Licensed under LGPLv3 - http://www.gnu.org/licenses/lgpl-3.0.txt
+
+function initStringArray (fieldSize, length) local (size, counter)
+(
+    this.start  = gFilledMemory;
+    this.fieldSize  = fieldSize;
+    this.length = length;
+    size = length * fieldSize;
+    gFilledMemory += size;
+    
+    counter = 0;
+    loop (size, (
+        this.start[counter] = 0;
+        counter += 1;
+    ));
+);
+
+function setString (index, value) local (pos, offset, valLength)
+(
+    index < 0 || index >= this.length ? (
+        ReaScriptError (sprintf (#, "(setString) Index out of bounds: %d (Array length: %d, Memory start: %d)", index, this.length, this.start));
+    ) : (
+        pos = this.start + index * this.fieldSize;
+        offset = 0;
+        valLength = strlen (value);
+        loop (this.fieldSize - 1, (
+            pos[offset] = offset < valLength ? str_getchar (value, offset) : 0;
+            offset += 1;
+        ));
+    );
+);
+
+function getString (index) local (pos, offset, value)
+(
+    index < 0 || index >= this.length ? (
+        ReaScriptError (sprintf (#, "(getString) Index out of bounds: %d (Array length: %d, Memory start: %d)", index, this.length, this.start));
+    ) : (
+        pos = this.start + index * this.fieldSize;
+        offset = 0;
+        value = "";
+        while (offset < this.fieldSize) (
+            pos[offset] > 0 ? (
+                value = sprintf (#, "%s%c", value, pos[offset]);
+                offset += 1;
+            ) : offset = this.fieldSize;
+        );
+        value;
+    );
+);
+
+function initNumberArray (length) local (counter)
+(
+    this.start  = gFilledMemory;
+    this.length = length;
+    gFilledMemory += length;
+    
+    counter = 0;
+    loop (length, (
+        this.start[counter] = -1;
+        counter += 1;
+    ));
+);
+
+function setNumber (index, value)
+(
+    index < 0 || index >= this.length ? ReaScriptError (sprintf (#, "(setNumber) Index out of bounds: %d (Array length: %d, Memory start: %d)", index, this.length, this.start)) : this.start[index] = value;
+);
+
+function getNumber (index)
+(
+    index < 0 || index >= this.length ? ReaScriptError (sprintf (#, "(getNumber) Index out of bounds: %d (Array length: %d, Memory start: %d)", index, this.length, this.start)) : this.start[index];
+);

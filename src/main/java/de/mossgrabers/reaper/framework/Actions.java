@@ -1,0 +1,147 @@
+// Written by Jürgen Moßgraber - mossgrabers.de
+// (c) 2017-2018
+// Licensed under LGPLv3 - http://www.gnu.org/licenses/lgpl-3.0.txt
+
+package de.mossgrabers.reaper.framework;
+
+/**
+ * Reaper action IDs.
+ *
+ * @author J&uuml;rgen Mo&szlig;graber
+ */
+public final class Actions
+{
+    /** Previous project tab. */
+    public static final int    PROJECT_TAB_PREVIOUS                   = 40862;
+    /** Next project tab. */
+    public static final int    PROJECT_TAB_NEXT                       = 40861;
+    /** Transport: Tap tempo. */
+    public static final int    TRANSPORT_TAP_TEMPO                    = 1134;
+
+    /** Item: Remove items. */
+    public static final int    REMOVE_ITEMS                           = 40006;
+    /** Item: Duplicate items. */
+    public static final int    DUPLICATE_ITEMS                        = 41295;
+    /** Item: Glue items. */
+    public static final int    GLUE_ITEMS                             = 41588;
+
+    /** Undo. */
+    public static final int    EDIT_UNDO                              = 40029;
+    /** Redo. */
+    public static final int    EDIT_REDO                              = 40030;
+    /** Record: Set record mode to normal. */
+    public static final int    RECORD_MODE_NORMAL                     = 40252;
+    /** Record: Set record mode to selected item auto-punch. */
+    public static final int    RECORD_MODE_PUNCH_ITEMS                = 40253;
+    /** Record: Set record mode to time selection auto-punch. */
+    public static final int    RECORD_MODE_AUTO_PUNCH                 = 40076;
+
+    /** Pre-roll: Toggle pre-roll on record. */
+    public static final int    RECORD_PREROLL                         = 41819;
+    /** Options: Toggle metronome. */
+    public static final int    TOGGLE_METRONOME                       = 40364;
+
+    /** Track: Insert new track. */
+    public static final int    INSERT_NEW_TRACK                       = 40001;
+    /** Track: Insert new track at end of mixer. */
+    public static final int    INSERT_NEW_TRACK_AT_END                = 41147;
+    /** Track: Insert track from template.... */
+    public static final int    INSERT_NEW_TRACK_FROM_TEMPLATE         = 46000;
+    /** Track: Duplicate tracks. */
+    public static final int    DUPLICATE_TRACKS                       = 40062;
+
+    /** Item: Open in built in midi editor. */
+    public static final int    OPEN_IN_BUILT_IN_MIDI_EDITOR           = 40153;
+    /** Load the 1st window set. */
+    public static final int    LOAD_WINDOW_SET_1                      = 40454;
+    /** Load the 2nd window set. */
+    public static final int    LOAD_WINDOW_SET_2                      = 40455;
+    /** Load the 3rd window set. */
+    public static final int    LOAD_WINDOW_SET_3                      = 40456;
+
+    /** Envelope: Toggle show all active envelopes. */
+    public static final int    SHOW_ALL_ACTIVE_ENVELOPES              = 40926;
+    /** View: Toggle mixer visible. */
+    public static final int    TOGGLE_MIXER_VISIBLE                   = 40078;
+    /** View: Toggle show MIDI editor windows. */
+    public static final int    TOGGLE_SHOW_MIDI_EDITOR_WINDOWS        = 40716;
+    /** View: Show track manager window. */
+    public static final int    SHOW_TRACK_MANAGER_WINDOW              = 40906;
+    /** Toggle fullscreen. */
+    public static final int    TOGGLE_FULLSCREEN                      = 40346;
+    /** Media explorer: Show/hide media explorer. */
+    public static final int    TOGGLE_MEDIA_EXPLORER                  = 50124;
+
+    /** Mixer: Toggle show FX inserts if space available. */
+    public static final int    TOGGLE_FX_INSERTS                      = 40549;
+    /** Mixer: Toggle show sends if space available. */
+    public static final int    TOGGLE_FX_SENDS                        = 40557;
+    /** Mixer: Toggle show FX parameters if space available. */
+    public static final int    TOGGLE_FX_PARAMETERS                   = 40910;
+
+    /** Select all notes in the midi editor. */
+    public static final int    MIDI_SELECT_ALL_NOTES                  = 40003;
+    /** Quantize all notes in the midi editor. */
+    public static final int    MIDI_QUANTIZE_SELECTED_NOTES           = 40728;
+
+    /** Item: Dynamic split items... */
+    public static final int    DYNAMIC_SPLIT                          = 40760;
+
+    /** Track : Mute Tracks. */
+    public static final int    MUTE_TRACKS                            = 40730;
+    /** Track : Unmute Tracks. */
+    public static final int    UNMUTE_TRACKS                          = 40731;
+
+    /** Track: Set all FX offline for selected tracks. */
+    public static final int    SET_ALL_FX_OFFLINE                     = 40535;
+    /** Track: Set all FX online for selected tracks. */
+    public static final int    SET_ALL_FX_ONLINE                      = 40536;
+
+    /** Track: Lock track controls. */
+    public static final int    LOCK_TRACK_CONTROLS                    = 41312;
+    /** Track: Unock track controls. */
+    public static final int    UNLOCK_TRACK_CONTROLS                  = 41313;
+
+    /** Track: Go to next track. */
+    public static final int    GO_TO_NEXT_TRACK                       = 40285;
+    /** Track: Go to previous track. */
+    public static final int    GO_TO_PREV_TRACK                       = 40286;
+
+    /** View: Zoom out horizontal. */
+    public static final int    ZOOM_OUT_HORIZ                         = 1011;
+    /** View: Zoom in horizontal. */
+    public static final int    ZOOM_IN_HORIZ                          = 1012;
+    /** View: Zoom out vertical. */
+    public static final int    ZOOM_OUT_VERT                          = 40112;
+    /** View: Zoom in vertical. */
+    public static final int    ZOOM_IN_VERT                           = 40111;
+
+    /** SWS/S&M: Toggle show FX chain windows for selected tracks. */
+    public static final String SHOW_FX_CHAIN_WINDOWS                  = "_S&M_TOGLFXCHAIN";
+    /** SWS: Add item(s) to left of selected item(s) to selection. */
+    public static final String ADD_LEFT_ITEM_TO_SELECTION             = "_SWS_ADDLEFTITEM";
+
+    /** SWS : Bypass FX on selected tracks. */
+    public static final String BYPASS_ALL_FX_ON_SELECTED_TRACKS       = "_S&M_FXBYPALL2";
+    /** SWS/S&M: Unbypass all FX for selected tracks. */
+    public static final String UNBYPASS_ALL_FX_ON_SELECTED_TRACKS     = "_S&M_FXBYPALL3";
+
+    /** SWS: Mute all sends from selected track(s). */
+    public static final String MUTE_ALL_SENDS_ON_SELECTED_TRACKS      = "_SWS_MUTESENDS";
+    /** SWS: Unmute all sends from selected track(s). */
+    public static final String UNMUTE_ALL_SENDS_ON_SELECTED_TRACKS    = "_SWS_UNMUTESENDS";
+
+    /** SWS: Mute all receives for selected track(s). */
+    public static final String MUTE_ALL_RECEIVES_ON_SELECTED_TRACKS   = "_SWS_MUTERECVS";
+    /** SWS: Unmute all receives for selected track(s). */
+    public static final String UNMUTE_ALL_RECEIVES_ON_SELECTED_TRACKS = "_SWS_UNMUTERECVS";
+
+
+    /**
+     * Constructor. Private due to constant class.
+     */
+    private Actions ()
+    {
+        // Intentionally empty
+    }
+}

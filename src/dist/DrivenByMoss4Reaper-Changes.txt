@@ -1,0 +1,24 @@
+2.10
+- New: If supported by the Java/OS platform the application is run as a tray icon.
+       Closing the app minimizes it to the tray. Double click the tray icon to show it again.
+       Right click on the tray icon to show the context menu with the options to show
+       the application or to exit it. If Auto-run is enabled, the app is automatically minimized
+       on startup.
+- New: The console window is no longer shown on startup.
+- New: 64 drum pad view for Ableton Push and Novation Launchpad Pro / MkII.
+- New: Bank page is now automatically adjusted on controller if changed in Reaper.
+- Fixed: Midi In-/Outpus were not correctly restarted when Configuration dialog was closed.
+- Fixed: Push 2 preview display window was still drawn when hidden.
+- Fixed: Push 2 preview display window producerd OutOfMemoryExceptions after a while.
+
+2.03
+- Fixed: The Reaper start path was not stored.
+
+2.02
+- Fixed: Could not start Reaper when spaces are included in the path.
+
+2.01
+- New: Added more logging information for loading Reaper INI files
+
+2.00
+- New: Initial release after switching to Java

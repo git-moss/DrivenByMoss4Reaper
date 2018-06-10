@@ -1,0 +1,1034 @@
+// Written by Jürgen Moßgraber - mossgrabers.de
+// (c) 2017-2018
+// Licensed under LGPLv3 - http://www.gnu.org/licenses/lgpl-3.0.txt
+
+@import DrivenByMoss-Arrays.eel
+@import DrivenByMoss-Macros.eel
+
+// Configuration
+
+gTrackBankSize = 8;
+gSendBankSize = 8;
+gDeviceBankSize = 8;
+gParameterBankSize = 8;
+
+gFilledMemory = 1;  // Must not start at 0!
+gDump = 0;
+gProjectID = 0;
+
+logConnection = 0;
+logInput = 0;
+logOutput = 0;
+
+startupTime = time ();
+
+function strToInt (str)
+(
+    matchi("*?%{int_value}f*?", str) ? int_value;
+);
+
+
+// Connection management
+connection = 0;
+measure = time ();
+gINIPath.initStringArray (256, 1);
+
+// Project values
+gProjectEngine = -1;
+gPrerollMeasures = -1;
+gPrerollClick = -1;
+gProjectName.initStringArray (60, 1);
+
+// Transport values
+gPlay = -1;
+gRecord = -1;
+gRepeat = -1;
+gTimesig = -1;
+gDenomOut = -1;
+gPlayPosition = 0;
+gTempo = 100;
+gMetronome = -1;
+gTimeStr.initStringArray (20, 1);
+
+// Clip values
+gMusicalStart = -1;
+gMusicalEnd = -1;
+gMusicalLoopStart = -1;
+gMusicalLoopEnd = -1;
+
+// Master values
+gMasterSelected = -1;
+gMasterMute = -1;
+gMasterSolo = -1;
+gMasterVolume = -1;
+gMasterPan = -1;
+gMasterVULeft = -1;
+gMasterVURight = -1;
+gMasterVolumeStr.initStringArray (10, 1);
+gMasterPanStr.initStringArray (6, 1);
+
+// Track values
+gTrackCount = -1;
+gTrackBankOffset = 0;
+gTrackSelection = 0;
+gTrackExists.initNumberArray (gTrackBankSize);
+gTrackNumber.initNumberArray (gTrackBankSize);
+gTrackName.initStringArray (20, gTrackBankSize);
+gTrackType.initStringArray (10, gTrackBankSize);
+gTrackColor.initStringArray (12, gTrackBankSize);
+gTrackSelected.initNumberArray (gTrackBankSize);
+gTrackMute.initNumberArray (gTrackBankSize);
+gTrackSolo.initNumberArray (gTrackBankSize);
+gTrackRecArmed.initNumberArray (gTrackBankSize);
+gTrackActive.initNumberArray (gTrackBankSize);
+gTrackMonitor.initNumberArray (gTrackBankSize);
+gTrackAutoMonitor.initNumberArray (gTrackBankSize);
+gTrackVolume.initNumberArray (gTrackBankSize);
+gTrackVolumeStr.initStringArray (10, gTrackBankSize);
+gTrackPan.initNumberArray (gTrackBankSize);
+gTrackPanStr.initStringArray (6, gTrackBankSize);
+gTrackVULeft.initNumberArray (gTrackBankSize);
+gTrackVURight.initNumberArray (gTrackBankSize);
+gTrackAutoMode.initNumberArray (gTrackBankSize);
+gTrackSendName.initStringArray (20, gTrackBankSize * gSendBankSize);
+gTrackSendVolume.initNumberArray (gTrackBankSize * gSendBankSize);
+gTrackSendVolumeStr.initStringArray (10, gTrackBankSize * gSendBankSize);
+gTrackRepeatActive.initNumberArray (gTrackBankSize);
+gTrackRepeatNoteLength.initNumberArray (gTrackBankSize);
+
+// Device values
+gDeviceCount = -1;
+gDeviceBankOffset = 0;
+gDeviceSelected = 0;
+gDeviceExists = -1;
+gDevicePosition = -1;
+gDeviceWindow = -1;
+gDeviceBypass = -1;
+gDeviceExpanded = -1;
+gDeviceExpandedType = -1;
+gDeviceExpandedTypeTemp = -1;
+gDeviceName.initStringArray (60, 1);
+gDeviceSiblings.initStringArray (60, gDeviceBankSize);
+
+// Device parameter values
+gDeviceParamCount = -1;
+gDeviceParamBankSelected = -1;    // Parameter Bank selection is not devided in pages of 8!
+gDeviceParamBankSelectedTemp = 0;
+gDeviceParamName.initStringArray (60, gParameterBankSize);
+gDeviceParamValue.initNumberArray (gParameterBankSize);
+gDeviceParamValueStr.initStringArray (40, gParameterBankSize);
+
+// Groove
+gGrooveStrength = -1;
+gGrooveVelstrength = -1;
+gGrooveTarget = -1;
+gGrooveTolerance = -1;
+gQuantizeStrength = -1;
+
+// Browser
+gDevicePresetIndex = -1;
+gDevicePresetName.initStringArray (40, 1);
+gDevicePresetsStr.initStringArray (40, 128);
+
+gNotificationWindowWidth = 500;
+gNotificationWindowHeight = 60;
+gCountdownStart = 0;
+gCountdownNow = -1;
+
+function notificationloop ()
+(
+    time (gCountdownNow);
+    gCountdownNow - gCountdownStart > 1 ? gfx_quit() : defer ("notificationloop ()");
+    gfx_update ();
+);
+
+function displayNotification (text) local (textWidth, textHeight)
+(
+    gfx_init ("Notification", gNotificationWindowWidth, gNotificationWindowHeight, 0, 200, 200);
+    gfx_setfont (1, "Arial", 28, 0);
+    gfx_measurestr (text, textWidth, textHeight);
+
+    gfx_x = (gNotificationWindowWidth - textWidth) / 2;
+    gfx_y = (gNotificationWindowHeight - textHeight) / 2;
+    gfx_drawstr (text);
+
+    time (gCountdownStart);
+    
+    notificationloop ();
+);
+
+function sendToClient (formatStr, newValue) local (cmd)
+(
+    cmd = sprintf (#, formatStr, newValue);
+    connection > 0 ? tcp_send (connection, cmd);
+    logOutput ? ShowConsoleMsg (cmd);
+);
+
+function sendOSC (formatStr, oldValue, newValue) local (cmd)
+(
+    (oldValue != newValue || gDump) ? sendToClient (formatStr, newValue);
+    newValue;
+);
+
+function sendOSCStr (formatStr, oldValue, newValue) local (cmd)
+(
+    (strcmp (oldValue, newValue) != 0 || gDump) ? sendToClient (formatStr, newValue);
+    newValue;
+);
+
+function sendOSCIntArray (index, formatStr, newValue) local (oldValue)
+(
+    oldValue = this.getNumber (index);
+    sendOSC (formatStr, oldValue, newValue);
+    this.setNumber (index, newValue);
+);
+
+function sendOSCStrArray (index, formatStr, newValue) local (oldValue, newValLength)
+(
+    oldValue = this.getString (index);
+    sendOSCStr (formatStr, oldValue, newValue);
+    this.setString (index, newValue);
+);
+
+function loadDevicePresetFile (track, fx) local (filename, file, len, counter, name)
+(
+    counter = 0;
+    TrackFX_GetUserPresetFilename (track, fx, filename);
+    file = fopen (filename, "r");
+    file > 0 ? (
+        len = 1;
+        while (len > 0) (
+            len = fgets (file, name);
+            len > 0 ? (
+                matchi ("Name=%s\n", name, #strip) > 0 ? (
+                    gDevicePresetsStr.sendOSCStrArray (counter, sprintf (#, "/browser/result/%d/name %%s\n", counter + 1), strcpy (#, #strip));
+                    counter += 1;
+                );
+            );
+        );
+        fclose (file);
+    );
+    
+    while (counter < 128) (
+        gDevicePresetsStr.sendOSCStrArray (counter, sprintf (#, "/browser/result/%d/name %%s\n", counter + 1), sprintf (#, ""));
+        counter += 1;
+    );
+);
+
+function sendGrooveData () local (result, iniPath)
+(
+    get_ini_file (inipath) ?
+    (
+        extension_api ("BR_Win32_GetPrivateProfileString", "fingers", "groove_strength", "100", inipath, result);
+        result = strcpy (#, result);
+        gGrooveStrength = sendOSC ("/groove/strength %d\n", gGrooveStrength, strToInt (result));
+    
+        extension_api ("BR_Win32_GetPrivateProfileString", "fingers", "groove_velstrength", "100", inipath, result);
+        gGrooveVelstrength = sendOSC ("/groove/velocity %d\n", gGrooveVelstrength, strToInt (result));
+    
+        extension_api ("BR_Win32_GetPrivateProfileString", "fingers", "groove_target", "0", inipath, result);
+        gGrooveTarget = sendOSC ("/groove/target %d\n", gGrooveTarget, strToInt (result));
+    
+        extension_api ("BR_Win32_GetPrivateProfileString", "fingers", "groove_tolerance", "16", inipath, result);
+        gGrooveTolerance = sendOSC ("/groove/tolerance %d\n", gGrooveTolerance, strToInt (result));
+    
+        extension_api ("BR_Win32_GetPrivateProfileString", "midiedit", "quantstrength", "100", inipath, result);
+        gQuantizeStrength = sendOSC ("/quantize/strength %d\n", gQuantizeStrength, strToInt (result));
+    );
+);
+
+function sendDeviceData () local (index, deviceIndex, bankDeviceIndex, deviceCount, deviceName, paramAddress, paramCount, paramName, paramValue, paramValueStr, result)
+(
+    track = GetTrack (gProjectID, gTrackBankOffset + gTrackSelection);
+
+    deviceIndex = gDeviceBankOffset + gDeviceSelected;
+    bankDeviceIndex = 1;
+    index = 0;
+    deviceCount = TrackFX_GetCount (track);
+    gDeviceCount = sendOSC ("/device/count %d\n", gDeviceCount, deviceCount);
+    gDeviceExists = sendOSC ("/device/exists %d\n", gDeviceExists, deviceIndex < deviceCount ? 1 : 0);
+    gDevicePosition = sendOSC ("/device/position %d\n", gDevicePosition, deviceIndex);
+    gDeviceWindow = sendOSC ("/device/window %d\n", gDeviceWindow, TrackFX_GetOpen (track, deviceIndex));
+    gDeviceExpanded = sendOSC ("/device/expand %d\n", gDeviceExpanded, gDeviceExpandedTypeTemp == 1);
+    gDeviceExpandedType = gDeviceExpandedTypeTemp;
+
+    result = TrackFX_GetFXName (track, deviceIndex, deviceName);
+    gDeviceName.sendOSCStrArray (0, "/device/name %s\n", result ? deviceName : "");
+    gDeviceBypass = sendOSC ("/device/bypass %d\n", gDeviceBypass, TrackFX_GetEnabled (track, deviceIndex) ? 0 : 1);
+        
+    loop (gDeviceBankSize, (
+        deviceAddress = sprintf (#, "/device/sibling/%d/", bankDeviceIndex);
+        result = TrackFX_GetFXName (track, gDeviceBankOffset + index, deviceName);
+        gDeviceSiblings.sendOSCStrArray (index, sprintf (#, "%sname %%s\n", deviceAddress), result ? deviceName : "");
+    
+        index += 1;
+        bankDeviceIndex += 1;
+    ));
+    
+    paramCount = TrackFX_GetNumParams (track, deviceIndex);
+    gDeviceParamCount = sendOSC ("/device/param/count %d\n", gDeviceParamCount, paramCount);
+    gDeviceParamBankSelected = sendOSC ("/device/param/bank/selected %d\n", gDeviceParamBankSelected + 1, gDeviceParamBankSelectedTemp + 1) - 1;
+
+    index = 0;
+    paramIndex = gDeviceParamBankSelected * gParameterBankSize;
+    loop (gParameterBankSize, (
+        paramAddress = sprintf (#, "/device/param/%d/", index + 1);
+
+        result = TrackFX_GetParamName (track, deviceIndex, paramIndex, paramName);
+        gDeviceParamName.sendOSCStrArray (index, sprintf (#, "%sname %%s\n", paramAddress), result ? paramName : "");
+        paramValue = TrackFX_GetParamNormalized (track, deviceIndex, paramIndex);
+        gDeviceParamValue.sendOSCIntArray (index, sprintf (#, "%svalue %%g\n", paramAddress), paramValue);
+        result = TrackFX_FormatParamValueNormalized (track, deviceIndex, paramIndex, paramValue, paramValueStr);
+        gDeviceParamValueStr.sendOSCStrArray (index, sprintf (#, "%svalue/str %%s\n", paramAddress), result ? paramValueStr : "");
+
+        index += 1;
+        paramIndex += 1;
+    ));
+);
+
+function adjustTrackBank () local (track, trackIdx)
+(
+    track = GetSelectedTrack (gProjectID, 0);
+    track ?
+    (
+        trackIdx = CSurf_TrackToID (track, false) - 1;
+        trackIdx >= 0 ? gTrackBankOffset = floor (trackIdx / gTrackBankSize) * gTrackBankSize;
+    );
+);
+
+function sendTrackData () local (index, trackIndex, bankTrackIndex, trackCount, track, trackName, trackState, R, G, B, position, repeatActive, repeatNoteLength, minVal, maxVal, monitor, panVal, volDB, numSends, sendCounter, trackAddress, sendAddress, arrayIndex, selected, result)
+(
+    adjustTrackBank ();
+    
+    trackIndex = gTrackBankOffset;
+    bankTrackIndex = 1;
+    index = 0;
+    trackCount = CountTracks (gProjectID);
+    gTrackCount = sendOSC ("/track/count %d\n", gTrackCount, trackCount);
+
+    loop (gTrackBankSize, (
+        trackAddress = sprintf (#, "/track/%d/", bankTrackIndex);
+    
+        // Track exists flag and number of tracks
+        gTrackExists.sendOSCIntArray (index, sprintf (#, "%sexists %%d\n", trackAddress), trackIndex < trackCount ? 1 : 0);
+        gTrackNumber.sendOSCIntArray (index, sprintf (#, "%snumber %%d\n", trackAddress), trackIndex);
+
+        // Track name
+        track = GetTrack (gProjectID, trackIndex);
+        result = GetTrackName (track, trackName);
+        gTrackName.sendOSCStrArray (index, sprintf (#, "%sname %%s\n", trackAddress), result ? trackName : "");
+
+        // Track type (GROUP or HYBRID), select, mute, solo, recarm and monitor states
+        GetTrackState (#, track, trackState);
+        gTrackType.sendOSCStrArray (index, sprintf (#, "%stype %%s\n", trackAddress), trackState & 1 > 0 ? "GROUP" : "HYBRID");
+        selected = trackState & 2 > 0 ? 1 : 0;
+        trackIndex < trackCount && selected ? gTrackSelection = index;
+        gTrackSelected.sendOSCIntArray (index, sprintf (#, "%sselect %%d\n", trackAddress), selected);
+        gTrackMute.sendOSCIntArray (index, sprintf (#, "%smute %%d\n", trackAddress), trackState & 8 > 0 ? 1 : 0);
+        gTrackSolo.sendOSCIntArray (index, sprintf (#, "%ssolo %%d\n", trackAddress), trackState & 16 > 0 ? 1 : 0);
+        gTrackRecArmed.sendOSCIntArray (index, sprintf (#, "%srecarm %%d\n", trackAddress), trackState & 64 > 0 ? 1 : 0);
+        // Uses "lock track" as active indication
+        gTrackActive.sendOSCIntArray (index, sprintf (#, "%sactive %%d\n", trackAddress), GetTrackLockState (track) ? 0 : 1);
+        
+        monitor = GetMediaTrackInfo_Value (track, "I_RECMON");
+        gTrackMonitor.sendOSCIntArray (index, sprintf (#, "%smonitor %%d\n", trackAddress), monitor == 1 ? 1 : 0);
+        gTrackAutoMonitor.sendOSCIntArray (index, sprintf (#, "%sautoMonitor %%d\n", trackAddress), monitor == 2 ? 1 : 0);
+
+        // Track color
+        ColorFromNative (GetTrackColor (track) & 0xFEFFFFFF, R, G, B);
+        gTrackColor.sendOSCStrArray (index, sprintf (#, "%scolor %%s\n", trackAddress), sprintf (#, "%d %d %d", R, G, B));
+        
+        // Track volume and pan
+        volDB = VAL2DB (GetMediaTrackInfo_Value (track, "D_VOL"));
+        gTrackVolume.sendOSCIntArray (index, sprintf (#, "%svolume %%g\n", trackAddress), DB2SLIDER (volDB) / 1000.0);
+        volDB = volDB == -150 ? "-inf dB" : (volDB < 0 ? sprintf (#, "%.1f dB", volDB) : sprintf (#, "+%.1f dB", volDB));
+        gTrackVolumeStr.sendOSCStrArray (index, sprintf (#, "%svolume/str %%s\n", trackAddress), volDB);
+        
+        panVal = GetMediaTrackInfo_Value (track, "D_PAN");
+        gTrackPan.sendOSCIntArray (index, sprintf (#, "%span %%g\n", trackAddress), (panVal + 1) / 2);
+        panVal = abs (panVal) < 0.001 ? "C" : (panVal < 0 ? sprintf (#, "%d%%L", panVal * -100) : sprintf (#, "%d%%R", panVal * 100));
+        gTrackPanStr.sendOSCStrArray (index, sprintf (#, "%span/str %%s\n", trackAddress), panVal);
+        
+        // VU and automation mode
+        gTrackVULeft.sendOSCIntArray (index, sprintf (#, "%svuleft %%g\n", trackAddress), DB2SLIDER (VAL2DB (Track_GetPeakInfo (track, 0))) / 1000.0);
+        gTrackVURight.sendOSCIntArray (index, sprintf (#, "%svuright %%g\n", trackAddress), DB2SLIDER (VAL2DB (Track_GetPeakInfo (track, 1))) / 1000.0);
+        gTrackAutoMode.sendOSCIntArray (index, sprintf (#, "%sautomode %%d\n", trackAddress), GetMediaTrackInfo_Value (track, "I_AUTOMODE"));
+        
+        // Sends
+        numSends = GetTrackNumSends (track, 0);
+        sendCounter = 0;
+        loop (gSendBankSize, (
+            sendAddress = sprintf (#, "%ssend/%d/", trackAddress, sendCounter + 1);
+            arrayIndex = index * gTrackBankSize + sendCounter;
+            sendCounter < numSends ? (
+                result = GetTrackSendName (track, sendCounter, trackName);
+                gTrackSendName.sendOSCStrArray (arrayIndex, sprintf (#, "%sname %%s\n", sendAddress), result ? trackName : "");
+                volDB = VAL2DB (GetTrackSendInfo_Value (track, 0, sendCounter, "D_VOL"));
+                gTrackSendVolume.sendOSCIntArray (arrayIndex, sprintf (#, "%svolume %%g\n", sendAddress), DB2SLIDER (volDB) / 1000.0);
+                volDB = volDB == -150 ? "-inf dB" : (volDB < 0 ? sprintf (#, "%.1f dB", volDB) : sprintf (#, "+%.1f dB", volDB));
+                gTrackSendVolumeStr.sendOSCStrArray (arrayIndex, sprintf (#, "%svolume/str %%s\n", sendAddress), volDB);
+            ) : (
+                gTrackSendName.sendOSCStrArray (arrayIndex, sprintf (#, "%sname %%s\n", sendAddress), "");
+                gTrackSendVolume.sendOSCIntArray (arrayIndex, sprintf (#, "%svolume %%g\n", sendAddress), 0);
+                gTrackSendVolumeStr.sendOSCStrArray (arrayIndex, sprintf (#, "%svolume/str %%s\n", sendAddress), "");
+            );
+            sendCounter += 1;
+        ));
+        
+        // Midi note repeat plugin is on track?
+        position = TrackFX_AddByName (track, "midi_note_repeater", 1, 0);
+        repeatActive = (position > -1) ? TrackFX_GetEnabled (track, 0x1000000 + position) : 0;
+        repeatNoteLength = (position > -1) ? TrackFX_GetParam (track, 0x1000000 + position, 0, minVal, maxVal) : 1;
+        gTrackRepeatActive.sendOSCIntArray (index, sprintf (#, "%srepeatActive %%d\n", trackAddress), repeatActive ? 1 : 0);
+        gTrackRepeatNoteLength.sendOSCIntArray (index, sprintf (#, "%snoterepeatlength %%d\n", trackAddress), repeatNoteLength);
+        
+        index += 1;
+        trackIndex += 1;
+        bankTrackIndex += 1;
+    ));
+    
+    sendDeviceData ();
+);
+
+function sendMasterTrackData () local (master, masterState)
+(
+    master = GetMasterTrack (gProjectID);
+    GetTrackState (#, master, masterState);
+    gMasterSelected = sendOSC ("/master/select %d\n", gMasterSelected, masterState & 2 > 0);
+    gMasterMute = sendOSC ("/master/mute %d\n", gMasterMute, masterState & 8 > 0);
+    gMasterSolo = sendOSC ("/master/solo %d\n", gMasterSolo, masterState & 16 > 0);
+
+    // Master track volume and pan
+    volDB = VAL2DB (GetMediaTrackInfo_Value (master, "D_VOL"));
+    gMasterVolume = sendOSC ("/master/volume %g\n", gMasterVolume, DB2SLIDER (volDB) / 1000.0);
+    volDB = volDB == -150 ? "-inf dB" : (volDB < 0 ? sprintf (#, "%.1f dB", volDB) : sprintf (#, "+%.1f dB", volDB));
+    gMasterVolumeStr.sendOSCStrArray (0, "/master/volume/str %s\n", volDB);
+
+    panVal = GetMediaTrackInfo_Value (master, "D_PAN");
+    gMasterPan = sendOSC ("/master/pan %g\n", gMasterPan, (panVal + 1) / 2);
+    panVal = abs (panVal) < 0.001 ? "C" : (panVal < 0 ? sprintf (#, "%d%%L", panVal * -100) : sprintf (#, "%d%%R", panVal * 100));
+    gMasterPanStr.sendOSCStrArray (index, "/master/pan/str %s\n", panVal);
+    
+    gMasterVULeft = sendOSC ("/master/vuleft %g\n", gMasterVULeft, DB2SLIDER (VAL2DB (Track_GetPeakInfo (master, 0))) / 1000.0);
+    gMasterVURight = sendOSC ("/master/vuright %g\n", gMasterVURight, DB2SLIDER (VAL2DB (Track_GetPeakInfo (master, 1))) / 1000.0);
+);
+
+function sendTransportData () local (playState)
+(
+    // Transport states
+    playState = GetPlayStateEx (gProjectID);
+    gPlay = sendOSC ("/play %d\n", gPlay, playState & 1 > 0);
+    gRecord = sendOSC ("/record %d\n", gRecord, playState & 4 > 0);
+    gRepeat = sendOSC ("/repeat %d\n", gRepeat, GetSetRepeat (-1));
+    
+    gMetronome = sendOSC ("/click %d\n", gMetronome, GetToggleCommandState (40364));
+
+    // The tempo
+    gTempo = sendOSC ("/tempo %.2f\n", gTempo, Master_GetTempo ());
+);
+
+function sendFrequentProperties () local (count, item, itemStart, itemEnd, timesig, denomOut, startBPM, endBPM, musicalStart, musicalEnd, loopStart, loopEnd, musicalLoopStart, musicalLoopEnd, cursorPos, projectName, error, iniPath, timeStr)
+(
+    GetResourcePath (iniPath) ? gINIPath.sendOSCStrArray (0, "/inipath %s\n", iniPath);
+
+    // Get the selected media item if any and calculate the items start and end
+    count = CountSelectedMediaItems (gProjectID);
+    (count > 0) ? (
+        item = GetSelectedMediaItem (gProjectID, 0);
+        itemStart = GetMediaItemInfo_Value (item, "D_POSITION");
+        itemEnd   = itemStart + GetMediaItemInfo_Value (item, "D_LENGTH");
+        
+        TimeMap_GetTimeSigAtTime (gProjectID, itemStart, timesig, denomOut, startBPM);
+        TimeMap_GetTimeSigAtTime (gProjectID, itemEnd, timesig, denomOut, endBPM);
+        musicalStart = startBPM * itemStart / 60;
+        musicalEnd   = endBPM * itemEnd / 60;
+    ) : (
+        musicalStart = -1;
+        musicalEnd   = -1;
+    );
+    gMusicalStart = sendOSC ("/clip/start %g\n", gMusicalStart, musicalStart);
+    gMusicalEnd = sendOSC ("/clip/end %g\n", gMusicalEnd, musicalEnd);
+    
+    // Get the loop start and end if any
+    GetSet_LoopTimeRange2 (gProjectID, 0, 0, loopStart, loopEnd, 0);
+    TimeMap_GetTimeSigAtTime (gProjectID, loopStart, timesig, denomOut, startBPM);
+    TimeMap_GetTimeSigAtTime (gProjectID, loopEnd, timesig, denomOut, endBPM);
+    (loopStart == 0 && loopEnd == 0) ? (
+        musicalLoopStart = -1;
+        musicalLoopEnd   = -1;
+    ) : (
+        musicalLoopStart = startBPM * loopStart / 60;
+        musicalLoopEnd   = endBPM * loopEnd / 60;
+    );
+    gMusicalLoopStart = sendOSC ("/clip/loopStart %g\n", gMusicalLoopStart, musicalLoopStart);
+    gMusicalLoopEnd = sendOSC ("/clip/loopEnd %g\n", gMusicalLoopEnd, musicalLoopEnd);
+    
+    // Get the time signature at the current play position
+    cursorPos = GetCursorPositionEx (gProjectID);
+    TimeMap_GetTimeSigAtTime (gProjectID, cursorPos, timesig, denomOut, startBPM);
+    gTimesig = sendOSC ("/numerator %d\n", gTimesig, timesig);
+    gDenomOut = sendOSC ("/denominator %d\n", gDenomOut, denomOut);
+    
+    cursorPos = GetPlayPositionEx (gProjectID);
+    TimeMap_GetTimeSigAtTime (gProjectID, cursorPos, timesig, denomOut, startBPM);
+    gPlayPosition = sendOSC ("/time %g\n", gPlayPosition, startBPM * cursorPos / 60);
+    format_timestr (cursorPos, timeStr);
+    gTimeStr.sendOSCStrArray (0, "/time/str %s\n", timeStr);
+    
+    // Project name    
+    GetProjectName (gProjectID, projectName);
+    gProjectName.sendOSCStrArray (0, "/project/name %s\n", projectName);
+    gProjectEngine = sendOSC ("/project/engine %d\n", gProjectEngine, Audio_IsRunning ());
+    
+    gPrerollMeasures = sendOSC ("/preroll %d\n", gPrerollMeasures, extension_api("SNM_GetDoubleConfigVar", "prerollmeas", 2));
+    gPrerollClick = sendOSC ("/prerollClick %d\n", gPrerollClick, GetToggleCommandState (41819));
+
+    sendTransportData ();
+    sendTrackData ();
+    sendMasterTrackData ();
+    sendGrooveData ();
+);
+
+function parsePart (line, character, count) local (part, i, length, c)
+(
+    part = "";
+    length = strlen (line);
+    i = 0;
+    count += 1;
+    while (i < length && count >= 0) (
+        c = str_getchar (line, i);
+        (c != '\n') ?
+            (c == character) ? (
+                count -= 1;
+            ) : (
+                (count == 1) ? part = sprintf (#, "%s%c", part, c);
+            );
+        
+        i += 1;
+    );
+    part;
+);
+
+function parseValue (line) local (part, i, start, length, c)
+(
+    part = "";
+    length = strlen (line);
+    i = 0;
+    start = 0;
+    while (i < length) (
+        c = str_getchar (line, i);
+        c != '\n' ?
+        (
+            start == 0 ?
+            (
+                c == ' ' ? start = 1;
+            ) : part = sprintf (#, "%s%c", part, c);
+        );
+        i += 1;
+    );
+    part;
+);
+
+function parseTransport (line, command, value) local (pos, item, actionID, direction, inipath, playState)
+(
+    strcmp (command, "play") == 0 ? (
+        playState = GetPlayStateEx (gProjectID);
+        playState & 1 ? CSurf_OnPlay () : (
+            CSurf_OnPause ();
+            playState & 2 == 0 ? CSurf_OnPlay ();
+        );
+
+    ) : (strcmp (command, "stop") == 0 ? (
+        CSurf_OnStop ();
+
+    ) : (strcmp (command, "record") == 0 ? (
+        CSurf_OnRecord ();
+
+    ) : (strcmp (command, "repeat") == 0 ? (
+        Main_OnCommandEx (1068, 0, gProjectID);
+
+    ) : (strcmp (command, "time") == 0 ? (
+        SetEditCurPos2 (gProjectID, strToInt (value), true, true);
+
+    ) : (strcmp (command, "tempo") == 0 ? (
+        direction = parsePart (line, '/', 2);
+        strcmp (direction, "+") == 0 ? (
+            Main_OnCommandEx (41137, 0, gProjectID);
+        ) : (strcmp (direction, "++") == 0 ? (
+            Main_OnCommandEx (41129, 0, gProjectID);
+        ) : (strcmp (direction, "-") == 0 ? (
+            Main_OnCommandEx (41138, 0, gProjectID);
+        ) : (strcmp (direction, "--") == 0 ? (
+            Main_OnCommandEx (41130, 0, gProjectID);
+        ))));
+
+    ) : (strcmp (command, "action") == 0 ? (
+        Main_OnCommandEx (strToInt (value), 0, gProjectID);
+        
+    ) : (strcmp (command, "action_ex") == 0 ? (
+        Main_OnCommandEx (NamedCommandLookup (value), 0, gProjectID);
+        
+    ) : (strcmp (command, "quantize") == 0 ? (
+        direction = parsePart (line, '/', 2);
+        strcmp (direction, "strength") == 0 ? (
+            get_ini_file (inipath) ? (
+                extension_api ("BR_Win32_WritePrivateProfileString", "midiedit", "quantstrength", value, inipath);
+            );
+        ) : quantizeClip ();
+        
+    ) : (strcmp (command, "metro_vol") == 0 ? (
+        actionID = NamedCommandLookup (strcmp (parsePart (line, '/', 2), "+") == 0 ? "_S&M_METRO_VOL_UP" : "_S&M_METRO_VOL_DOWN");
+        Main_OnCommandEx (actionID, 0, gProjectID);
+
+    ) : (strcmp (command, "preroll") == 0 ? (
+        extension_api ("SNM_SetDoubleConfigVar", "prerollmeas", strToInt (value));
+    
+    ) : ShowConsoleMsg (sprintf (#, "Unhandled command: %s %s\n", line, value))))))))))));
+);
+
+function parseMasterCommand (line, value) local (command, track, isTouch)
+(
+    command = parsePart (line, '/', 2);
+    track = GetMasterTrack (gProjectID);
+    
+    strcmp (command, "select") == 0 ? (
+        SetOnlyTrackSelected (track);
+        SetMixerScroll (track);
+        gDeviceSelected = 0;
+        gDeviceParamBankSelectedTemp = 0;
+    
+    ) : (strcmp (command, "solo") == 0 ? (
+        SetMediaTrackInfo_Value (track, "I_SOLO", strToInt (value));
+        
+    ) : (strcmp (command, "mute") == 0 ? (
+        SetMediaTrackInfo_Value (track, "B_MUTE", strToInt (value));
+        
+    ) : (strcmp (command, "volume") == 0 ? (
+        isTouch = parsePart (line, '/', 3);
+        // Touch not supported            
+        strcmp (isTouch, "touch") != 0 ? (
+            gMasterVolume = DB2VAL (SLIDER2DB (strToInt (value) * 1000.0));
+            SetMediaTrackInfo_Value (track, "D_VOL", gMasterVolume);
+        );
+    
+    ) : (strcmp (command, "pan") == 0 ? (
+        isTouch = parsePart (line, '/', 3);
+        // Touch not supported            
+        strcmp (isTouch, "touch") != 0 ? (
+            gMasterPan = strToInt (value) * 2 - 1;
+            SetMediaTrackInfo_Value (track, "D_PAN", gMasterPan);
+        );
+    )))));
+);
+
+function parseTrackCommand (line, value) local (part, isTouch, command, index, sendIndex, track)
+(
+    part = parsePart (line, '/', 2);
+    
+    strcmp (part, "bank") == 0 ? (
+        command = parsePart (line, '/', 3);
+        strcmp (command, "+") == 0 ? (
+            gTrackBankOffset < gTrackCount ? gTrackBankOffset += gTrackBankSize;
+        ) : (strcmp (command, "-") == 0 ? (
+            gTrackBankOffset > 0 ? gTrackBankOffset -= gTrackBankSize;
+        ));
+    ) : (
+        index = strToInt (part) - 1;
+        command = parsePart (line, '/', 3);
+        strcmp (command, "select") == 0 ? (
+            track = GetTrack (gProjectID, gTrackBankOffset + index);
+            SetOnlyTrackSelected (track);
+            SetMixerScroll (track);
+            gDeviceSelected = 0;
+            gDeviceParamBankSelectedTemp = 0;
+    
+        ) : (strcmp (command, "color") == 0 ? (
+            setColorOfTrack (index, value);
+    
+        ) : (strcmp (command, "createClip") == 0 ? (
+            createMidiClip (index, strToInt (value));
+            
+        ) : (strcmp (command, "noterepeat") == 0 ? (
+            enableRepeatPlugin (index, strToInt (value) > 0);
+    
+        ) : (strcmp (command, "noterepeatlength") == 0 ? (
+            setRepeatLength (index, strToInt (value));
+
+        ) : strcmp (command, "solo") == 0 ? (
+            SetMediaTrackInfo_Value (GetTrack (gProjectID, gTrackBankOffset + index), "I_SOLO", strToInt (value));
+            
+        ) : (strcmp (command, "mute") == 0 ? (
+            SetMediaTrackInfo_Value (GetTrack (gProjectID, gTrackBankOffset + index), "B_MUTE", strToInt (value));
+
+        ) : (strcmp (command, "recarm") == 0 ? (
+            SetMediaTrackInfo_Value (GetTrack (gProjectID, gTrackBankOffset + index), "I_RECARM", strToInt (value));
+
+        ) : (strcmp (command, "monitor") == 0 ? (
+            SetMediaTrackInfo_Value (GetTrack (gProjectID, gTrackBankOffset + index), "I_RECMON", strToInt (value) > 0 ? 1 : 0);
+
+        ) : (strcmp (command, "autoMonitor") == 0 ? (
+            SetMediaTrackInfo_Value (GetTrack (gProjectID, gTrackBankOffset + index), "I_RECMON", strToInt (value) > 0 ? 2 : 0);
+
+        ) : (strcmp (command, "volume") == 0 ? (
+            isTouch = parsePart (line, '/', 4);
+            // Touch not supported            
+            strcmp (isTouch, "touch") != 0 ? (
+                gTrackVolume.setNumber (index, DB2VAL (SLIDER2DB (strToInt (value) * 1000.0)));
+                SetMediaTrackInfo_Value (GetTrack (gProjectID, gTrackBankOffset + index), "D_VOL", gTrackVolume.getNumber (index));
+            );
+        
+        ) : (strcmp (command, "pan") == 0 ? (
+            isTouch = parsePart (line, '/', 4);
+            // Touch not supported            
+            strcmp (isTouch, "touch") != 0 ? (
+                gTrackPan.setNumber (index, strToInt (value) * 2 - 1);
+                SetMediaTrackInfo_Value (GetTrack (gProjectID, gTrackBankOffset + index), "D_PAN", gTrackPan.getNumber (index));
+            );
+
+        ) : (strcmp (command, "autotrim") == 0 ? (
+            strToInt (value) > 0 ? SetMediaTrackInfo_Value (GetTrack (gProjectID, gTrackBankOffset + index), "I_AUTOMODE", 0);
+        ) : (strcmp (command, "autoread") == 0 ? (
+            strToInt (value) > 0 ? SetMediaTrackInfo_Value (GetTrack (gProjectID, gTrackBankOffset + index), "I_AUTOMODE", 1);
+        ) : (strcmp (command, "autotouch") == 0 ? (
+            strToInt (value) > 0 ? SetMediaTrackInfo_Value (GetTrack (gProjectID, gTrackBankOffset + index), "I_AUTOMODE", 2);
+        ) : (strcmp (command, "autowrite") == 0 ? (
+            strToInt (value) > 0 ? SetMediaTrackInfo_Value (GetTrack (gProjectID, gTrackBankOffset + index), "I_AUTOMODE", 3);
+        ) : (strcmp (command, "autolatch") == 0 ? (
+            strToInt (value) > 0 ? SetMediaTrackInfo_Value (GetTrack (gProjectID, gTrackBankOffset + index), "I_AUTOMODE", 4);
+
+        ) : (strcmp (command, "send") == 0 ? (
+        
+            sendIndex = strToInt (parsePart (line, '/', 4)) - 1;
+            command = parsePart (line, '/', 5);
+            strcmp (command, "volume") == 0 ? (
+                gTrackSendVolume.setNumber (index * gTrackBankSize + sendIndex, DB2VAL (SLIDER2DB (strToInt (value) * 1000.0)));
+                SetTrackSendInfo_Value (GetTrack (gProjectID, gTrackBankOffset + index), 0, sendIndex, "D_VOL", gTrackSendVolume.getNumber (index * gTrackBankSize + sendIndex));
+            );
+
+        ) : ShowConsoleMsg (sprintf (#, "Unhandled track command: %s %s\n", line, value))))))))))))))))));
+    );
+);
+
+function setDeviceSelection (position)
+(
+    position = min (max (0, position), gDeviceCount - 1);
+    gDeviceSelected = position % gDeviceBankSize;
+    gDeviceBankOffset = floor (position / gDeviceBankSize) * gDeviceBankSize;
+);
+
+function parseDeviceCommand (line, value) local (part, track, paramNo, isOpen, position, insert)
+(
+    part = parsePart (line, '/', 2);
+    track = GetTrack (gProjectID, gTrackBankOffset + gTrackSelection);
+    selDevice = gDeviceBankOffset + gDeviceSelected;
+    
+    strcmp (part, "selected") == 0 ? (
+        gDeviceSelected = strToInt (value) - 1;
+        gDeviceParamBankSelectedTemp = 0;
+
+    ) : (strcmp (part, "bypass") == 0 ? (
+        TrackFX_SetEnabled (track, selDevice, strToInt (value) > 0 ? 0 : 1);
+        
+    ) : (strcmp (part, "window") == 0 ? (
+        strToInt (value) > 0 ?
+            TrackFX_Show (track, selDevice, gDeviceExpandedType) :
+            TrackFX_SetOpen (track, selDevice, 0);
+        
+    ) : (strcmp (part, "expand") == 0 ? (
+        isOpen = TrackFX_GetOpen (track, selDevice);
+        TrackFX_SetOpen (track, selDevice, 0);
+        gDeviceExpandedTypeTemp = strToInt (value) > 0 ? 1 : 3;
+        isOpen ? TrackFX_Show (track, selDevice, gDeviceExpandedTypeTemp);
+        
+    ): (strcmp (part, "page") == 0 ? (
+        part = parsePart (line, '/', 3);
+
+        strcmp (part, "selected") == 0 ? (
+            gDeviceSelected = (strToInt (value) - 1) * gDeviceBankSize;
+
+        ) : (strcmp (part, "+") == 0 ? (
+            setDeviceSelection (gDeviceBankOffset + gDeviceSelected + gDeviceBankSize);
+
+        ) : (strcmp (part, "-") == 0 ? (
+            setDeviceSelection (gDeviceBankOffset + gDeviceSelected - gDeviceBankSize);
+
+        )));
+
+    ) : (strcmp (part, "+") == 0 ? (
+        setDeviceSelection (gDeviceBankOffset + gDeviceSelected + 1);
+
+    ) : (strcmp (part, "-") == 0 ? (
+        setDeviceSelection (gDeviceBankOffset + gDeviceSelected - 1);
+
+    ) : (strcmp (part, "add") == 0 ? (
+        position = TrackFX_AddByName (track, value, false, -1);
+        position >= 0 ?
+        (
+            insert = strToInt (parsePart (line, '/', 3));
+            while (position > insert)
+            (
+                extension_api ("SNM_MoveOrRemoveTrackFX", track, position, -1);
+                position -= 1;
+            );
+        ) : ShowConsoleMsg (sprintf (#, "Device not found: %s\n", value));
+
+    ) : (strcmp (part, "preset") == 0 ? (
+        TrackFX_SetPresetByIndex (track, gDeviceBankOffset + gDeviceSelected, strToInt (value));
+        
+    ) : (strcmp (part, "param") == 0 ? (
+        part = parsePart (line, '/', 3);
+
+        strcmp (part, "bank") == 0 ? (
+            part = parsePart (line, '/', 4);
+
+            strcmp (part, "selected") == 0 ? (
+                gDeviceParamBankSelectedTemp = strToInt (value) - 1;
+
+            ) : (strcmp (part, "+") == 0 ? (
+                (gDeviceParamBankSelected + gParameterBankSize) * gParameterBankSize < gDeviceParamCount ? gDeviceParamBankSelectedTemp += gParameterBankSize;
+
+            ) : (strcmp (part, "-") == 0 ? (
+                gDeviceParamBankSelected >= gParameterBankSize ? gDeviceParamBankSelectedTemp -= gParameterBankSize;
+            )));
+
+        ) : (strcmp (part, "+") == 0 ? (
+            (gDeviceParamBankSelected + 1) * gParameterBankSize < gDeviceParamCount ? gDeviceParamBankSelectedTemp += 1;
+            
+        ) : (strcmp (part, "-") == 0 ? (
+            gDeviceParamBankSelected >= 1 ? gDeviceParamBankSelectedTemp -= 1;
+
+        ) : (            
+            paramNo = strToInt (part) - 1;
+            part = parsePart (line, '/', 4);
+            strcmp (part, "value") == 0 ?
+                TrackFX_SetParamNormalized (track, selDevice, (gDeviceParamBankOffset + gDeviceParamBankSelected) * gParameterBankSize + paramNo, strToInt (value));
+
+        )));
+
+    ) : ShowConsoleMsg (sprintf (#, "Unhandled device command: %s %s\n", line, value)))))))))));
+);
+
+function parseClipCommand (line, value) local (command, item, itemStart, itemEnd, timesig, denomOut, startBPM, loopStart, loopEnd)
+(
+    command = parsePart (line, '/', 2);
+    
+    strcmp (command, "start") == 0 ? (
+        
+        CountSelectedMediaItems (gProjectID) > 0 ? (
+            item = GetSelectedMediaItem (gProjectID, 0);
+            itemStart = GetMediaItemInfo_Value (item, "D_POSITION");
+            TimeMap_GetTimeSigAtTime (gProjectID, itemStart, timesig, denomOut, startBPM);
+            itemStart = strToInt (value) * 60 / startBPM;
+            SetMediaItemInfo_Value (item, "D_POSITION", itemStart);
+        );
+    
+    ) : (strcmp (command, "end") == 0 ? (
+        
+        CountSelectedMediaItems (gProjectID) > 0 ? (
+            item = GetSelectedMediaItem (gProjectID, 0);
+            itemStart = GetMediaItemInfo_Value (item, "D_POSITION");
+            itemEnd = itemStart + GetMediaItemInfo_Value (item, "D_LENGTH");
+            TimeMap_GetTimeSigAtTime (gProjectID, itemEnd, timesig, denomOut, startBPM);
+            itemEnd = strToInt (value) * 60 / startBPM;
+            SetMediaItemInfo_Value (item, "D_LENGTH", itemEnd - itemStart);
+        );
+        
+    ) : (strcmp (command, "loopStart") == 0 ? (
+    
+        GetSet_LoopTimeRange2 (gProjectID, 0, 0, loopStart, loopEnd, 0);
+        TimeMap_GetTimeSigAtTime (gProjectID, loopStart, timesig, denomOut, startBPM);
+        loopStart = strToInt (value) * 60 / startBPM;
+        GetSet_LoopTimeRange2 (gProjectID, 1, 0, loopStart, loopEnd, 0);
+    
+    ) : (strcmp (command, "loopEnd") == 0 ? (
+    
+        GetSet_LoopTimeRange2 (gProjectID, 0, 0, loopStart, loopEnd, 0);
+        TimeMap_GetTimeSigAtTime (gProjectID, loopEnd, timesig, denomOut, startBPM);
+        loopEnd = strToInt (value) * 60 / startBPM;
+        GetSet_LoopTimeRange2 (gProjectID, 1, 0, loopStart, loopEnd, 0);
+    
+    ) : (strcmp (command, "color") == 0 ? (
+        
+        setColorOfClip (value);
+        
+    ) : ShowConsoleMsg (sprintf (#, "Unknown clip command: %s\n", command))))));
+);
+
+function parseMidiCommand (line, value) local (part, channel, command, number)
+(
+    part = strcpy (#, parsePart (line, '/', 2));
+    channel = strToInt (part);
+    command = parsePart (line, '/', 3);
+    
+    strcmp (command, "note") == 0 ? (
+        number = strToInt (parsePart (line, '/', 4));
+        StuffMIDIMessage (0, 0x90 + channel, number, strToInt (value));
+        
+    ) : (strcmp (command, "aftertouch") == 0 ? (
+        number = strToInt (parsePart (line, '/', 4));
+        StuffMIDIMessage (0, 0xA0 + channel, number, strToInt (value));
+
+    ) : (strcmp (command, "cc") == 0 ? (
+        number = strToInt (parsePart (line, '/', 4));
+        StuffMIDIMessage (0, 0xB0 + channel, number, strToInt (value));
+
+    ) : (strcmp (command, "pitch") == 0 ? (
+        number = strToInt (value);
+        StuffMIDIMessage (0, 0xE0 + channel, number % 128, number / 128);
+
+    ) : (strcmp (command, "program") == 0 ? (
+        StuffMIDIMessage (0, 0xC0 + channel, strToInt (value), 0);
+        
+    ) : ShowConsoleMsg (sprintf (#, "Unknown Midi command: %s\n", command))))));
+);
+
+function parseBrowserCommand (line, value) local (part, track, counter, newVal, presetname, numberOfPresets, selectedIndex)
+(
+    part = strcpy (#, parsePart (line, '/', 2));
+    strcmp (part, "preset") == 0 ? (
+    
+        track = GetTrack (gProjectID, gTrackBankOffset + gTrackSelection);
+        loadDevicePresetFile (track, gDeviceBankOffset + gDeviceSelected);
+        
+        TrackFX_GetPreset (track, gDeviceBankOffset + gDeviceSelected, presetname);
+        gDevicePresetName.sendOSCStrArray (0, "/browser/selected/name %s\n", presetname);
+        selectedIndex = TrackFX_GetPresetIndex (track, gDeviceBankOffset + gDeviceSelected, numberOfPresets);
+        gDevicePresetIndex = sendOSC ("/browser/selected/index %d\n", gDevicePresetIndex, selectedIndex);
+        
+    ) : ShowConsoleMsg (sprintf (#, "Unknown Midi command: %s\n", command));
+);
+
+function parseGrooveCommand (line, value) local (inipath, part)
+(
+    get_ini_file (inipath) ?
+    (
+        part = strcpy (#, parsePart (line, '/', 2));
+        strcmp (part, "strength") == 0 ? (
+            extension_api ("BR_Win32_WritePrivateProfileString", "fingers", "groove_strength", value, inipath);
+          
+        ) : (strcmp (part, "velocity") == 0 ? (
+            extension_api ("BR_Win32_WritePrivateProfileString", "fingers", "groove_velstrength", value, inipath);
+
+        ) : (strcmp (part, "target") == 0 ? (
+            extension_api ("BR_Win32_WritePrivateProfileString", "fingers", "groove_target", value, inipath);
+          
+        ) : (strcmp (part, "tolerance") == 0 ? (
+            extension_api ("BR_Win32_WritePrivateProfileString", "fingers", "groove_tolerance", value, inipath);
+            
+        ) : ShowConsoleMsg (sprintf (#, "Unknown Groove command: %s\n", part)))));
+    );
+);
+
+function parseCommand (line) local (valueLength, part)
+(
+    value = strcpy (#, parseValue (line));
+    logInput ? ShowConsoleMsg (sprintf (#, "Value: >%s<\n", value));
+
+    valueLength = strlen (value);
+    (valueLength > 0) ? line = strcpy_substr (#, line, 0, strlen  (line) - valueLength - 1);
+    part = strcpy (#, parsePart (line, '/', 1));
+
+    strcmp (part, "vkb_midi") == 0 ? (
+        parseMidiCommand (line, value);
+
+    ) : (strcmp (part, "undo") == 0 ? (
+        Undo_DoUndo2 (gProjectID);
+
+    ) : (strcmp (part, "redo") == 0 ? (
+        Undo_DoRedo2 (gProjectID);
+
+    ) : (strcmp (part, "track") == 0 ? (
+        parseTrackCommand (line, value);
+
+    ) : (strcmp (part, "master") == 0 ? (
+        parseMasterCommand (line, value);
+
+    ) : (strcmp (part, "device") == 0 ? (
+        parseDeviceCommand (line, value);
+
+    ) : (strcmp (part, "clip") == 0 ? (
+        parseClipCommand (line, value);
+
+    ) : (strcmp (part, "browser") == 0 ? (
+        parseBrowserCommand (line, value);
+
+    ) : (strcmp (part, "cursor") == 0 ? (
+        CSurf_OnArrow (strToInt (value), 0);
+
+    ) : (strcmp (part, "project") == 0 ? (
+        part = parsePart (line, '/', 2);
+        strcmp (part, "engine") == 0 ? (
+            strToInt (value) > 0 ? Audio_Init () : Audio_Quit ();
+        );
+
+    ) : (strcmp (part, "groove") == 0 ? (
+        parseGrooveCommand (line, value);
+
+    ) : (strcmp (part, "refresh") == 0 ? (
+        gDump = 1;
+        sendFrequentProperties ();
+        gDump = 0;
+    
+    ) : (strcmp (part, "notify") == 0 ? (
+        displayNotification (value);
+
+    ) : parseTransport (line, part, value)))))))))))));
+);
+
+function parseCommands (line) local (part, i)
+(
+    part = "";
+    i = 0;
+    loop (strlen (line), (
+        c = str_getchar (line, i);
+        (c == '\n') ? (
+            logInput ? ShowConsoleMsg (sprintf (#, "Handle command: %s\n", part));
+            parseCommand (part);
+            part = "";
+        ) :  part = sprintf (#, "%s%c", part, c);
+        i += 1;
+    ));
+);
+
+function checkConnection ()
+(
+  (connection == 0) ? (
+      logConnection ? ShowConsoleMsg ("\nReconnecting.\n");  
+      connection = tcp_connect ("127.0.0.1", 1200, 0); // 0 = non blocking connection
+      measure = time ();
+  );
+);
+
+function receiveMessage ()
+(
+    checkConnection ();
+    (connection > 0) ? (
+        numBytes = tcp_recv (connection, data);
+        logConnection ? ShowConsoleMsg (".");
+        (numBytes > 0) ? (
+            logConnection ? ShowConsoleMsg (sprintf (#, "Received: %d\n", numBytes));
+            parseCommands (data);
+            measure = time ();
+        );
+            
+        sendFrequentProperties ();
+        
+        // Reconnect to the server if there was no connection for 10 seconds
+        (time() - measure > 10) ? (
+            tcp_close (connection);
+            connection = 0;
+        );
+    );
+
+    defer ("receiveMessage ()");
+);
+
+// Delay startup or otherwise tcp_send does crash on Mac OS
+function delayStartup ()
+(
+    (time() - startupTime > 4) ? defer ("receiveMessage ()") : defer ("delayStartup ()");
+);
+
+logConnection || logInput || logOutput || logOutputTrack ? ShowConsoleMsg ("");
+defer ("delayStartup ()");
+
