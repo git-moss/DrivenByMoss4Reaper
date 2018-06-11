@@ -217,7 +217,7 @@ function loadDevicePresetFile (track, fx) local (filename, file, len, counter, n
 
 function sendGrooveData () local (result, iniPath)
 (
-    get_ini_file (inipath) ?
+    APIExists ("BR_Win32_GetPrivateProfileString") && get_ini_file (inipath) ?
     (
         extension_api ("BR_Win32_GetPrivateProfileString", "fingers", "groove_strength", "100", inipath, result);
         result = strcpy (#, result);
@@ -480,7 +480,8 @@ function sendFrequentProperties () local (count, item, itemStart, itemEnd, times
     gProjectName.sendOSCStrArray (0, "/project/name %s\n", projectName);
     gProjectEngine = sendOSC ("/project/engine %d\n", gProjectEngine, Audio_IsRunning ());
     
-    gPrerollMeasures = sendOSC ("/preroll %d\n", gPrerollMeasures, extension_api("SNM_GetDoubleConfigVar", "prerollmeas", 2));
+    APIExists ("SNM_GetDoubleConfigVar") ?
+        gPrerollMeasures = sendOSC ("/preroll %d\n", gPrerollMeasures, extension_api("SNM_GetDoubleConfigVar", "prerollmeas", 2));
     gPrerollClick = sendOSC ("/prerollClick %d\n", gPrerollClick, GetToggleCommandState (41819));
 
     sendTransportData ();
@@ -571,7 +572,7 @@ function parseTransport (line, command, value) local (pos, item, actionID, direc
     ) : (strcmp (command, "quantize") == 0 ? (
         direction = parsePart (line, '/', 2);
         strcmp (direction, "strength") == 0 ? (
-            get_ini_file (inipath) ? (
+            APIExists ("BR_Win32_WritePrivateProfileString") && get_ini_file (inipath) ? (
                 extension_api ("BR_Win32_WritePrivateProfileString", "midiedit", "quantstrength", value, inipath);
             );
         ) : quantizeClip ();
@@ -581,7 +582,7 @@ function parseTransport (line, command, value) local (pos, item, actionID, direc
         Main_OnCommandEx (actionID, 0, gProjectID);
 
     ) : (strcmp (command, "preroll") == 0 ? (
-        extension_api ("SNM_SetDoubleConfigVar", "prerollmeas", strToInt (value));
+        APIExists ("SNM_SetDoubleConfigVar") ? extension_api ("SNM_SetDoubleConfigVar", "prerollmeas", strToInt (value));
     
     ) : ShowConsoleMsg (sprintf (#, "Unhandled command: %s %s\n", line, value))))))))))));
 );
@@ -764,11 +765,14 @@ function parseDeviceCommand (line, value) local (part, track, paramNo, isOpen, p
         position = TrackFX_AddByName (track, value, false, -1);
         position >= 0 ?
         (
-            insert = strToInt (parsePart (line, '/', 3));
-            while (position > insert)
+            APIExists ("SNM_MoveOrRemoveTrackFX") ?
             (
-                extension_api ("SNM_MoveOrRemoveTrackFX", track, position, -1);
-                position -= 1;
+                insert = strToInt (parsePart (line, '/', 3));
+                while (position > insert)
+                (
+                    extension_api ("SNM_MoveOrRemoveTrackFX", track, position, -1);
+                    position -= 1;
+                );
             );
         ) : ShowConsoleMsg (sprintf (#, "Device not found: %s\n", value));
 
@@ -900,7 +904,7 @@ function parseBrowserCommand (line, value) local (part, track, counter, newVal, 
 
 function parseGrooveCommand (line, value) local (inipath, part)
 (
-    get_ini_file (inipath) ?
+    APIExists ("BR_Win32_WritePrivateProfileString") && get_ini_file (inipath) ?
     (
         part = strcpy (#, parsePart (line, '/', 2));
         strcmp (part, "strength") == 0 ? (
