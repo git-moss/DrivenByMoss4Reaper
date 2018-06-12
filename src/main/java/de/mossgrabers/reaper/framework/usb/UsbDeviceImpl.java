@@ -49,12 +49,12 @@ public class UsbDeviceImpl implements IUsbDevice
         this.host = host;
         this.usbMatcher = usbMatcher;
 
+        if (usbMatcher.isEnableHID ())
+            this.hidDevice = new HidDeviceImpl (this.usbMatcher.getVendor (), this.usbMatcher.getProductID ());
+
         this.handle = openDeviceWithVidPid (usbMatcher.getVendor (), usbMatcher.getProductID ());
         if (this.handle == null)
             host.error ("USB Device not found.", new LibUsbException (LibUsb.ERROR_NO_DEVICE));
-
-        if (usbMatcher.isEnableHID ())
-            this.hidDevice = new HidDeviceImpl (this.usbMatcher.getVendor (), this.usbMatcher.getProductID ());
     }
 
 
@@ -159,7 +159,11 @@ public class UsbDeviceImpl implements IUsbDevice
         // Only claim interface once
         if (!this.interfaces.contains (Byte.valueOf (interfaceNumber)))
         {
-            final int result = LibUsb.claimInterface (this.handle, interfaceNumber);
+            int result = LibUsb.setAutoDetachKernelDriver (this.handle, true);
+            if (result != LibUsb.SUCCESS && result != LibUsb.ERROR_NOT_SUPPORTED)
+                throw new LibUsbException ("Unable enable auto kernel driver attach.", result);
+
+            result = LibUsb.claimInterface (this.handle, interfaceNumber);
             if (result != LibUsb.SUCCESS)
             {
                 this.host.error ("Unable to claim interface.", new LibUsbException (result));

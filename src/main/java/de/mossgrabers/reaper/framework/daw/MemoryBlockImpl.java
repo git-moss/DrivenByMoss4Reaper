@@ -30,6 +30,7 @@ public class MemoryBlockImpl implements IMemoryBlock
     @Override
     public ByteBuffer createByteBuffer ()
     {
+    	this.buffer.rewind();
         return this.buffer;
     }
 }
