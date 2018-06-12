@@ -396,15 +396,18 @@ public class Kontrol1UsbDevice
 
     private static final Map<Integer, Integer> LED_MAPPING        = new HashMap<> (21);
 
+    private boolean                            useHIDForInput;
     private IHost                              host;
     private IUsbDevice                         usbDevice;
     private IUsbEndpoint                       usbEndpointDisplay;
     private IUsbEndpoint                       usbEndpointUI;
+    private IHidDevice                         hidDevice;
 
     private IMemoryBlock                       initBlock;
     private IMemoryBlock                       displayBlock;
     private IMemoryBlock                       ledBlock;
     private IMemoryBlock                       keyLedBlock;
+    private IMemoryBlock                       uiBlock;
 
     private final Object                       busySendingDisplay = new Object ();
     private boolean                            busySendingLEDs    = false;
@@ -426,12 +429,6 @@ public class Kontrol1UsbDevice
     private boolean                            isFirstStateMsg    = true;
 
     private UIChangeCallback                   callback;
-
-    private IMemoryBlock                       uiBlock;
-
-    private IHidDevice                         hidDevice;
-
-    private boolean                            useHIDForInput;
 
     static
     {
