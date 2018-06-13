@@ -54,6 +54,10 @@ public class UsbDeviceImpl implements IUsbDevice
         if (usbMatcher.isEnableHID ())
             this.hidDevice = new HidDeviceImpl (this.usbMatcher.getVendor (), this.usbMatcher.getProductID ());
 
+        // Only attempt to open the device if endpoints are configured
+        if (usbMatcher.getEndpoints ().isEmpty ())
+            return;
+
         this.handle = openDeviceWithVidPid (usbMatcher.getVendor (), usbMatcher.getProductID ());
         if (this.handle == null)
             host.error ("USB Device not found.", new LibUsbException (LibUsb.ERROR_NO_DEVICE));
