@@ -84,12 +84,18 @@ public class Kontrol1ControllerDefinition extends DefaultControllerDefinition
     public UsbMatcher claimUSBDevice ()
     {
         final boolean useHIDForInput = OperatingSystem.get () == OperatingSystem.WINDOWS;
-        if (useHIDForInput)
-            return new UsbMatcher (VENDOR_ID, this.productID, INTERFACE_NUMBER, DISPLAY_ENDPOINT_ADDRESS, false, true);
-        return new UsbMatcher (VENDOR_ID, this.productID, INTERFACE_NUMBER, ENDPOINT_ADDRESSES, new boolean []
-        {
-            false,
-            false
-        }, false);
+
+        return new UsbMatcher (VENDOR_ID, this.productID, true);
+
+        // TODO
+        // if (useHIDForInput)
+        // return new UsbMatcher (VENDOR_ID, this.productID, INTERFACE_NUMBER,
+        // DISPLAY_ENDPOINT_ADDRESS, false, true);
+        // return new UsbMatcher (VENDOR_ID, this.productID, INTERFACE_NUMBER, ENDPOINT_ADDRESSES,
+        // new boolean []
+        // {
+        // false,
+        // false
+        // }, false);
     }
 }

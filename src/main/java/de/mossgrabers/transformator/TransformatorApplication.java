@@ -145,7 +145,7 @@ public class TransformatorApplication extends Application implements MessageHand
             if (result != LibUsb.SUCCESS)
                 throw new LibUsbException ("Unable to initialize libusb.", result);
 
-            // TODO
+            // Print LibUsb errors and warnings
             LibUsb.setDebug (null, LibUsb.LOG_LEVEL_WARNING);
 
         }

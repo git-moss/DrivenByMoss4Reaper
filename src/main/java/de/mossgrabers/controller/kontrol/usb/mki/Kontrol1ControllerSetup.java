@@ -102,8 +102,6 @@ public class Kontrol1ControllerSetup extends AbstractControllerSetup<Kontrol1Con
         surface.setDisplay (display);
 
         surface.getModeManager ().setDefaultMode (Modes.MODE_TRACK);
-        
-        this.usbDevice.pollUI ();
     }
 
 

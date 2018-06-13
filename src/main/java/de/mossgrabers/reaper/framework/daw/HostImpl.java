@@ -12,6 +12,7 @@ import de.mossgrabers.framework.osc.IOpenSoundControlCallback;
 import de.mossgrabers.framework.osc.IOpenSoundControlMessage;
 import de.mossgrabers.framework.osc.IOpenSoundControlServer;
 import de.mossgrabers.framework.usb.IUsbDevice;
+import de.mossgrabers.framework.usb.UsbException;
 import de.mossgrabers.framework.usb.UsbMatcher;
 import de.mossgrabers.reaper.framework.graphics.BitmapImpl;
 import de.mossgrabers.reaper.framework.graphics.SVGImage;
@@ -154,7 +155,7 @@ public class HostImpl implements IHost
 
     /** {@inheritDoc} */
     @Override
-    public void error (final String text, final Exception ex)
+    public void error (final String text, final Throwable ex)
     {
         this.model.addLogMessage (text);
         this.model.addLogMessage (ex.getClass () + ":" + ex.getMessage ());
@@ -212,7 +213,7 @@ public class HostImpl implements IHost
 
     /** {@inheritDoc} */
     @Override
-    public IUsbDevice getUsbDevice (final int index)
+    public IUsbDevice getUsbDevice (final int index) throws UsbException
     {
         final UsbDeviceImpl usbDevice = new UsbDeviceImpl (this, this.usbDeviceInfos.get (index));
         this.usbDevices.add (usbDevice);

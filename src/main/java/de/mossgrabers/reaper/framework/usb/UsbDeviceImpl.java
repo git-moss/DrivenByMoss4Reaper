@@ -8,6 +8,7 @@ import de.mossgrabers.framework.daw.IHost;
 import de.mossgrabers.framework.usb.IHidDevice;
 import de.mossgrabers.framework.usb.IUsbDevice;
 import de.mossgrabers.framework.usb.IUsbEndpoint;
+import de.mossgrabers.framework.usb.UsbException;
 import de.mossgrabers.framework.usb.UsbMatcher;
 import de.mossgrabers.framework.usb.UsbMatcher.EndpointMatcher;
 
@@ -43,8 +44,9 @@ public class UsbDeviceImpl implements IUsbDevice
      *
      * @param host The host
      * @param usbMatcher The device info
+     * @throws UsbException Could not lookup or open the device
      */
-    public UsbDeviceImpl (final IHost host, final UsbMatcher usbMatcher)
+    public UsbDeviceImpl (final IHost host, final UsbMatcher usbMatcher) throws UsbException
     {
         this.host = host;
         this.usbMatcher = usbMatcher;
@@ -96,18 +98,19 @@ public class UsbDeviceImpl implements IUsbDevice
      * @param vendorId The vendor ID to look for
      * @param productId The product ID to look for
      * @return The device handle of the device or null if not found
+     * @throws UsbException Error reading device descriptor
      */
-    private static DeviceHandle openDeviceWithVidPid (final short vendorId, final short productId)
+    private static DeviceHandle openDeviceWithVidPid (final short vendorId, final short productId) throws UsbException
     {
         final DeviceList list = new DeviceList ();
         int result = LibUsb.getDeviceList (null, list);
         if (result < LibUsb.SUCCESS)
-            throw new LibUsbException ("Unable to get device list.", result);
+            throw new UsbException ("Unable to get device list.", new LibUsbException (result));
 
         try
         {
             final Iterator<Device> iterator = list.iterator ();
-            LibUsbException ex = null;
+            UsbException ex = null;
             while (iterator.hasNext ())
             {
                 final Device device = iterator.next ();
@@ -115,7 +118,7 @@ public class UsbDeviceImpl implements IUsbDevice
                 result = LibUsb.getDeviceDescriptor (device, descriptor);
                 if (result != LibUsb.SUCCESS)
                 {
-                    ex = new LibUsbException ("Unable to read device descriptor.", result);
+                    ex = new UsbException ("Unable to read device descriptor.", new LibUsbException (result));
                     // Continue, maybe there is a working device
                     continue;
                 }
@@ -125,7 +128,7 @@ public class UsbDeviceImpl implements IUsbDevice
                     result = LibUsb.open (device, handle);
                     if (result != LibUsb.SUCCESS)
                     {
-                        ex = new LibUsbException ("Unable to read device descriptor.", result);
+                        ex = new UsbException ("Unable to read device descriptor.", new LibUsbException (result));
                         // Continue, maybe there is a working device
                         continue;
                     }
@@ -147,7 +150,7 @@ public class UsbDeviceImpl implements IUsbDevice
 
     /** {@inheritDoc} */
     @Override
-    public IUsbEndpoint getEndpoint (final int interfaceIndex, final int endpointIndex)
+    public IUsbEndpoint getEndpoint (final int interfaceIndex, final int endpointIndex) throws UsbException
     {
         if (this.handle == null)
             return null;
@@ -161,7 +164,7 @@ public class UsbDeviceImpl implements IUsbDevice
         {
             int result = LibUsb.setAutoDetachKernelDriver (this.handle, true);
             if (result != LibUsb.SUCCESS && result != LibUsb.ERROR_NOT_SUPPORTED)
-                throw new LibUsbException ("Unable enable auto kernel driver attach.", result);
+                throw new UsbException ("Unable enable auto kernel driver attach.", new LibUsbException (result));
 
             result = LibUsb.claimInterface (this.handle, interfaceNumber);
             if (result != LibUsb.SUCCESS)
