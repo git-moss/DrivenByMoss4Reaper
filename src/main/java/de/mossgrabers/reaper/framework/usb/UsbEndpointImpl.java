@@ -115,12 +115,11 @@ public class UsbEndpointImpl implements IUsbEndpoint
         {
             boolean await = this.clearLatch.await (10L, TimeUnit.SECONDS);
             if (!await)
-                System.out.println ("Timed OUT");
+                this.host.error ("Timed out waiting for LibUsb transfer cancelation.");
         }
         catch (final InterruptedException ex)
         {
-            // TODO Auto-generated catch block
-            ex.printStackTrace ();
+            this.host.error ("Thread was interrupted while waiting for LibUsb transfer cancelation.", ex);
         }
     }
 

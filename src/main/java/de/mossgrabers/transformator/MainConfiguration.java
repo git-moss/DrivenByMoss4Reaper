@@ -31,6 +31,7 @@ public class MainConfiguration extends PropertiesEx
 
     private static final String DEFAULT_REAPER_PATH_WINDOWS = "C:\\Program Files\\REAPER (x64)\\reaper.exe";
     private static final String DEFAULT_REAPER_PATH_MAC     = "/Applications/REAPER64.app";
+    private static final String DEFAULT_REAPER_PATH_LINUX   = "";
 
 
     /**
@@ -163,7 +164,7 @@ public class MainConfiguration extends PropertiesEx
             case MAC:
                 return DEFAULT_REAPER_PATH_MAC;
             case LINUX:
-                // TODO Reaper runs on Linux now but SWS is missing...
+                return DEFAULT_REAPER_PATH_LINUX;
             default:
                 // No support for other OS
                 return "";
