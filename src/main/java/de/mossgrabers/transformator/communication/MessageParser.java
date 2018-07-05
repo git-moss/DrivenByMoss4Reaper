@@ -588,6 +588,33 @@ public class MessageParser
 
     private void parseGrooveValue (final Queue<String> parts, final String value)
     {
+        // TODO Load from INI file instead
+
+        // BR_Win32_GetPrivateProfileString("fingers", "groove_strength", "100", configFile, result,
+        // LENGTH);
+        // this->grooveStrength = CollectIntValue(ss, "/groove/strength", this->grooveStrength,
+        // std::atoi(result), dump);
+
+        // BR_Win32_GetPrivateProfileString("fingers", "groove_velstrength", "100", configFile,
+        // result, LENGTH);
+        // this->grooveVelstrength = CollectIntValue(ss, "/groove/velocity",
+        // this->grooveVelstrength, std::atoi(result), dump);
+
+        // BR_Win32_GetPrivateProfileString("fingers", "groove_target", "0", configFile, result,
+        // LENGTH);
+        // this->grooveTarget = CollectIntValue(ss, "/groove/target", this->grooveTarget,
+        // std::atoi(result), dump);
+
+        // BR_Win32_GetPrivateProfileString("fingers", "groove_tolerance", "16", configFile, result,
+        // LENGTH);
+        // this->grooveTolerance = CollectIntValue(ss, "/groove/tolerance", this->grooveTolerance,
+        // std::atoi(result), dump);
+
+        // BR_Win32_GetPrivateProfileString("midiedit", "quantstrength", "100", configFile, result,
+        // LENGTH);
+        // this->quantizeStrength = CollectIntValue(ss, "/quantize/strength",
+        // this->quantizeStrength, std::atoi(result), dump);
+
         final String command = parts.poll ();
         switch (command)
         {

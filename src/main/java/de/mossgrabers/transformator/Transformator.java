@@ -21,8 +21,25 @@ public class Transformator
     public static void main (final String [] args)
     {
         // Start in separate thread to allow the method to return to C++
-        final Thread t = new Thread ( () -> Application.launch (TransformatorApplication.class, args));
-        t.start ();
+        try
+        {
+            final Thread t = new Thread ( () -> {
+                try
+                {
+                    Application.launch (TransformatorApplication.class, args);
+                }
+                catch (final Throwable ex)
+                {
+                    ex.printStackTrace ();
+                }
+            });
+
+            t.start ();
+        }
+        catch (final Throwable ex)
+        {
+            ex.printStackTrace ();
+        }
     }
 
 

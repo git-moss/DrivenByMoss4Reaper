@@ -59,5 +59,6 @@ dependencies {
     compile group: 'org.usb4java', name: 'usb4java', version: '1.2.0'
     compile group: 'com.illposed.osc', name: 'javaosc-core', version: '0.4'
     compile group: 'uk.co.xfactory-librarians', name: 'coremidi4j', version: '1.1'
-    compile fileTree(dir: 'libs', include: '*.jar')
+		compile group: 'com.nikhaldimann', name: 'inieditor', version: 'r6'    
+		compile fileTree(dir: 'libs', include: '*.jar')
 }

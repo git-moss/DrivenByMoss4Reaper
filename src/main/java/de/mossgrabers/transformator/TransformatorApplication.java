@@ -8,6 +8,7 @@ import de.mossgrabers.framework.controller.IControllerDefinition;
 import de.mossgrabers.reaper.controller.ControllerInstanceManager;
 import de.mossgrabers.reaper.controller.IControllerInstance;
 import de.mossgrabers.reaper.framework.Actions;
+import de.mossgrabers.reaper.framework.IniFiles;
 import de.mossgrabers.reaper.framework.device.DeviceManager;
 import de.mossgrabers.reaper.framework.graphics.SVGImage;
 import de.mossgrabers.transformator.communication.DataModelUpdateExecutor;
@@ -78,6 +79,7 @@ public class TransformatorApplication extends Application implements MessageSend
     private ControllerInstanceManager           instanceManager;
     private AnimationTimer                      animationTimer;
     private final DataModelUpdateExecutor       modelUpdater      = new DataModelUpdateExecutor (this);
+    private IniFiles                            iniFiles          = new IniFiles ();
 
     private TrayIcon                            trayIcon;
     private SystemTray                          tray;
@@ -617,7 +619,8 @@ public class TransformatorApplication extends Application implements MessageSend
     private final void loadINIFiles (final String path)
     {
         this.logModel.addLogMessage ("Loading device INI files from " + path + " ...");
-        DeviceManager.get ().loadINIFiles (path, this.logModel);
+        this.iniFiles.init (path, this.logModel);
+        DeviceManager.get ().parseINIFiles (this.iniFiles, this.logModel);
     }
 
 

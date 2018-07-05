@@ -19,7 +19,6 @@ import de.mossgrabers.reaper.framework.graphics.SVGImage;
 import de.mossgrabers.reaper.framework.osc.OpenSoundControlMessageImpl;
 import de.mossgrabers.reaper.framework.osc.OpenSoundControlServerImpl;
 import de.mossgrabers.reaper.framework.usb.UsbDeviceImpl;
-import de.mossgrabers.transformator.communication.MessageSender;
 import de.mossgrabers.transformator.util.LogModel;
 
 import com.illposed.osc.OSCListener;
@@ -50,12 +49,12 @@ public class HostImpl implements IHost
 {
     private final Window                   owner;
     private final LogModel                 model;
-    private final ScheduledExecutorService executor       = Executors.newSingleThreadScheduledExecutor ();
-    private final List<UsbMatcher>         usbDeviceInfos = new ArrayList<> ();
-    private final List<IUsbDevice>         usbDevices     = new ArrayList<> ();
-    private final MessageSender            dawSender;
+    private final ScheduledExecutorService executor           = Executors.newSingleThreadScheduledExecutor ();
+    private final List<UsbMatcher>         usbDeviceInfos     = new ArrayList<> ();
+    private final List<IUsbDevice>         usbDevices         = new ArrayList<> ();
     private OSCPortOut                     oscSender;
     private OSCPortIn                      oscReceiver;
+    private final NotificationWindow       notificationWindow = new NotificationWindow ();
 
 
     /**
@@ -63,13 +62,11 @@ public class HostImpl implements IHost
      *
      * @param model The logging model
      * @param owner The owner window for the bitmap display window
-     * @param sender The OSC sender
      */
-    public HostImpl (final LogModel model, final Window owner, final MessageSender sender)
+    public HostImpl (final LogModel model, final Window owner)
     {
         this.model = model;
         this.owner = owner;
-        this.dawSender = sender;
     }
 
 
@@ -79,6 +76,7 @@ public class HostImpl implements IHost
     public void shutdown ()
     {
         this.executor.shutdown ();
+        this.notificationWindow.shutdown ();
     }
 
 
@@ -174,7 +172,7 @@ public class HostImpl implements IHost
     @Override
     public void showNotification (final String message)
     {
-        this.dawSender.sendOSC ("/notify", message);
+        this.notificationWindow.displayMessage (message);
     }
 
 

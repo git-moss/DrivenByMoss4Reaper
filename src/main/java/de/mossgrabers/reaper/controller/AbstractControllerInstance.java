@@ -5,7 +5,6 @@
 package de.mossgrabers.reaper.controller;
 
 import de.mossgrabers.framework.configuration.AbstractConfiguration;
-import de.mossgrabers.framework.configuration.Configuration;
 import de.mossgrabers.framework.controller.IControllerDefinition;
 import de.mossgrabers.framework.controller.IControllerSetup;
 import de.mossgrabers.framework.usb.UsbMatcher;
@@ -91,7 +90,7 @@ public abstract class AbstractControllerInstance implements IControllerInstance
 
             this.logModel.addLogMessage ("Starting controller '" + this.controllerDefinition.toString () + "'");
 
-            this.host = new HostImpl (this.logModel, this.window, this.sender);
+            this.host = new HostImpl (this.logModel, this.window);
             this.settingsUI = new SettingsUI (this.controllerDefinition.getNumMidiInPorts (), this.controllerDefinition.getNumMidiOutPorts (), this.controllerDefinition.getMidiDiscoveryPairs (OperatingSystem.get ()));
 
             final File configFile = new File (this.getFileName ());
@@ -121,8 +120,7 @@ public abstract class AbstractControllerInstance implements IControllerInstance
 
                 this.settingsUI.load (this.controllerConfiguration);
 
-                final Configuration configuration = this.controllerSetup.getConfiguration ();
-                configuration.addSettingObserver (AbstractConfiguration.QUANTIZE_AMOUNT, () -> this.sender.sendOSC ("/quantize/strength", Integer.valueOf (configuration.getQuantizeAmount ())));
+                this.controllerSetup.getConfiguration ().addSettingObserver (AbstractConfiguration.QUANTIZE_AMOUNT, this::storeQuantizeAmount);
 
                 this.oscParser = new MessageParser (this.controllerSetup);
 
@@ -133,6 +131,14 @@ public abstract class AbstractControllerInstance implements IControllerInstance
                 this.isRunning = true;
             });
         }
+    }
+
+
+    private void storeQuantizeAmount ()
+    {
+        // TODO Store in INI file
+
+        // "midiedit", "quantstrength", Integer.toString (configuration.getQuantizeAmount ()
     }
 
 

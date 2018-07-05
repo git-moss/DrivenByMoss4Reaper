@@ -4,7 +4,10 @@
 
 package de.mossgrabers.reaper.framework.device;
 
+import de.mossgrabers.reaper.framework.IniFiles;
 import de.mossgrabers.transformator.util.LogModel;
+
+import com.nikhaldimann.inieditor.IniEditor;
 
 import java.io.File;
 import java.io.IOException;
@@ -215,31 +218,29 @@ public class DeviceManager
      * Load all information about available devices from different INI files
      * (reaper-vstplugins64.ini, reaper-fxtags.ini, reaper-jsfx.ini) in Reapers configuration path.
      *
-     * @param iniPath The path were the INI files reside
+     * @param iniFiles Access to the INI files
      * @param logModel For logging
      */
-    public void loadINIFiles (final String iniPath, final LogModel logModel)
+    public void parseINIFiles (final IniFiles iniFiles, final LogModel logModel)
     {
         synchronized (this.devices)
         {
             this.clearCache ();
 
-            final IniFile iniFile = new IniFile ();
-
             // Load all 64 bit devices
-            if (loadINIFile (iniPath + File.separator + "reaper-vstplugins64.ini", iniFile, logModel))
-                this.parseDevicesFile (iniFile);
+            if (iniFiles.isVstPresent ())
+                this.parseDevicesFile (iniFiles.getIniVstPlugins64 ());
 
             // Load categories and vendor information
-            if (loadINIFile (iniPath + File.separator + "reaper-fxtags.ini", iniFile, logModel))
-                this.parseFXTagsFile (iniFile);
+            if (iniFiles.isFxTagsPresent ())
+                this.parseFXTagsFile (iniFiles.getIniFxTags ());
 
             // Load JS devices
-            this.loadJSDevices (iniPath + File.separator + "reaper-jsfx.ini", logModel);
+            this.loadJSDevices (iniFiles.getIniPath () + File.separator + "reaper-jsfx.ini", logModel);
 
             // Load collection filters
-            if (loadINIFile (iniPath + File.separator + "reaper-fxfolders.ini", iniFile, logModel))
-                this.parseCollectionFilters (iniFile);
+            if (iniFiles.isFxFoldersPresent ())
+                this.parseCollectionFilters (iniFiles.getIniFxFolders ());
 
             this.devices.sort ( (d1, d2) -> d1.getDisplayName ().compareToIgnoreCase (d2.getDisplayName ()));
         }
@@ -313,9 +314,9 @@ public class DeviceManager
      *
      * @param iniFile The ini file from which to parse
      */
-    private void parseDevicesFile (final IniFile iniFile)
+    private void parseDevicesFile (final IniEditor iniFile)
     {
-        final Map<String, String> vstcacheSection = iniFile.getSection ("vstcache");
+        final Map<String, String> vstcacheSection = iniFile.getSectionMap ("vstcache");
         for (final Entry<String, String> entry: vstcacheSection.entrySet ())
         {
             final Device device = parseDevice (entry.getKey (), entry.getValue ());
@@ -330,11 +331,11 @@ public class DeviceManager
      *
      * @param iniFile The ini file from which to parse
      */
-    private void parseFXTagsFile (final IniFile iniFile)
+    private void parseFXTagsFile (final IniEditor iniFile)
     {
         for (final Device d: this.devices)
         {
-            final String categoriesStr = iniFile.getString ("category", d.getModule (), null);
+            final String categoriesStr = iniFile.get ("category", d.getModule ());
             if (categoriesStr != null)
             {
                 final List<String> asList = Arrays.asList (categoriesStr.split ("\\|"));
@@ -342,7 +343,7 @@ public class DeviceManager
                 this.categories.addAll (asList);
             }
 
-            final String vendor = iniFile.getString ("developer", d.getModule (), null);
+            final String vendor = iniFile.get ("developer", d.getModule ());
             if (vendor == null)
                 continue;
             d.setVendor (vendor);
@@ -356,25 +357,52 @@ public class DeviceManager
      *
      * @param iniFile The ini file from which to parse
      */
-    private void parseCollectionFilters (final IniFile iniFile)
+    private void parseCollectionFilters (final IniEditor iniFile)
     {
-        for (int i = 0; i < iniFile.getInt ("Folders", "NbFolders", 0); i++)
+        for (int i = 0; i < getInt (iniFile, "Folders", "NbFolders", 0); i++)
         {
-            final int id = iniFile.getInt ("Folders", "Id" + i, -1);
+            final int id = getInt (iniFile, "Folders", "Id" + i, -1);
             if (id < 0)
                 continue;
-            final String collectionName = iniFile.getString ("Folders", "Name" + i, "");
+            final String collectionName = iniFile.get ("Folders", "Name" + i);
+            if (collectionName == null)
+                continue;
 
             final DeviceCollection deviceCollection = new DeviceCollection (collectionName);
             this.collections.add (deviceCollection);
 
             final String collectionSection = "Folder" + id;
-            for (int j = 0; j < iniFile.getInt (collectionSection, "Nb", 0); j++)
+            for (int j = 0; j < getInt (iniFile, collectionSection, "Nb", 0); j++)
             {
-                final String item = iniFile.getString (collectionSection, "Item" + j, "");
-                final int type = iniFile.getInt (collectionSection, "Type" + j, 0);
+                final String item = iniFile.get (collectionSection, "Item" + j);
+                if (item == null)
+                    continue;
+                final int type = getInt (iniFile, collectionSection, "Type" + j, 0);
                 deviceCollection.addItem (item, type);
             }
+        }
+    }
+
+
+    /**
+     * Get a value from the INI file and convert it to an integer.
+     *
+     * @param iniFile The INI file
+     * @param category The category section
+     * @param name The name of the entry
+     * @param def The default value
+     * @return The integer value
+     */
+    private static int getInt (final IniEditor iniFile, final String category, final String name, final int def)
+    {
+        final String value = iniFile.get ("Folders", "NbFolders");
+        try
+        {
+            return value == null ? def : Integer.parseInt (value);
+        }
+        catch (final NumberFormatException ex)
+        {
+            return def;
         }
     }
 
@@ -478,35 +506,5 @@ public class DeviceManager
             device.setCategories (Collections.singleton (o));
             this.categories.add (o);
         }
-    }
-
-
-    /**
-     * Load an INI file.
-     *
-     * @param filename The absolute filename
-     * @param iniFile The ini file
-     * @param logModel For logging
-     * @return True if successfully loaded
-     */
-    private static boolean loadINIFile (final String filename, final IniFile iniFile, final LogModel logModel)
-    {
-        try
-        {
-            final File file = new File (filename);
-            if (file.exists ())
-            {
-                iniFile.load (file.getAbsolutePath ());
-                return true;
-            }
-            logModel.addLogMessage (filename + " not present, skipped loading.");
-        }
-        catch (final IOException ex)
-        {
-            logModel.addLogMessage ("Could not load file: " + filename);
-            logModel.addLogMessage (ex.getClass () + ":" + ex.getMessage ());
-
-        }
-        return false;
     }
 }
