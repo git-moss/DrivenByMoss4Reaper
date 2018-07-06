@@ -172,7 +172,7 @@ public class HostImpl implements IHost
     @Override
     public void showNotification (final String message)
     {
-        this.notificationWindow.displayMessage (message);
+        Platform.runLater ( () -> this.notificationWindow.displayMessage (message));
     }
 
 
