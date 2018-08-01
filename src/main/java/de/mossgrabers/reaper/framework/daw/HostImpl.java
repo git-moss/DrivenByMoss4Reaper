@@ -20,12 +20,12 @@ import de.mossgrabers.reaper.framework.osc.OpenSoundControlMessageImpl;
 import de.mossgrabers.reaper.framework.osc.OpenSoundControlServerImpl;
 import de.mossgrabers.reaper.framework.usb.UsbDeviceImpl;
 import de.mossgrabers.transformator.util.LogModel;
+import de.mossgrabers.transformator.util.SafeRunLater;
 
 import com.illposed.osc.OSCListener;
 import com.illposed.osc.OSCPortIn;
 import com.illposed.osc.OSCPortOut;
 
-import javafx.application.Platform;
 import javafx.stage.Window;
 
 import java.awt.Color;
@@ -130,6 +130,14 @@ public class HostImpl implements IHost
 
     /** {@inheritDoc} */
     @Override
+    public boolean canEditMarkers ()
+    {
+        return true;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
     public void scheduleTask (final Runnable task, final long delay)
     {
         try
@@ -172,7 +180,7 @@ public class HostImpl implements IHost
     @Override
     public void showNotification (final String message)
     {
-        Platform.runLater ( () -> this.notificationWindow.displayMessage (message));
+        SafeRunLater.execute ( () -> this.notificationWindow.displayMessage (message));
     }
 
 
@@ -277,7 +285,7 @@ public class HostImpl implements IHost
             return;
         }
 
-        this.oscReceiver.addListener (messageAddress -> true, (OSCListener) (time, message) -> Platform.runLater ( () -> callback.handle (new OpenSoundControlMessageImpl (message))));
+        this.oscReceiver.addListener (messageAddress -> true, (OSCListener) (time, message) -> SafeRunLater.execute ( () -> callback.handle (new OpenSoundControlMessageImpl (message))));
         this.oscReceiver.startListening ();
     }
 

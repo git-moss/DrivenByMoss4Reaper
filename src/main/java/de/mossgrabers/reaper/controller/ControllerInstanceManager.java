@@ -74,12 +74,12 @@ public class ControllerInstanceManager
         KontrolMkIS88ControllerInstance.class,
         KontrolMkIIS49ControllerInstance.class,
         KontrolMkIIS61ControllerInstance.class,
-        // TODO Support protocol with more than 8 bank pages
+        // TODO Reaper Support protocol with more than 8 bank pages
         // KontrolMkIIControllerInstance.class,
         LaunchpadMkIIControllerInstance.class,
         LaunchpadProControllerInstance.class,
         MCU1ControllerInstance.class,
-        // TODO Support protocol with more than 8 bank pages
+        // TODO Reaper Support protocol with more than 8 bank pages
         // MCU2ControllerInstance.class,
         // MCU3ControllerInstance.class,
         // MCU4ControllerInstance.class,
@@ -104,12 +104,12 @@ public class ControllerInstanceManager
         new Kontrol1ControllerDefinition (3),
         new Kontrol2ControllerDefinition (0),
         new Kontrol2ControllerDefinition (1),
-        // TODO Support protocol with more than 8 bank pages
+        // TODO Reaper Support protocol with more than 8 bank pages
         // new KontrolOSCControllerDefinition (),
         new LaunchpadControllerDefinition (true),
         new LaunchpadControllerDefinition (false),
         new MCUControllerDefinition (0),
-        // TODO Support protocol with more than 8 bank pages
+        // TODO Reaper Support protocol with more than 8 bank pages
         // new MCUControllerDefinition (1),
         // new MCUControllerDefinition (2),
         // new MCUControllerDefinition (3),
@@ -212,7 +212,20 @@ public class ControllerInstanceManager
      */
     public void parseAll (final String address, final String argument)
     {
-        this.instances.forEach (inst -> inst.parse (address, argument));
+        this.instances.forEach (inst -> {
+            try
+            {
+                inst.parse (address, argument);
+            }
+            catch (final RuntimeException ex)
+            {
+                final StringBuilder sb = new StringBuilder ("Could not parse OSC message: ").append (address).append (" ");
+                if (argument != null)
+                    sb.append (argument);
+                sb.append (" / ").append (ex.getMessage ());
+                this.logModel.addLogMessage (sb.toString ());
+            }
+        });
     }
 
 

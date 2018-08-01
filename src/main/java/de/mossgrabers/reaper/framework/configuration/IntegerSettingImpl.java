@@ -6,8 +6,8 @@ package de.mossgrabers.reaper.framework.configuration;
 
 import de.mossgrabers.framework.configuration.IIntegerSetting;
 import de.mossgrabers.transformator.util.PropertiesEx;
+import de.mossgrabers.transformator.util.SafeRunLater;
 
-import javafx.application.Platform;
 import javafx.scene.control.TextField;
 
 
@@ -71,7 +71,7 @@ public class IntegerSettingImpl extends BaseSetting<TextField, Integer> implemen
         this.value = value;
         this.flush ();
 
-        Platform.runLater ( () -> {
+        SafeRunLater.execute ( () -> {
             final String v = this.field.textProperty ().get ();
             if (!v.equals (Integer.toString (this.value)))
                 this.field.textProperty ().set (Integer.toString (this.value));

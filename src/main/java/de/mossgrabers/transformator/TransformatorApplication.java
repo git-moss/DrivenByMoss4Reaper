@@ -17,6 +17,7 @@ import de.mossgrabers.transformator.communication.MessageSender;
 import de.mossgrabers.transformator.midi.Midi;
 import de.mossgrabers.transformator.midi.MidiConnection;
 import de.mossgrabers.transformator.util.LogModel;
+import de.mossgrabers.transformator.util.SafeRunLater;
 
 import org.usb4java.LibUsb;
 import org.usb4java.LibUsbException;
@@ -101,7 +102,7 @@ public class TransformatorApplication extends Application implements MessageSend
             // Instructs JavaFX not to exit implicitly when the last application window is closed
             Platform.setImplicitExit (false);
             // Sets up the tray icon (using awt code)
-            Platform.runLater (this::addAppToTray);
+            SafeRunLater.execute (this::addAppToTray);
         }
 
         this.setTitle ();
@@ -122,7 +123,7 @@ public class TransformatorApplication extends Application implements MessageSend
         if (this.iniPath != null)
         {
             this.initUSB ();
-            Platform.runLater (this::startupInfrastructure);
+            SafeRunLater.execute (this::startupInfrastructure);
         }
     }
 
@@ -370,7 +371,7 @@ public class TransformatorApplication extends Application implements MessageSend
     private void startControllers ()
     {
         this.instanceManager.startAll ();
-        Platform.runLater (this::sendRefreshCommand);
+        SafeRunLater.execute (this::sendRefreshCommand);
     }
 
 
@@ -655,12 +656,12 @@ public class TransformatorApplication extends Application implements MessageSend
             this.trayIcon.setImageAutoSize (true);
 
             // If the user double-clicks on the tray icon, show the main app stage.
-            this.trayIcon.addActionListener (event -> Platform.runLater (this::showStage));
+            this.trayIcon.addActionListener (event -> SafeRunLater.execute (this::showStage));
 
             // If the user selects the default menu item (which includes the app name),
             // show the main app stage.
             final java.awt.MenuItem openItem = new java.awt.MenuItem ("Open");
-            openItem.addActionListener (event -> Platform.runLater (this::showStage));
+            openItem.addActionListener (event -> SafeRunLater.execute (this::showStage));
 
             // The convention for tray icons seems to be to set the default icon for opening
             // the application stage in a bold font.

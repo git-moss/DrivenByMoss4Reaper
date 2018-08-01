@@ -1,6 +1,7 @@
 package de.mossgrabers.reaper.framework.daw;
 
-import javafx.application.Platform;
+import de.mossgrabers.transformator.util.SafeRunLater;
+
 import javafx.geometry.Bounds;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
@@ -57,7 +58,7 @@ public class NotificationWindow
             if (this.counter.decrementAndGet () == 0)
             {
                 // Needs to be run on the JavaFX tread
-                Platform.runLater (this.popupStage::hide);
+                SafeRunLater.execute (this.popupStage::hide);
             }
         }, 1, 1, TimeUnit.SECONDS);
     }

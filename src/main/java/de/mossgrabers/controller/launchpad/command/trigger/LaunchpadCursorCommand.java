@@ -15,8 +15,10 @@ import de.mossgrabers.controller.launchpad.view.SequencerView;
 import de.mossgrabers.controller.launchpad.view.Views;
 import de.mossgrabers.framework.command.trigger.CursorCommand;
 import de.mossgrabers.framework.daw.IBrowser;
+import de.mossgrabers.framework.daw.ICursorClip;
 import de.mossgrabers.framework.daw.ICursorDevice;
 import de.mossgrabers.framework.daw.IModel;
+import de.mossgrabers.framework.daw.IParameterBank;
 import de.mossgrabers.framework.daw.ISceneBank;
 import de.mossgrabers.framework.daw.ITrackBank;
 import de.mossgrabers.framework.daw.data.ITrack;
@@ -79,14 +81,14 @@ public class LaunchpadCursorCommand extends CursorCommand<LaunchpadControlSurfac
             return;
         }
 
+        final ICursorClip cursorClip = this.model.getCursorClip ();
         if (viewManager.isActiveView (Views.VIEW_DRUM))
         {
             final int octave = this.model.getScales ().getDrumOctave ();
             this.canScrollUp = octave < 5;
             this.canScrollDown = octave > -3;
-            this.canScrollLeft = this.model.getCursorClip ().getEditPage () > 0;
-            // TODO API extension required - We do not know the number of steps
-            this.canScrollRight = true;
+            this.canScrollLeft = cursorClip.canScrollStepsBackwards ();
+            this.canScrollRight = cursorClip.canScrollStepsForwards ();
             return;
         }
 
@@ -106,9 +108,8 @@ public class LaunchpadCursorCommand extends CursorCommand<LaunchpadControlSurfac
             final int octave = this.model.getScales ().getOctave ();
             this.canScrollUp = octave < Scales.OCTAVE_RANGE;
             this.canScrollDown = octave > -Scales.OCTAVE_RANGE;
-            this.canScrollLeft = this.model.getCursorClip ().getEditPage () > 0;
-            // TODO API extension required - We do not know the number of steps
-            this.canScrollRight = true;
+            this.canScrollLeft = cursorClip.canScrollStepsBackwards ();
+            this.canScrollRight = cursorClip.canScrollStepsForwards ();
             return;
         }
 
@@ -117,8 +118,9 @@ public class LaunchpadCursorCommand extends CursorCommand<LaunchpadControlSurfac
             final ICursorDevice cursorDevice = this.model.getCursorDevice ();
             this.canScrollUp = cursorDevice.canSelectNextFX ();
             this.canScrollDown = cursorDevice.canSelectPreviousFX ();
-            this.canScrollLeft = cursorDevice.hasPreviousParameterPage ();
-            this.canScrollRight = cursorDevice.hasNextParameterPage ();
+            final IParameterBank parameterBank = cursorDevice.getParameterBank ();
+            this.canScrollLeft = parameterBank.canScrollBackwards ();
+            this.canScrollRight = parameterBank.canScrollForwards ();
             return;
         }
 
@@ -202,8 +204,8 @@ public class LaunchpadCursorCommand extends CursorCommand<LaunchpadControlSurfac
         if (viewManager.isActiveView (Views.VIEW_DEVICE))
         {
             final ICursorDevice cursorDevice = this.model.getCursorDevice ();
-            cursorDevice.previousParameterPage ();
-            this.surface.getDisplay ().notify (cursorDevice.getSelectedParameterPageName ());
+            cursorDevice.getParameterBank ().scrollBackwards ();
+            this.surface.getDisplay ().notify (cursorDevice.getParameterPageBank ().getSelectedItem ());
             return;
         }
 
@@ -251,8 +253,8 @@ public class LaunchpadCursorCommand extends CursorCommand<LaunchpadControlSurfac
         if (viewManager.isActiveView (Views.VIEW_DEVICE))
         {
             final ICursorDevice cursorDevice = this.model.getCursorDevice ();
-            cursorDevice.nextParameterPage ();
-            this.surface.getDisplay ().notify (cursorDevice.getSelectedParameterPageName ());
+            cursorDevice.getParameterBank ().scrollForwards ();
+            this.surface.getDisplay ().notify (cursorDevice.getParameterPageBank ().getSelectedItem ());
             return;
         }
 

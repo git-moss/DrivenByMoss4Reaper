@@ -78,7 +78,7 @@ public abstract class ItemImpl extends BaseImpl implements IItem
     @Override
     public String getName ()
     {
-        return this.name;
+        return this.exists ? this.name : "";
     }
 
 

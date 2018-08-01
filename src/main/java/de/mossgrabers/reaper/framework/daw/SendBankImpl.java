@@ -19,7 +19,7 @@ import de.mossgrabers.transformator.communication.MessageSender;
  */
 public class SendBankImpl extends AbstractBankImpl<ISend> implements ISendBank
 {
-    private int trackIndex;
+    private final int trackIndex;
 
 
     /**
@@ -33,7 +33,8 @@ public class SendBankImpl extends AbstractBankImpl<ISend> implements ISendBank
      */
     public SendBankImpl (final IHost host, final MessageSender sender, final IValueChanger valueChanger, final int trackIndex, final int numSends)
     {
-        super (null, null, valueChanger, numSends);
+        super (host, sender, valueChanger, numSends);
+        this.trackIndex = trackIndex;
         this.initItems ();
     }
 
@@ -51,8 +52,7 @@ public class SendBankImpl extends AbstractBankImpl<ISend> implements ISendBank
     @Override
     public void scrollPageBackwards ()
     {
-        // TODO Auto-generated method stub
-
+        // TODO Reaper Support more than 8 sends?
     }
 
 
@@ -60,7 +60,6 @@ public class SendBankImpl extends AbstractBankImpl<ISend> implements ISendBank
     @Override
     public void scrollPageForwards ()
     {
-        // TODO Auto-generated method stub
-
+        // TODO Reaper Support more than 8 sends?
     }
 }

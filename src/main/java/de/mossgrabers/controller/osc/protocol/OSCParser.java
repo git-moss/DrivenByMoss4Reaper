@@ -14,11 +14,14 @@ import de.mossgrabers.framework.daw.IBrowser;
 import de.mossgrabers.framework.daw.ICursorDevice;
 import de.mossgrabers.framework.daw.IDeviceBank;
 import de.mossgrabers.framework.daw.IHost;
+import de.mossgrabers.framework.daw.IMarkerBank;
 import de.mossgrabers.framework.daw.IMixer;
 import de.mossgrabers.framework.daw.IModel;
+import de.mossgrabers.framework.daw.IParameterBank;
 import de.mossgrabers.framework.daw.ISceneBank;
 import de.mossgrabers.framework.daw.ITrackBank;
 import de.mossgrabers.framework.daw.data.IChannel;
+import de.mossgrabers.framework.daw.data.IMarker;
 import de.mossgrabers.framework.daw.data.ISend;
 import de.mossgrabers.framework.daw.data.ISlot;
 import de.mossgrabers.framework.daw.data.ITrack;
@@ -65,7 +68,7 @@ public class OSCParser extends AbstractOpenSoundControlParser
      * @param midiInput The midi input
      * @param keyManager The key manager
      */
-    public OSCParser (final IHost host, OSCControlSurface surface, final IModel model, final IOpenSoundControlConfiguration configuration, final IOpenSoundControlWriter writer, final IMidiInput midiInput, final KeyManager keyManager)
+    public OSCParser (final IHost host, final OSCControlSurface surface, final IModel model, final IOpenSoundControlConfiguration configuration, final IOpenSoundControlWriter writer, final IMidiInput midiInput, final KeyManager keyManager)
     {
         super (host, model, midiInput, configuration, writer);
 
@@ -239,6 +242,28 @@ public class OSCParser extends AbstractOpenSoundControlParser
 
             case "primary":
                 this.parseDeviceValue (this.model.getPrimaryDevice (), oscParts, value);
+                break;
+
+            //
+            // Marker
+            //
+
+            case "marker":
+                if (oscParts.isEmpty ())
+                {
+                    this.host.error ("Missing Marker index or command.");
+                    return;
+                }
+                try
+                {
+                    final int markerNo = Integer.parseInt (oscParts.get (0));
+                    oscParts.removeFirst ();
+                    this.parseMarkerValue (this.model.getMarkerBank ().getItem (markerNo - 1), oscParts);
+                }
+                catch (final NumberFormatException ex)
+                {
+                    this.parseMarker (oscParts);
+                }
                 break;
 
             //
@@ -1032,15 +1057,7 @@ public class OSCParser extends AbstractOpenSoundControlParser
                 {
                     case "selected":
                         if (numValue > 0)
-                        {
-                            final String [] parameterPageNames = cursorDevice.getParameterPageNames ();
-                            final int selectedParameterPage = cursorDevice.getSelectedParameterPage ();
-                            final int page = Math.min (Math.max (0, selectedParameterPage), parameterPageNames.length - 1);
-                            final int start = page / 8 * 8;
-                            final int bankPage = start + bankNo - 1;
-                            if (bankPage < parameterPageNames.length)
-                                cursorDevice.setSelectedParameterPage (bankPage);
-                        }
+                            cursorDevice.getParameterPageBank ().selectPage (bankNo - 1);
                         break;
 
                     default:
@@ -1123,8 +1140,9 @@ public class OSCParser extends AbstractOpenSoundControlParser
                 switch (oscParts.removeFirst ())
                 {
                     case "param":
-                        for (int i = 0; i < cursorDevice.getNumParameters (); i++)
-                            cursorDevice.indicateParameter (i, numValue > 0);
+                        final IParameterBank parameterBank = cursorDevice.getParameterBank ();
+                        for (int i = 0; i < parameterBank.getPageSize (); i++)
+                            parameterBank.getItem (i).setIndication (numValue > 0);
                         break;
 
                     default:
@@ -1152,10 +1170,10 @@ public class OSCParser extends AbstractOpenSoundControlParser
                         switch (part)
                         {
                             case "+":
-                                cursorDevice.nextParameterPage ();
+                                cursorDevice.getParameterBank ().scrollPageForwards ();
                                 break;
                             case "-":
-                                cursorDevice.previousParameterPage ();
+                                cursorDevice.getParameterBank ().scrollPageBackwards ();
                                 break;
 
                             case "bank":
@@ -1174,9 +1192,9 @@ public class OSCParser extends AbstractOpenSoundControlParser
                                             return;
                                         }
                                         if ("+".equals (oscParts.removeFirst ()))
-                                            cursorDevice.nextParameterPageBank ();
+                                            cursorDevice.getParameterPageBank ().scrollForwards ();
                                         else // "-"
-                                            cursorDevice.previousParameterPageBank ();
+                                            cursorDevice.getParameterPageBank ().scrollBackwards ();
                                         break;
                                     default:
                                         this.host.error ("Unknown Device Param Bank subcommand: " + subCommand4);
@@ -1231,7 +1249,7 @@ public class OSCParser extends AbstractOpenSoundControlParser
             final int layerNo;
             if ("selected".equals (command))
             {
-                final IChannel selectedLayerOrDrumPad = cursorDevice.getSelectedLayerOrDrumPad ();
+                final IChannel selectedLayerOrDrumPad = cursorDevice.getLayerOrDrumPadBank ().getSelectedItem ();
                 layerNo = selectedLayerOrDrumPad == null ? -1 : selectedLayerOrDrumPad.getIndex ();
             }
             else
@@ -1253,11 +1271,11 @@ public class OSCParser extends AbstractOpenSoundControlParser
                     break;
 
                 case "+":
-                    cursorDevice.nextLayerOrDrumPad ();
+                    cursorDevice.getLayerOrDrumPadBank ().selectNextItem ();
                     break;
 
                 case "-":
-                    cursorDevice.previousLayerOrDrumPad ();
+                    cursorDevice.getLayerOrDrumPadBank ().selectPreviousItem ();
                     break;
 
                 case "page":
@@ -1267,15 +1285,78 @@ public class OSCParser extends AbstractOpenSoundControlParser
                         return;
                     }
                     if ("+".equals (parts.get (0)))
-                        cursorDevice.nextLayerOrDrumPadBank ();
+                        cursorDevice.getLayerOrDrumPadBank ().selectNextPage ();
                     else
-                        cursorDevice.previousLayerOrDrumPadBank ();
+                        cursorDevice.getLayerOrDrumPadBank ().selectPreviousPage ();
                     break;
 
                 default:
                     this.host.println ("Unknown Layour/Drum command: " + command);
                     break;
             }
+        }
+    }
+
+
+    private void parseMarker (final LinkedList<String> parts)
+    {
+        if (parts.isEmpty ())
+        {
+            this.host.println ("Missing Marker command.");
+            return;
+        }
+
+        final IMarkerBank markerBank = this.model.getMarkerBank ();
+
+        final String command = parts.removeFirst ();
+        switch (command)
+        {
+            case "bank":
+                if (parts.isEmpty ())
+                {
+                    this.host.error ("Missing Marker Bank subcommand.");
+                    return;
+                }
+                final String subCommand = parts.removeFirst ();
+                switch (subCommand)
+                {
+                    case "+":
+                        markerBank.scrollPageForwards ();
+                        this.host.scheduleTask ( () -> markerBank.getItem (0).select (), 75);
+                        break;
+                    case "-":
+                        markerBank.scrollPageBackwards ();
+                        this.host.scheduleTask ( () -> markerBank.getItem (markerBank.getPageSize () - 1).select (), 75);
+                        break;
+                    default:
+                        this.host.error ("Unknown Marker Bank subcommand: " + subCommand);
+                        break;
+                }
+                break;
+            default:
+                this.host.println ("Unknown Marker Command: " + command);
+                break;
+        }
+    }
+
+
+    private void parseMarkerValue (final IMarker marker, final LinkedList<String> parts)
+    {
+        if (parts.isEmpty ())
+        {
+            this.host.error ("Missing Marker command.");
+            return;
+        }
+
+        final String command = parts.removeFirst ();
+        switch (command)
+        {
+            case "launch":
+                marker.launch (true);
+                break;
+            default:
+                this.host.println ("Unknown Marker Command: " + command);
+                break;
         }
     }
 
@@ -1371,7 +1452,7 @@ public class OSCParser extends AbstractOpenSoundControlParser
     }
 
 
-    private void parseDeviceLayerValue (final ICursorDevice cursorDevice, final int layer, final LinkedList<String> parts, final Object value)
+    private void parseDeviceLayerValue (final ICursorDevice cursorDevice, final int layerIndex, final LinkedList<String> parts, final Object value)
     {
         if (parts.isEmpty ())
         {
@@ -1380,51 +1461,51 @@ public class OSCParser extends AbstractOpenSoundControlParser
         }
         final String command = parts.removeFirst ();
         final int numValue = value instanceof Number ? ((Number) value).intValue () : -1;
+        final IChannel layer = cursorDevice.getLayerOrDrumPadBank ().getItem (layerIndex);
         switch (command)
         {
             case "select":
-                cursorDevice.selectLayer (layer);
+                cursorDevice.getLayerOrDrumPadBank ().getItem (layerIndex).select ();
                 break;
 
             case PART_VOLUME:
                 if (parts.isEmpty ())
-                    cursorDevice.setLayerOrDrumPadVolume (layer, numValue);
+                    layer.setVolume (numValue);
                 else if (PART_TOUCH.equals (parts.get (0)))
-                    cursorDevice.touchLayerOrDrumPadVolume (layer, numValue > 0);
+                    layer.touchVolume (numValue > 0);
                 break;
 
             case "pan":
                 if (parts.isEmpty ())
-                    cursorDevice.setLayerOrDrumPadPan (layer, numValue);
+                    layer.setPan (numValue);
                 else if (PART_TOUCH.equals (parts.get (0)))
-                    cursorDevice.touchLayerOrDrumPadPan (layer, numValue > 0);
+                    layer.touchPan (numValue > 0);
                 break;
 
             case "mute":
                 if (numValue < 0)
-                    cursorDevice.toggleLayerOrDrumPadMute (layer);
+                    layer.toggleMute ();
                 else
-                    cursorDevice.setLayerOrDrumPadMute (layer, numValue > 0);
+                    layer.setMute (numValue > 0);
                 break;
 
             case "solo":
                 if (numValue < 0)
-                    cursorDevice.toggleLayerOrDrumPadSolo (layer);
+                    layer.toggleSolo ();
                 else
-                    cursorDevice.setLayerOrDrumPadSolo (layer, numValue > 0);
+                    layer.setSolo (numValue > 0);
                 break;
 
             case "send":
                 final int sendNo = Integer.parseInt (parts.removeFirst ()) - 1;
                 if (parts.isEmpty ())
-                    cursorDevice.setLayerOrDrumPadSend (layer, sendNo, numValue);
+                    layer.getSendBank ().getItem (sendNo).setValue (numValue);
                 else if (PART_TOUCH.equals (parts.get (0)))
-                    cursorDevice.touchLayerOrDrumPadSend (layer, sendNo, numValue > 0);
+                    layer.getSendBank ().getItem (sendNo).touchValue (numValue > 0);
                 break;
 
             case "enter":
-                cursorDevice.enterLayerOrDrumPad (layer);
-                cursorDevice.selectFirstDeviceInLayerOrDrumPad (layer);
+                layer.enter ();
                 break;
 
             default:
@@ -1447,20 +1528,20 @@ public class OSCParser extends AbstractOpenSoundControlParser
         {
             case "value":
                 if (parts.size () == 1 && value != null)
-                    cursorDevice.setParameter (fxparamIndex, numValue);
+                    cursorDevice.getParameterBank ().getItem (fxparamIndex).setValue (numValue);
                 break;
 
             case PART_INDICATE:
                 if (parts.size () == 1 && value != null)
-                    cursorDevice.indicateParameter (fxparamIndex, numValue > 0);
+                    cursorDevice.getParameterBank ().getItem (fxparamIndex).setIndication (numValue > 0);
                 break;
 
             case PART_RESET:
-                cursorDevice.resetParameter (fxparamIndex);
+                cursorDevice.getParameterBank ().getItem (fxparamIndex).resetValue ();
                 break;
 
             case PART_TOUCH:
-                cursorDevice.touchParameter (fxparamIndex, numValue > 0);
+                cursorDevice.getParameterBank ().getItem (fxparamIndex).touchValue (numValue > 0);
                 break;
 
             default:

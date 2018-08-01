@@ -563,6 +563,14 @@ public class EmptyTrackData implements ITrack
 
     /** {@inheritDoc} */
     @Override
+    public void enter ()
+    {
+        // Intentionally empty
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
     public void addNoteObserver (final NoteObserver observer)
     {
         // Intentionally empty
@@ -571,7 +579,7 @@ public class EmptyTrackData implements ITrack
     class EmptySlotBank extends EmptyBank<ISlot> implements ISlotBank
     {
         @Override
-        public ISlot getEmptySlot (int startFrom)
+        public ISlot getEmptySlot (final int startFrom)
         {
             return null;
         }

@@ -19,8 +19,8 @@ import de.mossgrabers.transformator.communication.MessageParser;
 import de.mossgrabers.transformator.communication.MessageSender;
 import de.mossgrabers.transformator.util.LogModel;
 import de.mossgrabers.transformator.util.PropertiesEx;
+import de.mossgrabers.transformator.util.SafeRunLater;
 
-import javafx.application.Platform;
 import javafx.stage.Window;
 
 import java.io.File;
@@ -120,7 +120,7 @@ public abstract class AbstractControllerInstance implements IControllerInstance
             this.setupFactory = new ReaperSetupFactory (this.iniFiles, this.sender, this.host, this.logModel, this.settingsUI.getSelectedMidiInputs (), this.settingsUI.getSelectedMidiOutputs ());
             this.controllerSetup = this.createControllerSetup (this.setupFactory);
 
-            Platform.runLater ( () -> {
+            SafeRunLater.execute ( () -> {
                 this.controllerSetup.init ();
 
                 this.settingsUI.load (this.controllerConfiguration);
@@ -131,7 +131,16 @@ public abstract class AbstractControllerInstance implements IControllerInstance
 
                 this.settingsUI.flush ();
 
-                this.host.scheduleTask (this.controllerSetup::startup, 1000);
+                this.host.scheduleTask ( () -> {
+                    try
+                    {
+                        this.controllerSetup.startup ();
+                    }
+                    catch (final RuntimeException ex)
+                    {
+                        this.logModel.addLogMessage (ex.getMessage ());
+                    }
+                }, 1000);
 
                 this.isRunning = true;
             });

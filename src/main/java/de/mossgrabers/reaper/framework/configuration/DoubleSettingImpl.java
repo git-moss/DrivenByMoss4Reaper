@@ -6,8 +6,8 @@ package de.mossgrabers.reaper.framework.configuration;
 
 import de.mossgrabers.framework.configuration.IDoubleSetting;
 import de.mossgrabers.transformator.util.PropertiesEx;
+import de.mossgrabers.transformator.util.SafeRunLater;
 
-import javafx.application.Platform;
 import javafx.scene.control.TextField;
 
 
@@ -62,7 +62,7 @@ public class DoubleSettingImpl extends BaseSetting<TextField, Double> implements
         this.value = value;
         this.flush ();
 
-        Platform.runLater ( () -> {
+        SafeRunLater.execute ( () -> {
             final String v = this.field.textProperty ().get ();
             if (!v.equals (Double.toString (this.value)))
                 this.field.textProperty ().set (Double.toString (this.value));

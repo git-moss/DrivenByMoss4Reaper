@@ -5,15 +5,15 @@
 package de.mossgrabers.reaper.framework.daw;
 
 import de.mossgrabers.framework.controller.IValueChanger;
-import de.mossgrabers.framework.daw.DAWColors;
+import de.mossgrabers.framework.daw.IChannelBank;
 import de.mossgrabers.framework.daw.ICursorDevice;
 import de.mossgrabers.framework.daw.IDeviceBank;
+import de.mossgrabers.framework.daw.IDrumPadBank;
 import de.mossgrabers.framework.daw.IHost;
-import de.mossgrabers.framework.daw.data.IChannel;
-import de.mossgrabers.framework.daw.data.IDrumPad;
-import de.mossgrabers.framework.daw.data.IParameter;
-import de.mossgrabers.reaper.framework.daw.data.DrumPadImpl;
-import de.mossgrabers.reaper.framework.daw.data.ParameterImpl;
+import de.mossgrabers.framework.daw.ILayerBank;
+import de.mossgrabers.framework.daw.IParameterBank;
+import de.mossgrabers.framework.daw.IParameterPageBank;
+import de.mossgrabers.reaper.framework.daw.data.DeviceImpl;
 import de.mossgrabers.transformator.communication.MessageSender;
 
 
@@ -22,28 +22,20 @@ import de.mossgrabers.transformator.communication.MessageSender;
  *
  * @author J&uuml;rgen Mo&szlig;graber
  */
-public class CursorDeviceImpl extends BaseImpl implements ICursorDevice
+public class CursorDeviceImpl extends DeviceImpl implements ICursorDevice
 {
-    private int           numParams;
-    private int           numDeviceLayers;
-    private int           numDrumPadLayers;
+    private boolean                     isEnabled      = false;
+    private int                         position;
+    private boolean                     isWindowOpen;
+    private boolean                     isExpanded;
+    private int                         selectedDevice = 0;
+    private int                         deviceCount    = 0;
 
-    private boolean       exists                = false;
-    private boolean       isEnabled             = false;
-    private String        name;
-    private int           position;
-    private boolean       isWindowOpen;
-    private boolean       isExpanded;
-    private IParameter [] fxparams;
-    private IDrumPad []   drumPadLayers;
-    private IDeviceBank   deviceBank;
-
-    private int           selectedDevice        = 0;
-    private int           selectedParameterPage = 0;
-    private int           selectedParameterBank = 0;
-    private int           deviceCount           = 0;
-
-    private String []     parameterPageNames    = new String [0];
+    private final IDeviceBank           deviceBank;
+    private final ParameterPageBankImpl parameterPageBank;
+    private final IParameterBank        parameterBank;
+    private final ILayerBank            layerBank;
+    private final IDrumPadBank          drumPadBank;
 
 
     /**
@@ -60,36 +52,31 @@ public class CursorDeviceImpl extends BaseImpl implements ICursorDevice
      */
     public CursorDeviceImpl (final IHost host, final MessageSender sender, final IValueChanger valueChanger, final int numSends, final int numParams, final int numDevicesInBank, final int numDeviceLayers, final int numDrumPadLayers)
     {
-        super (host, sender);
+        super (host, sender, -1);
 
-        this.numParams = numParams >= 0 ? numParams : 8;
-        final int numDevices = numDevicesInBank >= 0 ? numDevicesInBank : 8;
-        this.numDeviceLayers = numDeviceLayers >= 0 ? numDeviceLayers : 8;
-        this.numDrumPadLayers = numDrumPadLayers >= 0 ? numDrumPadLayers : 16;
+        final int checkedNumParams = numParams >= 0 ? numParams : 8;
+        final int checkedNumDevices = numDevicesInBank >= 0 ? numDevicesInBank : 8;
+        final int checkedNumDeviceLayers = numDeviceLayers >= 0 ? numDeviceLayers : 8;
+        final int checkedNumDrumPadLayers = numDrumPadLayers >= 0 ? numDrumPadLayers : 16;
 
-        this.deviceBank = new DeviceBankImpl (host, sender, valueChanger, numDevices);
+        this.deviceBank = new DeviceBankImpl (host, sender, valueChanger, checkedNumDevices);
 
-        if (this.numParams > 0)
+        if (checkedNumParams > 0)
         {
-            this.fxparams = new IParameter [this.numParams];
-            for (int i = 0; i < this.numParams; i++)
-                this.fxparams[i] = new ParameterImpl (host, sender, valueChanger, i);
+            this.parameterPageBank = new ParameterPageBankImpl (host, sender, valueChanger, checkedNumParams);
+            this.parameterBank = new ParameterBankImpl (host, sender, valueChanger, this.parameterPageBank, checkedNumParams);
+        }
+        else
+        {
+            this.parameterPageBank = null;
+            this.parameterBank = null;
         }
 
-        if (this.numDrumPadLayers > 0)
-        {
-            this.drumPadLayers = new IDrumPad [this.numDrumPadLayers];
-            for (int i = 0; i < this.numDrumPadLayers; i++)
-                this.drumPadLayers[i] = new DrumPadImpl (host, sender, valueChanger, i, numSends);
-        }
-    }
+        // Always empty
+        this.layerBank = new LayerBankImpl (checkedNumDeviceLayers);
 
-
-    /** {@inheritDoc} */
-    @Override
-    public IDeviceBank getDeviceBank ()
-    {
-        return this.deviceBank;
+        // Monitor the drum pad layers of a container device (if any)
+        this.drumPadBank = new DrumPadBankImpl (host, sender, valueChanger, checkedNumDrumPadLayers, numSends);
     }
 
 
@@ -135,25 +122,9 @@ public class CursorDeviceImpl extends BaseImpl implements ICursorDevice
 
     /** {@inheritDoc} */
     @Override
-    public boolean doesExist ()
-    {
-        return this.exists;
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
     public boolean isEnabled ()
     {
         return this.isEnabled;
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public String getName ()
-    {
-        return this.name == null ? "" : this.name;
     }
 
 
@@ -297,147 +268,6 @@ public class CursorDeviceImpl extends BaseImpl implements ICursorDevice
 
     /** {@inheritDoc} */
     @Override
-    public void changeParameter (final int index, final int control)
-    {
-        this.getFXParam (index).changeValue (control);
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void setParameter (final int index, final int value)
-    {
-        this.getFXParam (index).setValue (value);
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void resetParameter (final int index)
-    {
-        this.getFXParam (index).resetValue ();
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void indicateParameter (final int index, final boolean indicate)
-    {
-        this.getFXParam (index).setIndication (indicate);
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void touchParameter (final int index, final boolean indicate)
-    {
-        this.getFXParam (index).touchValue (indicate);
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void previousParameterPage ()
-    {
-        // To support displaying the newly selected device
-        if (this.selectedParameterPage > 0)
-        {
-            this.selectedParameterPage--;
-            this.sender.sendOSC ("/device/param/-", null);
-        }
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void nextParameterPage ()
-    {
-        // To support displaying the newly selected device
-        if (this.selectedParameterPage < this.parameterPageNames.length - 1)
-        {
-            this.selectedParameterPage++;
-            this.sender.sendOSC ("/device/param/+", null);
-        }
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void setSelectedParameterPage (final int index)
-    {
-        this.selectedParameterPage = index;
-        this.selectedParameterBank = this.selectedParameterPage / this.getDeviceBank ().getPageSize ();
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public int getSelectedParameterPage ()
-    {
-        return this.selectedParameterPage;
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public boolean hasPreviousParameterPage ()
-    {
-        return this.selectedParameterPage > 0;
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public boolean hasNextParameterPage ()
-    {
-        return this.selectedParameterPage < this.parameterPageNames.length - 1;
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public String [] getParameterPageNames ()
-    {
-        return this.parameterPageNames;
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public String getSelectedParameterPageName ()
-    {
-        final int sel = this.getSelectedParameterPage ();
-        return sel >= 0 && sel < this.parameterPageNames.length ? this.parameterPageNames[sel] : "";
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void setSelectedParameterPageInBank (final int index)
-    {
-        this.selectedParameterPage = this.selectedParameterBank * 8 + index;
-        this.sender.sendOSC ("/device/param/bank/selected", Integer.valueOf (this.selectedParameterPage + 1));
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void previousParameterPageBank ()
-    {
-        this.sender.sendOSC ("/device/param/bank/-", null);
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void nextParameterPageBank ()
-    {
-        this.sender.sendOSC ("/device/param/bank/+", null);
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
     public void toggleEnabledState ()
     {
         this.sender.sendOSC ("/device/bypass", Integer.valueOf (this.isEnabled ? 1 : 0));
@@ -458,8 +288,7 @@ public class CursorDeviceImpl extends BaseImpl implements ICursorDevice
     {
         // To support displaying the newly selected device
         if (this.selectedDevice > 0)
-            this.name = this.deviceBank.getItem (this.selectedDevice - 1).getName ();
-
+            this.setName (this.deviceBank.getItem (this.selectedDevice - 1).getName ());
         this.sender.sendOSC ("/device/-", null);
     }
 
@@ -470,8 +299,7 @@ public class CursorDeviceImpl extends BaseImpl implements ICursorDevice
     {
         // To support displaying the newly selected device
         if (this.selectedDevice < this.deviceBank.getPageSize () - 1)
-            this.name = this.deviceBank.getItem (this.selectedDevice + 1).getName ();
-
+            this.setName (this.deviceBank.getItem (this.selectedDevice + 1).getName ());
         this.sender.sendOSC ("/device/+", null);
     }
 
@@ -481,14 +309,6 @@ public class CursorDeviceImpl extends BaseImpl implements ICursorDevice
     public boolean hasSelectedDevice ()
     {
         return this.doesExist ();
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public IParameter getFXParam (final int index)
-    {
-        return this.fxparams[index];
     }
 
 
@@ -509,900 +329,6 @@ public class CursorDeviceImpl extends BaseImpl implements ICursorDevice
     }
 
 
-    /** {@inheritDoc} */
-    @Override
-    public IChannel getLayerOrDrumPad (final int index)
-    {
-        return this.hasDrumPads () ? this.getDrumPad (index) : this.getLayer (index);
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public IChannel getSelectedLayerOrDrumPad ()
-    {
-        return this.hasDrumPads () ? this.getSelectedDrumPad () : this.getSelectedLayer ();
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void selectLayerOrDrumPad (final int index)
-    {
-        if (this.hasDrumPads ())
-            this.selectDrumPad (index);
-        else
-            this.selectLayer (index);
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void previousLayerOrDrumPad ()
-    {
-        if (this.hasDrumPads ())
-            this.previousDrumPad ();
-        else
-            this.previousLayer ();
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void nextLayerOrDrumPad ()
-    {
-        if (this.hasDrumPads ())
-            this.nextDrumPad ();
-        else
-            this.nextLayer ();
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void previousLayerOrDrumPadBank ()
-    {
-        if (this.hasDrumPads ())
-            this.previousDrumPadBank ();
-        else
-            this.previousLayerBank ();
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void nextLayerOrDrumPadBank ()
-    {
-        if (this.hasDrumPads ())
-            this.nextDrumPadBank ();
-        else
-            this.nextLayerBank ();
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void enterLayerOrDrumPad (final int index)
-    {
-        if (this.hasDrumPads ())
-            this.enterDrumPad (index);
-        else
-            this.enterLayer (index);
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void selectFirstDeviceInLayerOrDrumPad (final int index)
-    {
-        if (this.hasDrumPads ())
-            this.selectFirstDeviceInDrumPad (index);
-        else
-            this.selectFirstDeviceInLayer (index);
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public boolean canScrollLayersOrDrumPadsUp ()
-    {
-        return this.hasDrumPads () ? this.canScrollDrumPadsUp () : this.canScrollLayersUp ();
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public boolean canScrollLayersOrDrumPadsDown ()
-    {
-        return this.hasDrumPads () ? this.canScrollDrumPadsDown () : this.canScrollLayersDown ();
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void scrollLayersOrDrumPadsPageUp ()
-    {
-        if (this.hasDrumPads ())
-            this.scrollDrumPadsPageUp ();
-        else
-            this.scrollLayersPageUp ();
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void scrollLayersOrDrumPadsPageDown ()
-    {
-        if (this.hasDrumPads ())
-            this.scrollDrumPadsPageDown ();
-        else
-            this.scrollLayersPageDown ();
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void setLayerOrDrumPadColor (final int index, final double red, final double green, final double blue)
-    {
-        if (this.hasDrumPads ())
-            this.setDrumPadColor (index, red, green, blue);
-        else
-            this.setLayerColor (index, red, green, blue);
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public String getLayerOrDrumPadColorEntry (final int index)
-    {
-        return DAWColors.getColorIndex (this.getLayerOrDrumPad (index).getColor ());
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void changeLayerOrDrumPadVolume (final int index, final int control)
-    {
-        if (this.hasDrumPads ())
-            this.changeDrumPadVolume (index, control);
-        else
-            this.changeLayerVolume (index, control);
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void setLayerOrDrumPadVolume (final int index, final int value)
-    {
-        if (this.hasDrumPads ())
-            this.setDrumPadVolume (index, value);
-        else
-            this.setLayerVolume (index, value);
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void resetLayerOrDrumPadVolume (final int index)
-    {
-        if (this.hasDrumPads ())
-            this.resetDrumPadVolume (index);
-        else
-            this.resetLayerVolume (index);
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void touchLayerOrDrumPadVolume (final int index, final boolean isBeingTouched)
-    {
-        if (this.hasDrumPads ())
-            this.touchDrumPadVolume (index, isBeingTouched);
-        else
-            this.touchLayerVolume (index, isBeingTouched);
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void changeLayerOrDrumPadPan (final int index, final int control)
-    {
-        if (this.hasDrumPads ())
-            this.changeDrumPadPan (index, control);
-        else
-            this.changeLayerPan (index, control);
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void setLayerOrDrumPadPan (final int index, final int value)
-    {
-        if (this.hasDrumPads ())
-            this.setDrumPadPan (index, value);
-        else
-            this.setLayerPan (index, value);
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void resetLayerOrDrumPadPan (final int index)
-    {
-        if (this.hasDrumPads ())
-            this.resetDrumPadPan (index);
-        else
-            this.resetLayerPan (index);
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void touchLayerOrDrumPadPan (final int index, final boolean isBeingTouched)
-    {
-        if (this.hasDrumPads ())
-            this.touchDrumPadPan (index, isBeingTouched);
-        else
-            this.touchLayerPan (index, isBeingTouched);
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void changeLayerOrDrumPadSend (final int index, final int send, final int control)
-    {
-        if (this.hasDrumPads ())
-            this.changeDrumPadSend (index, send, control);
-        else
-            this.changeLayerSend (index, send, control);
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void setLayerOrDrumPadSend (final int index, final int send, final int value)
-    {
-        if (this.hasDrumPads ())
-            this.setDrumPadSend (index, send, value);
-        else
-            this.setLayerSend (index, send, value);
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void resetLayerOrDrumPadSend (final int index, final int send)
-    {
-        if (this.hasDrumPads ())
-            this.resetDrumPadSend (index, send);
-        else
-            this.resetLayerSend (index, send);
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void touchLayerOrDrumPadSend (final int index, final int send, final boolean isBeingTouched)
-    {
-        if (this.hasDrumPads ())
-            this.touchDrumPadSend (index, send, isBeingTouched);
-        else
-            this.touchLayerSend (index, send, isBeingTouched);
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void toggleLayerOrDrumPadIsActivated (final int index)
-    {
-        if (this.hasDrumPads ())
-            this.toggleDrumPadIsActivated (index);
-        else
-            this.toggleLayerIsActivated (index);
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void toggleLayerOrDrumPadMute (final int index)
-    {
-        if (this.hasDrumPads ())
-            this.toggleDrumPadMute (index);
-        else
-            this.toggleLayerMute (index);
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void setLayerOrDrumPadMute (final int index, final boolean value)
-    {
-        if (this.hasDrumPads ())
-            this.setDrumPadMute (index, value);
-        else
-            this.setLayerMute (index, value);
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void toggleLayerOrDrumPadSolo (final int index)
-    {
-        if (this.hasDrumPads ())
-            this.toggleDrumPadSolo (index);
-        else
-            this.toggleLayerSolo (index);
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void setLayerOrDrumPadSolo (final int index, final boolean value)
-    {
-        if (this.hasDrumPads ())
-            this.setDrumPadSolo (index, value);
-        else
-            this.setLayerSolo (index, value);
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public boolean hasZeroLayers ()
-    {
-        return true;
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public IChannel getLayer (final int index)
-    {
-        // Not supported
-        return null;
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public IChannel getSelectedLayer ()
-    {
-        // Not supported
-        return null;
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void selectLayer (final int index)
-    {
-        // Not supported
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void previousLayer ()
-    {
-        // Not supported
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void nextLayer ()
-    {
-        // Not supported
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void previousLayerBank ()
-    {
-        // Not supported
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void nextLayerBank ()
-    {
-        // Not supported
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void enterLayer (final int index)
-    {
-        // Not supported
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void selectFirstDeviceInLayer (final int index)
-    {
-        // Not supported
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public boolean canScrollLayersUp ()
-    {
-        // Not supported
-        return false;
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public boolean canScrollLayersDown ()
-    {
-        // Not supported
-        return false;
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void scrollLayersPageUp ()
-    {
-        // Not supported
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void scrollLayersPageDown ()
-    {
-        // Not supported
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void setLayerColor (final int index, final double red, final double green, final double blue)
-    {
-        // Not supported
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void changeLayerVolume (final int index, final int control)
-    {
-        // Not supported
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void setLayerVolume (final int index, final int value)
-    {
-        // Not supported
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void resetLayerVolume (final int index)
-    {
-        // Not supported
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void touchLayerVolume (final int index, final boolean isBeingTouched)
-    {
-        // Not supported
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void changeLayerPan (final int index, final int control)
-    {
-        // Not supported
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void setLayerPan (final int index, final int value)
-    {
-        // Not supported
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void resetLayerPan (final int index)
-    {
-        // Not supported
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void touchLayerPan (final int index, final boolean isBeingTouched)
-    {
-        // Not supported
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void changeLayerSend (final int index, final int sendIndex, final int control)
-    {
-        // Not supported
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void setLayerSend (final int index, final int sendIndex, final int value)
-    {
-        // Not supported
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void resetLayerSend (final int index, final int sendIndex)
-    {
-        // Not supported
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void touchLayerSend (final int index, final int sendIndex, final boolean isBeingTouched)
-    {
-        // Not supported
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void toggleLayerIsActivated (final int index)
-    {
-        // Not supported
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void toggleLayerMute (final int index)
-    {
-        // Not supported
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void setLayerMute (final int index, final boolean value)
-    {
-        // Not supported
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void toggleLayerSolo (final int index)
-    {
-        // Not supported
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void setLayerSolo (final int index, final boolean value)
-    {
-        // Not supported
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void setDrumPadIndication (final boolean enable)
-    {
-        // Not supported
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public IDrumPad getDrumPad (final int index)
-    {
-        return this.drumPadLayers[index];
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public IChannel getSelectedDrumPad ()
-    {
-        // Not supported
-        return null;
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void selectDrumPad (final int index)
-    {
-        // Not supported
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void previousDrumPad ()
-    {
-        // Not supported
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void nextDrumPad ()
-    {
-        // Not supported
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void previousDrumPadBank ()
-    {
-        // Not supported
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void nextDrumPadBank ()
-    {
-        // Not supported
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void enterDrumPad (final int index)
-    {
-        // Not supported
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void selectFirstDeviceInDrumPad (final int index)
-    {
-        // Not supported
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public boolean canScrollDrumPadsUp ()
-    {
-        return this.canScrollLayersUp ();
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public boolean canScrollDrumPadsDown ()
-    {
-        return this.canScrollLayersDown ();
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void scrollDrumPadsPageUp ()
-    {
-        // Not supported
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void scrollDrumPadsPageDown ()
-    {
-        // Not supported
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void scrollDrumPadsUp ()
-    {
-        // Not supported
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void scrollDrumPadsDown ()
-    {
-        // Not supported
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void setDrumPadColor (final int index, final double red, final double green, final double blue)
-    {
-        // Not supported
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void changeDrumPadVolume (final int index, final int control)
-    {
-        // Not supported
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void setDrumPadVolume (final int index, final int value)
-    {
-        // Not supported
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void resetDrumPadVolume (final int index)
-    {
-        // Not supported
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void touchDrumPadVolume (final int index, final boolean isBeingTouched)
-    {
-        // Not supported
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void changeDrumPadPan (final int index, final int control)
-    {
-        // Not supported
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void setDrumPadPan (final int index, final int value)
-    {
-        // Not supported
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void resetDrumPadPan (final int index)
-    {
-        // Not supported
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void touchDrumPadPan (final int index, final boolean isBeingTouched)
-    {
-        // Not supported
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void changeDrumPadSend (final int index, final int sendIndex, final int control)
-    {
-        // Not supported
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void setDrumPadSend (final int index, final int sendIndex, final int value)
-    {
-        // Not supported
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void resetDrumPadSend (final int index, final int sendIndex)
-    {
-        // Not supported
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void touchDrumPadSend (final int index, final int sendIndex, final boolean isBeingTouched)
-    {
-        // Not supported
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void toggleDrumPadIsActivated (final int index)
-    {
-        // Not supported
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void toggleDrumPadMute (final int index)
-    {
-        // Not supported
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void setDrumPadMute (final int index, final boolean value)
-    {
-        // Not supported
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void toggleDrumPadSolo (final int index)
-    {
-        // Not supported
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void setDrumPadSolo (final int index, final boolean value)
-    {
-        // Not supported
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public int getNumLayers ()
-    {
-        return this.numDeviceLayers;
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public int getNumParameters ()
-    {
-        return this.numParams;
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public int getNumDrumPads ()
-    {
-        return this.numDrumPadLayers;
-    }
-
-
     /**
      * Set the position (index) of the device on the track.
      *
@@ -1414,28 +340,6 @@ public class CursorDeviceImpl extends BaseImpl implements ICursorDevice
             return;
         this.position = position;
         this.selectedDevice = position % this.getDeviceBank ().getPageSize ();
-    }
-
-
-    /**
-     * Set if there is an existing device selected.
-     *
-     * @param exists True if exists
-     */
-    public void setExists (final boolean exists)
-    {
-        this.exists = exists;
-    }
-
-
-    /**
-     * Set the name of the device.
-     *
-     * @param name The name
-     */
-    public void setName (final String name)
-    {
-        this.name = name;
     }
 
 
@@ -1492,8 +396,58 @@ public class CursorDeviceImpl extends BaseImpl implements ICursorDevice
     {
         int pageSize = this.deviceBank.getPageSize ();
         final int numOfPages = count / pageSize + (count % pageSize > 0 ? 1 : 0);
-        this.parameterPageNames = new String [numOfPages];
+
+        final String [] parameterPageNames = new String [numOfPages];
         for (int i = 0; i < numOfPages; i++)
-            this.parameterPageNames[i] = "Page " + (i + 1);
+            parameterPageNames[i] = "Page " + (i + 1);
+        this.parameterPageBank.setPageNames (parameterPageNames);
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public IDeviceBank getDeviceBank ()
+    {
+        return this.deviceBank;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public IParameterPageBank getParameterPageBank ()
+    {
+        return this.parameterPageBank;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public IParameterBank getParameterBank ()
+    {
+        return this.parameterBank;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public ILayerBank getLayerBank ()
+    {
+        return this.layerBank;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public IDrumPadBank getDrumPadBank ()
+    {
+        return this.drumPadBank;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public IChannelBank<?> getLayerOrDrumPadBank ()
+    {
+        return this.hasDrumPads () ? this.drumPadBank : this.layerBank;
     }
 }

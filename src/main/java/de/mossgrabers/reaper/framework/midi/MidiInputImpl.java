@@ -6,9 +6,9 @@ package de.mossgrabers.reaper.framework.midi;
 
 import de.mossgrabers.framework.daw.IHost;
 import de.mossgrabers.framework.daw.midi.IMidiInput;
+import de.mossgrabers.framework.daw.midi.INoteInput;
 import de.mossgrabers.framework.daw.midi.MidiShortCallback;
 import de.mossgrabers.framework.daw.midi.MidiSysExCallback;
-import de.mossgrabers.framework.utils.StringUtils;
 import de.mossgrabers.transformator.communication.MessageSender;
 import de.mossgrabers.transformator.midi.MidiConnection;
 
@@ -16,8 +16,8 @@ import javax.sound.midi.MidiDevice;
 import javax.sound.midi.MidiMessage;
 import javax.sound.midi.SysexMessage;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -27,18 +27,17 @@ import java.util.Set;
  */
 class MidiInputImpl implements IMidiInput
 {
-    private final IHost          host;
-    private final MessageSender  sender;
-    private final MidiConnection midiConnection;
-    private final MidiDevice     device;
+    private static final String       VKB_MIDI   = "/vkb_midi/";
 
-    private MidiShortCallback    shortCallback;
-    private MidiSysExCallback    sysexCallback;
+    private final IHost               host;
+    private final MessageSender       sender;
+    private final MidiConnection      midiConnection;
+    private final MidiDevice          device;
+    private final NoteInputImpl       defaultNoteInput;
+    private final List<NoteInputImpl> noteInputs = new ArrayList<> ();
 
-    private Integer []           keyTranslationTable;
-    private Integer []           velocityTranslationTable;
-
-    private Set<String>          filters = new HashSet<> ();
+    private MidiShortCallback         shortCallback;
+    private MidiSysExCallback         sysexCallback;
 
 
     /**
@@ -48,32 +47,41 @@ class MidiInputImpl implements IMidiInput
      * @param sender The OSC sender
      * @param midiConnection The midi connection
      * @param device The midi device
+     * @param filters a filter string formatted as hexadecimal value with `?` as wildcard. For
+     *            example `80????` would match note-off on channel 1 (0). When this parameter is
+     *            {@null}, a standard filter will be used to forward note-related messages on
+     *            channel 1 (0).
      */
-    public MidiInputImpl (final IHost host, final MessageSender sender, final MidiConnection midiConnection, final MidiDevice device)
+    public MidiInputImpl (final IHost host, final MessageSender sender, final MidiConnection midiConnection, final MidiDevice device, final String [] filters)
     {
         this.host = host;
         this.sender = sender;
         this.midiConnection = midiConnection;
         this.device = device;
 
-        this.midiConnection.setInput (this.device, (message, timeStamp) -> this.handleMidiMessage (message));
+        this.midiConnection.setInput (this.device, (message, timeStamp) -> {
+            try
+            {
+                this.handleMidiMessage (message);
+            }
+            catch (final RuntimeException ex)
+            {
+                host.error ("Could not handle midi message.", ex);
+            }
+        });
+
+        this.defaultNoteInput = new NoteInputImpl (filters);
+        this.noteInputs.add (this.defaultNoteInput);
     }
 
 
     /** {@inheritDoc} */
     @Override
-    public void createNoteInput (final String name, final String... filters)
+    public INoteInput createNoteInput (final String name, final String... filters)
     {
-        if (filters.length == 0)
-        {
-            this.filters.add ("90");
-            this.filters.add ("80");
-            return;
-        }
-
-        // Remove questionmarks for faster comparison
-        for (final String filter: filters)
-            this.filters.add (filter.replace ('?', ' ').trim ());
+        final NoteInputImpl noteInput = new NoteInputImpl (filters);
+        this.noteInputs.add (noteInput);
+        return noteInput;
     }
 
 
@@ -97,7 +105,8 @@ class MidiInputImpl implements IMidiInput
     @Override
     public void setKeyTranslationTable (final Integer [] table)
     {
-        this.keyTranslationTable = table;
+        if (this.defaultNoteInput != null)
+            this.defaultNoteInput.setKeyTranslationTable (table);
     }
 
 
@@ -105,7 +114,8 @@ class MidiInputImpl implements IMidiInput
     @Override
     public void setVelocityTranslationTable (final Integer [] table)
     {
-        this.velocityTranslationTable = table;
+        if (this.defaultNoteInput != null)
+            this.defaultNoteInput.setVelocityTranslationTable (table);
     }
 
 
@@ -113,7 +123,7 @@ class MidiInputImpl implements IMidiInput
     @Override
     public void toggleRepeat ()
     {
-        // TODO we need the current track
+        // TODO Reaper We need the current track
         this.sender.sendOSC ("/track/1/noterepeat", Integer.valueOf (1));
     }
 
@@ -129,24 +139,24 @@ class MidiInputImpl implements IMidiInput
         {
             case 0xA0:
             case 0xD0:
-                this.sender.sendOSC ("/vkb_midi/" + channel + "/aftertouch/" + data1, Integer.valueOf (data2));
+                this.sender.sendOSC (VKB_MIDI + channel + "/aftertouch/" + data1, Integer.valueOf (data2));
                 break;
 
             case 0xB0:
-                this.sender.sendOSC ("/vkb_midi/" + channel + "/cc/" + data1, Integer.valueOf (data2));
+                this.sender.sendOSC (VKB_MIDI + channel + "/cc/" + data1, Integer.valueOf (data2));
                 break;
 
             case 0xC0:
-                this.sender.sendOSC ("/vkb_midi/" + channel + "/program", Integer.valueOf (data1));
+                this.sender.sendOSC (VKB_MIDI + channel + "/program", Integer.valueOf (data1));
                 break;
 
             case 0xE0:
-                this.sender.sendOSC ("/vkb_midi/" + channel + "/pitch", Integer.valueOf (data2 * 128 + data1));
+                this.sender.sendOSC (VKB_MIDI + channel + "/pitch", Integer.valueOf (data2 * 128 + data1));
                 break;
 
             case 0x80:
             case 0x90:
-                this.sender.sendOSC ("/vkb_midi/" + channel + "/note/" + data1, Integer.valueOf (data2));
+                this.sender.sendOSC (VKB_MIDI + channel + "/note/" + data1, Integer.valueOf (data2));
                 break;
 
             default:
@@ -172,23 +182,19 @@ class MidiInputImpl implements IMidiInput
         final byte data1 = msg[1];
         final byte data2 = msg[2];
 
-        final String statusHex = StringUtils.toHexStr (Byte.toUnsignedInt ((byte) status));
-        boolean sendThru = this.filters.contains (statusHex);
-        if (!sendThru)
-            sendThru = this.filters.contains (statusHex + StringUtils.toHexStr (data1));
-
-        if (sendThru)
+        for (final NoteInputImpl noteInput: this.noteInputs)
         {
+            if (!noteInput.acceptFilter (status, data1))
+                continue;
             final int code = status & 0xF0;
             switch (code)
             {
                 case 0x80:
                 case 0x90:
-                    final int key = this.translateKey (data1);
+                    final int key = noteInput.translateKey (data1);
                     if (key >= 0)
-                        this.sendRawMidiEvent (status, key, code == 0x80 ? 0 : this.translateVelocity (data2));
+                        this.sendRawMidiEvent (status, key, code == 0x80 ? 0 : noteInput.translateVelocity (data2));
                     break;
-
                 default:
                     this.sendRawMidiEvent (status, data1, data2);
                     break;
@@ -210,17 +216,5 @@ class MidiInputImpl implements IMidiInput
         for (final byte data: sysexMessage.getData ())
             dataString.append (String.format ("%02x", Integer.valueOf (data & 0xFF)));
         this.sysexCallback.handleMidi (dataString.toString ().toUpperCase ());
-    }
-
-
-    private int translateKey (final int key)
-    {
-        return this.keyTranslationTable == null ? key : this.keyTranslationTable[key].intValue ();
-    }
-
-
-    private int translateVelocity (final int velocity)
-    {
-        return this.velocityTranslationTable == null ? velocity : this.velocityTranslationTable[velocity].intValue ();
     }
 }

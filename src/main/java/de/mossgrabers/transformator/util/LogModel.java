@@ -1,6 +1,5 @@
 package de.mossgrabers.transformator.util;
 
-import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
@@ -48,12 +47,13 @@ public class LogModel
      */
     public synchronized void addLogMessage (final String message)
     {
-        Platform.runLater ( () -> {
-            final String string = this.logMessage.get ();
+        SafeRunLater.execute ( () -> {
+            final String text = this.logMessage.get ();
             final StringBuilder sb = new StringBuilder ();
-            if (string != null)
-                sb.append (string);
-            this.logMessage.set (sb.append (message).append ('\n').toString ());
+            if (text != null)
+                sb.append (text);
+            String msg = sb.append (message).append ('\n').toString ();
+            this.logMessage.set (msg);
             System.out.println (message);
         });
     }

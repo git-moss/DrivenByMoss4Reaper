@@ -64,7 +64,7 @@ public abstract class AbstractBankImpl<T extends IItem> extends AbstractBank<T>
     @Override
     public void scrollBackwards ()
     {
-        // TODO We need that for OSC, requires rewrite of bank managment
+        // TODO Reaper We need that for OSC, requires rewrite of bank management
     }
 
 
@@ -72,7 +72,7 @@ public abstract class AbstractBankImpl<T extends IItem> extends AbstractBank<T>
     @Override
     public void scrollForwards ()
     {
-        // TODO We need that for OSC, requires rewrite of bank managment
+        // TODO Reaper We need that for OSC, requires rewrite of bank management
     }
 
 
@@ -100,7 +100,7 @@ public abstract class AbstractBankImpl<T extends IItem> extends AbstractBank<T>
         if (position < 0 || position >= this.getItemCount ())
             return;
 
-        // TODO Possible? -> auf jeden Fall kann man die Page verschieben
+        // TODO Reaper Possible? -> auf jeden Fall kann man die Page verschieben
         // final int pageSize = this.getPageSize ();
         // this.bank.scrollPosition ().set ((position / pageSize) * pageSize);
         // this.bank.scrollIntoView (position);

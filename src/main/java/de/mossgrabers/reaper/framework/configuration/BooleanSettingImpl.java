@@ -6,8 +6,8 @@ package de.mossgrabers.reaper.framework.configuration;
 
 import de.mossgrabers.framework.configuration.IBooleanSetting;
 import de.mossgrabers.transformator.util.PropertiesEx;
+import de.mossgrabers.transformator.util.SafeRunLater;
 
-import javafx.application.Platform;
 import javafx.scene.control.CheckBox;
 
 
@@ -52,7 +52,7 @@ public class BooleanSettingImpl extends BaseSetting<CheckBox, Boolean> implement
         this.value = value;
         this.flush ();
 
-        Platform.runLater ( () -> {
+        SafeRunLater.execute ( () -> {
             final boolean v = this.field.selectedProperty ().get ();
             if (v != this.value)
                 this.field.selectedProperty ().set (this.value);

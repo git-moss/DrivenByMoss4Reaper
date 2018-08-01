@@ -41,6 +41,7 @@ import de.mossgrabers.framework.controller.ISetupFactory;
 import de.mossgrabers.framework.controller.color.ColorManager;
 import de.mossgrabers.framework.daw.ICursorDevice;
 import de.mossgrabers.framework.daw.IHost;
+import de.mossgrabers.framework.daw.IParameterBank;
 import de.mossgrabers.framework.daw.ISendBank;
 import de.mossgrabers.framework.daw.ITrackBank;
 import de.mossgrabers.framework.daw.data.IMasterTrack;
@@ -172,7 +173,7 @@ public class SLControllerSetup extends AbstractControllerSetup<SLControlSurface,
     @Override
     protected void createModel ()
     {
-        this.model = this.factory.createModel (this.colorManager, this.valueChanger, this.scales, 8, 8, 6, 16, 16, true, -1, -1, -1, -1);
+        this.model = this.factory.createModel (this.colorManager, this.valueChanger, this.scales, 8, 8, 6, 16, 16, true, -1, -1, -1, -1, 0);
         this.model.getTrackBank ().addSelectionObserver (this::handleTrackChange);
         this.model.getMasterTrack ().addSelectionObserver ( (index, isSelected) -> {
             if (!isSelected)
@@ -312,6 +313,7 @@ public class SLControllerSetup extends AbstractControllerSetup<SLControlSurface,
         final boolean isVolume = Modes.MODE_VOLUME.equals (mode);
 
         final ICursorDevice cursorDevice = this.model.getCursorDevice ();
+        final IParameterBank parameterBank = cursorDevice.getParameterBank ();
         final ITrack selectedTrack = tb.getSelectedItem ();
         for (int i = 0; i < 8; i++)
         {
@@ -331,7 +333,7 @@ public class SLControllerSetup extends AbstractControllerSetup<SLControlSurface,
                 fxTrack.setPanIndication (isEffect);
             }
 
-            cursorDevice.indicateParameter (i, true);
+            parameterBank.getItem (i).setIndication (true);
         }
     }
 

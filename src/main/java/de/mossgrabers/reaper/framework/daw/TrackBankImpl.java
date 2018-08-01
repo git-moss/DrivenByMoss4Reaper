@@ -6,6 +6,7 @@ package de.mossgrabers.reaper.framework.daw;
 
 import de.mossgrabers.framework.controller.IValueChanger;
 import de.mossgrabers.framework.daw.IHost;
+import de.mossgrabers.framework.daw.data.ISend;
 import de.mossgrabers.transformator.communication.MessageSender;
 
 
@@ -64,7 +65,8 @@ public class TrackBankImpl extends AbstractTrackBankImpl
     {
         for (int i = 0; i < this.getPageSize (); i++)
         {
-            if (this.getItem (i).getSendBank ().getItem (sendIndex).doesExist ())
+            final ISend send = this.getItem (i).getSendBank ().getItem (sendIndex);
+            if (send.doesExist ())
                 return true;
         }
         return false;

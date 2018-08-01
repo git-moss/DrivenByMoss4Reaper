@@ -6,8 +6,8 @@ package de.mossgrabers.reaper.framework.configuration;
 
 import de.mossgrabers.framework.configuration.IStringSetting;
 import de.mossgrabers.transformator.util.PropertiesEx;
+import de.mossgrabers.transformator.util.SafeRunLater;
 
-import javafx.application.Platform;
 import javafx.scene.control.TextField;
 
 
@@ -44,7 +44,7 @@ public class StringSettingImpl extends BaseSetting<TextField, String> implements
         this.value = value;
         this.flush ();
 
-        Platform.runLater ( () -> {
+        SafeRunLater.execute ( () -> {
             final String v = this.field.textProperty ().get ();
             if (v == null || !v.equals (this.value))
                 this.field.textProperty ().set (this.value);

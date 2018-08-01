@@ -10,7 +10,8 @@ import de.mossgrabers.controller.push.mode.Modes;
 import de.mossgrabers.controller.push.mode.device.DeviceBrowserMode;
 import de.mossgrabers.controller.push.mode.device.DeviceParamsMode;
 import de.mossgrabers.framework.daw.IBrowser;
-import de.mossgrabers.framework.daw.ICursorDevice;
+import de.mossgrabers.framework.daw.IChannelBank;
+import de.mossgrabers.framework.daw.IMarkerBank;
 import de.mossgrabers.framework.daw.IModel;
 import de.mossgrabers.framework.daw.ISceneBank;
 import de.mossgrabers.framework.daw.ITrackBank;
@@ -65,11 +66,19 @@ public class PushCursorCommand extends de.mossgrabers.framework.command.trigger.
             return;
         }
 
+        if (modeManager.isActiveOrTempMode (Modes.MODE_MARKERS))
+        {
+            final IMarkerBank markerBank = this.model.getMarkerBank ();
+            this.canScrollLeft = markerBank.canScrollBackwards ();
+            this.canScrollRight = markerBank.canScrollForwards ();
+            return;
+        }
+
         if (Modes.isLayerMode (modeManager.getActiveOrTempModeId ()))
         {
-            final ICursorDevice cd = this.model.getCursorDevice ();
-            this.canScrollLeft = cd.canScrollLayersOrDrumPadsUp ();
-            this.canScrollRight = cd.canScrollLayersOrDrumPadsDown ();
+            final IChannelBank<?> layerBank = this.model.getCursorDevice ().getLayerOrDrumPadBank ();
+            this.canScrollLeft = layerBank.canScrollBackwards ();
+            this.canScrollRight = layerBank.canScrollForwards ();
             return;
         }
 
@@ -102,12 +111,18 @@ public class PushCursorCommand extends de.mossgrabers.framework.command.trigger.
             return;
         }
 
+        if (modeManager.isActiveOrTempMode (Modes.MODE_MARKERS))
+        {
+            this.model.getMarkerBank ().scrollPageBackwards ();
+            return;
+        }
+
         if (Modes.isLayerMode (modeManager.getActiveOrTempModeId ()))
         {
             if (this.surface.isShiftPressed ())
-                this.model.getCursorDevice ().previousLayerOrDrumPadBank ();
+                this.model.getCursorDevice ().getLayerOrDrumPadBank ().selectPreviousPage ();
             else
-                this.model.getCursorDevice ().previousLayerOrDrumPad ();
+                this.model.getCursorDevice ().getLayerOrDrumPadBank ().selectPreviousItem ();
             return;
         }
 
@@ -139,12 +154,18 @@ public class PushCursorCommand extends de.mossgrabers.framework.command.trigger.
             return;
         }
 
+        if (modeManager.isActiveOrTempMode (Modes.MODE_MARKERS))
+        {
+            this.model.getMarkerBank ().scrollPageForwards ();
+            return;
+        }
+
         if (Modes.isLayerMode (modeManager.getActiveOrTempModeId ()))
         {
             if (this.surface.isShiftPressed ())
-                this.model.getCursorDevice ().nextLayerOrDrumPadBank ();
+                this.model.getCursorDevice ().getLayerOrDrumPadBank ().selectNextPage ();
             else
-                this.model.getCursorDevice ().nextLayerOrDrumPad ();
+                this.model.getCursorDevice ().getLayerOrDrumPadBank ().selectNextItem ();
             return;
         }
 

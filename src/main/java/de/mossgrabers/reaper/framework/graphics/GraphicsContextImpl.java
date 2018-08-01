@@ -10,6 +10,7 @@ import de.mossgrabers.framework.graphics.IGraphicsContext;
 import de.mossgrabers.framework.graphics.IImage;
 import de.mossgrabers.transformator.util.FontCache;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FontMetrics;
@@ -17,6 +18,7 @@ import java.awt.GradientPaint;
 import java.awt.Graphics2D;
 import java.awt.Paint;
 import java.awt.RenderingHints;
+import java.awt.Stroke;
 import java.awt.font.LineMetrics;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
@@ -66,10 +68,21 @@ public class GraphicsContextImpl implements IGraphicsContext
 
     /** {@inheritDoc} */
     @Override
-    public void strokeRectangle (final double x, final double y, final double width, final double height, final ColorEx color)
+    public void strokeRectangle (final double left, final double top, final double width, final double height, final ColorEx color)
     {
+        this.strokeRectangle (left, top, width, height, color, 1);
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void strokeRectangle (final double left, final double top, final double width, final double height, final ColorEx color, final double lineWidth)
+    {
+        final Stroke oldStroke = this.gc.getStroke ();
         this.setColor (color);
-        this.gc.drawRect ((int) x, (int) y, (int) width, (int) height);
+        this.gc.setStroke (new BasicStroke ((float) lineWidth));
+        this.gc.drawRect ((int) left, (int) top, (int) width, (int) height);
+        this.gc.setStroke (oldStroke);
     }
 
 
@@ -112,6 +125,16 @@ public class GraphicsContextImpl implements IGraphicsContext
             (int) y2,
             (int) y3
         }, 3);
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void fillCircle (double x, double y, double radius, ColorEx fillColor)
+    {
+        this.setColor (fillColor);
+        final int size = (int) (2 * radius);
+        this.gc.fillOval ((int) (x - radius), (int) (y - radius), size, size);
     }
 
 

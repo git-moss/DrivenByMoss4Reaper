@@ -45,6 +45,7 @@ import de.mossgrabers.controller.push.mode.FixedMode;
 import de.mossgrabers.controller.push.mode.FrameMode;
 import de.mossgrabers.controller.push.mode.GrooveMode;
 import de.mossgrabers.controller.push.mode.InfoMode;
+import de.mossgrabers.controller.push.mode.MarkersMode;
 import de.mossgrabers.controller.push.mode.Modes;
 import de.mossgrabers.controller.push.mode.NoteMode;
 import de.mossgrabers.controller.push.mode.NoteViewSelectMode;
@@ -117,6 +118,7 @@ import de.mossgrabers.framework.controller.color.ColorManager;
 import de.mossgrabers.framework.daw.ICursorClip;
 import de.mossgrabers.framework.daw.ICursorDevice;
 import de.mossgrabers.framework.daw.IHost;
+import de.mossgrabers.framework.daw.IParameterBank;
 import de.mossgrabers.framework.daw.ISendBank;
 import de.mossgrabers.framework.daw.ITrackBank;
 import de.mossgrabers.framework.daw.ITransport;
@@ -184,7 +186,7 @@ public class PushControllerSetup extends AbstractControllerSetup<PushControlSurf
     @Override
     protected void createModel ()
     {
-        this.model = this.factory.createModel (this.colorManager, this.valueChanger, this.scales, 8, 8, 8, this.isPush2 ? 48 : 16, this.isPush2 ? 48 : 16, false, -1, -1, -1, -1);
+        this.model = this.factory.createModel (this.colorManager, this.valueChanger, this.scales, 8, 8, 8, this.isPush2 ? 48 : 16, this.isPush2 ? 48 : 16, false, -1, -1, -1, -1, 8);
 
         final ITrackBank trackBank = this.model.getTrackBank ();
         trackBank.setIndication (true);
@@ -262,6 +264,7 @@ public class PushControllerSetup extends AbstractControllerSetup<PushControlSurf
         modeManager.registerMode (Modes.MODE_GROOVE, new GrooveMode (surface, this.model));
         modeManager.registerMode (Modes.MODE_VIEW_SELECT, new NoteViewSelectMode (surface, this.model));
         modeManager.registerMode (Modes.MODE_SESSION, new SessionMode (surface, this.model));
+        modeManager.registerMode (Modes.MODE_MARKERS, new MarkersMode (surface, this.model));
 
         modeManager.registerMode (Modes.MODE_AUTOMATION, new AutomationMode (surface, this.model));
         modeManager.registerMode (Modes.MODE_TRANSPORT, new TransportMode (surface, this.model));
@@ -561,7 +564,7 @@ public class PushControllerSetup extends AbstractControllerSetup<PushControlSurf
             if (modeManager.isActiveOrTempMode (Modes.MODE_DEVICE_LAYER))
             {
                 final ICursorDevice cd = this.model.getCursorDevice ();
-                final IChannel layer = cd.getSelectedLayerOrDrumPad ();
+                final IChannel layer = cd.getLayerOrDrumPadBank ().getSelectedItem ();
                 surface.updateButton (PushControlSurface.PUSH_BUTTON_MUTE, layer != null && layer.isMute () ? PushColors.PUSH_BUTTON_STATE_MUTE_HI : PushColors.PUSH_BUTTON_STATE_MUTE_ON);
                 surface.updateButton (PushControlSurface.PUSH_BUTTON_SOLO, layer != null && layer.isSolo () ? PushColors.PUSH_BUTTON_STATE_SOLO_HI : PushColors.PUSH_BUTTON_STATE_SOLO_ON);
             }
@@ -650,6 +653,7 @@ public class PushControllerSetup extends AbstractControllerSetup<PushControlSurf
         final boolean isEffect = this.model.isEffectTrackBankActive ();
         final boolean isPan = Modes.MODE_PAN.equals (mode);
         final boolean isVolume = Modes.MODE_VOLUME.equals (mode);
+        final boolean isDevice = Modes.isDeviceMode (mode) || Modes.isLayerMode (mode);
 
         tb.setIndication (!isEffect && isSession);
         if (tbe != null)
@@ -657,6 +661,7 @@ public class PushControllerSetup extends AbstractControllerSetup<PushControlSurf
 
         final ICursorDevice cursorDevice = this.model.getCursorDevice ();
         final ITrack selectedTrack = tb.getSelectedItem ();
+        final IParameterBank parameterBank = cursorDevice.getParameterBank ();
         for (int i = 0; i < tb.getPageSize (); i++)
         {
             final boolean hasTrackSel = selectedTrack != null && selectedTrack.getIndex () == i && Modes.MODE_TRACK.equals (mode);
@@ -675,7 +680,7 @@ public class PushControllerSetup extends AbstractControllerSetup<PushControlSurf
                 fxTrack.setPanIndication (isEffect && isPan);
             }
 
-            cursorDevice.indicateParameter (i, true);
+            parameterBank.getItem (i).setIndication (isDevice);
         }
     }
 

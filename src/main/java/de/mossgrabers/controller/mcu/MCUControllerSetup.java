@@ -28,6 +28,7 @@ import de.mossgrabers.controller.mcu.command.trigger.ZoomCommand;
 import de.mossgrabers.controller.mcu.controller.MCUControlSurface;
 import de.mossgrabers.controller.mcu.controller.MCUDisplay;
 import de.mossgrabers.controller.mcu.controller.MCUSegmentDisplay;
+import de.mossgrabers.controller.mcu.mode.MarkerMode;
 import de.mossgrabers.controller.mcu.mode.Modes;
 import de.mossgrabers.controller.mcu.mode.device.DeviceBrowserMode;
 import de.mossgrabers.controller.mcu.mode.device.DeviceParamsMode;
@@ -72,6 +73,7 @@ import de.mossgrabers.framework.controller.color.ColorManager;
 import de.mossgrabers.framework.daw.IApplication;
 import de.mossgrabers.framework.daw.ICursorDevice;
 import de.mossgrabers.framework.daw.IHost;
+import de.mossgrabers.framework.daw.IParameterBank;
 import de.mossgrabers.framework.daw.ISendBank;
 import de.mossgrabers.framework.daw.ITrackBank;
 import de.mossgrabers.framework.daw.ITransport;
@@ -193,7 +195,9 @@ public class MCUControllerSetup extends AbstractControllerSetup<MCUControlSurfac
     @Override
     protected void createModel ()
     {
-        this.model = this.factory.createModel (this.colorManager, this.valueChanger, this.scales, 8 * this.numMCUDevices, 8, 8, 8, 8, true, 8 * this.numMCUDevices, -1, 0, 0);
+        int adjustedNum = 8 * this.numMCUDevices;
+
+        this.model = this.factory.createModel (this.colorManager, this.valueChanger, this.scales, adjustedNum, 8, 8, 8, 8, true, adjustedNum, -1, 0, 0, adjustedNum);
 
         final ITrackBank trackBank = this.model.getTrackBank ();
         trackBank.setIndication (true);
@@ -221,8 +225,8 @@ public class MCUControllerSetup extends AbstractControllerSetup<MCUControlSurfac
             final IMidiInput input = midiAccess.createInput (i, null);
             final MCUControlSurface surface = new MCUControlSurface (this.surfaces, this.model.getHost (), this.colorManager, this.configuration, output, input, 8 * (this.numMCUDevices - i - 1), i == 0);
             this.surfaces.add (surface);
-            surface.setDisplay (new MCUDisplay (this.model.getHost (), output, true, false));
-            surface.setSecondDisplay (new MCUDisplay (this.model.getHost (), output, false, i == 0));
+            surface.setDisplay (new MCUDisplay (this.host, output, true, false));
+            surface.setSecondDisplay (new MCUDisplay (this.host, output, false, i == 0));
             surface.setSegmentDisplay (new MCUSegmentDisplay (output));
             surface.getModeManager ().setDefaultMode (Modes.MODE_VOLUME);
         }
@@ -244,11 +248,11 @@ public class MCUControllerSetup extends AbstractControllerSetup<MCUControlSurfac
             final SendMode modeSend = new SendMode (surface, this.model);
             for (int i = 0; i < 8; i++)
                 modeManager.registerMode (Integer.valueOf (Modes.MODE_SEND1.intValue () + i), modeSend);
+            modeManager.registerMode (Modes.MODE_MASTER, new MasterMode (surface, this.model, false));
 
             modeManager.registerMode (Modes.MODE_DEVICE_PARAMS, new DeviceParamsMode (surface, this.model));
             modeManager.registerMode (Modes.MODE_BROWSER, new DeviceBrowserMode (surface, this.model));
-
-            modeManager.registerMode (Modes.MODE_MASTER, new MasterMode (surface, this.model, false));
+            modeManager.registerMode (Modes.MODE_MARKER, new MarkerMode (surface, this.model));
         }
     }
 
@@ -715,7 +719,7 @@ public class MCUControllerSetup extends AbstractControllerSetup<MCUControlSurfac
             else if (modeManager.isActiveOrTempMode (Modes.MODE_SEND8))
                 value = track.getSendBank ().getItem (7).getValue ();
             else if (modeManager.isActiveOrTempMode (Modes.MODE_DEVICE_PARAMS))
-                value = this.model.getCursorDevice ().getFXParam (channel).getValue ();
+                value = this.model.getCursorDevice ().getParameterBank ().getItem (channel).getValue ();
         }
 
         if (value != this.faderValues[channel])
@@ -771,8 +775,9 @@ public class MCUControllerSetup extends AbstractControllerSetup<MCUControlSurfac
             }
         }
 
-        for (int i = 0; i < cursorDevice.getNumParameters (); i++)
-            cursorDevice.indicateParameter (i, isDevice);
+        final IParameterBank parameterBank = cursorDevice.getParameterBank ();
+        for (int i = 0; i < parameterBank.getPageSize (); i++)
+            parameterBank.getItem (i).setIndication (isDevice);
     }
 
 

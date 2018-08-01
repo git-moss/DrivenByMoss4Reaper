@@ -375,17 +375,19 @@ public class MessageParser
     private void parseSendValue (final ISend send, final Queue<String> parts, final String value)
     {
         final String command = parts.poll ();
+        final SendImpl sendImpl = (SendImpl) send;
         switch (command)
         {
             case "name":
-                ((SendImpl) send).setName (value);
+                sendImpl.setName (value);
+                sendImpl.setExists (value != null && !value.isEmpty ());
                 break;
 
             case "volume":
                 if (parts.isEmpty ())
-                    ((SendImpl) send).setInternalValue (this.valueChanger.fromNormalizedValue (Double.parseDouble (value)));
+                    sendImpl.setInternalValue (this.valueChanger.fromNormalizedValue (Double.parseDouble (value)));
                 else if ("str".equals (parts.poll ()))
-                    ((SendImpl) send).setValueStr (value);
+                    sendImpl.setValueStr (value);
                 break;
 
             default:
@@ -454,7 +456,7 @@ public class MessageParser
                 try
                 {
                     final int paramNo = Integer.parseInt (cmd) - 1;
-                    this.parseDeviceParamValue (this.cursorDevice.getFXParam (paramNo), parts, value);
+                    this.parseDeviceParamValue (this.cursorDevice.getParameterBank ().getItem (paramNo), parts, value);
                 }
                 catch (final NumberFormatException ex)
                 {
@@ -472,7 +474,7 @@ public class MessageParser
                             }
                             final String bankCmd = parts.poll ();
                             if ("selected".equals (bankCmd))
-                                this.cursorDevice.setSelectedParameterPage (Integer.parseInt (value) - 1);
+                                this.cursorDevice.getParameterPageBank ().selectPage (Integer.parseInt (value) - 1);
                             else
                                 this.host.error ("Unhandled Device Param Bank parameter: " + cmd);
                             break;
@@ -499,6 +501,7 @@ public class MessageParser
         {
             case "name":
                 ((ParameterImpl) param).setName (value);
+                ((ParameterImpl) param).setExists (value != null && !value.isEmpty ());
                 break;
 
             case "value":

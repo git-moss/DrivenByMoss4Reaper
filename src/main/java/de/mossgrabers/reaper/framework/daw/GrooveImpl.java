@@ -28,6 +28,7 @@ public class GrooveImpl extends BaseImpl implements IGroove
 
     /**
      * Constructor
+     * 
      * @param host The DAW host
      * @param sender The OSC sender
      * @param valueChanger The value changer
@@ -68,7 +69,7 @@ public class GrooveImpl extends BaseImpl implements IGroove
      */
     public void setParameter (final int index, final int value)
     {
-        // TODO Is this necessary? Needs to be moved to setValue?!
+        // TODO Reaper - Is this necessary? Needs to be moved to setValue?!
 
         switch (index)
         {

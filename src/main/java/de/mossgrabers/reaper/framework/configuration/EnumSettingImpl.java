@@ -6,8 +6,8 @@ package de.mossgrabers.reaper.framework.configuration;
 
 import de.mossgrabers.framework.configuration.IEnumSetting;
 import de.mossgrabers.transformator.util.PropertiesEx;
+import de.mossgrabers.transformator.util.SafeRunLater;
 
-import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.scene.control.ComboBox;
@@ -52,7 +52,7 @@ public class EnumSettingImpl extends BaseSetting<ComboBox<String>, String> imple
         this.value = value;
         this.flush ();
 
-        Platform.runLater ( () -> {
+        SafeRunLater.execute ( () -> {
             final SingleSelectionModel<String> selectionModel = this.field.getSelectionModel ();
             final ReadOnlyObjectProperty<String> selectedItemProperty = selectionModel.selectedItemProperty ();
             if (this.value != null && !this.value.equals (selectedItemProperty.get ()))

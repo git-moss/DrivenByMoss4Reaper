@@ -388,8 +388,8 @@ public class TrackImpl extends ChannelImpl implements ITrack
 
     /** {@inheritDoc} */
     @Override
-    public void addNoteObserver (NoteObserver observer)
+    public void addNoteObserver (final NoteObserver observer)
     {
-        // TODO Auto-generated method stub
+        // Monitoring played notes from the DAW is not supported
     }
 }

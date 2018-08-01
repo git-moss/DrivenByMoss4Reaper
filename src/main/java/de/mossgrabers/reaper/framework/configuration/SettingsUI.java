@@ -161,7 +161,16 @@ public class SettingsUI implements ISettingsUI
      */
     public void flush ()
     {
-        this.settings.forEach (s -> s.flush ());
+        this.settings.forEach (s -> {
+            try
+            {
+                s.flush ();
+            }
+            catch (final RuntimeException ex)
+            {
+                ex.printStackTrace ();
+            }
+        });
     }
 
 

@@ -45,8 +45,9 @@ public class ModelImpl extends AbstractModel
      * @param numDevicesInBank The number of devices to monitor
      * @param numDeviceLayers The number of device layers to monitor
      * @param numDrumPadLayers The number of drum pad layers to monitor
+     * @param numMarkers The number of markers
      */
-    public ModelImpl (final IniFiles iniFiles, final MessageSender sender, final IHost host, final ColorManager colorManager, final IValueChanger valueChanger, final Scales scales, final int numTracks, final int numScenes, final int numSends, final int numFilterColumnEntries, final int numResults, final boolean hasFlatTrackList, final int numParams, final int numDevicesInBank, final int numDeviceLayers, final int numDrumPadLayers)
+    public ModelImpl (final IniFiles iniFiles, final MessageSender sender, final IHost host, final ColorManager colorManager, final IValueChanger valueChanger, final Scales scales, final int numTracks, final int numScenes, final int numSends, final int numFilterColumnEntries, final int numResults, final boolean hasFlatTrackList, final int numParams, final int numDevicesInBank, final int numDeviceLayers, final int numDrumPadLayers, final int numMarkers)
     {
         super (colorManager, valueChanger, scales, numTracks, numScenes, numSends, numFilterColumnEntries, numResults, hasFlatTrackList, numParams, numDevicesInBank, numDeviceLayers, numDrumPadLayers);
 
@@ -71,6 +72,7 @@ public class ModelImpl extends AbstractModel
         this.transport = new TransportImpl (host, sender, valueChanger, this.trackBank, iniFiles);
 
         this.groove = new GrooveImpl (host, sender, valueChanger, iniFiles);
+        this.markerBank = new MarkerBankImpl (host, sender, valueChanger, numMarkers);
 
         this.currentTrackBank = this.trackBank;
     }
@@ -81,7 +83,7 @@ public class ModelImpl extends AbstractModel
     public ITrackBank createSceneViewTrackBank (final int numTracks, final int numScenes)
     {
         // Not supported
-        return null;
+        throw new UnsupportedOperationException ("Model.createSceneViewTrackBank not supported!");
     }
 
 

@@ -211,7 +211,14 @@ public class IniFiles
         String value;
         synchronized (this.iniReaperMain)
         {
-            value = this.iniReaperMain.get (section, option);
+            try
+            {
+                value = this.iniReaperMain.get (section, option);
+            }
+            catch (final com.nikhaldimann.inieditor.IniEditor.NoSuchSectionException ex)
+            {
+                return defaultValue;
+            }
         }
         if (value == null)
             return defaultValue;
@@ -237,6 +244,8 @@ public class IniFiles
     {
         synchronized (this.iniReaperMain)
         {
+            if (!this.iniReaperMain.hasSection (section))
+                this.iniReaperMain.addSection (section);
             this.iniReaperMain.set (section, option, Integer.toString (value));
         }
     }
@@ -255,7 +264,14 @@ public class IniFiles
         String value;
         synchronized (this.iniReaperMain)
         {
-            value = this.iniReaperMain.get (section, option);
+            try
+            {
+                value = this.iniReaperMain.get (section, option);
+            }
+            catch (final com.nikhaldimann.inieditor.IniEditor.NoSuchSectionException ex)
+            {
+                return defaultValue;
+            }
         }
         if (value == null)
             return defaultValue;
@@ -281,6 +297,8 @@ public class IniFiles
     {
         synchronized (this.iniReaperMain)
         {
+            if (!this.iniReaperMain.hasSection (section))
+                this.iniReaperMain.addSection (section);
             this.iniReaperMain.set (section, option, Double.toString (value));
         }
     }

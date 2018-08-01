@@ -52,6 +52,8 @@ public class SendImpl extends ParameterImpl implements ISend
         if (!this.doesExist ())
             return;
         this.value = (int) value;
-        this.sender.sendOSC ("/track/" + (this.trackIndex + 1) + "/send/" + (this.getIndex () + 1) + "/volume", Double.valueOf (this.valueChanger.toNormalizedValue (this.getValue ())));
+        final Double doubleValue = Double.valueOf (this.valueChanger.toNormalizedValue (this.getValue ()));
+        final StringBuilder command = new StringBuilder ("/track/").append (this.trackIndex + 1).append ("/send/").append (this.getIndex () + 1).append ("/volume");
+        this.sender.sendOSC (command.toString (), doubleValue);
     }
 }

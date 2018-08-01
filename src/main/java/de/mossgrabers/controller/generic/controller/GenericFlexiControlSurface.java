@@ -499,7 +499,7 @@ public class GenericFlexiControlSurface extends AbstractControlSurface<GenericFl
             case DEVICE_SET_PARAMETER_6:
             case DEVICE_SET_PARAMETER_7:
             case DEVICE_SET_PARAMETER_8:
-                return this.model.getCursorDevice ().getFXParam (command.ordinal () - FlexiCommand.DEVICE_SET_PARAMETER_1.ordinal ()).getValue ();
+                return this.model.getCursorDevice ().getParameterBank ().getItem (command.ordinal () - FlexiCommand.DEVICE_SET_PARAMETER_1.ordinal ()).getValue ();
 
             case BROWSER_BROWSE_PRESETS:
             case BROWSER_INSERT_DEVICE_BEFORE_CURRENT:
@@ -556,6 +556,18 @@ public class GenericFlexiControlSurface extends AbstractControlSurface<GenericFl
                 return selectedSlot3 != null && selectedSlot3.isRecording () ? 127 : 0;
 
             case CLIP_NEW:
+                return -1;
+
+            case MARKER_1_LAUNCH_MARKER:
+            case MARKER_2_LAUNCH_MARKER:
+            case MARKER_3_LAUNCH_MARKER:
+            case MARKER_4_LAUNCH_MARKER:
+            case MARKER_5_LAUNCH_MARKER:
+            case MARKER_6_LAUNCH_MARKER:
+            case MARKER_7_LAUNCH_MARKER:
+            case MARKER_8_LAUNCH_MARKER:
+            case MARKER_SELECT_PREVIOUS_BANK:
+            case MARKER_SELECT_NEXT_BANK:
                 return -1;
 
             default:
@@ -1234,12 +1246,12 @@ public class GenericFlexiControlSurface extends AbstractControlSurface<GenericFl
             // Device: Select Previous Parameter Bank
             case DEVICE_SELECT_PREVIOUS_PARAMETER_BANK:
                 if (value > 0)
-                    this.model.getCursorDevice ().previousParameterPage ();
+                    this.model.getCursorDevice ().getParameterBank ().scrollPageBackwards ();
                 break;
             // Device: Select Next Parameter Bank
             case DEVICE_SELECT_NEXT_PARAMETER_BANK:
                 if (value > 0)
-                    this.model.getCursorDevice ().nextParameterPage ();
+                    this.model.getCursorDevice ().getParameterBank ().scrollPageForwards ();
                 break;
 
             case DEVICE_SCROLL_PARAMETER_BANKS:
@@ -1427,6 +1439,26 @@ public class GenericFlexiControlSurface extends AbstractControlSurface<GenericFl
                 if (value > 0)
                     new NewCommand<> (this.model, this).executeNormal (ButtonEvent.DOWN);
                 break;
+
+            case MARKER_1_LAUNCH_MARKER:
+            case MARKER_2_LAUNCH_MARKER:
+            case MARKER_3_LAUNCH_MARKER:
+            case MARKER_4_LAUNCH_MARKER:
+            case MARKER_5_LAUNCH_MARKER:
+            case MARKER_6_LAUNCH_MARKER:
+            case MARKER_7_LAUNCH_MARKER:
+            case MARKER_8_LAUNCH_MARKER:
+                final int index = command.ordinal () - FlexiCommand.MARKER_1_LAUNCH_MARKER.ordinal ();
+                this.model.getMarkerBank ().getItem (index).launch (true);
+                break;
+
+            case MARKER_SELECT_PREVIOUS_BANK:
+                this.model.getMarkerBank ().selectPreviousPage ();
+                break;
+
+            case MARKER_SELECT_NEXT_BANK:
+                this.model.getMarkerBank ().selectNextPage ();
+                break;
         }
 
         this.host.scheduleTask ( () -> {
@@ -1439,7 +1471,7 @@ public class GenericFlexiControlSurface extends AbstractControlSurface<GenericFl
 
     private void handleParameter (final int knobMode, final int index, final int value)
     {
-        final IParameter fxParam = this.model.getCursorDevice ().getFXParam (index);
+        final IParameter fxParam = this.model.getCursorDevice ().getParameterBank ().getItem (index);
         if (knobMode == KNOB_MODE_ABSOLUTE)
             fxParam.setValue (value);
         else
@@ -1630,9 +1662,9 @@ public class GenericFlexiControlSurface extends AbstractControlSurface<GenericFl
             return;
 
         if (this.getRelativeSpeed (knobMode, value) > 0)
-            this.model.getCursorDevice ().nextParameterPage ();
+            this.model.getCursorDevice ().getParameterBank ().scrollPageForwards ();
         else
-            this.model.getCursorDevice ().previousParameterPage ();
+            this.model.getCursorDevice ().getParameterBank ().scrollPageBackwards ();
     }
 
 

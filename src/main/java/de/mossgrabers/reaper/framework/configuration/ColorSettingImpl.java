@@ -7,8 +7,8 @@ package de.mossgrabers.reaper.framework.configuration;
 import de.mossgrabers.framework.configuration.IColorSetting;
 import de.mossgrabers.framework.controller.color.ColorEx;
 import de.mossgrabers.transformator.util.PropertiesEx;
+import de.mossgrabers.transformator.util.SafeRunLater;
 
-import javafx.application.Platform;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.paint.Color;
 
@@ -67,7 +67,7 @@ public class ColorSettingImpl extends BaseSetting<ColorPicker, double []> implem
         this.value = value;
         this.flush ();
 
-        Platform.runLater ( () -> {
+        SafeRunLater.execute ( () -> {
             final Color c = this.field.getValue ();
             if (this.value.getRed () != c.getRed () || this.value.getGreen () != c.getGreen () || this.value.getBlue () != c.getBlue ())
                 this.field.setValue (Color.color (this.value.getRed (), this.value.getGreen (), this.value.getBlue ()));

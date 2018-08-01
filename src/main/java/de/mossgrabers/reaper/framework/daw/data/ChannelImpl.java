@@ -10,6 +10,7 @@ import de.mossgrabers.framework.daw.ISendBank;
 import de.mossgrabers.framework.daw.data.IChannel;
 import de.mossgrabers.framework.daw.resource.ChannelType;
 import de.mossgrabers.reaper.framework.Actions;
+import de.mossgrabers.reaper.framework.daw.SendBankImpl;
 import de.mossgrabers.transformator.communication.MessageSender;
 
 
@@ -33,7 +34,8 @@ public class ChannelImpl extends ItemImpl implements IChannel
     private boolean         isSolo;
     private boolean         isActivated        = true;
     private double []       color;
-    private ISendBank       sendBank;
+
+    private final ISendBank sendBank;
 
     private boolean         isVolumeBeingTouched;
     private int             lastReceivedVolume = -1;
@@ -56,6 +58,16 @@ public class ChannelImpl extends ItemImpl implements IChannel
         this.valueChanger = valueChanger;
 
         this.setName ("Track " + (index + 1));
+
+        this.sendBank = new SendBankImpl (host, sender, valueChanger, index, numSends);
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void enter ()
+    {
+        // Not supported
     }
 
 

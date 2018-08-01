@@ -11,9 +11,14 @@ import de.mossgrabers.framework.daw.IArranger;
 import de.mossgrabers.framework.daw.IBrowser;
 import de.mossgrabers.framework.daw.ICursorDevice;
 import de.mossgrabers.framework.daw.IDeviceBank;
+import de.mossgrabers.framework.daw.IDrumPadBank;
 import de.mossgrabers.framework.daw.IHost;
+import de.mossgrabers.framework.daw.ILayerBank;
+import de.mossgrabers.framework.daw.IMarkerBank;
 import de.mossgrabers.framework.daw.IMixer;
 import de.mossgrabers.framework.daw.IModel;
+import de.mossgrabers.framework.daw.IParameterBank;
+import de.mossgrabers.framework.daw.IParameterPageBank;
 import de.mossgrabers.framework.daw.ISceneBank;
 import de.mossgrabers.framework.daw.ISendBank;
 import de.mossgrabers.framework.daw.ISlotBank;
@@ -23,6 +28,7 @@ import de.mossgrabers.framework.daw.data.EmptyTrackData;
 import de.mossgrabers.framework.daw.data.IBrowserColumn;
 import de.mossgrabers.framework.daw.data.IBrowserColumnItem;
 import de.mossgrabers.framework.daw.data.IChannel;
+import de.mossgrabers.framework.daw.data.IMarker;
 import de.mossgrabers.framework.daw.data.IParameter;
 import de.mossgrabers.framework.daw.data.IScene;
 import de.mossgrabers.framework.daw.data.ISend;
@@ -120,6 +126,13 @@ public class OSCWriter extends AbstractOpenSoundControlWriter
         this.sendOSC ("/mixer/meterSectionVisibility", mix.isMeterSectionVisible (), dump);
 
         //
+        // Markers
+        //
+        final IMarkerBank markerBank = this.model.getMarkerBank ();
+        for (int i = 0; i < markerBank.getPageSize (); i++)
+            this.flushMarker ("/marker/" + (i + 1) + "/", markerBank.getItem (i), dump);
+
+        //
         // Project
         //
 
@@ -153,11 +166,13 @@ public class OSCWriter extends AbstractOpenSoundControlWriter
         this.flushDevice ("/device/", cd, dump);
         if (cd.hasDrumPads ())
         {
-            for (int i = 0; i < cd.getNumDrumPads (); i++)
-                this.flushDeviceLayers ("/device/drumpad/" + (i + 1) + "/", cd.getLayerOrDrumPad (i), dump);
+            final IDrumPadBank drumPadBank = cd.getDrumPadBank ();
+            for (int i = 0; i < drumPadBank.getPageSize (); i++)
+                this.flushDeviceLayers ("/device/drumpad/" + (i + 1) + "/", drumPadBank.getItem (i), dump);
         }
-        for (int i = 0; i < cd.getNumLayers (); i++)
-            this.flushDeviceLayers ("/device/layer/" + (i + 1) + "/", cd.getLayerOrDrumPad (i), dump);
+        final ILayerBank layerBank = cd.getLayerBank ();
+        for (int i = 0; i < layerBank.getPageSize (); i++)
+            this.flushDeviceLayers ("/device/layer/" + (i + 1) + "/", layerBank.getItem (i), dump);
         this.flushDevice ("/primary/", this.model.getPrimaryDevice (), dump);
 
         //
@@ -173,6 +188,22 @@ public class OSCWriter extends AbstractOpenSoundControlWriter
         this.flushNotes ("/vkb_midi/note/", dump);
 
         this.flush ();
+    }
+
+
+    /**
+     * Flush all data of a marker.
+     *
+     * @param markerAddress The start address for the marker
+     * @param marker The marker
+     * @param dump Forces a flush if true otherwise only changed values are flushed
+     */
+    private void flushMarker (final String markerAddress, final IMarker marker, final boolean dump)
+    {
+        this.sendOSC (markerAddress + "exists", marker.doesExist (), dump);
+        this.sendOSC (markerAddress + "name", marker.getName (), dump);
+        final double [] color = marker.getColor ();
+        this.sendOSCColor (markerAddress + "color", color[0], color[1], color[2], dump);
     }
 
 
@@ -277,28 +308,22 @@ public class OSCWriter extends AbstractOpenSoundControlWriter
             this.sendOSC (deviceAddress + "sibling/" + oneplus + "/selected", i == positionInBank, dump);
 
         }
-        for (int i = 0; i < device.getNumParameters (); i++)
+        final IParameterBank parameterBank = device.getParameterBank ();
+        for (int i = 0; i < parameterBank.getPageSize (); i++)
         {
             final int oneplus = i + 1;
-            this.flushParameterData (deviceAddress + "param/" + oneplus + "/", device.getFXParam (i), dump);
+            this.flushParameterData (deviceAddress + "param/" + oneplus + "/", parameterBank.getItem (i), dump);
         }
-        final String [] parameterPageNames = device.getParameterPageNames ();
-        final int selectedParameterPage = device.getSelectedParameterPage ();
 
-        final int page = Math.min (Math.max (0, selectedParameterPage), parameterPageNames.length - 1);
-        final int start = page / 8 * 8;
-
-        for (int i = 0; i < 8; i++)
+        final IParameterPageBank parameterPageBank = device.getParameterPageBank ();
+        final int selectedParameterPage = parameterPageBank.getSelectedItemIndex ();
+        for (int i = 0; i < parameterPageBank.getPageSize (); i++)
         {
-            final int index = start + i;
-            final String pageName = index < parameterPageNames.length ? parameterPageNames[index] : "";
-
             final int oneplus = i + 1;
-            this.sendOSC (deviceAddress + "page/" + oneplus + "/", pageName, dump);
-            this.sendOSC (deviceAddress + "page/" + oneplus + "/selected", page == index, dump);
+            this.sendOSC (deviceAddress + "page/" + oneplus + "/", parameterPageBank.getItem (i), dump);
+            this.sendOSC (deviceAddress + "page/" + oneplus + "/selected", selectedParameterPage == i, dump);
         }
-        final int sel = page % 8;
-        this.sendOSC (deviceAddress + "page/selected/name", sel >= 0 && sel < 8 ? parameterPageNames[sel] : "", dump);
+        this.sendOSC (deviceAddress + "page/selected/name", parameterPageBank.getSelectedItem (), dump);
     }
 
 
