@@ -38,7 +38,7 @@ public class MarkerBankImpl extends AbstractBankImpl<IMarker> implements IMarker
     @Override
     public void addMarker ()
     {
-        // TODO Reaper - Implement add marker
+        this.sender.sendOSC ("/marker/add", null);
     }
 
 
@@ -55,7 +55,7 @@ public class MarkerBankImpl extends AbstractBankImpl<IMarker> implements IMarker
     @Override
     public void scrollPageBackwards ()
     {
-        // TODO Reaper - Implement scrolling of markers
+        this.sender.sendOSC ("/marker/bank/-", null);
     }
 
 
@@ -63,6 +63,17 @@ public class MarkerBankImpl extends AbstractBankImpl<IMarker> implements IMarker
     @Override
     public void scrollPageForwards ()
     {
-        // TODO Reaper - Implement scrolling of markers
+        this.sender.sendOSC ("/marker/bank/+", null);
+    }
+
+
+    /**
+     * Sets the number of markers.
+     *
+     * @param markerCount The number of markers
+     */
+    public void setMarkerCount (final int markerCount)
+    {
+        this.itemCount = markerCount;
     }
 }

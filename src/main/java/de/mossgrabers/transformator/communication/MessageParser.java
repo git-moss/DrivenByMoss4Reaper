@@ -9,10 +9,12 @@ import de.mossgrabers.framework.controller.IValueChanger;
 import de.mossgrabers.framework.daw.IBrowser;
 import de.mossgrabers.framework.daw.ICursorClip;
 import de.mossgrabers.framework.daw.IHost;
+import de.mossgrabers.framework.daw.IMarkerBank;
 import de.mossgrabers.framework.daw.IModel;
 import de.mossgrabers.framework.daw.IProject;
 import de.mossgrabers.framework.daw.ISendBank;
 import de.mossgrabers.framework.daw.ITrackBank;
+import de.mossgrabers.framework.daw.data.IMarker;
 import de.mossgrabers.framework.daw.data.IMasterTrack;
 import de.mossgrabers.framework.daw.data.IParameter;
 import de.mossgrabers.framework.daw.data.ISend;
@@ -22,10 +24,12 @@ import de.mossgrabers.reaper.framework.daw.AbstractTrackBankImpl;
 import de.mossgrabers.reaper.framework.daw.ApplicationImpl;
 import de.mossgrabers.reaper.framework.daw.BrowserImpl;
 import de.mossgrabers.reaper.framework.daw.CursorDeviceImpl;
+import de.mossgrabers.reaper.framework.daw.MarkerBankImpl;
 import de.mossgrabers.reaper.framework.daw.ProjectImpl;
 import de.mossgrabers.reaper.framework.daw.TransportImpl;
 import de.mossgrabers.reaper.framework.daw.data.ChannelImpl;
 import de.mossgrabers.reaper.framework.daw.data.ItemImpl;
+import de.mossgrabers.reaper.framework.daw.data.MarkerImpl;
 import de.mossgrabers.reaper.framework.daw.data.ParameterImpl;
 import de.mossgrabers.reaper.framework.daw.data.SendImpl;
 import de.mossgrabers.reaper.framework.daw.data.TrackImpl;
@@ -128,6 +132,10 @@ public class MessageParser
 
             case "browser":
                 this.parseBrowserValue (parts, value);
+                break;
+
+            case "marker":
+                this.parseMarker (parts, value);
                 break;
 
             case "quantize":
@@ -547,6 +555,74 @@ public class MessageParser
 
             default:
                 this.host.error ("Unhandled Browser Parameter: " + command);
+                break;
+        }
+    }
+
+
+    private void parseMarker (final Queue<String> parts, final String value)
+    {
+        final IMarkerBank markerBank = this.model.getMarkerBank ();
+        final String part = parts.poll ();
+        try
+        {
+            this.parseMarkerValue (markerBank.getItem (Integer.parseInt (part) - 1), parts, value);
+        }
+        catch (final NumberFormatException ex)
+        {
+            switch (part)
+            {
+                // The number of tracks
+                case "count":
+                    ((MarkerBankImpl) markerBank).setMarkerCount (Integer.parseInt (value));
+                    break;
+
+                default:
+                    this.host.error ("Unhandled Marker command: " + part);
+                    return;
+            }
+        }
+    }
+
+
+    private void parseMarkerValue (final IMarker marker, final Queue<String> parts, final String value)
+    {
+        final String command = parts.poll ();
+        switch (command)
+        {
+            case "exists":
+                ((MarkerImpl) marker).setExists (Double.parseDouble (value) > 0);
+                break;
+
+            case "number":
+                ((MarkerImpl) marker).setPosition (Integer.parseInt (value));
+                break;
+
+            case "name":
+                ((MarkerImpl) marker).setName (value);
+                break;
+
+            case "color":
+                final String [] values = value.split (" ");
+                if (values.length != 3)
+                {
+                    this.host.error ("Color: Wrong number of arguments: " + values.length);
+                    final StringBuilder str = new StringBuilder ();
+                    for (final String value2: values)
+                        str.append (value2).append (':');
+                    this.host.error (str.toString ());
+                    return;
+                }
+                ((MarkerImpl) marker).setColorState (new double []
+                {
+                    Double.parseDouble (values[0]) / 255.0,
+                    Double.parseDouble (values[1]) / 255.0,
+                    Double.parseDouble (values[2]) / 255.0
+                });
+                break;
+
+            default:
+                this.host.error ("Unhandled Marker Parameter: " + command);
                 break;
         }
     }

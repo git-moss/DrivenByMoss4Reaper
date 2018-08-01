@@ -16,6 +16,10 @@ import de.mossgrabers.transformator.communication.MessageSender;
  */
 public class MarkerImpl extends ItemImpl implements IMarker
 {
+    private int       position;
+    private double [] color;
+
+
     /**
      * Constructor.
      *
@@ -33,14 +37,42 @@ public class MarkerImpl extends ItemImpl implements IMarker
     @Override
     public double [] getColor ()
     {
-        // TODO Reaper Do markers have a color in Reaper? If not return gray
-        // final ColorValue color = this.marker.getColor ();
-        return new double []
+        return this.color == null ? new double []
         {
-            0,
-            0,
-            0
-        };
+            0.2,
+            0.2,
+            0.2
+        } : this.color;
+    }
+
+
+    /**
+     * Set the color.
+     *
+     * @param color The color
+     */
+    public void setColorState (final double [] color)
+    {
+        this.color = color;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public int getPosition ()
+    {
+        return this.position;
+    }
+
+
+    /**
+     * Set the position of the track, among all tracks.
+     *
+     * @param position The position
+     */
+    public void setPosition (final int position)
+    {
+        this.position = position;
     }
 
 
@@ -48,7 +80,7 @@ public class MarkerImpl extends ItemImpl implements IMarker
     @Override
     public void launch (final boolean quantized)
     {
-        // TODO Reaper - select and launch from the marker
+        this.sendMarkerOSC ("launch", null);
     }
 
 
@@ -56,7 +88,7 @@ public class MarkerImpl extends ItemImpl implements IMarker
     @Override
     public void removeMarker ()
     {
-        // TODO Reaper - remove the marker
+        this.sendMarkerOSC ("remove", null);
     }
 
 
@@ -64,6 +96,12 @@ public class MarkerImpl extends ItemImpl implements IMarker
     @Override
     public void select ()
     {
-        // TODO Reaper - Select the marker
+        this.sendMarkerOSC ("select", null);
+    }
+
+
+    protected void sendMarkerOSC (final String command, final Object value)
+    {
+        this.sender.sendOSC ("/marker/" + (this.getIndex () + 1) + "/" + command, value);
     }
 }
