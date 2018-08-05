@@ -18,6 +18,7 @@ public class DeviceImpl extends ItemImpl implements IDevice
 {
     /**
      * Constructor.
+     * 
      * @param host The DAW host
      * @param sender The OSC sender
      * @param index The index of the device
@@ -44,6 +45,22 @@ public class DeviceImpl extends ItemImpl implements IDevice
     }
 
 
+    /** {@inheritDoc} */
+    @Override
+    public void remove ()
+    {
+        this.sendDeviceOSC ("remove", null);
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void duplicate ()
+    {
+        this.sendDeviceOSC ("duplicate", null);
+    }
+
+
     private static String removeTypeAndManufacturer (final String name)
     {
         if (name == null)
@@ -66,5 +83,11 @@ public class DeviceImpl extends ItemImpl implements IDevice
     {
         final int index = name.indexOf ('(');
         return index > 1 ? name.substring (0, index).trim () : name;
+    }
+
+
+    protected void sendDeviceOSC (final String command, final Object value)
+    {
+        this.sender.sendOSC ("/device/" + (this.getIndex () + 1) + "/" + command, value);
     }
 }

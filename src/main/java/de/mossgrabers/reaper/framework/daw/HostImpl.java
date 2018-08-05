@@ -92,7 +92,7 @@ public class HostImpl implements IHost
     @Override
     public boolean hasClips ()
     {
-        return false;
+        return true;
     }
 
 

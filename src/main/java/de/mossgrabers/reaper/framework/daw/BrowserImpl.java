@@ -213,7 +213,7 @@ public class BrowserImpl extends AbstractBrowser
     public void browseForPresets ()
     {
         this.stopBrowsing (false);
-        this.insertPosition = this.cursorDevice.getPositionInChain ();
+        this.insertPosition = this.cursorDevice.getPosition ();
         this.setContentType (ContentType.CONTENTTYPE_PRESET.ordinal ());
         this.isBrowserActive = true;
     }
@@ -223,7 +223,7 @@ public class BrowserImpl extends AbstractBrowser
     @Override
     public void browseToInsertBeforeDevice ()
     {
-        this.insertDevice (this.cursorDevice.getPositionInChain ());
+        this.insertDevice (this.cursorDevice.getPosition ());
     }
 
 
@@ -231,7 +231,7 @@ public class BrowserImpl extends AbstractBrowser
     @Override
     public void browseToInsertAfterDevice ()
     {
-        this.insertDevice (this.cursorDevice.getPositionInChain () + 1);
+        this.insertDevice (this.cursorDevice.getPosition () + 1);
     }
 
 

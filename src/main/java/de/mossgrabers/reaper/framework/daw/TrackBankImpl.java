@@ -37,30 +37,6 @@ public class TrackBankImpl extends AbstractTrackBankImpl
 
     /** {@inheritDoc} */
     @Override
-    public void selectChildren ()
-    {
-        // Not supported
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void selectParent ()
-    {
-        // Not supported
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public boolean hasParent ()
-    {
-        return false;
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
     public boolean canEditSend (final int sendIndex)
     {
         for (int i = 0; i < this.getPageSize (); i++)

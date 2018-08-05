@@ -82,8 +82,7 @@ public class ModelImpl extends AbstractModel
     @Override
     public ITrackBank createSceneViewTrackBank (final int numTracks, final int numScenes)
     {
-        // Not supported
-        throw new UnsupportedOperationException ("Model.createSceneViewTrackBank not supported!");
+        return new TrackBankImpl (this.host, this.sender, this.valueChanger, numTracks, numScenes, this.numSends, true);
     }
 
 

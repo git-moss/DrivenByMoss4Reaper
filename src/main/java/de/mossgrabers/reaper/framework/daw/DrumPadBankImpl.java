@@ -86,20 +86,4 @@ public class DrumPadBankImpl extends AbstractBankImpl<IDrumPad> implements IDrum
         // Not supported
         return null;
     }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void scrollPageBackwards ()
-    {
-        // Not supported
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void scrollPageForwards ()
-    {
-        // Not supported
-    }
 }

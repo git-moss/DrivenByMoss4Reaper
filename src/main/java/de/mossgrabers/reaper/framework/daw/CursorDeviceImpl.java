@@ -24,12 +24,10 @@ import de.mossgrabers.transformator.communication.MessageSender;
  */
 public class CursorDeviceImpl extends DeviceImpl implements ICursorDevice
 {
-    private boolean                     isEnabled      = false;
-    private int                         position;
+    private boolean                     isEnabled   = false;
     private boolean                     isWindowOpen;
     private boolean                     isExpanded;
-    private int                         selectedDevice = 0;
-    private int                         deviceCount    = 0;
+    private int                         deviceCount = 0;
 
     private final IDeviceBank           deviceBank;
     private final ParameterPageBankImpl parameterPageBank;
@@ -82,41 +80,9 @@ public class CursorDeviceImpl extends DeviceImpl implements ICursorDevice
 
     /** {@inheritDoc} */
     @Override
-    public void browseToReplaceDevice ()
+    public int getIndex ()
     {
-        // Not used
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void browseToInsertBeforeDevice ()
-    {
-        // Not used
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void browseToInsertAfterDevice ()
-    {
-        // Not used
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void selectParent ()
-    {
-        // Not supported
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void selectChannel ()
-    {
-        // Not supported
+        return this.getPosition () % this.deviceBank.getPageSize ();
     }
 
 
@@ -158,25 +124,9 @@ public class CursorDeviceImpl extends DeviceImpl implements ICursorDevice
 
     /** {@inheritDoc} */
     @Override
-    public int getPositionInChain ()
-    {
-        return this.position;
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public int getPositionInBank ()
-    {
-        return this.selectedDevice;
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
     public boolean canSelectPreviousFX ()
     {
-        return this.selectedDevice > 0;
+        return this.getPosition () > 0;
     }
 
 
@@ -184,7 +134,7 @@ public class CursorDeviceImpl extends DeviceImpl implements ICursorDevice
     @Override
     public boolean canSelectNextFX ()
     {
-        return this.position < this.deviceCount - 1;
+        return this.getPosition () < this.deviceCount - 1;
     }
 
 
@@ -286,9 +236,10 @@ public class CursorDeviceImpl extends DeviceImpl implements ICursorDevice
     @Override
     public void selectPrevious ()
     {
-        // To support displaying the newly selected device
-        if (this.selectedDevice > 0)
-            this.setName (this.deviceBank.getItem (this.selectedDevice - 1).getName ());
+        // To support displaying the newly selected device quickly
+        final int index = this.getIndex ();
+        if (index > 0)
+            this.setName (this.deviceBank.getItem (index - 1).getName ());
         this.sender.sendOSC ("/device/-", null);
     }
 
@@ -297,18 +248,11 @@ public class CursorDeviceImpl extends DeviceImpl implements ICursorDevice
     @Override
     public void selectNext ()
     {
-        // To support displaying the newly selected device
-        if (this.selectedDevice < this.deviceBank.getPageSize () - 1)
-            this.setName (this.deviceBank.getItem (this.selectedDevice + 1).getName ());
+        // To support displaying the newly selected device quickly
+        final int index = this.getIndex ();
+        if (index < this.deviceBank.getPageSize () - 1)
+            this.setName (this.deviceBank.getItem (index + 1).getName ());
         this.sender.sendOSC ("/device/+", null);
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public boolean hasSelectedDevice ()
-    {
-        return this.doesExist ();
     }
 
 
@@ -326,20 +270,6 @@ public class CursorDeviceImpl extends DeviceImpl implements ICursorDevice
     public void toggleParameterPageSectionVisible ()
     {
         // Not supported
-    }
-
-
-    /**
-     * Set the position (index) of the device on the track.
-     *
-     * @param position The index
-     */
-    public void setPosition (final int position)
-    {
-        if (position < 0)
-            return;
-        this.position = position;
-        this.selectedDevice = position % this.getDeviceBank ().getPageSize ();
     }
 
 
@@ -449,5 +379,45 @@ public class CursorDeviceImpl extends DeviceImpl implements ICursorDevice
     public IChannelBank<?> getLayerOrDrumPadBank ()
     {
         return this.hasDrumPads () ? this.drumPadBank : this.layerBank;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void browseToReplaceDevice ()
+    {
+        // Not used
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void browseToInsertBeforeDevice ()
+    {
+        // Not used
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void browseToInsertAfterDevice ()
+    {
+        // Not used
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void selectParent ()
+    {
+        // Not supported
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void selectChannel ()
+    {
+        // Not supported
     }
 }

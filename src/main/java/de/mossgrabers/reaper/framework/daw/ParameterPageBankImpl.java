@@ -125,6 +125,7 @@ public class ParameterPageBankImpl implements IParameterPageBank
     {
         this.page = position % this.pageSize;
         this.bank = this.page / this.pageSize;
+        this.sender.sendOSC ("/device/param/bank/selected", Integer.valueOf (position));
     }
 
 

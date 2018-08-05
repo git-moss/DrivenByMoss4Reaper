@@ -547,6 +547,14 @@ public class ChannelImpl extends ItemImpl implements IChannel
 
     /** {@inheritDoc} */
     @Override
+    public void remove ()
+    {
+        this.sendTrackOSC ("remove", null);
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
     public ISendBank getSendBank ()
     {
         return this.sendBank;

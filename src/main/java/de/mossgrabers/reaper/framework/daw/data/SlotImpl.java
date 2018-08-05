@@ -148,7 +148,7 @@ public class SlotImpl extends ItemImpl implements ISlot
 
     /** {@inheritDoc} */
     @Override
-    public void delete ()
+    public void remove ()
     {
         // Not supported
     }

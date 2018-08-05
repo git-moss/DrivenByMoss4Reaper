@@ -77,36 +77,4 @@ public class LayerBankImpl extends AbstractBankImpl<ILayer> implements ILayerBan
     {
         // Not supported
     }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public boolean canScrollBackwards ()
-    {
-        return false;
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public boolean canScrollForwards ()
-    {
-        return false;
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void scrollPageBackwards ()
-    {
-        // Not supported
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void scrollPageForwards ()
-    {
-        // Not supported
-    }
 }

@@ -4,8 +4,11 @@
 
 package de.mossgrabers.reaper.framework.daw;
 
+import de.mossgrabers.framework.daw.IHost;
 import de.mossgrabers.framework.daw.ISceneBank;
 import de.mossgrabers.framework.daw.data.IScene;
+import de.mossgrabers.reaper.framework.daw.data.SceneImpl;
+import de.mossgrabers.transformator.communication.MessageSender;
 
 
 /**
@@ -18,9 +21,11 @@ public class SceneBankImpl extends AbstractBankImpl<IScene> implements ISceneBan
     /**
      * Constructor.
      *
+     * @param host The DAW host
+     * @param sender The OSC sender
      * @param numScenes The number of scenes in the page of the bank
      */
-    public SceneBankImpl (final int numScenes)
+    public SceneBankImpl (final IHost host, final MessageSender sender, final int numScenes)
     {
         super (null, null, null, numScenes);
         this.initItems ();
@@ -39,22 +44,7 @@ public class SceneBankImpl extends AbstractBankImpl<IScene> implements ISceneBan
     @Override
     protected void initItems ()
     {
-        // Intentionally empty
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void scrollPageBackwards ()
-    {
-        // Intentionally empty
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void scrollPageForwards ()
-    {
-        // Intentionally empty
+        for (int i = 0; i < this.pageSize; i++)
+            this.items.add (new SceneImpl (this.host, this.sender, i));
     }
 }

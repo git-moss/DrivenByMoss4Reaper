@@ -46,20 +46,4 @@ public class SendBankImpl extends AbstractBankImpl<ISend> implements ISendBank
         for (int i = 0; i < this.pageSize; i++)
             this.items.add (new SendImpl (this.host, this.sender, this.valueChanger, this.trackIndex, i));
     }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void scrollPageBackwards ()
-    {
-        // TODO Reaper Support more than 8 sends?
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void scrollPageForwards ()
-    {
-        // TODO Reaper Support more than 8 sends?
-    }
 }

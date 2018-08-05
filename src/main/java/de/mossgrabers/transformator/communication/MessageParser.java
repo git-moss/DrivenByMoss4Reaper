@@ -445,7 +445,9 @@ public class MessageParser
                     switch (parts.poll ())
                     {
                         case "name":
-                            ((ItemImpl) this.cursorDevice.getDeviceBank ().getItem (siblingNo)).setName (value);
+                            final ItemImpl sibling = (ItemImpl) this.cursorDevice.getDeviceBank ().getItem (siblingNo);
+                            sibling.setName (value);
+                            sibling.setExists (value != null && !value.isEmpty ());
                             break;
 
                         default:

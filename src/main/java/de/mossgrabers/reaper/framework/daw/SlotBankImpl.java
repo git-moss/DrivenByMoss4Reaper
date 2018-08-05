@@ -75,21 +75,4 @@ public class SlotBankImpl extends AbstractBankImpl<ISlot> implements ISlotBank
         for (int i = 0; i < this.pageSize; i++)
             this.items.add (new SlotImpl (this.host, this.sender, this.trackIndex, i));
     }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void scrollPageBackwards ()
-    {
-        // Not supported
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void scrollPageForwards ()
-    {
-        // Not supported
-
-    }
 }

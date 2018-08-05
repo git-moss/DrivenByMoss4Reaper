@@ -16,7 +16,6 @@ import de.mossgrabers.transformator.communication.MessageSender;
  */
 public class MarkerImpl extends ItemImpl implements IMarker
 {
-    private int       position;
     private double [] color;
 
 
@@ -54,25 +53,6 @@ public class MarkerImpl extends ItemImpl implements IMarker
     public void setColorState (final double [] color)
     {
         this.color = color;
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public int getPosition ()
-    {
-        return this.position;
-    }
-
-
-    /**
-     * Set the position of the track, among all tracks.
-     *
-     * @param position The position
-     */
-    public void setPosition (final int position)
-    {
-        this.position = position;
     }
 
 

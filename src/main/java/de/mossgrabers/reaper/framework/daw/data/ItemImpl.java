@@ -19,6 +19,7 @@ import de.mossgrabers.transformator.communication.MessageSender;
 public abstract class ItemImpl extends BaseImpl implements IItem
 {
     private int     index;
+    private int     position;
     private boolean exists;
     private String  name = "";
     private boolean selected;
@@ -70,7 +71,19 @@ public abstract class ItemImpl extends BaseImpl implements IItem
     @Override
     public int getPosition ()
     {
-        throw new UnsupportedOperationException ();
+        return this.position;
+    }
+
+
+    /**
+     * Set the position of the track, among all tracks.
+     *
+     * @param position The position
+     */
+    public void setPosition (final int position)
+    {
+        if (position >= 0)
+            this.position = position;
     }
 
 

@@ -38,7 +38,6 @@ public class TrackImpl extends ChannelImpl implements ITrack
     /** Automation write is write. */
     public static final String AUTOMATION_WRITE = "write";
 
-    private int                position;
     private boolean            isRecArm;
     private boolean            monitor;
     private boolean            autoMonitor;
@@ -72,14 +71,6 @@ public class TrackImpl extends ChannelImpl implements ITrack
     public void enableObservers (final boolean enable)
     {
         // Not supported
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public int getPosition ()
-    {
-        return this.position;
     }
 
 
@@ -198,18 +189,8 @@ public class TrackImpl extends ChannelImpl implements ITrack
     @Override
     public void select ()
     {
-        this.sendTrackOSC ("select", Integer.valueOf (1));
-    }
-
-
-    /**
-     * Set the position of the track, among all tracks.
-     *
-     * @param position The position
-     */
-    public void setPosition (final int position)
-    {
-        this.position = position;
+        if (this.doesExist ())
+            this.sendTrackOSC ("select", Integer.valueOf (1));
     }
 
 

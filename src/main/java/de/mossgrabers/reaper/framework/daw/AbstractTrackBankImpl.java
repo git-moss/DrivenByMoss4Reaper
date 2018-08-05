@@ -44,7 +44,7 @@ public abstract class AbstractTrackBankImpl extends AbstractBankImpl<ITrack> imp
 
         this.initItems ();
 
-        this.sceneBank = new SceneBankImpl (this.numScenes);
+        this.sceneBank = new SceneBankImpl (host, sender, this.numScenes);
     }
 
 
@@ -180,5 +180,14 @@ public abstract class AbstractTrackBankImpl extends AbstractBankImpl<ITrack> imp
     public void setIndication (boolean enable)
     {
         // Not supported
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void scrollTo (final int position)
+    {
+        if (position >= 0 && position < this.getItemCount ())
+            this.sendTrackOSC ("scrollto/" + position, null);
     }
 }
