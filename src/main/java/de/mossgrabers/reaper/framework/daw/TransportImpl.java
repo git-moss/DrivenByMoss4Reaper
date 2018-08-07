@@ -483,19 +483,19 @@ public class TransportImpl extends BaseImpl implements ITransport
     /**
      * Set the position value.
      *
-     * @param beats The position
+     * @param time The position in seconds
      */
-    public void setPositionValue (final double beats)
+    public void setPositionValue (final double time)
     {
-        this.position = beats;
+        this.position = time;
     }
 
 
     /** {@inheritDoc} */
     @Override
-    public void setPosition (final double beats)
+    public void setPosition (final double time)
     {
-        this.position = beats;
+        this.position = time;
         this.sender.sendOSC ("/time", Double.valueOf (this.position));
     }
 

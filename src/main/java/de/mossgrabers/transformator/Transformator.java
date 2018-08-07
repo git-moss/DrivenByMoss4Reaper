@@ -1,7 +1,6 @@
 package de.mossgrabers.transformator;
 
 import javafx.application.Application;
-import javafx.application.Platform;
 
 
 /**
@@ -48,6 +47,8 @@ public class Transformator
      */
     public static void shutdown ()
     {
-        Platform.exit ();
+        final TransformatorApplication app = TransformatorApplication.get ();
+        if (app != null)
+            app.exit ();
     }
 }

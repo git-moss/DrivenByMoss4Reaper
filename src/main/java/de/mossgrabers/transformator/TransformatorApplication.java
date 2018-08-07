@@ -69,6 +69,8 @@ import java.util.ResourceBundle;
  */
 public class TransformatorApplication extends Application implements MessageSender, DataModelUpdater
 {
+    private static TransformatorApplication     app               = null;
+
     protected final SimpleStringProperty        title             = new SimpleStringProperty ();
     protected final LogModel                    logModel          = new LogModel ();
 
@@ -85,6 +87,28 @@ public class TransformatorApplication extends Application implements MessageSend
 
     private TrayIcon                            trayIcon;
     private SystemTray                          tray;
+
+
+    /**
+     * Constructor.
+     */
+    public TransformatorApplication ()
+    {
+        // Very very ugly singleton but currently the only solution to get access to the instance of
+        // the application.
+        app = this;
+    }
+
+
+    /**
+     * Get the singleton instance.
+     *
+     * @return The singleton or null if not instatiated yet
+     */
+    public static TransformatorApplication get ()
+    {
+        return app;
+    }
 
 
     /** {@inheritDoc} */
@@ -195,7 +219,7 @@ public class TransformatorApplication extends Application implements MessageSend
 
     /** {@inheritDoc} */
     @Override
-    public void stop () throws Exception
+    public void stop ()
     {
         this.logModel.addLogMessage ("Shutting down...");
 
@@ -231,9 +255,14 @@ public class TransformatorApplication extends Application implements MessageSend
     public void exit ()
     {
         this.logModel.addLogMessage ("Exiting platform...");
-        Platform.exit ();
+
+        // Normally this is called from Platform.exit but the JVM is killed before that from C++
+        this.stop ();
+
         if (this.tray != null && this.trayIcon != null)
             this.tray.remove (this.trayIcon);
+
+        Platform.exit ();
     }
 
 
