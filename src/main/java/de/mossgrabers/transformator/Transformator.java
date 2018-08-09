@@ -1,6 +1,6 @@
 package de.mossgrabers.transformator;
 
-import javafx.application.Application;
+import javax.swing.SwingUtilities;
 
 
 /**
@@ -25,7 +25,9 @@ public class Transformator
             final Thread t = new Thread ( () -> {
                 try
                 {
-                    Application.launch (TransformatorApplication.class, args);
+                    SwingUtilities.invokeLater ( () -> new TransformatorFrame (args[0]));
+
+                    // Application.launch (TransformatorApplication.class, args);
                 }
                 catch (final Throwable ex)
                 {

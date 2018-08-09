@@ -23,7 +23,6 @@ import org.usb4java.LibUsb;
 import org.usb4java.LibUsbException;
 
 import javafx.animation.AnimationTimer;
-import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
@@ -41,16 +40,15 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextInputControl;
-import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 
 import javax.imageio.ImageIO;
 import javax.sound.midi.MidiUnavailableException;
+import javax.swing.JFrame;
 
 import java.awt.AWTException;
+import java.awt.Dimension;
 import java.awt.SystemTray;
 import java.awt.TrayIcon;
 import java.io.IOException;
@@ -58,7 +56,6 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.Socket;
-import java.util.List;
 import java.util.ResourceBundle;
 
 
@@ -67,7 +64,7 @@ import java.util.ResourceBundle;
  *
  * @author J&uuml;rgen Mo&szlig;graber
  */
-public class TransformatorApplication extends Application implements MessageSender, DataModelUpdater
+public class TransformatorApplication implements MessageSender, DataModelUpdater
 {
     private static TransformatorApplication     app               = null;
 
@@ -76,7 +73,7 @@ public class TransformatorApplication extends Application implements MessageSend
 
     protected final MainConfiguration           mainConfiguration = new MainConfiguration ();
 
-    protected Stage                             stage;
+    protected JFrame                            stage;
     private final ListView<IControllerInstance> controllerList    = new ListView<> ();
 
     private ControllerInstanceManager           instanceManager;
@@ -111,17 +108,15 @@ public class TransformatorApplication extends Application implements MessageSend
     }
 
 
-    /** {@inheritDoc} */
-    @Override
-    public void start (final Stage stage)
+    public Scene start (final JFrame stage, final String iniPath)
     {
         this.stage = stage;
-        this.instanceManager = new ControllerInstanceManager (this.logModel, stage, this, this.iniFiles);
+        this.instanceManager = new ControllerInstanceManager (this.logModel, null /* TODO stage */, this, this.iniFiles);
 
         // Run the application as a tray icon if supported
         if (SystemTray.isSupported ())
         {
-            this.stage.initStyle (StageStyle.UTILITY);
+            // TODO this.stage.initStyle (StageStyle.UTILITY);
 
             // Instructs JavaFX not to exit implicitly when the last application window is closed
             Platform.setImplicitExit (false);
@@ -131,12 +126,11 @@ public class TransformatorApplication extends Application implements MessageSend
 
         this.setTitle ();
 
-        final List<String> parameters = this.getParameters ().getRaw ();
-        if (parameters.isEmpty ())
+        if (iniPath.isEmpty ())
             this.logModel.addLogMessage ("Missing INI path parameter! Cannot start the application.");
         else
         {
-            this.iniPath = parameters.get (0);
+            this.iniPath = iniPath;
             this.loadConfig ();
             this.loadINIFiles (this.iniPath);
         }
@@ -149,6 +143,8 @@ public class TransformatorApplication extends Application implements MessageSend
             this.initUSB ();
             SafeRunLater.execute (this::startupInfrastructure);
         }
+
+        return scene;
     }
 
 
@@ -217,8 +213,6 @@ public class TransformatorApplication extends Application implements MessageSend
     }
 
 
-    /** {@inheritDoc} */
-    @Override
     public void stop ()
     {
         this.logModel.addLogMessage ("Shutting down...");
@@ -287,18 +281,18 @@ public class TransformatorApplication extends Application implements MessageSend
      * @param stage The stage to start
      * @param scene The scene to set
      */
-    protected void showStage (final Stage stage, final Scene scene)
+    protected void showStage (final JFrame stage, final Scene scene)
     {
-        stage.minWidthProperty ().set (600);
-        stage.minHeightProperty ().set (500);
+        stage.setMinimumSize (new Dimension (600, 500));
 
-        stage.titleProperty ().bind (this.title);
+        stage.setTitle (this.title.get ());
 
-        final InputStream rs = ClassLoader.getSystemResourceAsStream ("images/AppIcon.gif");
-        if (rs != null)
-            stage.getIcons ().add (new Image (rs));
-
-        stage.setScene (scene);
+        // TODO
+        // final InputStream rs = ClassLoader.getSystemResourceAsStream ("images/AppIcon.gif");
+        // if (rs != null)
+        // stage.getIcons ().add (new Image (rs));
+        //
+        // stage.setScene (scene);
 
         if (!SystemTray.isSupported ())
             stage.show ();
@@ -319,7 +313,7 @@ public class TransformatorApplication extends Application implements MessageSend
             this.logModel.addLogMessage ("Could not load main configuration: " + ex.getLocalizedMessage ());
         }
 
-        this.mainConfiguration.restoreStagePlacement (this.stage);
+        // TODO this.mainConfiguration.restoreStagePlacement (this.stage);
 
         SVGImage.clearCache ();
     }
@@ -335,7 +329,7 @@ public class TransformatorApplication extends Application implements MessageSend
 
         try
         {
-            this.mainConfiguration.storeStagePlacement (this.stage);
+            // TODO this.mainConfiguration.storeStagePlacement (this.stage);
             this.mainConfiguration.save (this.iniPath);
         }
         catch (final IOException ex)
@@ -360,7 +354,7 @@ public class TransformatorApplication extends Application implements MessageSend
         alert.setTitle (null);
         alert.setHeaderText (null);
         alert.setContentText (message);
-        alert.initOwner (this.stage);
+        // TODO alert.initOwner (this.stage);
         alert.showAndWait ();
     }
 
