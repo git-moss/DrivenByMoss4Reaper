@@ -1,6 +1,8 @@
 package de.mossgrabers.transformator;
 
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 
 
 /**
@@ -12,6 +14,9 @@ import javax.swing.SwingUtilities;
  */
 public class Transformator
 {
+    private static TransformatorApplication app;
+
+
     /**
      * Main function.
      *
@@ -22,20 +27,25 @@ public class Transformator
         // Start in separate thread to allow the method to return to C++
         try
         {
-            final Thread t = new Thread ( () -> {
+            SwingUtilities.invokeLater ( () -> {
                 try
                 {
-                    SwingUtilities.invokeLater ( () -> new TransformatorFrame (args[0]));
+                    try
+                    {
+                        UIManager.setLookAndFeel (UIManager.getSystemLookAndFeelClassName ());
+                    }
+                    catch (final UnsupportedLookAndFeelException ex)
+                    {
+                        // Ignore
+                    }
 
-                    // Application.launch (TransformatorApplication.class, args);
+                    app = new TransformatorApplication (args[0]);
                 }
                 catch (final Throwable ex)
                 {
                     ex.printStackTrace ();
                 }
             });
-
-            t.start ();
         }
         catch (final Throwable ex)
         {
@@ -49,7 +59,6 @@ public class Transformator
      */
     public static void shutdown ()
     {
-        final TransformatorApplication app = TransformatorApplication.get ();
         if (app != null)
             app.exit ();
     }

@@ -1,8 +1,9 @@
 package de.mossgrabers.transformator.util;
 
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
+
+import javax.swing.JTextArea;
 
 
 /**
@@ -14,8 +15,19 @@ import javafx.beans.value.ChangeListener;
  */
 public class LogModel
 {
-    private final SimpleStringProperty  logMessage     = new SimpleStringProperty ();
     private final SimpleBooleanProperty shutdownSignal = new SimpleBooleanProperty ();
+    private final JTextArea             logMessage;
+
+
+    /**
+     * Constructor.
+     *
+     * @param loggingTextArea Where to output the logging messages
+     */
+    public LogModel (final JTextArea loggingTextArea)
+    {
+        this.logMessage = loggingTextArea;
+    }
 
 
     /**
@@ -30,17 +42,6 @@ public class LogModel
 
 
     /**
-     * Get the log text message property.
-     *
-     * @return The property
-     */
-    public SimpleStringProperty getLogMessageProperty ()
-    {
-        return this.logMessage;
-    }
-
-
-    /**
      * Adds a logging message.
      *
      * @param message The message to add
@@ -48,12 +49,9 @@ public class LogModel
     public synchronized void addLogMessage (final String message)
     {
         SafeRunLater.execute ( () -> {
-            final String text = this.logMessage.get ();
-            final StringBuilder sb = new StringBuilder ();
-            if (text != null)
-                sb.append (text);
-            String msg = sb.append (message).append ('\n').toString ();
-            this.logMessage.set (msg);
+
+            this.logMessage.append (message);
+            this.logMessage.append ("\n");
             System.out.println (message);
         });
     }
@@ -64,7 +62,7 @@ public class LogModel
      */
     public synchronized void clearLogMessage ()
     {
-        this.logMessage.set ("");
+        this.logMessage.setText ("");
     }
 
 

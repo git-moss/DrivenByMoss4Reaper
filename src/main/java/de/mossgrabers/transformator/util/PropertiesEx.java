@@ -1,8 +1,7 @@
 package de.mossgrabers.transformator.util;
 
-import javafx.scene.shape.Rectangle;
-import javafx.stage.Stage;
-import javafx.stage.Window;
+import java.awt.Rectangle;
+import java.awt.Window;
 
 
 /**
@@ -266,7 +265,7 @@ public class PropertiesEx extends java.util.Properties
      *
      * @param stage The main stage of an application
      */
-    public void storeStagePlacement (final Stage stage)
+    public void storeStagePlacement (final Window stage)
     {
         this.putWindowPlacement (MAIN, -1, stage);
     }
@@ -277,7 +276,7 @@ public class PropertiesEx extends java.util.Properties
      *
      * @param stage The main stage of an application
      */
-    public void restoreStagePlacement (final Stage stage)
+    public void restoreStagePlacement (final Window stage)
     {
         this.restoreWindowPlacement (MAIN, stage);
     }
@@ -305,12 +304,8 @@ public class PropertiesEx extends java.util.Properties
     public void restoreWindowPlacement (final String name, final int id, final Window window)
     {
         final Rectangle bounds = this.getWindowPlacement (name, id);
-        if (bounds == null)
-            return;
-        window.setX (Math.max (0, bounds.getX ()));
-        window.setY (Math.max (0, bounds.getY ()));
-        window.setWidth (bounds.getWidth ());
-        window.setHeight (bounds.getHeight ());
+        if (bounds != null)
+            window.setBounds (Math.max (0, (int) bounds.getX ()), Math.max (0, (int) bounds.getY ()), (int) bounds.getWidth (), (int) bounds.getHeight ());
     }
 
 
@@ -324,9 +319,9 @@ public class PropertiesEx extends java.util.Properties
     public Rectangle getWindowPlacement (final String name, final int id)
     {
         final String prop = buildPropertyName (name, id);
-        final double width = this.getDouble (prop + W);
-        final double height = this.getDouble (prop + H);
-        return width <= 0 || height <= 0 ? null : new Rectangle (this.getDouble (prop + X), this.getDouble (prop + Y), width, height);
+        final int width = (int) this.getDouble (prop + W);
+        final int height = (int) this.getDouble (prop + H);
+        return width <= 0 || height <= 0 ? null : new Rectangle ((int) this.getDouble (prop + X), (int) this.getDouble (prop + Y), width, height);
     }
 
 

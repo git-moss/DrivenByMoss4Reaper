@@ -41,8 +41,7 @@ import de.mossgrabers.transformator.communication.MessageSender;
 import de.mossgrabers.transformator.util.LogModel;
 import de.mossgrabers.transformator.util.PropertiesEx;
 
-import javafx.stage.Window;
-
+import java.awt.Window;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;

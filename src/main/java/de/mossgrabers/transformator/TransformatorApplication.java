@@ -22,18 +22,25 @@ import de.mossgrabers.transformator.util.SafeRunLater;
 import org.usb4java.LibUsb;
 import org.usb4java.LibUsbException;
 
-
 import javax.imageio.ImageIO;
 import javax.sound.midi.MidiUnavailableException;
+import javax.swing.DefaultListModel;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.border.EmptyBorder;
 
 import java.awt.AWTException;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.Panel;
+import java.awt.GridLayout;
 import java.awt.SystemTray;
 import java.awt.TrayIcon;
 import java.io.IOException;
@@ -41,7 +48,7 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.Socket;
-import java.util.ResourceBundle;
+import java.net.URL;
 
 
 /**
@@ -49,87 +56,65 @@ import java.util.ResourceBundle;
  *
  * @author J&uuml;rgen Mo&szlig;graber
  */
-public class TransformatorApplication implements MessageSender, DataModelUpdater
+public class TransformatorApplication extends JFrame implements MessageSender, DataModelUpdater
 {
-    private static TransformatorApplication     app               = null;
+    private static final long                serialVersionUID  = 4251131641194938848L;
+    private static final int                 GAP               = 14;
 
- // TODO protected final SimpleStringProperty        title             = new SimpleStringProperty ();
-    protected final LogModel                    logModel          = new LogModel ();
+    private JTextArea                        loggingTextArea   = new JTextArea ();
+    private final LogModel                   logModel          = new LogModel (this.loggingTextArea);
 
-    protected final MainConfiguration           mainConfiguration = new MainConfiguration ();
+    protected final MainConfiguration        mainConfiguration = new MainConfiguration ();
 
-    protected JFrame                            stage;
-    // TODO private final ListView<IControllerInstance> controllerList    = new ListView<> ();
+    private final JList<IControllerInstance> controllerList    = new JList<> (new DefaultListModel<> ());
 
-    private ControllerInstanceManager           instanceManager;
- // TODO private AnimationTimer                      animationTimer;
-    private final DataModelUpdateExecutor       modelUpdater      = new DataModelUpdateExecutor (this);
-    private String                              iniPath;
-    private IniFiles                            iniFiles          = new IniFiles ();
+    private ControllerInstanceManager        instanceManager;
+    private final DataModelUpdateExecutor    modelUpdater      = new DataModelUpdateExecutor (this);
+    private String                           iniPath;
+    private IniFiles                         iniFiles          = new IniFiles ();
 
-    private TrayIcon                            trayIcon;
-    private SystemTray                          tray;
+    private TrayIcon                         trayIcon;
+    private SystemTray                       tray;
 
 
     /**
      * Constructor.
+     * 
+     * @param iniPath The Reaper path which contains all INI files
      */
-    public TransformatorApplication ()
+    public TransformatorApplication (final String iniPath)
     {
-        // Very very ugly singleton but currently the only solution to get access to the instance of
-        // the application.
-        app = this;
-    }
+        this.iniPath = iniPath;
 
-
-    /**
-     * Get the singleton instance.
-     *
-     * @return The singleton or null if not instatiated yet
-     */
-    public static TransformatorApplication get ()
-    {
-        return app;
-    }
-
-
-    public JPanel start (final JFrame stage, final String iniPath)
-    {
-        this.stage = stage;
-        this.instanceManager = new ControllerInstanceManager (this.logModel, null /* TODO stage */, this, this.iniFiles);
+        this.instanceManager = new ControllerInstanceManager (this.logModel, this, this, this.iniFiles);
 
         // Run the application as a tray icon if supported
         if (SystemTray.isSupported ())
         {
-            // TODO this.stage.initStyle (StageStyle.UTILITY);
+            this.setType (Type.UTILITY);
 
-            // Instructs JavaFX not to exit implicitly when the last application window is closed
-            // TODO Platform.setImplicitExit (false);
             // Sets up the tray icon (using awt code)
             SafeRunLater.execute (this::addAppToTray);
         }
 
-        this.setTitle ();
+        this.updateTitle ();
 
-        if (iniPath.isEmpty ())
+        if (this.iniPath.isEmpty ())
             this.logModel.addLogMessage ("Missing INI path parameter! Cannot start the application.");
         else
         {
-            this.iniPath = iniPath;
             this.loadConfig ();
             this.loadINIFiles (this.iniPath);
         }
 
-        final JPanel scene = this.createUI ();
-        this.showStage (stage, scene);
+        this.createUI ();
+        this.showStage (this);
 
         if (this.iniPath != null)
         {
             this.initUSB ();
             SafeRunLater.execute (this::startupInfrastructure);
         }
-
-        return scene;
     }
 
 
@@ -155,68 +140,67 @@ public class TransformatorApplication implements MessageSender, DataModelUpdater
     }
 
 
-    protected JPanel createUI ()
+    protected void createUI ()
     {
         // Top pane with options
 
         // Top pane
-//        final Button refreshButton = new Button ("Refresh");
-//        refreshButton.setMaxWidth (Double.MAX_VALUE);
-//        refreshButton.setOnAction (event -> this.sendRefreshCommand ());
-//
-//        // Center pane with device configuration and logging
-//        final Button configButton = new Button ("Configuration");
-//        configButton.setOnAction (event -> this.editController ());
-//        configButton.setMaxWidth (Double.MAX_VALUE);
-//        final MenuButton addButton = new MenuButton ("Add");
-//        this.configureAddButton (addButton);
-//
-//        addButton.setMaxWidth (Double.MAX_VALUE);
-//        final Button removeButton = new Button ("Remove");
-//        removeButton.setOnAction (event -> this.removeController ());
-//        removeButton.setMaxWidth (Double.MAX_VALUE);
-//        final VBox deviceButtonContainer = new VBox (addButton, removeButton, configButton, refreshButton);
-//        deviceButtonContainer.getStyleClass ().add ("configurationButtons");
-//
-//        this.controllerList.setMinWidth (200);
-//        this.controllerList.setMinHeight (200);
-//        this.controllerList.setMaxHeight (200);
-//        final BorderPane controllerConfigurationPane = new BorderPane (this.controllerList, new Label ("Controller:"), deviceButtonContainer, null, null);
-//        controllerConfigurationPane.getStyleClass ().add ("configuration");
+        final JButton refreshButton = new JButton ("Refresh");
+        refreshButton.addActionListener (event -> this.sendRefreshCommand ());
 
-        final JTextArea loggingTextArea = new JTextArea ();
-     // TODO loggingTextArea.textProperty ().bind (this.logModel.getLogMessageProperty ());
+        // Center pane with device configuration and logging
+        final JButton configButton = new JButton ("Configuration");
+        configButton.addActionListener (event -> this.editController ());
+        final JButton addButton = new JButton ("Add");
+        this.configureAddButton (addButton);
+
+        final JButton removeButton = new JButton ("Remove");
+        removeButton.addActionListener (event -> this.removeController ());
+
+        final JPanel deviceButtonContainer = new JPanel ();
+        deviceButtonContainer.setBorder (new EmptyBorder (0, GAP, 0, 0));
+        deviceButtonContainer.setLayout (new GridLayout (4, 1, 0, GAP));
+
+        deviceButtonContainer.add (addButton);
+        deviceButtonContainer.add (removeButton);
+        deviceButtonContainer.add (configButton);
+        deviceButtonContainer.add (refreshButton);
+
+        this.controllerList.setMinimumSize (new Dimension (200, 200));
+        final JScrollPane controllerListPane = new JScrollPane (this.controllerList);
+
+        final JPanel controllerConfigurationPane = new JPanel (new BorderLayout ());
+        controllerConfigurationPane.add (controllerListPane, BorderLayout.CENTER);
+        controllerConfigurationPane.add (new JLabel ("Controller:"), BorderLayout.NORTH);
+
+        controllerConfigurationPane.add (deviceButtonContainer, BorderLayout.EAST);
+
+        final JScrollPane loggingTextAreaPane = new JScrollPane (this.loggingTextArea);
         final JLabel loggingAreaLabel = new JLabel ("Logging:");
-     // TODO this.createDefaultMenuItems (loggingTextArea);
+        this.createDefaultMenuItems (this.loggingTextArea);
         final JPanel loggingPane = new JPanel (new BorderLayout ());
-        loggingPane.add (loggingTextArea, BorderLayout.CENTER);
+        loggingPane.setBorder (new EmptyBorder (GAP, 0, 0, 0));
+        loggingPane.add (loggingTextAreaPane, BorderLayout.CENTER);
         loggingPane.add (loggingAreaLabel, BorderLayout.NORTH);
 
-        JPanel root = new JPanel (new BorderLayout ());
+        final JPanel root = new JPanel (new BorderLayout ());
+        root.setBorder (new EmptyBorder (GAP, GAP, GAP, GAP));
         root.add (loggingPane, BorderLayout.CENTER);
-        // TODO root.add (controllerConfigurationPane, BorderLayout.NORTH);
-        
-        
-//        final Scene scene = new Scene (root, javafx.scene.paint.Color.TRANSPARENT);
-//        scene.getStylesheets ().add ("css/DefaultStyles.css");
-        
-        
-        return root;
+        root.add (controllerConfigurationPane, BorderLayout.NORTH);
+
+        this.add (root);
+        this.pack ();
     }
 
 
-    public void stop ()
+    /**
+     * Exits the application.
+     */
+    public void exit ()
     {
-        this.logModel.addLogMessage ("Shutting down...");
+        this.logModel.addLogMessage ("Exiting platform...");
 
         this.modelUpdater.stopUpdater ();
-
-// TODO
-//        if (this.animationTimer != null)
-//        {
-//            this.logModel.addLogMessage ("Stopping flush timer...");
-//            this.animationTimer.stop ();
-//        }
 
         this.instanceManager.stopAll ();
 
@@ -231,30 +215,15 @@ public class TransformatorApplication implements MessageSender, DataModelUpdater
         this.logModel.addLogMessage ("Shutting down USB...");
         LibUsb.exit (null);
 
+        if (this.tray != null && this.trayIcon != null)
+            this.tray.remove (this.trayIcon);
+
         // Hardcore! No idea which thread is hanging, could be a JavaFX bug...
         System.exit (0);
     }
 
 
-    /**
-     * Exits the application.
-     */
-    public void exit ()
-    {
-        this.logModel.addLogMessage ("Exiting platform...");
-
-        // Normally this is called from Platform.exit but the JVM is killed before that from C++
-        this.stop ();
-
-        if (this.tray != null && this.trayIcon != null)
-            this.tray.remove (this.trayIcon);
-
-     // TODO
-//        Platform.exit ();
-    }
-
-
-    protected void setTitle ()
+    protected void updateTitle ()
     {
         final StringBuilder sb = new StringBuilder ("DrivenByMoss 4 Reaper");
 
@@ -265,8 +234,8 @@ public class TransformatorApplication implements MessageSender, DataModelUpdater
             if (implementationVersion != null)
                 sb.append (" v").append (implementationVersion);
         }
-     // TODO
-//        this.title.set (sb.toString ());
+
+        this.setTitle (sb.toString ());
     }
 
 
@@ -274,21 +243,17 @@ public class TransformatorApplication implements MessageSender, DataModelUpdater
      * Configures and shows the stage.
      *
      * @param stage The stage to start
-     * @param scene The scene to set
      */
-    protected void showStage (final JFrame stage, final JPanel scene)
+    protected void showStage (final JFrame stage)
     {
         stage.setMinimumSize (new Dimension (600, 500));
 
-        // TODO
-        // stage.setTitle (this.title.get ());
-
-        // TODO
-        // final InputStream rs = ClassLoader.getSystemResourceAsStream ("images/AppIcon.gif");
-        // if (rs != null)
-        // stage.getIcons ().add (new Image (rs));
-        //
-        // stage.setScene (scene);
+        final URL url = ClassLoader.getSystemResource ("images/AppIcon.gif");
+        if (url != null)
+        {
+            final ImageIcon imageIcon = new ImageIcon (url);
+            this.setIconImage (imageIcon.getImage ());
+        }
 
         if (!SystemTray.isSupported ())
             stage.setVisible (true);
@@ -309,7 +274,7 @@ public class TransformatorApplication implements MessageSender, DataModelUpdater
             this.logModel.addLogMessage ("Could not load main configuration: " + ex.getLocalizedMessage ());
         }
 
-        // TODO this.mainConfiguration.restoreStagePlacement (this.stage);
+        this.mainConfiguration.restoreStagePlacement (this);
 
         SVGImage.clearCache ();
     }
@@ -325,34 +290,14 @@ public class TransformatorApplication implements MessageSender, DataModelUpdater
 
         try
         {
-            // TODO this.mainConfiguration.storeStagePlacement (this.stage);
+            this.mainConfiguration.storeStagePlacement (this);
             this.mainConfiguration.save (this.iniPath);
         }
         catch (final IOException ex)
         {
             final String message = new StringBuilder ("Could not store configuration file: ").append (ex.getLocalizedMessage ()).toString ();
             this.logModel.addLogMessage (message);
-            this.message (message);
         }
-    }
-
-
-    /**
-     * Shows a message dialog. If the message starts with a '@' the message is interpreted as a
-     * identifier for a string located in the resource file.
-     *
-     * @param message The message to display or a resource key
-     * @see ResourceBundle#getString
-     */
-    private void message (final String message)
-    {
-     // TODO
-//        final Alert alert = new Alert (AlertType.INFORMATION);
-//        alert.setTitle (null);
-//        alert.setHeaderText (null);
-//        alert.setContentText (message);
-//        // TODO alert.initOwner (this.stage);
-//        alert.showAndWait ();
     }
 
 
@@ -361,8 +306,6 @@ public class TransformatorApplication implements MessageSender, DataModelUpdater
      */
     private void startupInfrastructure ()
     {
-        this.startFlushTimer ();
-
         try
         {
             Midi.readDeviceMetadata ();
@@ -373,11 +316,13 @@ public class TransformatorApplication implements MessageSender, DataModelUpdater
         }
 
         this.instanceManager.load (this.mainConfiguration);
-     // TODO
-//        final ObservableList<IControllerInstance> items = this.controllerList.getItems ();
-//        items.setAll (this.instanceManager.getInstances ());
-//        if (!items.isEmpty ())
-//            this.controllerList.getSelectionModel ().select (0);
+        final DefaultListModel<IControllerInstance> items = (DefaultListModel<IControllerInstance>) this.controllerList.getModel ();
+        items.clear ();
+
+        for (final IControllerInstance instance: this.instanceManager.getInstances ())
+            items.addElement (instance);
+        if (!items.isEmpty ())
+            this.controllerList.getSelectionModel ().setLeadSelectionIndex (0);
 
         // Start the loop to read data from Reaper
         this.modelUpdater.execute ();
@@ -412,25 +357,6 @@ public class TransformatorApplication implements MessageSender, DataModelUpdater
     void flushToController ()
     {
         this.instanceManager.flushAll ();
-    }
-
-
-    /**
-     * Starts the controller flush loop for display updates.
-     */
-    private void startFlushTimer ()
-    {
-     // TODO
-//        // Update & render loop
-//        this.animationTimer = new AnimationTimer ()
-//        {
-//            @Override
-//            public void handle (final long now)
-//            {
-//                TransformatorApplication.this.flushToController ();
-//            }
-//        };
-//        this.animationTimer.start ();
     }
 
 
@@ -556,24 +482,22 @@ public class TransformatorApplication implements MessageSender, DataModelUpdater
 
     private void removeController ()
     {
-     // TODO
-//        final int selectedIndex = this.controllerList.getSelectionModel ().getSelectedIndex ();
-//        if (selectedIndex < 0)
-//            return;
-//        this.controllerList.getItems ().remove (selectedIndex);
-//        this.instanceManager.remove (selectedIndex);
+        final int selectedIndex = this.controllerList.getSelectionModel ().getLeadSelectionIndex ();
+        if (selectedIndex < 0)
+            return;
+        ((DefaultListModel<IControllerInstance>) this.controllerList.getModel ()).remove (selectedIndex);
+        this.instanceManager.remove (selectedIndex);
     }
 
 
     private void editController ()
     {
-     // TODO
-//        final int selectedIndex = this.controllerList.getSelectionModel ().getSelectedIndex ();
-//        if (selectedIndex < 0)
-//            return;
-//
-//        this.instanceManager.edit (selectedIndex);
-//        this.restartControllers ();
+        final int selectedIndex = this.controllerList.getSelectionModel ().getLeadSelectionIndex ();
+        if (selectedIndex < 0)
+            return;
+
+        this.instanceManager.edit (selectedIndex);
+        this.restartControllers ();
     }
 
 
@@ -581,24 +505,33 @@ public class TransformatorApplication implements MessageSender, DataModelUpdater
     @Override
     public void updateDataModel (final boolean dump)
     {
-        final String data = this.receiveModelData (dump);
-        if (data == null || data.isEmpty ())
-            return;
-        for (final String command: data.split ("\n"))
+        try
         {
-            final String [] split = command.split (" ");
-            final String params = split.length == 1 ? null : command.substring (split[0].length () + 1);
-            try
+            final String data = this.receiveModelData (dump);
+            if (data == null || data.isEmpty ())
+                return;
+            for (final String command: data.split ("\n"))
             {
-                this.handleReceiveOSC (split[0], params);
-            }
-            catch (final IllegalArgumentException ex)
-            {
-                final StringWriter sw = new StringWriter ();
-                ex.printStackTrace (new PrintWriter (sw));
-                this.logModel.addLogMessage (sw.toString ());
+                final String [] split = command.split (" ");
+                final String params = split.length == 1 ? null : command.substring (split[0].length () + 1);
+                try
+                {
+                    this.handleReceiveOSC (split[0], params);
+                }
+                catch (final IllegalArgumentException ex)
+                {
+                    final StringWriter sw = new StringWriter ();
+                    ex.printStackTrace (new PrintWriter (sw));
+                    this.logModel.addLogMessage (sw.toString ());
+                }
             }
         }
+        catch (final UnsatisfiedLinkError error)
+        {
+            this.logModel.addLogMessage ("Native callback method not installed?!");
+        }
+
+        this.flushToController ();
     }
 
 
@@ -607,47 +540,53 @@ public class TransformatorApplication implements MessageSender, DataModelUpdater
         this.modelUpdater.executeDump ();
     }
 
- // TODO
-//    private void configureAddButton (final MenuButton addButton)
-//    {
-//        final ObservableList<MenuItem> items = addButton.getItems ();
-//        final IControllerDefinition [] definitions = this.instanceManager.getDefinitions ();
-//        for (int i = 0; i < definitions.length; i++)
-//        {
-//            final MenuItem item = new MenuItem (definitions[i].toString ());
-//            final int index = i;
-//            item.setOnAction (event -> {
-//                if (this.instanceManager.isInstantiated (index))
-//                {
-//                    this.logModel.addLogMessage ("Only one instance of a controller type is supported!");
-//                    return;
-//                }
-//                final IControllerInstance inst = this.instanceManager.instantiate (index);
-//                this.controllerList.getItems ().add (inst);
-//                this.controllerList.getSelectionModel ().select (inst);
-//                inst.start ();
-//                this.sendRefreshCommand ();
-//            });
-//            items.add (item);
-//        }
-//    }
+
+    private void configureAddButton (final JButton addButton)
+    {
+        final JPopupMenu popup = new JPopupMenu ();
+        final IControllerDefinition [] definitions = this.instanceManager.getDefinitions ();
+        for (int i = 0; i < definitions.length; i++)
+        {
+            final JMenuItem item = new JMenuItem (definitions[i].toString ());
+            final int index = i;
+            item.addActionListener (event -> {
+                if (this.instanceManager.isInstantiated (index))
+                {
+                    this.logModel.addLogMessage ("Only one instance of a controller type is supported!");
+                    return;
+                }
+                final IControllerInstance inst = this.instanceManager.instantiate (index);
+                ((DefaultListModel<IControllerInstance>) this.controllerList.getModel ()).addElement (inst);
+                this.controllerList.setSelectedValue (inst, true);
+                inst.start ();
+                this.sendRefreshCommand ();
+            });
+            popup.add (item);
+        }
+        addButton.addActionListener (event -> popup.show (addButton, 0, 0));
+    }
 
 
- // TODO
-//    private void createDefaultMenuItems (final TextInputControl t)
-//    {
-//        final MenuItem selectAll = new MenuItem ("Select All");
-//        selectAll.setOnAction (e -> t.selectAll ());
-//        final MenuItem copy = new MenuItem ("Copy");
-//        copy.setOnAction (e -> t.copy ());
-//        final MenuItem clear = new MenuItem ("Clear");
-//        clear.setOnAction (e -> this.logModel.clearLogMessage ());
-//
-//        final BooleanBinding emptySelection = Bindings.createBooleanBinding ( () -> Boolean.valueOf (t.getSelection ().getLength () == 0), t.selectionProperty ());
-//        copy.disableProperty ().bind (emptySelection);
-//
-//        t.setContextMenu (new ContextMenu (copy, clear, new SeparatorMenuItem (), selectAll));
-//    }
+    private void createDefaultMenuItems (final JTextArea t)
+    {
+        final JPopupMenu popup = new JPopupMenu ();
+
+        final JMenuItem copy = new JMenuItem ("Copy");
+        copy.addActionListener (e -> t.copy ());
+        popup.add (copy);
+
+        final JMenuItem clear = new JMenuItem ("Clear");
+        clear.addActionListener (e -> this.logModel.clearLogMessage ());
+        popup.add (clear);
+
+        popup.addSeparator ();
+
+        final JMenuItem selectAll = new JMenuItem ("Select All");
+        selectAll.addActionListener (e -> t.selectAll ());
+        popup.add (selectAll);
+
+        t.setComponentPopupMenu (popup);
+    }
 
 
     /**
@@ -713,9 +652,7 @@ public class TransformatorApplication implements MessageSender, DataModelUpdater
      */
     private void showStage ()
     {
-        if (this.stage == null)
-            return;
-        this.stage.show ();
-        this.stage.toFront ();
+        this.setVisible (true);
+        this.toFront ();
     }
 }
