@@ -38,7 +38,7 @@ public class CursorDeviceImpl extends DeviceImpl implements ICursorDevice
 
     /**
      * Constructor.
-     * 
+     *
      * @param host The host
      * @param sender The OSC sender
      * @param valueChanger The value changer
@@ -324,7 +324,7 @@ public class CursorDeviceImpl extends DeviceImpl implements ICursorDevice
      */
     public void setParameterCount (final int count)
     {
-        int pageSize = this.deviceBank.getPageSize ();
+        final int pageSize = this.deviceBank.getPageSize ();
         final int numOfPages = count / pageSize + (count % pageSize > 0 ? 1 : 0);
 
         final String [] parameterPageNames = new String [numOfPages];

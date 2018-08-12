@@ -14,9 +14,9 @@ import java.util.Collection;
 
 /**
  * Adds some helper functions to a JList.
- * 
+ *
  * @param <E> the type of the elements of this list
- * 
+ *
  * @author J&uuml;rgen Mo&szlig;graber
  */
 public class JListX<E> extends JList<E>
@@ -35,7 +35,7 @@ public class JListX<E> extends JList<E>
 
     /**
      * Constructor.
-     * 
+     *
      * @param items The items to add to the list
      */
     public JListX (final Collection<E> items)
@@ -56,7 +56,7 @@ public class JListX<E> extends JList<E>
 
     /**
      * Returns true if the list box has a selected item.
-     * 
+     *
      * @return True if the list box has a selected item
      */
     public boolean hasSelection ()
@@ -76,7 +76,7 @@ public class JListX<E> extends JList<E>
 
     /**
      * Selects the given items in the list.
-     * 
+     *
      * @param items The items to select
      */
     public void setSelectItems (final Collection<E> items)
@@ -91,7 +91,7 @@ public class JListX<E> extends JList<E>
 
     /**
      * Looks up the index of an item in a list.
-     * 
+     *
      * @param item The item to look up
      * @return The index of the item in the list or -1 if not found
      */
@@ -112,14 +112,14 @@ public class JListX<E> extends JList<E>
 
     /**
      * Get all items from the list.
-     * 
+     *
      * @return All items from the list
      */
     public Collection<E> getAll ()
     {
         final ListModel<E> model = this.getModel ();
         final int size = model.getSize ();
-        final Collection<E> items = new ArrayList<E> (size);
+        final Collection<E> items = new ArrayList<> (size);
         for (int i = 0; i < size; i++)
             items.add (model.getElementAt (i));
         return items;
@@ -129,7 +129,7 @@ public class JListX<E> extends JList<E>
     /**
      * Clears the list and adds all given items to the list. Selects the first added item in the
      * list.
-     * 
+     *
      * @param items The items to set
      */
     public void setAll (final Collection<E> items)
@@ -142,7 +142,7 @@ public class JListX<E> extends JList<E>
     /**
      * Adds all given items to the list. Selects the first added item in the list. If the items
      * collection is empty the selection is not changed.
-     * 
+     *
      * @param items The items to add
      */
     public final void addAll (final Collection<E> items)
@@ -160,7 +160,7 @@ public class JListX<E> extends JList<E>
     /**
      * Adds all given items to the list if they are not already present. Selects the first added
      * item in the list. If the items collection is empty the selection is not changed.
-     * 
+     *
      * @param items The items to add
      */
     public void addAllIfNotPresent (final Collection<E> items)
@@ -179,7 +179,7 @@ public class JListX<E> extends JList<E>
 
     /**
      * Adds an item to the list.
-     * 
+     *
      * @param item The item to add
      */
     public void addItem (final E item)
@@ -192,7 +192,7 @@ public class JListX<E> extends JList<E>
 
     /**
      * Adds an item to the list.
-     * 
+     *
      * @param index Index at which the specified item is to be inserted, if set to -1 the item is
      *            added to the end of the list
      * @param item The item to add
@@ -211,7 +211,7 @@ public class JListX<E> extends JList<E>
 
     /**
      * Removes the item at the given index from the list.
-     * 
+     *
      * @param index The index of an item
      */
     public void removeItem (final int index)
@@ -241,7 +241,7 @@ public class JListX<E> extends JList<E>
 
     /**
      * Replaces the item at the given index with the new item. Selects the item afterwards.
-     * 
+     *
      * @param index The index at which to replace an item
      * @param item The new item
      */
@@ -256,7 +256,7 @@ public class JListX<E> extends JList<E>
 
     /**
      * Moves the item at the currently selected index upwards or downwards in the list.
-     * 
+     *
      * @param up Move it upwards if true otherwise downwards
      */
     public void moveItem (final boolean up)
@@ -304,7 +304,7 @@ public class JListX<E> extends JList<E>
 
     /**
      * Get the DefaultListModel if this list has set one otherwise an exception is thrown.
-     * 
+     *
      * @return The casted model
      */
     @Override
@@ -316,7 +316,7 @@ public class JListX<E> extends JList<E>
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * Ensures that the newly selected index is visible.
      */
     @Override

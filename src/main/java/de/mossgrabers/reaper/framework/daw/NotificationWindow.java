@@ -5,15 +5,11 @@ import de.mossgrabers.transformator.util.SafeRunLater;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
+import javax.swing.border.EmptyBorder;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.Insets;
-import java.awt.Rectangle;
 import java.awt.Toolkit;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -41,20 +37,19 @@ public class NotificationWindow
      */
     public NotificationWindow ()
     {
-        this.popupStage.setTitle ("Title of popup");
+        this.popupStage.setTitle ("Notification");
         this.popupStage.setAlwaysOnTop (true);
         this.popupStage.setUndecorated (true);
         this.popupStage.setResizable (false);
+        this.popupStage.setMinimumSize (new Dimension (800, 80));
+
+        this.label.setFont (this.label.getFont ().deriveFont ((float) 40.0));
 
         final JPanel root = new JPanel (new BorderLayout ());
+        root.setBorder (new EmptyBorder (14, 14, 14, 14));
         root.add (this.label, BorderLayout.CENTER);
 
         this.popupStage.setContentPane (root);
-        // this.popupStage.setMinimumSize (new Dimension (FRAME_WIDTH, FRAME_HEIGHT));
-
-        this.popupStage.addComponentListener (new FontResizeAdapter ());
-
-        // this.popupStage.centerOnScreen ();
 
         this.executor.scheduleAtFixedRate ( () -> {
             final int c = this.counter.get ();
@@ -91,49 +86,21 @@ public class NotificationWindow
 
         this.label.setText (message);
 
-        if (!this.popupStage.isShowing ())
-        {
-            final Dimension dim = Toolkit.getDefaultToolkit ().getScreenSize ();
-            final Dimension size = this.popupStage.getSize ();
-            this.popupStage.setLocation (dim.width / 2 - size.width / 2, dim.height / 2 - size.height / 2);
-            this.popupStage.setVisible (true);
-        }
-    }
+        final Dimension preferredSize = this.label.getPreferredSize ();
+        preferredSize.width = preferredSize.width + 28;
+        preferredSize.height = preferredSize.height + 28;
+        this.popupStage.setMinimumSize (preferredSize);
+        this.popupStage.setMaximumSize (preferredSize);
+        this.popupStage.setPreferredSize (preferredSize);
+        this.popupStage.setSize (preferredSize);
+        this.popupStage.validate ();
+        this.popupStage.revalidate ();
 
+        if (this.popupStage.isShowing ())
+            return;
 
-    void updateLabel ()
-    {
-        float fittedFontSize = 1.0f;
-        while (getFittedText (this.label, fittedFontSize).equals (this.label.getText ()))
-            fittedFontSize += 1.0f;
-        this.label.setFont (this.label.getFont ().deriveFont (fittedFontSize - 1.0f));
-        this.label.revalidate ();
-        this.label.repaint ();
-    }
-
-
-    private static String getFittedText (JLabel label, float fontSize)
-    {
-        Insets i = label.getInsets ();
-        Rectangle viewRect = new Rectangle ();
-        Rectangle textRect = new Rectangle ();
-        Rectangle iconRect = new Rectangle ();
-        viewRect.x = i.left;
-        viewRect.y = i.top;
-        viewRect.width = label.getWidth () - (i.right + viewRect.x);
-        viewRect.height = label.getHeight () - (i.bottom + viewRect.y);
-        textRect.x = textRect.y = textRect.width = textRect.height = 0;
-        iconRect.x = iconRect.y = iconRect.width = iconRect.height = 0;
-
-        return SwingUtilities.layoutCompoundLabel (label, label.getFontMetrics (label.getFont ().deriveFont (fontSize)), label.getText (), label.getIcon (), label.getVerticalAlignment (), label.getHorizontalAlignment (), label.getVerticalTextPosition (), label.getHorizontalTextPosition (), viewRect, textRect, iconRect, label.getIconTextGap ());
-    }
-
-    class FontResizeAdapter extends ComponentAdapter
-    {
-        @Override
-        public void componentResized (ComponentEvent e)
-        {
-            updateLabel ();
-        }
+        final Dimension dim = Toolkit.getDefaultToolkit ().getScreenSize ();
+        this.popupStage.setLocation (dim.width / 2 - preferredSize.width / 2, dim.height / 2 - preferredSize.height / 2);
+        this.popupStage.setVisible (true);
     }
 }

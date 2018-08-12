@@ -143,15 +143,15 @@ public class ConfigurationDialog extends BasicDialog
         this.addComponentListener (new ComponentAdapter ()
         {
             @Override
-            public void componentResized (ComponentEvent event)
+            public void componentResized (final ComponentEvent event)
             {
-                final Rectangle b = getBounds ();
+                final Rectangle b = ConfigurationDialog.this.getBounds ();
                 final Dimension screenSize = Toolkit.getDefaultToolkit ().getScreenSize ();
                 final int maxHeight = (int) screenSize.getHeight () - 200;
                 if (b.height > maxHeight)
                 {
                     b.height = maxHeight;
-                    setBounds (b);
+                    ConfigurationDialog.this.setBounds (b);
                 }
                 super.componentResized (event);
             }

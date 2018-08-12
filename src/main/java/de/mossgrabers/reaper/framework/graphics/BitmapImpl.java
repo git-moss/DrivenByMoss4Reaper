@@ -40,7 +40,7 @@ public class BitmapImpl extends BasicDialog implements IBitmap
 
 
                                                    @Override
-                                                   public void paintComponent (Graphics gc)
+                                                   public void paintComponent (final Graphics gc)
                                                    {
                                                        // Let UI Delegate paint first, which
                                                        // includes background filling since

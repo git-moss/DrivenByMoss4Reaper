@@ -20,7 +20,7 @@ import java.awt.geom.Rectangle2D;
 
 /**
  * A titled border which draws a background with a gradient color effect.
- * 
+ *
  * @author J&uuml;rgen Mo&szlig;graber
  */
 public class GradientTitledBorder extends TitledBorder
@@ -33,7 +33,7 @@ public class GradientTitledBorder extends TitledBorder
 
     /**
      * Constructor. Uses LAF colors.
-     * 
+     *
      * @param title The text of the title
      */
     public GradientTitledBorder (final String title)
@@ -44,7 +44,7 @@ public class GradientTitledBorder extends TitledBorder
 
     /**
      * Constructor.
-     * 
+     *
      * @param title The text of the title
      * @param titleColor The color of the title
      * @param gradientColor1 The starting color of the gradient on the left
@@ -72,7 +72,7 @@ public class GradientTitledBorder extends TitledBorder
 
     /**
      * Paints the gradient titled border.
-     * 
+     *
      * @param c The component for which this border is being painted
      * @param g The paint graphics
      * @param x The x position of the painted border
@@ -97,7 +97,7 @@ public class GradientTitledBorder extends TitledBorder
 
     /**
      * Gets the insets of the border.
-     * 
+     *
      * @param c The component for which to get the insets of the border
      * @return The insets of the border
      */
@@ -110,7 +110,7 @@ public class GradientTitledBorder extends TitledBorder
 
     /**
      * No cascaded border possible, always returns null.
-     * 
+     *
      * @return null
      */
     @Override

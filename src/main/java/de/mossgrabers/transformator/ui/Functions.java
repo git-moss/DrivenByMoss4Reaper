@@ -21,7 +21,7 @@ import java.util.ResourceBundle;
 
 /**
  * Provides some useful static functions.
- * 
+ *
  * @author J&uuml;rgen Mo&szlig;graber
  */
 public final class Functions
@@ -32,7 +32,7 @@ public final class Functions
 
     /**
      * Initialise the Singleton object.
-     * 
+     *
      * @param messages A resource bundle which contains message texts
      */
     public static void init (final ResourceBundle messages)
@@ -43,7 +43,7 @@ public final class Functions
 
     /**
      * Get the size of the open and save dialog used for the getFileFromUser functions.
-     * 
+     *
      * @return The size of the open and save dialog used for the getFileFromUser functions
      */
     static Dimension getOpenSaveDlgDim ()
@@ -54,7 +54,7 @@ public final class Functions
 
     /**
      * Set the size of the open and save dialog used for the getFileFromUser functions.
-     * 
+     *
      * @param openSaveDlgDim The size of the open and save dialog used for the getFileFromUser
      *            functions.
      */
@@ -66,7 +66,7 @@ public final class Functions
 
     /**
      * Initialise the Singleton object.
-     * 
+     *
      * @param messages A resource bundle which contains message texts
      * @param openSaveDlgDim The size of the open and save dialog used for the getFileFromUser
      *            functions.
@@ -80,7 +80,7 @@ public final class Functions
 
     /**
      * Get a message.
-     * 
+     *
      * @param messageID The ID of the message to get
      * @param replaceStrings Replaces the %1..%n in the message with the strings
      * @return The message
@@ -98,7 +98,7 @@ public final class Functions
     /**
      * Get a message which contains a %1. Replaces the %1 with the message text of the exception. If
      * the exception has no message the class name of the Exception is inserted.
-     * 
+     *
      * @param messageID The ID of the message to get
      * @param ex An exception
      * @return The message
@@ -114,7 +114,7 @@ public final class Functions
     /**
      * Reads the text from the functions-resourcebundle if text starts with '@' otherwise the text
      * itself is returned.
-     * 
+     *
      * @param text The text or a message id starting with '@'
      * @return The loaded text
      */
@@ -129,7 +129,7 @@ public final class Functions
     /**
      * Shows a message dialog with the message of an exception. If the exception does not contain a
      * message the exceptions class name is shown.
-     * 
+     *
      * @param ex An exception
      */
     public static void message (final Throwable ex)
@@ -142,7 +142,7 @@ public final class Functions
     /**
      * Shows a message dialog with the message of an exception inserted into a message. If the
      * exception does not contain a message the exceptions class name is shown.
-     * 
+     *
      * @param message The message to display or a resource key
      * @param ex An exception
      */
@@ -156,7 +156,7 @@ public final class Functions
     /**
      * Shows a message dialog. If the message starts with a '@' the message is interpreted as a
      * identifier for a string located in the resource file.
-     * 
+     *
      * @param message The message to display or a resource key
      * @param replaceStrings Replaces the %1..%n in the message with the strings
      * @see ResourceBundle#getString
@@ -170,7 +170,7 @@ public final class Functions
 
     /**
      * Shows a yes or no choice dialog.
-     * 
+     *
      * @param message The text of the message
      * @return true if yes is selected
      */
@@ -182,7 +182,7 @@ public final class Functions
 
     /**
      * Shows a yes or no choice dialog.
-     * 
+     *
      * @param frame The owner frame
      * @param message The text of the message
      * @return true if yes is selected
@@ -195,7 +195,7 @@ public final class Functions
 
     /**
      * Shows a yes or no choice dialog.
-     * 
+     *
      * @param message The text of the message
      * @param replaceStrings Replaces the %1..%n in the message with the strings
      * @return True if yes is selected
@@ -208,7 +208,7 @@ public final class Functions
 
     /**
      * Shows a yes or no choice dialog.
-     * 
+     *
      * @param frame The owner frame
      * @param message The text of the message
      * @param replaceStrings Replaces the %1..%n in the message with the strings
@@ -223,7 +223,7 @@ public final class Functions
 
     /**
      * Choose 1 from 2 options.
-     * 
+     *
      * @param message The text of the message
      * @param title The title of the dialog
      * @param options The texts for the options
@@ -237,7 +237,7 @@ public final class Functions
 
     /**
      * Choose 1 from 2 options.
-     * 
+     *
      * @param parent The owning component
      * @param message The text of the message
      * @param title The title of the dialog
@@ -252,7 +252,7 @@ public final class Functions
 
     /**
      * Choose from N options.
-     * 
+     *
      * @param message The text of the message
      * @param title The title of the dialog
      * @param options The texts for the options
@@ -266,7 +266,7 @@ public final class Functions
 
     /**
      * Choose from N options.
-     * 
+     *
      * @param parent The owning component
      * @param message The text of the message
      * @param title The title of the dialog
@@ -283,7 +283,7 @@ public final class Functions
 
     /**
      * If value contains an empty string the function returns null otherwise the unmodified string.
-     * 
+     *
      * @param value The value to check/modify
      * @return Null or the string
      */
@@ -295,7 +295,7 @@ public final class Functions
 
     /**
      * If value is null the function returns an empty string otherwise the unmodified string.
-     * 
+     *
      * @param value The value to check/modify
      * @return An empty string or the unmodified string
      */
@@ -308,7 +308,7 @@ public final class Functions
     /**
      * Helper function to compare to objects which may be null. If both are null they are considered
      * as equal.
-     * 
+     *
      * @param o1 One element to compare
      * @param o2 The other element to compare
      * @return True if the elements are equal
@@ -321,7 +321,7 @@ public final class Functions
 
     /**
      * Replaces '%X' X=[0, replaceStrings.length-1] in a message with the replaceStrings.
-     * 
+     *
      * @param message The message to modify
      * @param replaceStrings The strings to insert
      * @return The modified string
@@ -341,7 +341,7 @@ public final class Functions
 
     /**
      * Get an icon from a jar file.
-     * 
+     *
      * @param iconName The name (and path) of the icon
      * @return The retrieved icon
      */
@@ -360,7 +360,7 @@ public final class Functions
 
     /**
      * Sets the fan's height to the idol's size.
-     * 
+     *
      * @param idol Use its height for the fan
      * @param fan Gets the height of the idol set
      */
@@ -376,7 +376,7 @@ public final class Functions
 
     /**
      * Sets the fan's width to the idol's size.
-     * 
+     *
      * @param idol Use its width for the fan
      * @param fan Gets the width of the idol set
      */
@@ -392,7 +392,7 @@ public final class Functions
 
     /**
      * Sets a minimum and a preferred size for the scroll pane of the given component.
-     * 
+     *
      * @param component The component which to size
      * @param width The preferred width
      * @param height The preferred height
@@ -412,7 +412,7 @@ public final class Functions
 
     /**
      * Sets a minimum and a preferred width for the scroll pane of the given component.
-     * 
+     *
      * @param component The component which to size
      * @param width The preferred width
      */
@@ -432,7 +432,7 @@ public final class Functions
 
     /**
      * Dis-/Enables a component with all their subcomponents.
-     * 
+     *
      * @param c The component to en-/disable
      * @param enable What to do
      */
@@ -451,7 +451,7 @@ public final class Functions
     /**
      * Positions a popup menu on the screen where the given mouse click did occur. Takes care that
      * the menu is fully visible on the screen.
-     * 
+     *
      * @param menu The menu to display
      * @param e The mouse event
      */
@@ -464,7 +464,7 @@ public final class Functions
     /**
      * Positions a popup menu on the screen at the given x/y position. Takes care that the menu is
      * fully visible on the screen.
-     * 
+     *
      * @param menu The menu to display
      * @param component The component in whose space the popup menu is to appear
      * @param x The x position where the menu should be displayed
@@ -482,7 +482,7 @@ public final class Functions
 
     /**
      * Show the WAIT-Cursor for the mouse.
-     * 
+     *
      * @param busy True if the WAIT-Curor should be shown
      */
     public static void setBusy (final boolean busy)
@@ -506,7 +506,7 @@ public final class Functions
 
         /**
          * Constructor.
-         * 
+         *
          * @param open True if this is an open dialog otherwise it is an save dialog
          * @param currentPath The current path to set
          * @param existanceMsg The message to display if this is a save dialog and the file does
@@ -555,7 +555,7 @@ public final class Functions
 
     /**
      * Get the frame with the focus.
-     * 
+     *
      * @return The frame with the focus
      */
     public static Frame getFocusedFrame ()

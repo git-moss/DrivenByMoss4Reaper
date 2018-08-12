@@ -84,7 +84,7 @@ public class TransformatorApplication extends JFrame implements MessageSender, D
 
     /**
      * Constructor.
-     * 
+     *
      * @param iniPath The Reaper path which contains all INI files
      */
     public TransformatorApplication (final String iniPath)
@@ -173,7 +173,7 @@ public class TransformatorApplication extends JFrame implements MessageSender, D
         deviceButtonContainer.add (this.configButton);
         deviceButtonContainer.add (refreshButton);
 
-        this.controllerList.setMinimumSize (new Dimension (200, 200));
+        this.controllerList.setMinimumSize (new Dimension (300, 200));
         final JScrollPane controllerListPane = new JScrollPane (this.controllerList);
 
         final JPanel controllerConfigurationPane = new JPanel (new BorderLayout ());
@@ -255,7 +255,7 @@ public class TransformatorApplication extends JFrame implements MessageSender, D
      */
     protected void showStage (final JFrame stage)
     {
-        stage.setMinimumSize (new Dimension (600, 500));
+        stage.setMinimumSize (new Dimension (840, 500));
 
         final URL url = ClassLoader.getSystemResource ("images/AppIcon.gif");
         if (url != null)

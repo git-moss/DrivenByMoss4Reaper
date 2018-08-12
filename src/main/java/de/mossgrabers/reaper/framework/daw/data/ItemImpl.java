@@ -27,7 +27,7 @@ public abstract class ItemImpl extends BaseImpl implements IItem
 
     /**
      * Constructor.
-     * 
+     *
      * @param host The DAW host
      * @param sender The OSC sender
      * @param index The index

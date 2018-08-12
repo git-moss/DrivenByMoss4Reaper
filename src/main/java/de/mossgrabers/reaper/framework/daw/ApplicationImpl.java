@@ -23,7 +23,7 @@ public class ApplicationImpl extends BaseImpl implements IApplication
 
     /**
      * Constructor.
-     * 
+     *
      * @param host The DAW host
      * @param sender The OSC sender
      */

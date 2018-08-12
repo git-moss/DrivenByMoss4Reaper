@@ -49,7 +49,7 @@ public class NoteInputImpl implements INoteInput
 
     /** {@inheritDoc} */
     @Override
-    public void setKeyTranslationTable (Integer [] table)
+    public void setKeyTranslationTable (final Integer [] table)
     {
         this.keyTranslationTable = table;
     }
@@ -57,7 +57,7 @@ public class NoteInputImpl implements INoteInput
 
     /** {@inheritDoc} */
     @Override
-    public void setVelocityTranslationTable (Integer [] table)
+    public void setVelocityTranslationTable (final Integer [] table)
     {
         this.velocityTranslationTable = table;
     }

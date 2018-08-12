@@ -177,7 +177,7 @@ public abstract class AbstractTrackBankImpl extends AbstractBankImpl<ITrack> imp
 
     /** {@inheritDoc} */
     @Override
-    public void setIndication (boolean enable)
+    public void setIndication (final boolean enable)
     {
         // Not supported
     }

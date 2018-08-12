@@ -21,7 +21,7 @@ public class MarkerBankImpl extends AbstractBankImpl<IMarker> implements IMarker
 {
     /**
      * Constructor.
-     * 
+     *
      * @param host The DAW host
      * @param sender The OSC sender
      * @param valueChanger The value changer

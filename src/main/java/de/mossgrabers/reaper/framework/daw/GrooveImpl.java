@@ -28,7 +28,7 @@ public class GrooveImpl extends BaseImpl implements IGroove
 
     /**
      * Constructor
-     * 
+     *
      * @param host The DAW host
      * @param sender The OSC sender
      * @param valueChanger The value changer

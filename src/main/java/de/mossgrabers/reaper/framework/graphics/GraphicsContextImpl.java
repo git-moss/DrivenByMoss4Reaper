@@ -130,7 +130,7 @@ public class GraphicsContextImpl implements IGraphicsContext
 
     /** {@inheritDoc} */
     @Override
-    public void fillCircle (double x, double y, double radius, ColorEx fillColor)
+    public void fillCircle (final double x, final double y, final double radius, final ColorEx fillColor)
     {
         this.setColor (fillColor);
         final int size = (int) (2 * radius);

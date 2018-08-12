@@ -38,7 +38,7 @@ public class GrooveParameter extends ParameterImpl
 
     /**
      * Constructor.
-     * 
+     *
      * @param host The DAW host
      * @param sender The OSC sender
      * @param valueChanger The value changer

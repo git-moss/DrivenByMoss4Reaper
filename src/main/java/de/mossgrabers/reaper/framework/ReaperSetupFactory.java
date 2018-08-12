@@ -62,7 +62,7 @@ public class ReaperSetupFactory implements ISetupFactory
 
     /** {@inheritDoc} */
     @Override
-    public IModel createModel (ColorManager colorManager, IValueChanger valueChanger, Scales scales, int numTracks, int numScenes, int numSends, int numFilterColumnEntries, int numResults, boolean hasFlatTrackList, int numParams, int numDevicesInBank, int numDeviceLayers, int numDrumPadLayers, int numMarkers)
+    public IModel createModel (final ColorManager colorManager, final IValueChanger valueChanger, final Scales scales, final int numTracks, final int numScenes, final int numSends, final int numFilterColumnEntries, final int numResults, final boolean hasFlatTrackList, final int numParams, final int numDevicesInBank, final int numDeviceLayers, final int numDrumPadLayers, final int numMarkers)
     {
         return new ModelImpl (this.iniFiles, this.sender, this.host, colorManager, valueChanger, scales, numTracks, numScenes, numSends, numFilterColumnEntries, numResults, hasFlatTrackList, numParams, numDevicesInBank, numDeviceLayers, numDrumPadLayers, numMarkers);
     }

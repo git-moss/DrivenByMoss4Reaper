@@ -336,26 +336,10 @@ public class ChannelImpl extends ItemImpl implements IChannel
 
     /** {@inheritDoc} */
     @Override
-    public void setIsActivated (final boolean value)
+    public void setIsActivated (final boolean enable)
     {
-        if (value)
-        {
-            this.sender.invokeAction (Actions.UNLOCK_TRACK_CONTROLS);
-            this.sender.invokeAction (Actions.SET_ALL_FX_ONLINE);
-            this.sender.invokeAction (Actions.UNMUTE_ALL_RECEIVES_ON_SELECTED_TRACKS);
-            this.sender.invokeAction (Actions.UNMUTE_ALL_SENDS_ON_SELECTED_TRACKS);
-            this.sender.invokeAction (Actions.UNBYPASS_ALL_FX_ON_SELECTED_TRACKS);
-            this.sender.invokeAction (Actions.UNMUTE_TRACKS);
-        }
-        else
-        {
-            this.sender.invokeAction (Actions.MUTE_TRACKS);
-            this.sender.invokeAction (Actions.BYPASS_ALL_FX_ON_SELECTED_TRACKS);
-            this.sender.invokeAction (Actions.MUTE_ALL_SENDS_ON_SELECTED_TRACKS);
-            this.sender.invokeAction (Actions.MUTE_ALL_RECEIVES_ON_SELECTED_TRACKS);
-            this.sender.invokeAction (Actions.SET_ALL_FX_OFFLINE);
-            this.sender.invokeAction (Actions.LOCK_TRACK_CONTROLS);
-        }
+        this.isActivated = enable;
+        this.sendTrackOSC ("active", Boolean.valueOf (enable));
     }
 
 

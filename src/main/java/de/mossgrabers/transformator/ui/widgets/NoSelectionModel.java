@@ -9,7 +9,7 @@ import javax.swing.DefaultListSelectionModel;
 
 /**
  * No selection please.
- * 
+ *
  * @author J&uuml;rgen Mo&szlig;graber
  */
 public class NoSelectionModel extends DefaultListSelectionModel

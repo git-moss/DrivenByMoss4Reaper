@@ -20,7 +20,7 @@ import java.awt.geom.Rectangle2D;
 
 /**
  * A titled separator. This is a text followed by a horizontal separator line.
- * 
+ *
  * @author J&uuml;rgen Mo&szlig;graber
  */
 public class TitledSeparator extends JPanel
@@ -33,7 +33,7 @@ public class TitledSeparator extends JPanel
 
     /**
      * Constructor.
-     * 
+     *
      * @param text The text to display as a title
      */
     public TitledSeparator (final String text)
@@ -56,7 +56,7 @@ public class TitledSeparator extends JPanel
      * displayedMnemonic property is set and the labelFor property is also set, the label will call
      * the requestFocus method of the component specified by the labelFor property when the mnemonic
      * is activated.
-     * 
+     *
      * @param c The Component this label is for, or null if the label is not the label for a
      *            component
      */
@@ -68,7 +68,7 @@ public class TitledSeparator extends JPanel
 
     /**
      * Paints the component.
-     * 
+     *
      * @param g The graphics display
      */
     @Override
@@ -90,7 +90,7 @@ public class TitledSeparator extends JPanel
 
     /**
      * Returns the minimum size of the label as the minimum size of this control.
-     * 
+     *
      * @return The minimum size
      */
     @Override
@@ -102,7 +102,7 @@ public class TitledSeparator extends JPanel
 
     /**
      * Returns the minimum size of the label as the preferred size of this control.
-     * 
+     *
      * @return The preferred size
      */
     @Override
@@ -114,7 +114,7 @@ public class TitledSeparator extends JPanel
 
     /**
      * Enables or disables this component, depending on the value of the parameter <code>b</code>.
-     * 
+     *
      * @param b If <code>true</code>, this component is enabled; otherwise this component is
      *            disabled
      */

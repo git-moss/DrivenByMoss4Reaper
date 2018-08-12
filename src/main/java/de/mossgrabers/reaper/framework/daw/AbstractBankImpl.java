@@ -29,7 +29,7 @@ public abstract class AbstractBankImpl<T extends IItem> extends AbstractBank<T>
 
     /**
      * Constructor.
-     * 
+     *
      * @param host The DAW host
      * @param sender The OSC sender
      * @param valueChanger The value changer

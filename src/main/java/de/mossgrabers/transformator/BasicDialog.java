@@ -60,7 +60,7 @@ public abstract class BasicDialog extends JDialog
 
     /**
      * Sets the ok button.
-     * 
+     *
      * @param ok The OK button
      */
     public void setButtons (final JButton ok)
@@ -71,7 +71,7 @@ public abstract class BasicDialog extends JDialog
 
     /**
      * Sets the ok and cancel button.
-     * 
+     *
      * @param ok The OK button
      * @param cancel The cancel button
      */
@@ -96,7 +96,7 @@ public abstract class BasicDialog extends JDialog
 
     /**
      * Show the wait cursor
-     * 
+     *
      * @param busy True to show busy cursor
      */
     public void setBusy (final boolean busy)
@@ -107,7 +107,7 @@ public abstract class BasicDialog extends JDialog
 
     /**
      * Returns true if the ok button was clicked to exit the dialog.
-     * 
+     *
      * @return True if the ok button was clicked to exit the dialog.
      */
     public boolean isConfirmed ()
@@ -256,7 +256,7 @@ public abstract class BasicDialog extends JDialog
 
     /**
      * Creates a closing event for this dialog.
-     * 
+     *
      * @return The event
      */
     private WindowEvent createClosingEvent ()

@@ -10,7 +10,7 @@ import javax.swing.text.Document;
 
 /**
  * Adds some helper functions.
- * 
+ *
  * @author J&uuml;rgen Mo&szlig;graber
  */
 public class JTextFieldX extends JTextField
@@ -31,7 +31,7 @@ public class JTextFieldX extends JTextField
     /**
      * Constructs a new <code>TextField</code> initialized with the specified text. A default model
      * is created and the number of columns is 0.
-     * 
+     *
      * @param text the text to be displayed, or <code>null</code>
      */
     public JTextFieldX (final String text)
@@ -43,7 +43,7 @@ public class JTextFieldX extends JTextField
     /**
      * Constructs a new empty <code>TextField</code> with the specified number of columns. A default
      * model is created and the initial string is set to <code>null</code>.
-     * 
+     *
      * @param columns the number of columns to use to calculate the preferred width; if columns is
      *            set to zero, the preferred width will be whatever naturally results from the
      *            component implementation
@@ -57,7 +57,7 @@ public class JTextFieldX extends JTextField
     /**
      * Constructs a new <code>TextField</code> initialized with the specified text and columns. A
      * default model is created.
-     * 
+     *
      * @param text the text to be displayed, or <code>null</code>
      * @param columns the number of columns to use to calculate the preferred width; if columns is
      *            set to zero, the preferred width will be whatever naturally results from the
@@ -73,7 +73,7 @@ public class JTextFieldX extends JTextField
      * Constructs a new <code>JTextField</code> that uses the given text storage model and the given
      * number of columns. This is the constructor through which the other constructors feed. If the
      * document is <code>null</code>, a default model is created.
-     * 
+     *
      * @param doc the text storage to use; if this is <code>null</code>, a default will be provided
      *            by calling the <code>createDefaultModel</code> method
      * @param text the initial string to display, or <code>null</code>
@@ -89,7 +89,7 @@ public class JTextFieldX extends JTextField
 
     /**
      * Parses an integer from the text. If an NumberFormatException occurs null is returned.
-     * 
+     *
      * @return The integer or null
      */
     public Integer getIntegerFromText ()
@@ -109,7 +109,7 @@ public class JTextFieldX extends JTextField
     /**
      * Parses an integer from the text. If an NumberFormatException occurs -1 or no text is present
      * null is returned.
-     * 
+     *
      * @return The integer or -1
      */
     public int getIntFromText ()
@@ -121,7 +121,7 @@ public class JTextFieldX extends JTextField
 
     /**
      * Sets an integer as the text value. If the value is null an empty string is set.
-     * 
+     *
      * @param value The integer to set
      */
     public void setIntegerAsText (final Integer value)
@@ -132,7 +132,7 @@ public class JTextFieldX extends JTextField
 
     /**
      * Sets an integer as the text value.
-     * 
+     *
      * @param value The integer to set
      */
     public void setIntAsText (final int value)
@@ -143,7 +143,7 @@ public class JTextFieldX extends JTextField
 
     /**
      * Sets an integer as the text value. If the value is less than 0 an empty string is set.
-     * 
+     *
      * @param value The integer to set
      */
     public void setPositiveIntAsText (final int value)

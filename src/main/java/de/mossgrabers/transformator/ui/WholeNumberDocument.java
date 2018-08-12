@@ -12,7 +12,7 @@ import java.awt.Toolkit;
 
 /**
  * Limits the characters in the document to numbers and a maximum number length.
- * 
+ *
  * @author J&uuml;rgen Mo&szlig;graber
  */
 public class WholeNumberDocument extends MaxLengthDocument
@@ -33,7 +33,7 @@ public class WholeNumberDocument extends MaxLengthDocument
 
     /**
      * Constructor.
-     * 
+     *
      * @param onlyPositive Also forbids negative numbers (0 is allowed)
      */
     public WholeNumberDocument (final boolean onlyPositive)
@@ -44,7 +44,7 @@ public class WholeNumberDocument extends MaxLengthDocument
 
     /**
      * Constructor.
-     * 
+     *
      * @param onlyPositive Also forbids negative numbers
      * @param maxLength The maximum number of characters of the document
      */
@@ -57,7 +57,7 @@ public class WholeNumberDocument extends MaxLengthDocument
 
     /**
      * Overwritten to limit the insertion of text to numbers.
-     * 
+     *
      * @param offs The offset in the text
      * @param str The string to insert
      * @param a The attributes of the string

@@ -19,7 +19,7 @@ public class MixerImpl extends BaseImpl implements IMixer
 {
     /**
      * Constructor
-     * 
+     *
      * @param host The DAW host
      * @param sender The OSC sender
      */

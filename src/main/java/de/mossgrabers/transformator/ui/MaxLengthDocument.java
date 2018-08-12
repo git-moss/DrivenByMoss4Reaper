@@ -11,7 +11,7 @@ import javax.swing.text.PlainDocument;
 
 /**
  * Limits the number of characters in the document to a maximum length.
- * 
+ *
  * @author J&uuml;rgen Mo&szlig;graber
  */
 public class MaxLengthDocument extends PlainDocument
@@ -23,7 +23,7 @@ public class MaxLengthDocument extends PlainDocument
 
     /**
      * Constructor.
-     * 
+     *
      * @param maxLength The maximum number of characters of the document
      */
     public MaxLengthDocument (final int maxLength)
@@ -35,7 +35,7 @@ public class MaxLengthDocument extends PlainDocument
 
     /**
      * Overwritten to limit the insertion of text.
-     * 
+     *
      * @param offs The offset in the text
      * @param str The string to insert
      * @param a The attributes of the string

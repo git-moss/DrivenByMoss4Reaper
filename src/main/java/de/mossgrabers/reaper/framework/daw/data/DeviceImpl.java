@@ -18,7 +18,7 @@ public class DeviceImpl extends ItemImpl implements IDevice
 {
     /**
      * Constructor.
-     * 
+     *
      * @param host The DAW host
      * @param sender The OSC sender
      * @param index The index of the device

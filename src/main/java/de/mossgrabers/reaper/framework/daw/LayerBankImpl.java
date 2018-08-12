@@ -20,7 +20,7 @@ public class LayerBankImpl extends AbstractBankImpl<ILayer> implements ILayerBan
 {
     /**
      * Constructor.
-     * 
+     *
      * @param numDeviceLayers The number of layers
      */
     public LayerBankImpl (final int numDeviceLayers)

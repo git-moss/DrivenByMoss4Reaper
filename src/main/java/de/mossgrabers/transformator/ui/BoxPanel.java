@@ -37,7 +37,7 @@ import java.util.Collection;
 
 /**
  * Panel which makes life easier.
- * 
+ *
  * @author J&uuml;rgen Mo&szlig;graber
  */
 public class BoxPanel extends JPanel
@@ -67,7 +67,7 @@ public class BoxPanel extends JPanel
     /**
      * Creates a JPanel with a BoxLayout. The field alignment is set to LEFT or TOP depending on
      * alignment.
-     * 
+     *
      * @param alignment X or Y alignment, use BoxLayout.?_AXIS
      * @param addBorderSpace If true a border with space is added
      */
@@ -82,7 +82,7 @@ public class BoxPanel extends JPanel
 
     /**
      * Creates a JPanel with a BoxLayout.
-     * 
+     *
      * @param alignment X or Y alignment, use BoxLayout.?_AXIS
      * @param fieldAlignment The alignment of the elements, use Component.?_ALIGNMENT
      * @param addBorderSpace If true a border with space is added
@@ -110,7 +110,7 @@ public class BoxPanel extends JPanel
     /**
      * Set the width or height (depending on the orientation of the panel) of all components in this
      * panel to those of the largest component.
-     * 
+     *
      * @param isVert If true equalizes the components vertically otherwise horizontally
      */
     public void sizeEqual (final boolean isVert)
@@ -148,7 +148,7 @@ public class BoxPanel extends JPanel
     /**
      * Wraps the BoxPanel inside the NORTH part of a JPanel with BorderLayout. This is useful to
      * prevent the controls inside the boxpanel to be sized vertically.
-     * 
+     *
      * @return The wrapper panel
      */
     public JPanel stickToTop ()
@@ -160,7 +160,7 @@ public class BoxPanel extends JPanel
     /**
      * Wraps the BoxPanel inside the SOUTH part of a JPanel with BorderLayout. This is useful to
      * prevent the controls inside the boxpanel to be sized vertically.
-     * 
+     *
      * @return The wrapper panel
      */
     public JPanel stickToBottom ()
@@ -172,7 +172,7 @@ public class BoxPanel extends JPanel
     /**
      * Wraps the BoxPanel inside the LEFT part of a JPanel with BorderLayout. This is useful to
      * prevent the controls inside the boxpanel to be sized hoizontally.
-     * 
+     *
      * @return The wrapper panel
      */
     public JPanel stickToLeft ()
@@ -184,7 +184,7 @@ public class BoxPanel extends JPanel
     /**
      * Wraps the BoxPanel inside the RIGHT part of a JPanel with BorderLayout. This is useful to
      * prevent the controls inside the boxpanel to be sized hoizontally.
-     * 
+     *
      * @return The wrapper panel
      */
     public JPanel stickToRight ()
@@ -196,7 +196,7 @@ public class BoxPanel extends JPanel
     /**
      * Sticks the panel to a BorderLayout direction by wrapping the panl in to a BorderLayout-ed
      * JPanel.
-     * 
+     *
      * @param where The BorderLayout diration
      * @return The wrapper panel
      */
@@ -210,7 +210,7 @@ public class BoxPanel extends JPanel
 
     /**
      * Dis-/Enables the panel with all its subcomponents.
-     * 
+     *
      * @param enable What to do
      */
     public void setAllEnabled (final boolean enable)
@@ -221,7 +221,7 @@ public class BoxPanel extends JPanel
 
     /**
      * Creates and adds a combobox to the panel.
-     * 
+     *
      * @param <E> The type of the combobox's content
      * @param label The name of the label which is added to the combobox
      * @param mnemonic A shortcut for the field
@@ -231,13 +231,13 @@ public class BoxPanel extends JPanel
      */
     public <E> JComboBoxX<E> createComboBox (final String label, final String mnemonic, final int space, final Collection<E> content)
     {
-        return this.addComponent (new JComboBoxX<E> (content), label, mnemonic, null, space);
+        return this.addComponent (new JComboBoxX<> (content), label, mnemonic, null, space);
     }
 
 
     /**
      * Creates and adds a combobox to the panel.
-     * 
+     *
      * @param <E> The type of the combobox's content
      * @param label The name of the label which is added to the combobox
      * @param mnemonic A shortcut for the field
@@ -247,7 +247,7 @@ public class BoxPanel extends JPanel
      */
     public <E> JComboBoxX<E> createComboBox (final String label, final String mnemonic, final int space, @SuppressWarnings("unchecked") final E... content)
     {
-        final Collection<E> objects = new ArrayList<E> (content.length);
+        final Collection<E> objects = new ArrayList<> (content.length);
         for (final E o: content)
             objects.add (o);
         return this.createComboBox (label, mnemonic, space, objects);
@@ -256,7 +256,7 @@ public class BoxPanel extends JPanel
 
     /**
      * Creates and adds a listbox to the panel.
-     * 
+     *
      * @param <E> The type of the combobox's content
      * @param label The name of the label which is added to the listbox
      * @param mnemonic A shortcut for the field
@@ -266,13 +266,13 @@ public class BoxPanel extends JPanel
      */
     public <E> JListX<E> createListBox (final String label, final String mnemonic, final int space, final Collection<E> content)
     {
-        return this.createListBox (label, mnemonic, space, new JListX<E> (content));
+        return this.createListBox (label, mnemonic, space, new JListX<> (content));
     }
 
 
     /**
      * Creates and adds a listbox to the panel.
-     * 
+     *
      * @param <E> The type of the combobox's content
      * @param label The name of the label which is added to the listbox
      * @param mnemonic A shortcut for the field
@@ -282,7 +282,7 @@ public class BoxPanel extends JPanel
      */
     public <E> JListX<E> createListBox (final String label, final String mnemonic, final int space, @SuppressWarnings("unchecked") final E... content)
     {
-        final Collection<E> objects = new ArrayList<E> (content.length);
+        final Collection<E> objects = new ArrayList<> (content.length);
         for (final E o: content)
             objects.add (o);
         return this.createListBox (label, mnemonic, space, objects);
@@ -291,7 +291,7 @@ public class BoxPanel extends JPanel
 
     /**
      * Adds a listbox to the panel.
-     * 
+     *
      * @param <E> The type of the combobox's content
      * @param label The name of the label which is added to the listbox
      * @param mnemonic A shortcut for the field
@@ -307,7 +307,7 @@ public class BoxPanel extends JPanel
 
     /**
      * Creates and adds a button to the panel.
-     * 
+     *
      * @param label The name of the label which is added to the button
      * @param mnemonic A shortcut for the button
      * @param space Add space after the element (NONE, SMALL, NORMAL, LARGE, GLUE)
@@ -321,7 +321,7 @@ public class BoxPanel extends JPanel
 
     /**
      * Creates and adds a button to the panel.
-     * 
+     *
      * @param icon An icon which is displayed on the button
      * @param space Add space after the element (NONE, SMALL, NORMAL, LARGE, GLUE)
      * @return The created button
@@ -334,7 +334,7 @@ public class BoxPanel extends JPanel
 
     /**
      * Creates and adds a button to the panel.
-     * 
+     *
      * @param icon An icon which is displayed on the button
      * @param label The name of the label which is displayed on the button
      * @param mnemonic A shortcut for the button
@@ -349,7 +349,7 @@ public class BoxPanel extends JPanel
 
     /**
      * Creates and adds a button to the panel.
-     * 
+     *
      * @param icon An icon which is displayed on the button
      * @param label The name of the label which is displayed on the button
      * @param mnemonic A shortcut for the button
@@ -365,7 +365,7 @@ public class BoxPanel extends JPanel
 
     /**
      * Creates and adds a radio button to the panel.
-     * 
+     *
      * @param label The name of the label which is added to the button
      * @param mnemonic A shortcut for the button
      * @param space Add space after the element (NONE, SMALL, NORMAL, LARGE, GLUE)
@@ -379,7 +379,7 @@ public class BoxPanel extends JPanel
 
     /**
      * Creates and adds a radio button to the panel.
-     * 
+     *
      * @param label The name of the label which is added to the button
      * @param mnemonic A shortcut for the button
      * @param tooltip Tooltip text
@@ -394,7 +394,7 @@ public class BoxPanel extends JPanel
 
     /**
      * Creates and adds a check box to the panel.
-     * 
+     *
      * @param label The text that is displayed beneath the check box
      * @param mnemonic A shortcut for the check box
      * @param space Add space after the element (NONE, SMALL, NORMAL, LARGE, GLUE)
@@ -408,7 +408,7 @@ public class BoxPanel extends JPanel
 
     /**
      * Creates and adds a text field to the panel.
-     * 
+     *
      * @param label The name of the label which is added to the field
      * @param mnemonic A shortcut for the field
      * @param space Add space after the element (NONE, SMALL, NORMAL, LARGE, GLUE)
@@ -422,7 +422,7 @@ public class BoxPanel extends JPanel
 
     /**
      * Creates and adds a text field to the panel.
-     * 
+     *
      * @param label The name of the label which is added to the field
      * @param mnemonic A shortcut for the field
      * @param space Add space after the element (NONE, SMALL, NORMAL, LARGE, GLUE)
@@ -438,7 +438,7 @@ public class BoxPanel extends JPanel
 
     /**
      * Creates and adds a text field to the panel.
-     * 
+     *
      * @param label The name of the label which is added to the field
      * @param mnemonic A shortcut for the field
      * @param space Add space after the element (NONE, SMALL, NORMAL, LARGE, GLUE)
@@ -452,7 +452,7 @@ public class BoxPanel extends JPanel
 
     /**
      * Creates and adds a text field to the panel.
-     * 
+     *
      * @param label The name of the label which is added to the field
      * @param mnemonic A shortcut for the field
      * @param space Add space after the element (NONE, SMALL, NORMAL, LARGE, GLUE)
@@ -471,7 +471,7 @@ public class BoxPanel extends JPanel
 
     /**
      * Creates and adds a text field to the panel.
-     * 
+     *
      * @param label The name of the label which is added to the field
      * @param mnemonic A shortcut for the field
      * @param space Add space after the element (NONE, SMALL, NORMAL, LARGE, GLUE)
@@ -485,7 +485,7 @@ public class BoxPanel extends JPanel
 
     /**
      * Creates and adds a text field to the panel.
-     * 
+     *
      * @param label The name of the label which is added to the field
      * @param mnemonic A shortcut for the field
      * @param space Add space after the element (NONE, SMALL, NORMAL, LARGE, GLUE)
@@ -500,7 +500,7 @@ public class BoxPanel extends JPanel
 
     /**
      * Creates and adds a text field to the panel.
-     * 
+     *
      * @param label The name of the label which is added to the field
      * @param mnemonic A shortcut for the field
      * @param space Add space after the element (NONE, SMALL, NORMAL, LARGE, GLUE)
@@ -519,7 +519,7 @@ public class BoxPanel extends JPanel
 
     /**
      * Creates and adds a password field to the panel.
-     * 
+     *
      * @param label The name of the label which is added to the field
      * @param mnemonic A shortcut for the field
      * @param space Add space after the element (NONE, SMALL, NORMAL, LARGE, GLUE)
@@ -534,7 +534,7 @@ public class BoxPanel extends JPanel
 
     /**
      * Creates and adds a password field to the panel.
-     * 
+     *
      * @param label The label which is added to the field
      * @param mnemonic A shortcut for the field
      * @param space Add space after the element (NONE, SMALL, NORMAL, LARGE, GLUE)
@@ -549,7 +549,7 @@ public class BoxPanel extends JPanel
 
     /**
      * Creates and adds a password field to the panel.
-     * 
+     *
      * @param label The name of the label which is added to the field
      * @param mnemonic A shortcut for the field
      * @param space Add space after the element (NONE, SMALL, NORMAL, LARGE, GLUE)
@@ -569,7 +569,7 @@ public class BoxPanel extends JPanel
 
     /**
      * Creates and adds a password field to the panel.
-     * 
+     *
      * @param label The label which is added to the field
      * @param mnemonic A shortcut for the field
      * @param space Add space after the element (NONE, SMALL, NORMAL, LARGE, GLUE)
@@ -589,7 +589,7 @@ public class BoxPanel extends JPanel
 
     /**
      * Creates and adds a text area to the panel.
-     * 
+     *
      * @param label The name of the label which is added to the field
      * @param mnemonic A shortcut for the field
      * @param space Add space after the element (NONE, SMALL, NORMAL, LARGE, GLUE)
@@ -603,7 +603,7 @@ public class BoxPanel extends JPanel
 
     /**
      * Creates and adds a text area to the panel.
-     * 
+     *
      * @param label The name of the label which is added to the field
      * @param mnemonic A shortcut for the field
      * @param space Add space after the element (NONE, SMALL, NORMAL, LARGE, GLUE)
@@ -619,7 +619,7 @@ public class BoxPanel extends JPanel
 
     /**
      * Creates and adds a text area to the panel.
-     * 
+     *
      * @param label The name of the label which is added to the field
      * @param mnemonic A shortcut for the field
      * @param space Add space after the element (NONE, SMALL, NORMAL, LARGE, GLUE)
@@ -639,7 +639,7 @@ public class BoxPanel extends JPanel
 
     /**
      * Creates and adds a text pane to the panel.
-     * 
+     *
      * @param label The name of the label which is added to the field
      * @param mnemonic A shortcut for the field
      * @param space Add space after the element (NONE, SMALL, NORMAL, LARGE, GLUE)
@@ -653,7 +653,7 @@ public class BoxPanel extends JPanel
 
     /**
      * Creates and adds a text pane to the panel.
-     * 
+     *
      * @param label The name of the label which is added to the field
      * @param mnemonic A shortcut for the field
      * @param space Add space after the element (NONE, SMALL, NORMAL, LARGE, GLUE)
@@ -682,7 +682,7 @@ public class BoxPanel extends JPanel
 
     /**
      * Creates and adds a separator to the panel.
-     * 
+     *
      * @param space Add space after the element (NONE, SMALL, NORMAL, LARGE, GLUE)
      * @return The created separator
      */
@@ -694,7 +694,7 @@ public class BoxPanel extends JPanel
 
     /**
      * Creates and adds an icon to the panel.
-     * 
+     *
      * @param icon The icon that is displayed
      * @param space Add space after the element (NONE, SMALL, NORMAL, LARGE, GLUE)
      * @return The created icon (label)
@@ -707,7 +707,7 @@ public class BoxPanel extends JPanel
 
     /**
      * Creates and adds a label to the panel.
-     * 
+     *
      * @param label The name of the label
      * @param mnemonic A shortcut for the label
      * @param space Add space after the element (NONE, SMALL, NORMAL, LARGE, GLUE)
@@ -721,7 +721,7 @@ public class BoxPanel extends JPanel
 
     /**
      * Adds a label to the panel.
-     * 
+     *
      * @param label The label to add
      * @param mnemonic A shortcut for the label
      * @param space Add space after the element (NONE, SMALL, NORMAL, LARGE, GLUE)
@@ -738,7 +738,7 @@ public class BoxPanel extends JPanel
 
     /**
      * Creates space and adds it to the panel.
-     * 
+     *
      * @param space The type of space (NONE, SMALL, NORMAL, LARGE, GLUE)
      */
     public void createSpace (final int space)
@@ -755,7 +755,7 @@ public class BoxPanel extends JPanel
 
     /**
      * Adds a component to the panel.
-     * 
+     *
      * @param <T> The exact type
      * @param component The component to add
      * @param space Add space after the element (NONE, SMALL, NORMAL, LARGE, GLUE)
@@ -769,7 +769,7 @@ public class BoxPanel extends JPanel
 
     /**
      * Adds a component with a label to the panel.
-     * 
+     *
      * @param <T> The exact type
      * @param component The component to add
      * @param label The name of the label which is added to the component
@@ -785,7 +785,7 @@ public class BoxPanel extends JPanel
 
     /**
      * Adds a component with a label to the panel.
-     * 
+     *
      * @param <T> The exact type
      * @param component The component to add
      * @param label The label which is added to the component
@@ -801,7 +801,7 @@ public class BoxPanel extends JPanel
 
     /**
      * Adds a component with a label to the panel.
-     * 
+     *
      * @param <T> The exact type
      * @param component The component to add
      * @param label The name of the label which is added to the component
@@ -818,7 +818,7 @@ public class BoxPanel extends JPanel
 
     /**
      * Adds a component with a label to the panel.
-     * 
+     *
      * @param <T> The exact type
      * @param component The component to add
      * @param label The label which is added to the component
@@ -835,7 +835,7 @@ public class BoxPanel extends JPanel
 
     /**
      * Adds a component with a label to the panel.
-     * 
+     *
      * @param <T> The exact type
      * @param component The component to add
      * @param label The name of the label which is added to the component
@@ -852,7 +852,7 @@ public class BoxPanel extends JPanel
 
     /**
      * Adds a component with a label to the panel.
-     * 
+     *
      * @param <T> The exact type
      * @param component The component to add
      * @param label The label which is added to the component
@@ -869,7 +869,7 @@ public class BoxPanel extends JPanel
 
     /**
      * Adds a component with a label to the panel.
-     * 
+     *
      * @param <T> The exact type
      * @param component The component to add
      * @param label The name of the label which is added to the component
@@ -888,7 +888,7 @@ public class BoxPanel extends JPanel
 
     /**
      * Adds a component with a label to the panel.
-     * 
+     *
      * @param <T> The exact type
      * @param component The component to add
      * @param label The label which is added to the component
@@ -922,7 +922,7 @@ public class BoxPanel extends JPanel
 
     /**
      * Adds an abstract button to the panel.
-     * 
+     *
      * @param button The button to add
      * @param icon An icon which is displayed on the button
      * @param label The name of the label which is added to the button
@@ -947,7 +947,7 @@ public class BoxPanel extends JPanel
 
     /**
      * Adds a text field to the panel.
-     * 
+     *
      * @param <T> The exact type
      * @param field The field to add
      * @param label The name of the label which is added to the field
@@ -966,7 +966,7 @@ public class BoxPanel extends JPanel
 
     /**
      * Adds a text field to the panel.
-     * 
+     *
      * @param field The field to add
      * @param label The label which is added to the field
      * @param mnemonic A shortcut for the field
@@ -984,7 +984,7 @@ public class BoxPanel extends JPanel
 
     /**
      * Reads the text from the functions-resourcebundle if text starts with '@'.
-     * 
+     *
      * @param text The text or a message id starting with '@'
      * @return The loaded char
      */

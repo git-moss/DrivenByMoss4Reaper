@@ -60,7 +60,7 @@ public class TransportImpl extends BaseImpl implements ITransport
 
     /**
      * Constructor
-     * 
+     *
      * @param host The DAW host
      * @param sender The OSC sender
      * @param valueChanger The value changer

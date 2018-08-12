@@ -19,7 +19,7 @@ import java.awt.event.ComponentEvent;
 
 /**
  * JPanel with two columns. The left column contains the labels and the right column the controls.
- * 
+ *
  * @author J&uuml;rgen Mo&szlig;graber
  */
 public class TwoColsPanel extends BoxPanel
@@ -32,7 +32,7 @@ public class TwoColsPanel extends BoxPanel
 
     /**
      * Creates a JPanel with two columns.
-     * 
+     *
      * @param addBorderSpace If true a border with space is added
      */
     public TwoColsPanel (final boolean addBorderSpace)
@@ -47,7 +47,7 @@ public class TwoColsPanel extends BoxPanel
 
     /**
      * Get the left column which contains the labels.
-     * 
+     *
      * @return The left column which contains the labels
      */
     public BoxPanel getLeft ()
@@ -58,7 +58,7 @@ public class TwoColsPanel extends BoxPanel
 
     /**
      * Get the right column which contains the controls.
-     * 
+     *
      * @return The right column which contains the controls
      */
     public BoxPanel getRight ()
@@ -77,7 +77,7 @@ public class TwoColsPanel extends BoxPanel
 
     /**
      * Adds a component with a label to the panel.
-     * 
+     *
      * @param <T> The exact type
      * @param component The component to add
      * @param label The name of the label which is added to the component
@@ -113,7 +113,7 @@ public class TwoColsPanel extends BoxPanel
     /**
      * Set the width or height (depending on the orientation of the panel) of all components in this
      * panel to those of the largest component.
-     * 
+     *
      * @param isVert If true equalizes the components vertically otherwise horizontally
      */
     @Override
@@ -133,7 +133,7 @@ public class TwoColsPanel extends BoxPanel
 
         /**
          * Constructor.
-         * 
+         *
          * @param label The label to adjust
          * @param component The componant to adjust
          */

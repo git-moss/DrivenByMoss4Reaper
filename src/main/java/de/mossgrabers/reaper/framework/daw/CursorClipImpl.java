@@ -31,7 +31,7 @@ public class CursorClipImpl extends BaseImpl implements ICursorClip
 
     /**
      * Constructor.
-     * 
+     *
      * @param host The DAW host
      * @param sender The OSC sender
      * @param valueChanger The value changer
