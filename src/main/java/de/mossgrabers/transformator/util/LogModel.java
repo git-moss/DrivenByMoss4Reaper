@@ -1,8 +1,5 @@
 package de.mossgrabers.transformator.util;
 
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.value.ChangeListener;
-
 import javax.swing.JTextArea;
 
 
@@ -15,8 +12,7 @@ import javax.swing.JTextArea;
  */
 public class LogModel
 {
-    private final SimpleBooleanProperty shutdownSignal = new SimpleBooleanProperty ();
-    private final JTextArea             logMessage;
+    private final JTextArea logMessage;
 
 
     /**
@@ -27,17 +23,6 @@ public class LogModel
     public LogModel (final JTextArea loggingTextArea)
     {
         this.logMessage = loggingTextArea;
-    }
-
-
-    /**
-     * Add a listener for a shutdown request.
-     *
-     * @param listener A listener
-     */
-    public void addShutdownListener (final ChangeListener<? super Boolean> listener)
-    {
-        this.shutdownSignal.addListener (listener);
     }
 
 
@@ -63,14 +48,5 @@ public class LogModel
     public synchronized void clearLogMessage ()
     {
         this.logMessage.setText ("");
-    }
-
-
-    /**
-     * Signal shutdown.
-     */
-    public void shutdown ()
-    {
-        this.shutdownSignal.set (true);
     }
 }

@@ -6,13 +6,11 @@ package de.mossgrabers.transformator.midi;
 
 import uk.co.xfactorylibrarians.coremidi4j.CoreMidiDeviceProvider;
 
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-
 import javax.sound.midi.MidiDevice;
 import javax.sound.midi.MidiSystem;
 import javax.sound.midi.MidiUnavailableException;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -23,8 +21,8 @@ import java.util.List;
  */
 public class Midi
 {
-    private final static ObservableList<MidiDevice> INPUTS  = FXCollections.observableArrayList ();
-    private final static ObservableList<MidiDevice> OUTPUTS = FXCollections.observableArrayList ();
+    private final static List<MidiDevice> INPUTS  = new ArrayList<> ();
+    private final static List<MidiDevice> OUTPUTS = new ArrayList<> ();
 
 
     /**

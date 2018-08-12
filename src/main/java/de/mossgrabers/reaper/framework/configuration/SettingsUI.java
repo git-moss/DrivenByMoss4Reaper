@@ -124,7 +124,9 @@ public class SettingsUI implements ISettingsUI
             midiInputs.add (midiInput);
             final int index = i;
             midiInput.addActionListener (event -> {
-                this.selectedMidiInputs[index] = midiInput.getSelectedItem ();
+                final MidiDevice selectedItem = midiInput.getSelectedItem ();
+                if (selectedItem != null)
+                    this.selectedMidiInputs[index] = selectedItem;
             });
         }
         return midiInputs;
@@ -145,7 +147,11 @@ public class SettingsUI implements ISettingsUI
             midiOutput.setRenderer (new MidiDeviceConverter ());
             midiOutputs.add (midiOutput);
             final int index = i;
-            midiOutput.addActionListener (event -> this.selectedMidiOutputs[index] = midiOutput.getSelectedItem ());
+            midiOutput.addActionListener (event -> {
+                final MidiDevice selectedItem = midiOutput.getSelectedItem ();
+                if (selectedItem != null)
+                    this.selectedMidiOutputs[index] = midiOutput.getSelectedItem ();
+            });
         }
         return midiOutputs;
     }
