@@ -1,1 +1,1 @@
-gradlew clean generateLicenseReport build
+gradlew clean generateLicenseReport installDist
