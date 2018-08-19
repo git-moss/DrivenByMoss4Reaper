@@ -10,6 +10,7 @@ import de.mossgrabers.framework.daw.AbstractModel;
 import de.mossgrabers.framework.daw.ICursorClip;
 import de.mossgrabers.framework.daw.IHost;
 import de.mossgrabers.framework.daw.ITrackBank;
+import de.mossgrabers.framework.daw.ModelSetup;
 import de.mossgrabers.framework.scale.Scales;
 import de.mossgrabers.reaper.framework.IniFiles;
 import de.mossgrabers.reaper.framework.daw.data.MasterTrackImpl;
@@ -35,35 +36,34 @@ public class ModelImpl extends AbstractModel
      * @param colorManager The color manager
      * @param valueChanger The value changer
      * @param scales The scales object
-     * @param numTracks The number of track to monitor (per track bank)
-     * @param numScenes The number of scenes to monitor (per scene bank)
-     * @param numSends The number of sends to monitor
-     * @param numFilterColumnEntries The number of entries in one filter column to monitor
-     * @param numResults The number of search results in the browser to monitor
-     * @param hasFlatTrackList Don"t navigate groups, all tracks are flat
-     * @param numParams The number of parameter of a device to monitor
-     * @param numDevicesInBank The number of devices to monitor
-     * @param numDeviceLayers The number of device layers to monitor
-     * @param numDrumPadLayers The number of drum pad layers to monitor
-     * @param numMarkers The number of markers
+     * @param modelSetup The configuration parameters for the model
      */
-    public ModelImpl (final IniFiles iniFiles, final MessageSender sender, final IHost host, final ColorManager colorManager, final IValueChanger valueChanger, final Scales scales, final int numTracks, final int numScenes, final int numSends, final int numFilterColumnEntries, final int numResults, final boolean hasFlatTrackList, final int numParams, final int numDevicesInBank, final int numDeviceLayers, final int numDrumPadLayers, final int numMarkers)
+    public ModelImpl (final IniFiles iniFiles, final MessageSender sender, final IHost host, final ColorManager colorManager, final IValueChanger valueChanger, final Scales scales, final ModelSetup modelSetup)
     {
-        super (colorManager, valueChanger, scales, numTracks, numScenes, numSends, numFilterColumnEntries, numResults, hasFlatTrackList, numParams, numDevicesInBank, numDeviceLayers, numDrumPadLayers);
+        super (colorManager, valueChanger, scales, modelSetup);
 
         this.sender = sender;
         this.host = host;
 
-        this.trackBank = new TrackBankImpl (host, sender, valueChanger, this.numTracks, this.numScenes, this.numSends, this.hasFlatTrackList);
+        final int numTracks = modelSetup.getNumTracks ();
+        final int numScenes = modelSetup.getNumScenes ();
+        final int numSends = modelSetup.getNumSends ();
+        this.trackBank = new TrackBankImpl (host, sender, valueChanger, numTracks, numScenes, numSends, modelSetup.hasFlatTrackList ());
         this.effectTrackBank = null;
         this.masterTrack = new MasterTrackImpl (host, sender, valueChanger);
 
-        this.primaryDevice = new CursorDeviceImpl (host, sender, valueChanger, this.numSends, this.numParams, this.numDevicesInBank, this.numDeviceLayers, this.numDrumPadLayers);
-        this.cursorDevice = new CursorDeviceImpl (host, sender, valueChanger, this.numSends, this.numParams, this.numDevicesInBank, this.numDeviceLayers, this.numDrumPadLayers);
-        if (this.numDrumPadLayers > 0)
+        final int numDevicesInBank = modelSetup.getNumDevicesInBank ();
+        final int numParams = modelSetup.getNumParams ();
+        final int numDeviceLayers = modelSetup.getNumDeviceLayers ();
+        final int numDrumPadLayers = modelSetup.getNumDrumPadLayers ();
+        this.primaryDevice = new CursorDeviceImpl (host, sender, valueChanger, numSends, numParams, numDevicesInBank, numDeviceLayers, numDrumPadLayers);
+        this.cursorDevice = new CursorDeviceImpl (host, sender, valueChanger, numSends, numParams, numDevicesInBank, numDeviceLayers, numDrumPadLayers);
+        if (numDrumPadLayers > 0)
             this.drumDevice64 = new CursorDeviceImpl (host, sender, valueChanger, 0, 0, 0, 64, 64);
-        if (this.numResults > 0)
-            this.browser = new BrowserImpl (sender, this.cursorDevice, this.numFilterColumnEntries, this.numResults);
+
+        final int numResults = modelSetup.getNumResults ();
+        if (numResults > 0)
+            this.browser = new BrowserImpl (sender, this.cursorDevice, modelSetup.getNumFilterColumnEntries (), numResults);
 
         this.application = new ApplicationImpl (host, sender);
         this.arranger = new ArrangerImpl ();
@@ -72,7 +72,7 @@ public class ModelImpl extends AbstractModel
         this.transport = new TransportImpl (host, sender, valueChanger, this.trackBank, iniFiles);
 
         this.groove = new GrooveImpl (host, sender, valueChanger, iniFiles);
-        this.markerBank = new MarkerBankImpl (host, sender, valueChanger, numMarkers);
+        this.markerBank = new MarkerBankImpl (host, sender, valueChanger, modelSetup.getNumMarkers ());
 
         this.currentTrackBank = this.trackBank;
     }
@@ -82,7 +82,7 @@ public class ModelImpl extends AbstractModel
     @Override
     public ITrackBank createSceneViewTrackBank (final int numTracks, final int numScenes)
     {
-        return new TrackBankImpl (this.host, this.sender, this.valueChanger, numTracks, numScenes, this.numSends, true);
+        return new TrackBankImpl (this.host, this.sender, this.valueChanger, numTracks, numScenes, this.modelSetup.getNumSends (), true);
     }
 
 

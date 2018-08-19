@@ -233,13 +233,13 @@ public class TransformatorApplication extends JFrame implements MessageSender, D
         // Don't execute on Mac since it hangs in the function, the memory is cleaned up on exit
         // anyway
         if (OperatingSystem.get () != OperatingSystem.MAC)
-        {    
+        {
             LibUsb.exit (null);
 
             if (this.tray != null && this.trayIcon != null)
                 this.tray.remove (this.trayIcon);
         }
-        
+
         System.exit (0);
     }
 
