@@ -21,7 +21,7 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Window;
 import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferInt;
+import java.awt.image.WritableRaster;
 import java.nio.ByteBuffer;
 
 
@@ -121,58 +121,29 @@ public class BitmapImpl extends BasicDialog implements IBitmap
         {
             this.imageBuffer.clear ();
 
-            final int [] pixels = ((DataBufferInt) this.bufferedImage.getRaster ().getDataBuffer ()).getData ();
+            final WritableRaster raster = this.bufferedImage.getRaster ();
 
-            for (int i = 0; i < pixels.length; i++)
+            final int [] pixel = new int [4];
+            final int h = this.bufferedImage.getHeight ();
+            final int w = this.bufferedImage.getWidth ();
+            for (int y = 0; y < h; y++)
             {
-                final int pixel = pixels[i];
-                final int red = ((pixel & 0x00FF0000) >> 16) * 31 / 255;
-                this.imageBuffer.put ((byte) red);
-                final int green = ((pixel & 0x0000FF00) >> 8) * 63 / 255;
-                this.imageBuffer.put ((byte) green);
-                final int blue = (pixel & 0x000000FF) * 31 / 255;
-                this.imageBuffer.put ((byte) blue);
-                // Alpha not used
-                this.imageBuffer.put ((byte) 0);
+                for (int x = 0; x < w; x++)
+                {
+                    raster.getPixel (x, y, pixel);
+
+                    this.imageBuffer.put ((byte) pixel[2]);
+                    this.imageBuffer.put ((byte) pixel[1]);
+                    this.imageBuffer.put ((byte) pixel[0]);
+                    // Alpha not used
+                    this.imageBuffer.put ((byte) 0);
+                }
             }
 
             this.imageBuffer.rewind ();
-            encoder.encode (this.imageBuffer, this.bufferedImage.getWidth (), this.bufferedImage.getHeight ());
+            encoder.encode (this.imageBuffer, w, h);
         }
     }
-
-    // TODO Remove
-    // /** {@inheritDoc} */
-    // @Override
-    // public void fillTransferBuffer (final ByteBuffer buffer)
-    // {
-    // synchronized (this.bufferedImage)
-    // {
-    // final int [] pixels = ((DataBufferInt) this.bufferedImage.getRaster ().getDataBuffer
-    // ()).getData ();
-    // final int height = this.bufferedImage.getHeight ();
-    // final int width = this.bufferedImage.getWidth ();
-    //
-    // for (int y = 0; y < height; y++)
-    // {
-    // for (int x = 0; x < width; x++)
-    // {
-    // final int pixel = pixels[x + y * width];
-    // final int red = ((pixel & 0x00FF0000) >> 16) * 31 / 255;
-    // final int green = ((pixel & 0x0000FF00) >> 8) * 63 / 255;
-    // final int blue = (pixel & 0x000000FF) * 31 / 255;
-    //
-    // // 3b(low) green - 5b red / 5b blue - 3b (high) green, e.g. gggRRRRR BBBBBGGG
-    // buffer.put ((byte) ((green & 0x07) << 5 | red & 0x1F));
-    // buffer.put ((byte) ((blue & 0x1F) << 3 | (green & 0x38) >> 3));
-    // }
-    // for (int x = 0; x < 128; x++)
-    // buffer.put ((byte) 0x00);
-    // }
-    // }
-    //
-    // buffer.rewind ();
-    // }
 
 
     /** {@inheritDoc} */
@@ -214,7 +185,7 @@ public class BitmapImpl extends BasicDialog implements IBitmap
     }
 
 
-    protected void drawImage (Graphics gc)
+    protected void drawImage (final Graphics gc)
     {
         synchronized (this.bufferedImage)
         {

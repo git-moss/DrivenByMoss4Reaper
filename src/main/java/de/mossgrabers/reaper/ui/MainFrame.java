@@ -22,7 +22,6 @@ import de.mossgrabers.reaper.ui.utils.SafeRunLater;
 import org.usb4java.LibUsb;
 import org.usb4java.LibUsbException;
 
-import javax.imageio.ImageIO;
 import javax.sound.midi.MidiUnavailableException;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
@@ -38,14 +37,11 @@ import javax.swing.JTextArea;
 import javax.swing.Timer;
 import javax.swing.border.EmptyBorder;
 
-import java.awt.AWTException;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.SystemTray;
-import java.awt.TrayIcon;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.Socket;
@@ -75,8 +71,6 @@ public class MainFrame extends JFrame implements MessageSender, DataModelUpdater
     private String                           iniPath;
     private IniFiles                         iniFiles          = new IniFiles ();
 
-    private TrayIcon                         trayIcon;
-    private SystemTray                       tray;
     private JButton                          addButton;
     private JButton                          removeButton;
     private JButton                          configButton;
@@ -100,15 +94,6 @@ public class MainFrame extends JFrame implements MessageSender, DataModelUpdater
         this.instanceManager = new ControllerInstanceManager (this.logModel, this, this, this.iniFiles);
 
         this.setType (Type.UTILITY);
-
-        // TODO Remove when tested on all 3 platforms
-        // Run the application as a tray icon if supported
-        if (SystemTray.isSupported ())
-        {
-            if (OperatingSystem.get () != OperatingSystem.WINDOWS)
-                // Sets up the tray icon (using awt code)
-                SafeRunLater.execute (this::addAppToTray);
-        }
 
         this.updateTitle ();
 
@@ -234,12 +219,7 @@ public class MainFrame extends JFrame implements MessageSender, DataModelUpdater
         // Don't execute on Mac since it hangs in the function, the memory is cleaned up on exit
         // anyway
         if (OperatingSystem.get () != OperatingSystem.MAC)
-        {
             LibUsb.exit (null);
-
-            if (this.tray != null && this.trayIcon != null)
-                this.tray.remove (this.trayIcon);
-        }
 
         System.exit (0);
     }
@@ -645,51 +625,6 @@ public class MainFrame extends JFrame implements MessageSender, DataModelUpdater
         this.logModel.addLogMessage ("Loading device INI files from " + path + " ...");
         this.iniFiles.init (path, this.logModel);
         DeviceManager.get ().parseINIFiles (this.iniFiles, this.logModel);
-    }
-
-
-    /**
-     * Sets up a system tray icon for the application.
-     */
-    private void addAppToTray ()
-    {
-        // set up a system tray icon.
-        this.tray = SystemTray.getSystemTray ();
-        final InputStream rs = ClassLoader.getSystemResourceAsStream ("images/AppIcon.gif");
-        if (rs == null)
-            return;
-
-        try
-        {
-            final java.awt.Image image = ImageIO.read (rs);
-            this.trayIcon = new TrayIcon (image);
-            this.trayIcon.setImageAutoSize (true);
-
-            // If the user double-clicks on the tray icon, show the main app stage.
-            this.trayIcon.addActionListener (event -> SafeRunLater.execute (this::showStage));
-
-            // If the user selects the default menu item (which includes the app name),
-            // show the main app stage.
-            final java.awt.MenuItem openItem = new java.awt.MenuItem ("Open");
-            openItem.addActionListener (event -> SafeRunLater.execute (this::showStage));
-
-            // The convention for tray icons seems to be to set the default icon for opening
-            // the application stage in a bold font.
-            final java.awt.Font defaultFont = java.awt.Font.decode (null);
-            openItem.setFont (defaultFont.deriveFont (java.awt.Font.BOLD));
-
-            // Setup the popup menu for the application.
-            final java.awt.PopupMenu popup = new java.awt.PopupMenu ();
-            popup.add (openItem);
-            this.trayIcon.setPopupMenu (popup);
-
-            // Add the application tray icon to the system tray.
-            this.tray.add (this.trayIcon);
-        }
-        catch (final AWTException | IOException ex)
-        {
-            this.logModel.addLogMessage ("Unable to init system tray");
-        }
     }
 
 

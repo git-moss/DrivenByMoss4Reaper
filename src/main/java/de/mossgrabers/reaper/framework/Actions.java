@@ -22,10 +22,6 @@ public final class Actions
 
     /** Item: Remove items. */
     public static final int    REMOVE_ITEMS                           = 40006;
-    /** Item: Duplicate items. */
-    public static final int    DUPLICATE_ITEMS                        = 41295;
-    /** Item: Glue items. */
-    public static final int    GLUE_ITEMS                             = 41588;
 
     /** Undo. */
     public static final int    EDIT_UNDO                              = 40029;
@@ -124,8 +120,6 @@ public final class Actions
 
     /** SWS/S&M: Toggle show FX chain windows for selected tracks. */
     public static final String SHOW_FX_CHAIN_WINDOWS                  = "_S&M_TOGLFXCHAIN";
-    /** SWS: Add item(s) to left of selected item(s) to selection. */
-    public static final String ADD_LEFT_ITEM_TO_SELECTION             = "_SWS_ADDLEFTITEM";
 
     /** SWS : Bypass FX on selected tracks. */
     public static final String BYPASS_ALL_FX_ON_SELECTED_TRACKS       = "_S&M_FXBYPALL2";

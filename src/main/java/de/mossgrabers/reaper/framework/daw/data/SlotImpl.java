@@ -8,7 +8,6 @@ import de.mossgrabers.framework.daw.IHost;
 import de.mossgrabers.framework.daw.data.ISlot;
 import de.mossgrabers.framework.utils.StringUtils;
 import de.mossgrabers.reaper.communication.MessageSender;
-import de.mossgrabers.reaper.framework.Actions;
 
 
 /**
@@ -158,7 +157,7 @@ public class SlotImpl extends ItemImpl implements ISlot
     @Override
     public void duplicate ()
     {
-        this.invokeAction (Actions.DUPLICATE_ITEMS);
+        this.sender.sendOSC ("/clip/duplicate", null);
     }
 
 

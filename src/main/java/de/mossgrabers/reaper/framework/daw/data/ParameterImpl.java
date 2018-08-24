@@ -61,8 +61,9 @@ public class ParameterImpl extends ItemImpl implements IParameter
     @Override
     public String getDisplayedValue (final int limit)
     {
-        final int length = this.valueStr.length ();
-        return length > limit ? this.valueStr.substring (0, length) : this.valueStr;
+        final String displayedValue = getDisplayedValue ();
+        final int length = displayedValue.length ();
+        return length > limit ? displayedValue.substring (0, length) : displayedValue;
     }
 
 
