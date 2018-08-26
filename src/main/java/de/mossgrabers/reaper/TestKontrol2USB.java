@@ -13,7 +13,6 @@ import org.usb4java.LibUsbException;
 import javax.imageio.ImageIO;
 
 import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferInt;
 import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.IOException;
@@ -83,55 +82,57 @@ public class TestKontrol2USB
 
     private static void sendImage (DeviceHandle handle)
     {
-        File imageFile = new File ("/home/mos/Schreibtisch/bitmaptest/64.png");
-        BufferedImage image;
-        try
-        {
-            image = ImageIO.read (imageFile);
-        }
-        catch (IOException ex)
-        {
-            // TODO Auto-generated catch block
-            ex.printStackTrace ();
-            return;
-        }
+        // File imageFile = new File ("/home/mos/Schreibtisch/bitmaptest/red64.png");
+        // BufferedImage image;
+        // try
+        // {
+        // image = ImageIO.read (imageFile);
+        // }
+        // catch (IOException ex)
+        // {
+        // // TODO Auto-generated catch block
+        // ex.printStackTrace ();
+        // return;
+        // }
+        //
+        // int width = image.getWidth ();
+        // int height = image.getHeight ();128
+        
+        ///////////////////////////////
+        // Display is 480 x 270
 
-        int width = image.getWidth ();
-        int height = image.getHeight ();
+        int x = 448;            // 448 = letztes
+        int y = 269;            // 256 = letztes
+        int width = 32;         // 32 = letztes
+        int height = 1;        // 16 = letztes
 
-        ByteBuffer buffer = ByteBuffer.allocate (10000);
+        ByteBuffer buffer = ByteBuffer.allocateDirect (9724*100);
 
         buffer.put ((byte) 0x84);
         buffer.put ((byte) 0x00);
-        buffer.put ((byte) 0x00); // Screen
+        buffer.put ((byte) 0x01); // Screen
 
         buffer.put ((byte) 0x60);
         buffer.put ((byte) 0x00);
         buffer.put ((byte) 0x00);
         buffer.put ((byte) 0x00);
         buffer.put ((byte) 0x00);
-        buffer.put ((byte) 0x00);
-        buffer.put ((byte) 0x00);
-        buffer.put ((byte) 0x00);
-        buffer.put ((byte) 0x00);
+        buffer.putShort ((short) x);
+        buffer.putShort ((short) y);
 
         buffer.putShort ((short) width);
         buffer.putShort ((short) height);
 
-        final WritableRaster raster = image.getRaster ();
-        DataBufferInt dataBuffer = (DataBufferInt) raster.getDataBuffer ();
-        final int [] data = dataBuffer.getData ();
+//        final WritableRaster raster = image.getRaster ();
+//        final int [] data = raster.getPixels (0, 0, width, height, (int []) null);
+        final int [] data = new int[0];
 
         boolean finished = false;
         int i = 0;
-        int length = width * height; // TODO Correct?
+        int length = width * height;
 
         while (!finished)
         {
-            // int red = data[2];
-            // int green = data[1];
-            // int blue = data[0];
-
             if (length - i != 0)
                 buffer.put (StringUtils.fromHexStr ("02000000000000"));
 
@@ -201,8 +202,19 @@ public class TestKontrol2USB
 
     private static void convertPixel (ByteBuffer buffer, int [] data, int i)
     {
-        int color = 0; // TODO (red / 7) | ((green / 3) * 64) | ((blue / 7) * 2048);
-        buffer.putShort ((short) color);
+        int pos = 3 * i;
+//        int red = data[pos];
+//        int green = data[pos + 1];
+//        int blue = data[pos + 2];
+        int red = 255;
+        int green = 0;
+        int blue = 0;
+
+        int pixel = ((red * 0x1F / 0xFF) << 11) + ((green * 0x3F / 0xFF) << 5) + (blue * 0x1F / 0xFF);
+
+        // Bytes need to be swapped
+        buffer.put ((byte) ((pixel & 0xFF00) >> 8));
+        buffer.put ((byte) (pixel & 0x00FF));
     }
 
 
@@ -242,8 +254,6 @@ public class TestKontrol2USB
                         ex.printStackTrace ();
                     }
 
-                    // handle = LibUsb.openDeviceWithVidPid (null, vendorId, productId);
-
                     // Continue, maybe there is a working device
                 }
             }
@@ -255,5 +265,4 @@ public class TestKontrol2USB
 
         return null;
     }
-
 }
