@@ -1,7 +1,7 @@
 package de.mossgrabers.reaper;
 
-import de.mossgrabers.framework.daw.IMemoryBlock;
 import de.mossgrabers.framework.usb.UsbException;
+import de.mossgrabers.framework.utils.StringUtils;
 
 import org.usb4java.Device;
 import org.usb4java.DeviceDescriptor;
@@ -13,6 +13,7 @@ import org.usb4java.LibUsbException;
 import javax.imageio.ImageIO;
 
 import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferInt;
 import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.IOException;
@@ -92,16 +93,18 @@ public class TestKontrol2USB
         {
             // TODO Auto-generated catch block
             ex.printStackTrace ();
+            return;
         }
+
         int width = image.getWidth ();
         int height = image.getHeight ();
-        
+
         ByteBuffer buffer = ByteBuffer.allocate (10000);
 
         buffer.put ((byte) 0x84);
         buffer.put ((byte) 0x00);
         buffer.put ((byte) 0x00); // Screen
-        
+
         buffer.put ((byte) 0x60);
         buffer.put ((byte) 0x00);
         buffer.put ((byte) 0x00);
@@ -111,99 +114,95 @@ public class TestKontrol2USB
         buffer.put ((byte) 0x00);
         buffer.put ((byte) 0x00);
         buffer.put ((byte) 0x00);
-        
+
         buffer.putShort ((short) width);
         buffer.putShort ((short) height);
-        
+
         final WritableRaster raster = image.getRaster ();
-        final int [] pixel = new int [4];
+        DataBufferInt dataBuffer = (DataBufferInt) raster.getDataBuffer ();
+        final int [] data = dataBuffer.getData ();
 
-        
         boolean finished = false;
-        int i=0;
-        int length = width * height;    // TODO Correct?
+        int i = 0;
+        int length = width * height; // TODO Correct?
 
-        while(!finished)
+        while (!finished)
         {
-            if(length-i != 0)
-                tux.append(QByteArray::fromHex("02000000000000"));
-            
-            if(length-i >= 22)
-                {
-                tux.append(QByteArray::fromHex("0b"));
-                for(unsigned int j=0;j<22;j++)
-                    tux.append(QByteArray::fromHex(QByteArray::number(swappedData[i+j],16).rightJustified(4,'0')));
-                i+=22;
-                }
-            else if(length-i >= 12)
-                {
-                tux.append(QByteArray::fromHex("06"));
-                for(unsigned int j=0;j<12;j++)
-                    tux.append(QByteArray::fromHex(QByteArray::number(swappedData[i+j],16).rightJustified(4,'0')));
-                i+=12;
-                }
-            else if(length-i >= 10)
-                {
-                tux.append(QByteArray::fromHex("05"));
-                for(unsigned int j=0;j<10;j++)
-                    tux.append(QByteArray::fromHex(QByteArray::number(swappedData[i+j],16).rightJustified(4,'0')));
-                i+=10;
-                }
-            else if(length-i >= 8)
-                {
-                tux.append(QByteArray::fromHex("04"));
-                for(unsigned int j=0;j<8;j++)
-                    tux.append(QByteArray::fromHex(QByteArray::number(swappedData[i+j],16).rightJustified(4,'0')));
-                i+=8;
-                }
-            else if(length-i >= 6)
-                {
-                tux.append(QByteArray::fromHex("03"));
-                for(unsigned int j=0;j<6;j++)
-                    tux.append(QByteArray::fromHex(QByteArray::number(swappedData[i+j],16).rightJustified(4,'0')));
-                i+=6;
-                }
-            else if(length-i >= 2)
-                {
-                tux.append(QByteArray::fromHex("01"));
-                for(unsigned int j=0;j<2;j++)
-                    tux.append(QByteArray::fromHex(QByteArray::number(swappedData[i+j],16).rightJustified(4,'0')));
-                i+=2;
-                }
-            else if(length-i == 1)
-                {
-                tux.append(QByteArray::fromHex("01"));
-                tux.append(QByteArray::fromHex(QByteArray::number(swappedData[i],16).rightJustified(4,'0')));
-                tux.append(QByteArray::fromHex("0000"));
-                i+=1;
-                }
+            // int red = data[2];
+            // int green = data[1];
+            // int blue = data[0];
+
+            if (length - i != 0)
+                buffer.put (StringUtils.fromHexStr ("02000000000000"));
+
+            if (length - i >= 22)
+            {
+                buffer.put (StringUtils.fromHexStr ("0b"));
+                for (int j = 0; j < 22; j++)
+                    convertPixel (buffer, data, i);
+                i += 22;
+            }
+            else if (length - i >= 12)
+            {
+                buffer.put (StringUtils.fromHexStr ("06"));
+                for (int j = 0; j < 12; j++)
+                    convertPixel (buffer, data, i);
+                i += 12;
+            }
+            else if (length - i >= 10)
+            {
+                buffer.put (StringUtils.fromHexStr ("05"));
+                for (int j = 0; j < 10; j++)
+                    convertPixel (buffer, data, i);
+                i += 10;
+            }
+            else if (length - i >= 8)
+            {
+                buffer.put (StringUtils.fromHexStr ("04"));
+                for (int j = 0; j < 8; j++)
+                    convertPixel (buffer, data, i);
+                i += 8;
+            }
+            else if (length - i >= 6)
+            {
+                buffer.put (StringUtils.fromHexStr ("03"));
+                for (int j = 0; j < 6; j++)
+                    convertPixel (buffer, data, i);
+                i += 6;
+            }
+            else if (length - i >= 2)
+            {
+                buffer.put (StringUtils.fromHexStr ("01"));
+                for (int j = 0; j < 2; j++)
+                    convertPixel (buffer, data, i);
+                i += 2;
+            }
+            else if (length - i == 1)
+            {
+                buffer.put (StringUtils.fromHexStr ("01"));
+                convertPixel (buffer, data, i);
+                buffer.put (StringUtils.fromHexStr ("0000"));
+                i += 1;
+            }
             else
-                {
-                tux.append(QByteArray::fromHex("02000000030000"));
-                tux.append(QByteArray::fromHex("0040000000"));
+            {
+                buffer.put (StringUtils.fromHexStr ("02000000030000"));
+                buffer.put (StringUtils.fromHexStr ("0040000000"));
                 finished = true;
-                }
+            }
 
-        }
-
-        
-        for (int i = 0; i < capacity; i += 4)
-        {
-
-            final byte red = imageBuffer.get ();
-            final byte green = imageBuffer.get ();
-            final byte blue = imageBuffer.get ();
-            imageBuffer.get (); // Drop transparency
-
-            int color = (red / 7) | ((green / 3) * 64) | ((blue / 7) * 2048);
-            b.putShort ((short) color);
-
-            // host.println (i + " - 0:" + buffer0.position () +" - 1:" + buffer1.position ());
         }
 
         final IntBuffer transfered = IntBuffer.allocate (1);
 
         LibUsb.bulkTransfer (handle, (byte) 0x03, buffer, transfered, 1000);
+    }
+
+
+    private static void convertPixel (ByteBuffer buffer, int [] data, int i)
+    {
+        int color = 0; // TODO (red / 7) | ((green / 3) * 64) | ((blue / 7) * 2048);
+        buffer.putShort ((short) color);
     }
 
 
