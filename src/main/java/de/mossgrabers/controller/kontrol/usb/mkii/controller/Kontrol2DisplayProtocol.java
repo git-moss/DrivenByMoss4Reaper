@@ -31,43 +31,9 @@ public class Kontrol2DisplayProtocol
     public static void encodeImage (final ByteBuffer buffer, final ByteBuffer data, final int display, final int x, final int y, final int width, final int height)
     {
         writeHeader (buffer, (byte) display, (short) x, (short) y, (short) width, (short) height);
-        writeImage (buffer, data);
+        transmitPixel (buffer, data);
         blit (buffer);
         writeFooter (buffer, (byte) display);
-        buffer.rewind ();
-    }
-
-
-    // TODO Remove
-    public static void encodeImage2 (final ByteBuffer buffer, final ByteBuffer data, final int display, final int x, final int y, final int width, final int height)
-    {
-        writeHeader (buffer, (byte) display, (short) x, (short) y, (short) width, (short) height);
-
-        int red;
-        int green;
-        int blue;
-
-        red = Byte.toUnsignedInt (data.get ());
-        green = Byte.toUnsignedInt (data.get ());
-        blue = Byte.toUnsignedInt (data.get ());
-
-        int counter = 1;
-
-        for (int i = 0; i < width * height - 1; i++)
-        {
-            final int redNew = Byte.toUnsignedInt (data.get ());
-            final int greenNew = Byte.toUnsignedInt (data.get ());
-            final int blueNew = Byte.toUnsignedInt (data.get ());
-
-            if (red == redNew && green == greenNew && blue == blueNew)
-                counter++;
-            else
-                repeatPixel (buffer, (short) (counter / 2), red, green, blue, red, green, blue);
-        }
-
-        blit (buffer);
-        writeFooter (buffer, (byte) display);
-        buffer.rewind ();
     }
 
 
@@ -175,11 +141,8 @@ public class Kontrol2DisplayProtocol
 
         final int length = data.limit () / 3;
         final int l = length / 2;
-
-        // TODO Correct?
         buffer.put ((byte) (l >> 16));
         buffer.putShort ((short) (l & 0x0000FFFF));
-
         for (int i = 0; i < length; i++)
             encodeColor565 (buffer, data);
     }

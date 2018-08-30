@@ -79,76 +79,25 @@ public class TestKontrol2USB
         ///////////////////////////////
         // Display is 480 x 272
 
-        int display = 0;
+        int display = 1;
         int x = 0;
         int y = 0;
         int width = 480;
-        int height = 1; // 272;
+        int height = 272;
 
         ByteBuffer data = ByteBuffer.allocateDirect (width * height * 3);
         for (int i = 0; i < width * height; i++)
         {
             data.put ((byte) 255);
-            data.put ((byte) 100);
             data.put ((byte) 0);
+            data.put ((byte) 255);
         }
+        data.rewind ();
 
-        final ByteBuffer buffer = ByteBuffer.allocateDirect (24 + 2 * 480);
-
-        // {0x84, 0x00, displayIndex_, 0x60, 0x00, 0x00, 0x00, 0x00,
-        // 0x00, 0x00, (uint8_t)(row) << 8, (uint8_t)row, 0x01, 0xE0, 0x00, 0x01,
-
-        Kontrol2DisplayProtocol.writeHeader (buffer, (byte) display, (short) x, (short) y, (short) width, (short) height);
-
-        // 0x00, 0x00, 0x00, 0xF0},
-        // ptr, 480 * 2,
-        Kontrol2DisplayProtocol.transmitPixel (buffer, data);
-
-        // { 0x03, 0x00,0x00, 0x00, 0x40,0x00,0x00,0x00}
-
-        Kontrol2DisplayProtocol.blit (buffer);
-        Kontrol2DisplayProtocol.writeFooter (buffer, (byte) display);
-
-        final IntBuffer transfered = IntBuffer.allocate (1);
-
-        Kontrol2DisplayProtocol.encodeImage (buffer, data, display, x, y, width, height);
-        LibUsb.bulkTransfer (handle, (byte) 0x03, buffer, transfered, 0);
-
-        // Kontrol2DisplayProtocol.clear (buffer, display, x, y, width, height);
-        // LibUsb.bulkTransfer (handle, (byte) 0x03, buffer, transfered, 0);
-        // Kontrol2DisplayProtocol.fill (buffer, display, x, y, width, height, 0, 255, 255);
-        // LibUsb.bulkTransfer (handle, (byte) 0x03, buffer, transfered, 0);
-        // Kontrol2DisplayProtocol.clear (buffer, display, x, y, width, height);
-        // LibUsb.bulkTransfer (handle, (byte) 0x03, buffer, transfered, 0);
-        // Kontrol2DisplayProtocol.fill (buffer, display, x, y, width, height, 0, 0, 255);
-
-        // LibUsb.bulkTransfer (handle, (byte) 0x03, buffer, transfered, 0);
-
-        // for (int row = 0; row < 1; row++)
-        // {
-        // for (int col = 0; col < 1; col++)
-        // {
-        // data.rewind ();
-        // buffer.clear ();
-        // drawImage (handle, display, col * 64, row * 64, width, height, data, buffer);
-        // }
-        // }
-    }
-
-
-    private static void drawImage (DeviceHandle handle, int display, int x, int y, int width, int height, ByteBuffer data, ByteBuffer buffer)
-    {
-        long start = System.currentTimeMillis ();
-
-        Kontrol2DisplayProtocol.encodeImage (buffer, data, display, x, y, width, height);
-
-        System.out.println ("Encoding: " + (System.currentTimeMillis () - start));
-        start = System.currentTimeMillis ();
-
+        final ByteBuffer buffer = ByteBuffer.allocateDirect (28 + 2 * 480 * 272);
+        Kontrol2DisplayProtocol.encodeImage (buffer, data, (byte) display, (short) x, (short) y, (short) width, (short) height);
         final IntBuffer transfered = IntBuffer.allocate (1);
         LibUsb.bulkTransfer (handle, (byte) 0x03, buffer, transfered, 0);
-
-        System.out.println ("Transfer: " + (System.currentTimeMillis () - start));
     }
 
 
