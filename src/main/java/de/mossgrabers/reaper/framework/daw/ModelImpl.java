@@ -16,6 +16,9 @@ import de.mossgrabers.reaper.communication.MessageSender;
 import de.mossgrabers.reaper.framework.IniFiles;
 import de.mossgrabers.reaper.framework.daw.data.MasterTrackImpl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 /**
  * The model which contains all data and access to the DAW.
@@ -90,7 +93,10 @@ public class ModelImpl extends AbstractModel
     @Override
     public ICursorClip getCursorClip (final int cols, final int rows)
     {
-        return this.cursorClips.computeIfAbsent (cols + "-" + rows, k -> new CursorClipImpl (this.host, this.sender, this.valueChanger, this.transport, cols, rows));
+        synchronized (this.cursorClips)
+        {
+            return this.cursorClips.computeIfAbsent (cols + "-" + rows, k -> new CursorClipImpl (this.host, this.sender, this.valueChanger, cols, rows));
+        }
     }
 
 
@@ -126,4 +132,92 @@ public class ModelImpl extends AbstractModel
         return true;
     }
 
+
+    /**
+     * Store all notes of the cursor clip.
+     *
+     * @param notesStr Formatted like start1:end1:pitch1:velocity1;...;startN:endN:pitchN:velocityN;
+     */
+    public void setCursorClipNotes (final String notesStr)
+    {
+        final List<NoteImpl> notes = new ArrayList<> ();
+        if (notesStr != null)
+        {
+            for (final String part: notesStr.trim ().split (";"))
+            {
+                final String [] noteParts = part.split (":");
+                final double start = Double.parseDouble (noteParts[0]);
+                final double end = Double.parseDouble (noteParts[1]);
+                final int pitch = Integer.parseInt (noteParts[2]);
+                final int velocity = Integer.parseInt (noteParts[3]);
+                notes.add (new NoteImpl (start, end, pitch, velocity));
+            }
+        }
+
+        synchronized (this.cursorClips)
+        {
+            for (final ICursorClip clip: this.cursorClips.values ())
+                ((CursorClipImpl) clip).setNotes (notes);
+        }
+    }
+
+
+    /**
+     * Set the play start for all cursor clip objects.
+     *
+     * @param start The start
+     */
+    public void setCursorClipPlayStart (final double start)
+    {
+        synchronized (this.cursorClips)
+        {
+            for (final ICursorClip clip: this.cursorClips.values ())
+                ((CursorClipImpl) clip).setPlayStart (start);
+        }
+    }
+
+
+    /**
+     * Set the play end for all cursor clip objects.
+     *
+     * @param end The end
+     */
+    public void setCursorClipPlayEnd (final double end)
+    {
+        synchronized (this.cursorClips)
+        {
+            for (final ICursorClip clip: this.cursorClips.values ())
+                ((CursorClipImpl) clip).setPlayEnd (end);
+        }
+    }
+
+
+    /**
+     * Set the play position for all cursor clip objects.
+     *
+     * @param playPosition The play position
+     */
+    public void setCursorClipPlayPosition (final double playPosition)
+    {
+        synchronized (this.cursorClips)
+        {
+            for (final ICursorClip clip: this.cursorClips.values ())
+                ((CursorClipImpl) clip).setPlayPosition (playPosition);
+        }
+    }
+
+
+    /**
+     * Set clip color value.
+     * 
+     * @param color Array with 3 elements: red, green, blue (0..1)
+     */
+    public void setCursorClipColorValue (final double [] color)
+    {
+        synchronized (this.cursorClips)
+        {
+            for (final ICursorClip clip: this.cursorClips.values ())
+                ((CursorClipImpl) clip).setColorValue (color);
+        }
+    }
 }

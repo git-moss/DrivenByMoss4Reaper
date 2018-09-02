@@ -7,7 +7,6 @@ package de.mossgrabers.reaper.communication;
 import de.mossgrabers.framework.controller.IControllerSetup;
 import de.mossgrabers.framework.controller.IValueChanger;
 import de.mossgrabers.framework.daw.IBrowser;
-import de.mossgrabers.framework.daw.ICursorClip;
 import de.mossgrabers.framework.daw.IDeviceBank;
 import de.mossgrabers.framework.daw.IHost;
 import de.mossgrabers.framework.daw.IMarkerBank;
@@ -27,6 +26,7 @@ import de.mossgrabers.reaper.framework.daw.ApplicationImpl;
 import de.mossgrabers.reaper.framework.daw.BrowserImpl;
 import de.mossgrabers.reaper.framework.daw.CursorDeviceImpl;
 import de.mossgrabers.reaper.framework.daw.MarkerBankImpl;
+import de.mossgrabers.reaper.framework.daw.ModelImpl;
 import de.mossgrabers.reaper.framework.daw.ParameterPageBankImpl;
 import de.mossgrabers.reaper.framework.daw.ProjectImpl;
 import de.mossgrabers.reaper.framework.daw.TransportImpl;
@@ -342,22 +342,9 @@ public class MessageParser
                 break;
 
             case "color":
-                final String [] values = value.split (" ");
-                if (values.length != 3)
-                {
-                    this.host.error ("Color: Wrong number of arguments: " + values.length);
-                    final StringBuilder str = new StringBuilder ();
-                    for (final String value2: values)
-                        str.append (value2).append (':');
-                    this.host.error (str.toString ());
-                    return;
-                }
-                ((TrackImpl) track).setColorState (new double []
-                {
-                    Double.parseDouble (values[0]) / 255.0,
-                    Double.parseDouble (values[1]) / 255.0,
-                    Double.parseDouble (values[2]) / 255.0
-                });
+                final double [] color = this.parseColor (value);
+                if (color != null)
+                    ((TrackImpl) track).setColorState (color);
                 break;
 
             case "send":
@@ -621,22 +608,9 @@ public class MessageParser
                 break;
 
             case "color":
-                final String [] values = value.split (" ");
-                if (values.length != 3)
-                {
-                    this.host.error ("Color: Wrong number of arguments: " + values.length);
-                    final StringBuilder str = new StringBuilder ();
-                    for (final String value2: values)
-                        str.append (value2).append (':');
-                    this.host.error (str.toString ());
-                    return;
-                }
-                ((MarkerImpl) marker).setColorState (new double []
-                {
-                    Double.parseDouble (values[0]) / 255.0,
-                    Double.parseDouble (values[1]) / 255.0,
-                    Double.parseDouble (values[2]) / 255.0
-                });
+                final double [] color = this.parseColor (value);
+                if (color != null)
+                    ((MarkerImpl) marker).setColorState (color);
                 break;
 
             default:
@@ -648,24 +622,29 @@ public class MessageParser
 
     private void parseClipValue (final Queue<String> parts, final String value)
     {
-        final ICursorClip clip = this.model.getCursorClip ();
         final String command = parts.poll ();
         switch (command)
         {
             case "start":
-                clip.setPlayStart (Double.parseDouble (value));
+                ((ModelImpl) this.model).setCursorClipPlayStart (Double.parseDouble (value));
                 break;
 
             case "end":
-                clip.setPlayEnd (Double.parseDouble (value));
+                ((ModelImpl) this.model).setCursorClipPlayEnd (Double.parseDouble (value));
                 break;
 
-            case "loopStart":
-                // Not used - this is the repeat loop start
+            case "playposition":
+                ((ModelImpl) this.model).setCursorClipPlayPosition (Double.parseDouble (value));
                 break;
 
-            case "loopEnd":
-                // Not used - this is the repeat loop end
+            case "color":
+                final double [] color = this.parseColor (value);
+                if (color != null)
+                    ((ModelImpl) this.model).setCursorClipColorValue (color);
+                break;
+
+            case "notes":
+                ((ModelImpl) this.model).setCursorClipNotes (value);
                 break;
 
             default:
@@ -685,5 +664,26 @@ public class MessageParser
         // Remove first empty element
         oscParts.poll ();
         return oscParts;
+    }
+
+
+    private double [] parseColor (final String value)
+    {
+        final String [] values = value.split (" ");
+        if (values.length != 3)
+        {
+            this.host.error ("Color: Wrong number of arguments: " + values.length);
+            final StringBuilder str = new StringBuilder ();
+            for (final String value2: values)
+                str.append (value2).append (':');
+            this.host.error (str.toString ());
+            return null;
+        }
+        return new double []
+        {
+            Double.parseDouble (values[0]) / 255.0,
+            Double.parseDouble (values[1]) / 255.0,
+            Double.parseDouble (values[2]) / 255.0
+        };
     }
 }

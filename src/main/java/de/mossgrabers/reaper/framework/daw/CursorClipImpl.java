@@ -7,8 +7,11 @@ package de.mossgrabers.reaper.framework.daw;
 import de.mossgrabers.framework.controller.IValueChanger;
 import de.mossgrabers.framework.daw.ICursorClip;
 import de.mossgrabers.framework.daw.IHost;
-import de.mossgrabers.framework.daw.ITransport;
 import de.mossgrabers.reaper.communication.MessageSender;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 
 /**
@@ -18,14 +21,23 @@ import de.mossgrabers.reaper.communication.MessageSender;
  */
 public class CursorClipImpl extends BaseImpl implements ICursorClip
 {
-    private ITransport    transport;
-    private IValueChanger valueChanger;
-
-    private int           numSteps;
-    private int           numRows;
-
-    private double        clipStart = -1;
-    private double        clipEnd   = -1;
+    private IValueChanger   valueChanger;
+    private double          clipStart    = -1;
+    private double          clipEnd      = -1;
+    private double          playPosition = -1;
+    private final double [] color        = new double []
+    {
+        0,
+        0,
+        0
+    };
+    private int             numSteps;
+    private int             numRows;
+    private double          stepLength;
+    private List<NoteImpl>  notes        = new ArrayList<> ();
+    private final int [] [] data;
+    private int             editPage     = 0;
+    private int             maxPage      = 1;
 
 
     /**
@@ -34,18 +46,24 @@ public class CursorClipImpl extends BaseImpl implements ICursorClip
      * @param host The DAW host
      * @param sender The OSC sender
      * @param valueChanger The value changer
-     * @param transport The transport
      * @param numSteps The number of steps of the clip to monitor
      * @param numRows The number of note rows of the clip to monitor
      */
-    public CursorClipImpl (final IHost host, final MessageSender sender, final IValueChanger valueChanger, final ITransport transport, final int numSteps, final int numRows)
+    public CursorClipImpl (final IHost host, final MessageSender sender, final IValueChanger valueChanger, final int numSteps, final int numRows)
     {
         super (host, sender);
 
-        this.transport = transport;
         this.valueChanger = valueChanger;
+
         this.numSteps = numSteps;
         this.numRows = numRows;
+        this.stepLength = 1.0 / 4.0; // 16th
+        this.data = new int [this.numSteps] [];
+        for (int step = 0; step < this.numSteps; step++)
+        {
+            this.data[step] = new int [this.numRows];
+            Arrays.fill (this.data[step], 0);
+        }
     }
 
 
@@ -57,17 +75,24 @@ public class CursorClipImpl extends BaseImpl implements ICursorClip
     }
 
 
+    /**
+     * Set clip color value.
+     *
+     * @param color Array with 3 elements: red, green, blue (0..1)
+     */
+    public void setColorValue (final double [] color)
+    {
+        this.color[0] = color[0];
+        this.color[1] = color[1];
+        this.color[2] = color[2];
+    }
+
+
     /** {@inheritDoc} */
     @Override
     public double [] getColor ()
     {
-        // Not used since there is no session view but could be retrieved (I_CUSTOMCOLOR)
-        return new double []
-        {
-            0,
-            0,
-            0
-        };
+        return this.color;
     }
 
 
@@ -84,6 +109,7 @@ public class CursorClipImpl extends BaseImpl implements ICursorClip
     public void setPlayStart (final double start)
     {
         this.clipStart = start;
+        this.updateNoteData ();
     }
 
 
@@ -93,7 +119,7 @@ public class CursorClipImpl extends BaseImpl implements ICursorClip
     {
         if (this.clipStart == -1)
             return;
-        this.clipStart = Math.max (0, this.clipStart + this.valueChanger.calcKnobSpeed (control, this.valueChanger.isSlow () ? 0.1 : 1));
+        this.setPlayStart (Math.max (0, this.clipStart + this.valueChanger.calcKnobSpeed (control, this.valueChanger.isSlow () ? 0.1 : 1)));
         this.sendClipOSC ("start", Double.valueOf (this.clipStart));
     }
 
@@ -111,6 +137,7 @@ public class CursorClipImpl extends BaseImpl implements ICursorClip
     public void setPlayEnd (final double end)
     {
         this.clipEnd = end;
+        this.updateNoteData ();
     }
 
 
@@ -121,7 +148,7 @@ public class CursorClipImpl extends BaseImpl implements ICursorClip
         if (this.clipEnd == -1)
             return;
         final double speed = this.valueChanger.calcKnobSpeed (control, this.valueChanger.isSlow () ? 0.1 : 1);
-        this.clipEnd = Math.max (0, this.clipEnd + speed);
+        this.setPlayEnd (Math.max (0, this.clipEnd + speed));
         this.sendClipOSC ("end", Double.valueOf (this.clipEnd));
     }
 
@@ -137,11 +164,24 @@ public class CursorClipImpl extends BaseImpl implements ICursorClip
     }
 
 
+    /**
+     * Calculate the number of available pages.
+     */
+    private void calcPages ()
+    {
+        final double length = this.clipEnd - this.clipStart;
+        final double pageLength = this.numSteps * this.stepLength;
+        this.maxPage = (int) Math.ceil (length / pageLength);
+        // Make sure the page is inside the new range
+        this.editPage = Math.max (0, Math.min (this.editPage, this.maxPage - 1));
+    }
+
+
     /** {@inheritDoc} */
     @Override
     public double getLoopStart ()
     {
-        return this.getPlayStart ();
+        return 0.0;
     }
 
 
@@ -189,8 +229,8 @@ public class CursorClipImpl extends BaseImpl implements ICursorClip
     @Override
     public boolean isLoopEnabled ()
     {
-        // No loops in Reaper use the global loop
-        return this.transport.isLoop ();
+        // No looping of clips in Reaper
+        return false;
     }
 
 
@@ -198,8 +238,7 @@ public class CursorClipImpl extends BaseImpl implements ICursorClip
     @Override
     public void setLoopEnabled (final boolean enable)
     {
-        // No loops in Reaper use the global loop
-        this.transport.setLoop (enable);
+        // No looping of clips in Reaper
     }
 
 
@@ -273,8 +312,14 @@ public class CursorClipImpl extends BaseImpl implements ICursorClip
     @Override
     public int getCurrentStep ()
     {
-        // Not supported
-        return 0;
+        if (this.playPosition == -1)
+            return -1;
+
+        // Should never happen but who knows...
+        final double offset = this.playPosition - this.clipStart;
+        if (offset < 0)
+            return -1;
+        return (int) Math.floor (offset / this.stepLength);
     }
 
 
@@ -282,8 +327,7 @@ public class CursorClipImpl extends BaseImpl implements ICursorClip
     @Override
     public int getStep (final int step, final int row)
     {
-        // TODO Not supported - could be calculated from the play position and the note positions
-        return 0;
+        return row < 0 ? 0 : this.data[step][row];
     }
 
 
@@ -291,7 +335,8 @@ public class CursorClipImpl extends BaseImpl implements ICursorClip
     @Override
     public void toggleStep (final int step, final int row, final int velocity)
     {
-        // TODO Not supported
+        final double pos = (step + this.editPage * this.numSteps) * this.stepLength;
+        this.sendClipOSC ("note/" + row + "/toggle", pos + " " + this.stepLength + " " + velocity);
     }
 
 
@@ -299,7 +344,8 @@ public class CursorClipImpl extends BaseImpl implements ICursorClip
     @Override
     public void setStep (final int step, final int row, final int velocity, final double duration)
     {
-        // TODO Not supported
+        final double pos = (step + this.editPage * this.numSteps) * this.stepLength;
+        this.sendClipOSC ("note/" + row + "/set", pos + " " + this.stepLength + " " + velocity);
     }
 
 
@@ -307,7 +353,8 @@ public class CursorClipImpl extends BaseImpl implements ICursorClip
     @Override
     public void clearStep (final int step, final int row)
     {
-        // TODO Not supported
+        final double pos = (step + this.editPage * this.numSteps) * this.stepLength;
+        this.sendClipOSC ("note/" + row + "/clear", Double.valueOf (pos));
     }
 
 
@@ -315,7 +362,7 @@ public class CursorClipImpl extends BaseImpl implements ICursorClip
     @Override
     public void clearRow (final int row)
     {
-        // TODO Not supported
+        this.sendClipOSC ("note/" + row + "/clear", null);
     }
 
 
@@ -323,7 +370,9 @@ public class CursorClipImpl extends BaseImpl implements ICursorClip
     @Override
     public boolean hasRowData (final int row)
     {
-        // TODO Not supported
+        for (int step = 0; step < this.numSteps; step++)
+            if (this.data[step][row] > 0)
+                return true;
         return false;
     }
 
@@ -332,7 +381,9 @@ public class CursorClipImpl extends BaseImpl implements ICursorClip
     @Override
     public int getLowerRowWithData ()
     {
-        // TODO Not supported
+        for (int row = 0; row < this.numRows; row++)
+            if (this.hasRowData (row))
+                return row;
         return -1;
     }
 
@@ -341,7 +392,9 @@ public class CursorClipImpl extends BaseImpl implements ICursorClip
     @Override
     public int getUpperRowWithData ()
     {
-        // TODO Not supported
+        for (int row = this.numRows - 1; row >= 0; row--)
+            if (this.hasRowData (row))
+                return row;
         return -1;
     }
 
@@ -350,7 +403,8 @@ public class CursorClipImpl extends BaseImpl implements ICursorClip
     @Override
     public void setStepLength (final double length)
     {
-        // TODO Not supported
+        this.stepLength = length;
+        this.updateNoteData ();
     }
 
 
@@ -358,8 +412,7 @@ public class CursorClipImpl extends BaseImpl implements ICursorClip
     @Override
     public double getStepLength ()
     {
-        // TODO Not supported
-        return 1;
+        return this.stepLength;
     }
 
 
@@ -367,7 +420,8 @@ public class CursorClipImpl extends BaseImpl implements ICursorClip
     @Override
     public void scrollTo (final int step, final int row)
     {
-        // TODO Not supported
+        // Only paged scrolling supported
+        this.scrollToPage (step / this.numSteps);
     }
 
 
@@ -375,7 +429,8 @@ public class CursorClipImpl extends BaseImpl implements ICursorClip
     @Override
     public void scrollToPage (final int page)
     {
-        // TODO Not supported
+        this.editPage = Math.max (0, Math.min (page, this.maxPage - 1));
+        this.updateNoteData ();
     }
 
 
@@ -383,8 +438,7 @@ public class CursorClipImpl extends BaseImpl implements ICursorClip
     @Override
     public int getEditPage ()
     {
-        // TODO Not supported
-        return 0;
+        return this.editPage;
     }
 
 
@@ -392,7 +446,7 @@ public class CursorClipImpl extends BaseImpl implements ICursorClip
     @Override
     public void scrollStepsPageBackwards ()
     {
-        // TODO Not supported
+        this.scrollToPage (this.editPage - 1);
     }
 
 
@@ -400,7 +454,7 @@ public class CursorClipImpl extends BaseImpl implements ICursorClip
     @Override
     public void scrollStepsPageForward ()
     {
-        // TODO Not supported
+        this.scrollToPage (this.editPage + 1);
     }
 
 
@@ -408,8 +462,7 @@ public class CursorClipImpl extends BaseImpl implements ICursorClip
     @Override
     public boolean canScrollStepsBackwards ()
     {
-        // TODO Not supported
-        return false;
+        return this.getEditPage () > 0;
     }
 
 
@@ -417,8 +470,7 @@ public class CursorClipImpl extends BaseImpl implements ICursorClip
     @Override
     public boolean canScrollStepsForwards ()
     {
-        // TODO Not supported
-        return false;
+        return this.editPage < this.maxPage - 1;
     }
 
 
@@ -450,12 +502,75 @@ public class CursorClipImpl extends BaseImpl implements ICursorClip
     @Override
     public void transpose (final int semitones)
     {
-        // TODO Not supported
+        this.sendClipOSC ("transpose", Integer.valueOf (semitones));
+    }
+
+
+    /**
+     * Set the play position. If the play cursor is playing a part of the cursor clip.
+     *
+     * @param playPosition The play position or -1 if the play cursor is not playing a part of the
+     *            clip
+     */
+    public void setPlayPosition (final double playPosition)
+    {
+        this.playPosition = playPosition;
+    }
+
+
+    /**
+     * Update all notes of the clip.
+     *
+     * @param notes Notes array
+     */
+    public void setNotes (final List<NoteImpl> notes)
+    {
+        synchronized (this.notes)
+        {
+            this.notes.clear ();
+            this.notes.addAll (notes);
+        }
+        this.updateNoteData ();
+    }
+
+
+    private void updateNoteData ()
+    {
+        // Clear the data array
+        for (int row = 0; row < this.numRows; row++)
+        {
+            for (int step = 0; step < this.numSteps; step++)
+                this.data[step][row] = 0;
+        }
+
+        synchronized (this.notes)
+        {
+            for (final NoteImpl note: this.notes)
+            {
+                // Is the note on the current page window?
+                final int row = note.getPitch ();
+                if (row < 0 || row >= this.numRows)
+                    continue;
+                final int step = (int) Math.floor (note.getStart () / this.stepLength);
+                final int pageOffset = this.editPage * this.numSteps;
+                final int relToPage = step - pageOffset;
+                if (relToPage < 0 || relToPage >= this.numSteps)
+                    continue;
+
+                // 0: not set, 1: note continues playing, 2: start of note
+                this.data[relToPage][row] = 2;
+                final int endStep = Math.min ((int) Math.floor (note.getEnd () / this.stepLength) - pageOffset, this.numSteps);
+                for (int i = relToPage + 1; i < endStep; i++)
+                    this.data[i][row] = 1;
+            }
+
+            this.calcPages ();
+        }
     }
 
 
     protected void sendClipOSC (final String command, final Object value)
     {
-        this.sender.sendOSC ("/clip/" + command + "/", value);
+        this.sender.sendOSC ("/clip/" + command, value);
     }
 }
