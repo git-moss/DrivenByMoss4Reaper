@@ -59,7 +59,7 @@ public class MessageParser
     private final IValueChanger    valueChanger;
     private final CursorDeviceImpl cursorDevice;
     private final IBrowser         browser;
-    private IModel                 model;
+    private final IModel           model;
 
 
     /**
