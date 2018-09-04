@@ -6,6 +6,7 @@ package de.mossgrabers.reaper.framework.daw.data;
 
 import de.mossgrabers.framework.controller.IValueChanger;
 import de.mossgrabers.framework.daw.IHost;
+import de.mossgrabers.framework.daw.data.IChannel;
 import de.mossgrabers.framework.daw.data.ISend;
 import de.mossgrabers.reaper.communication.MessageSender;
 
@@ -17,7 +18,7 @@ import de.mossgrabers.reaper.communication.MessageSender;
  */
 public class SendImpl extends ParameterImpl implements ISend
 {
-    private int trackIndex;
+    private IChannel channel;
 
 
     /**
@@ -26,14 +27,14 @@ public class SendImpl extends ParameterImpl implements ISend
      * @param host The DAW host
      * @param sender The OSC sender
      * @param valueChanger The value changer
-     * @param trackIndex The index of the track to which this send belongs
+     * @param channel The index of the track to which this send belongs
      * @param index The index of the send
      */
-    public SendImpl (final IHost host, final MessageSender sender, final IValueChanger valueChanger, final int trackIndex, final int index)
+    public SendImpl (final IHost host, final MessageSender sender, final IValueChanger valueChanger, final IChannel channel, final int index)
     {
         super (host, sender, valueChanger, index);
 
-        this.trackIndex = trackIndex;
+        this.channel = channel;
     }
 
 
@@ -53,7 +54,7 @@ public class SendImpl extends ParameterImpl implements ISend
             return;
         this.value = (int) value;
         final Double doubleValue = Double.valueOf (this.valueChanger.toNormalizedValue (this.getValue ()));
-        final StringBuilder command = new StringBuilder ("/track/").append (this.trackIndex + 1).append ("/send/").append (this.getIndex () + 1).append ("/volume");
+        final StringBuilder command = new StringBuilder ("/track/").append (this.channel.getPosition ()).append ("/send/").append (this.getIndex () + 1).append ("/volume");
         this.sender.sendOSC (command.toString (), doubleValue);
     }
 }

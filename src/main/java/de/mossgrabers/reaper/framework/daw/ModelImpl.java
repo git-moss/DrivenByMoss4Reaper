@@ -53,7 +53,7 @@ public class ModelImpl extends AbstractModel
         final int numSends = modelSetup.getNumSends ();
         this.trackBank = new TrackBankImpl (host, sender, valueChanger, numTracks, numScenes, numSends, modelSetup.hasFlatTrackList ());
         this.effectTrackBank = null;
-        this.masterTrack = new MasterTrackImpl (host, sender, valueChanger);
+        this.masterTrack = new MasterTrackImpl (host, sender, valueChanger, numSends);
 
         final int numDevicesInBank = modelSetup.getNumDevicesInBank ();
         final int numParams = modelSetup.getNumParams ();

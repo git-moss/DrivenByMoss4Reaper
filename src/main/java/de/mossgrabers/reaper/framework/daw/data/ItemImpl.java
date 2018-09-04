@@ -67,6 +67,17 @@ public abstract class ItemImpl extends BaseImpl implements IItem
     }
 
 
+    /**
+     * Update the index.
+     *
+     * @param index The new index
+     */
+    public void setIndex (final int index)
+    {
+        this.index = index;
+    }
+
+
     /** {@inheritDoc} */
     @Override
     public int getPosition ()

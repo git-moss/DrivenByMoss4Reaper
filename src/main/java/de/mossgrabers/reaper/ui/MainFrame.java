@@ -87,8 +87,9 @@ public class MainFrame extends JFrame implements MessageSender, DataModelUpdater
 
         // To not again loose any exception from executors or delayed methods...
         Thread.setDefaultUncaughtExceptionHandler ( (thread, throwable) -> {
-            throwable.printStackTrace ();
-            this.logModel.addLogMessage (throwable.getMessage ());
+            final StringWriter writer = new StringWriter ();
+            throwable.printStackTrace (new PrintWriter (writer));
+            this.logModel.addLogMessage (writer.toString ());
         });
 
         this.instanceManager = new ControllerInstanceManager (this.logModel, this, this, this.iniFiles);

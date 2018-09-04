@@ -9,6 +9,7 @@ import de.mossgrabers.framework.daw.DAWColors;
 import de.mossgrabers.framework.daw.IHost;
 import de.mossgrabers.framework.daw.ISceneBank;
 import de.mossgrabers.framework.daw.ITrackBank;
+import de.mossgrabers.framework.daw.data.EmptyTrackData;
 import de.mossgrabers.framework.daw.data.ITrack;
 import de.mossgrabers.reaper.communication.MessageSender;
 import de.mossgrabers.reaper.framework.daw.data.TrackImpl;
@@ -24,6 +25,7 @@ public abstract class AbstractTrackBankImpl extends AbstractBankImpl<ITrack> imp
     private int        numScenes;
     private int        numSends;
     private ISceneBank sceneBank;
+    private int        bankOffset = 0;
 
 
     /**
@@ -42,8 +44,6 @@ public abstract class AbstractTrackBankImpl extends AbstractBankImpl<ITrack> imp
         this.numScenes = numScenes;
         this.numSends = numSends;
 
-        this.initItems ();
-
         this.sceneBank = new SceneBankImpl (host, sender, this.numScenes);
     }
 
@@ -52,12 +52,16 @@ public abstract class AbstractTrackBankImpl extends AbstractBankImpl<ITrack> imp
     @Override
     public void scrollPageBackwards ()
     {
+        this.bankOffset = Math.max (0, this.bankOffset - this.pageSize);
+
         // Deselect previous selected track (if any)
         final ITrack selectedTrack = this.getSelectedItem ();
         if (selectedTrack != null)
-            this.sendTrackOSC (selectedTrack.getIndex () + 1 + "/select", Integer.valueOf (0));
-        this.sendTrackOSC ("bank/-", null);
-        this.sendTrackOSC (this.getPageSize () + "/select", Integer.valueOf (1));
+            this.sendTrackOSC (selectedTrack.getPosition () + "/select", Integer.valueOf (0));
+
+        // Select item on new page
+        int selIndex = Math.min (this.getItemCount () - 1, this.bankOffset + this.pageSize - 1);
+        this.sendTrackOSC (selIndex + "/select", Integer.valueOf (1));
     }
 
 
@@ -65,12 +69,16 @@ public abstract class AbstractTrackBankImpl extends AbstractBankImpl<ITrack> imp
     @Override
     public void scrollPageForwards ()
     {
+        if (this.bankOffset + this.pageSize < this.getItemCount ())
+            this.bankOffset += this.pageSize;
+
         // Deselect previous selected track (if any)
         final ITrack selectedTrack = this.getSelectedItem ();
         if (selectedTrack != null)
-            this.sendTrackOSC (selectedTrack.getIndex () + 1 + "/select", Integer.valueOf (0));
-        this.sendTrackOSC ("bank/+", null);
-        this.sendTrackOSC ("1/select", Integer.valueOf (1));
+            this.sendTrackOSC (selectedTrack.getPosition () + "/select", Integer.valueOf (0));
+
+        // Select item on new page
+        this.sendTrackOSC (this.bankOffset + "/select", Integer.valueOf (1));
     }
 
 
@@ -78,8 +86,38 @@ public abstract class AbstractTrackBankImpl extends AbstractBankImpl<ITrack> imp
     @Override
     protected void initItems ()
     {
-        for (int i = 0; i < this.pageSize; i++)
-            this.items.add (new TrackImpl (this.host, this.sender, this.valueChanger, i, this.numSends, this.numScenes));
+        // Items are added on the fly in getItem
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public ITrack getItem (int index)
+    {
+        final int id = this.bankOffset + index;
+        return id >= 0 && id < this.getItemCount () ? this.getTrack (id) : EmptyTrackData.INSTANCE;
+    }
+
+
+    /**
+     * Get a track from the track list. No paging is applied.
+     *
+     * @param index The index of the track
+     * @return The track
+     */
+    public TrackImpl getTrack (int index)
+    {
+        synchronized (this.items)
+        {
+            final int size = this.items.size ();
+            final int diff = index - size + 1;
+            if (diff > 0)
+            {
+                for (int i = 0; i < diff; i++)
+                    this.items.add (new TrackImpl (this.host, this.sender, this.valueChanger, size + i, this.getPageSize (), this.numSends, this.numScenes));
+            }
+            return (TrackImpl) this.items.get (index);
+        }
     }
 
 
@@ -188,6 +226,6 @@ public abstract class AbstractTrackBankImpl extends AbstractBankImpl<ITrack> imp
     public void scrollTo (final int position)
     {
         if (position >= 0 && position < this.getItemCount ())
-            this.sendTrackOSC ("scrollto/" + position, null);
+            this.sendTrackOSC (position + "/scrollto", null);
     }
 }

@@ -14,12 +14,10 @@ import de.mossgrabers.framework.daw.IModel;
 import de.mossgrabers.framework.daw.IParameterBank;
 import de.mossgrabers.framework.daw.IProject;
 import de.mossgrabers.framework.daw.ISendBank;
-import de.mossgrabers.framework.daw.ITrackBank;
 import de.mossgrabers.framework.daw.data.IMarker;
 import de.mossgrabers.framework.daw.data.IMasterTrack;
 import de.mossgrabers.framework.daw.data.IParameter;
 import de.mossgrabers.framework.daw.data.ISend;
-import de.mossgrabers.framework.daw.data.ITrack;
 import de.mossgrabers.framework.daw.resource.ChannelType;
 import de.mossgrabers.reaper.framework.daw.AbstractTrackBankImpl;
 import de.mossgrabers.reaper.framework.daw.ApplicationImpl;
@@ -29,10 +27,11 @@ import de.mossgrabers.reaper.framework.daw.MarkerBankImpl;
 import de.mossgrabers.reaper.framework.daw.ModelImpl;
 import de.mossgrabers.reaper.framework.daw.ParameterPageBankImpl;
 import de.mossgrabers.reaper.framework.daw.ProjectImpl;
+import de.mossgrabers.reaper.framework.daw.TrackBankImpl;
 import de.mossgrabers.reaper.framework.daw.TransportImpl;
-import de.mossgrabers.reaper.framework.daw.data.ChannelImpl;
 import de.mossgrabers.reaper.framework.daw.data.ItemImpl;
 import de.mossgrabers.reaper.framework.daw.data.MarkerImpl;
+import de.mossgrabers.reaper.framework.daw.data.MasterTrackImpl;
 import de.mossgrabers.reaper.framework.daw.data.ParameterImpl;
 import de.mossgrabers.reaper.framework.daw.data.SendImpl;
 import de.mossgrabers.reaper.framework.daw.data.TrackImpl;
@@ -54,7 +53,7 @@ public class MessageParser
     private final IHost            host;
     private final IProject         project;
     private final ApplicationImpl  application;
-    private final IMasterTrack     masterTrack;
+    private final MasterTrackImpl  masterTrack;
     private final TransportImpl    transport;
     private final IValueChanger    valueChanger;
     private final CursorDeviceImpl cursorDevice;
@@ -75,7 +74,7 @@ public class MessageParser
         this.project = this.model.getProject ();
         this.application = (ApplicationImpl) this.model.getApplication ();
         this.transport = (TransportImpl) this.model.getTransport ();
-        this.masterTrack = this.model.getMasterTrack ();
+        this.masterTrack = (MasterTrackImpl) this.model.getMasterTrack ();
         this.valueChanger = this.model.getValueChanger ();
         this.cursorDevice = (CursorDeviceImpl) this.model.getCursorDevice ();
         this.browser = this.model.getBrowser ();
@@ -218,13 +217,12 @@ public class MessageParser
 
     private void parseTrack (final Queue<String> parts, final String value)
     {
-        final ITrackBank tb = this.model.getTrackBank ();
+        final TrackBankImpl tb = (TrackBankImpl) this.model.getTrackBank ();
         final String part = parts.poll ();
         try
         {
-            final int index = Integer.parseInt (part) - 1;
-            if (index < tb.getPageSize ())
-                this.parseTrackValue (tb.getItem (index), parts, value);
+            final int index = Integer.parseInt (part);
+            this.parseTrackValue (tb.getTrack (index), parts, value);
         }
         catch (final NumberFormatException ex)
         {
@@ -243,80 +241,85 @@ public class MessageParser
     }
 
 
-    private void parseTrackValue (final ITrack track, final Queue<String> parts, final String value)
+    private void parseTrackValue (final TrackImpl track, final Queue<String> parts, final String value)
     {
         final String command = parts.poll ();
         switch (command)
         {
             case "exists":
-                ((TrackImpl) track).setExists (Double.parseDouble (value) > 0);
+                track.setExists (Double.parseDouble (value) > 0);
                 break;
 
             case "active":
-                ((TrackImpl) track).setInternalIsActivated (Double.parseDouble (value) > 0);
+                track.setInternalIsActivated (Double.parseDouble (value) > 0);
                 break;
 
             case "type":
-                ((TrackImpl) track).setType (ChannelType.valueOf (value));
+                track.setType (ChannelType.valueOf (value));
                 break;
 
             case "select":
-                final int index = track.getIndex ();
+                final boolean isSelected = Double.parseDouble (value) > 0;
                 // Is it the master track?
-                if (index == -1)
+                if (track instanceof IMasterTrack)
                     track.setSelected (Double.parseDouble (value) > 0);
                 else
-                    ((AbstractTrackBankImpl) this.model.getCurrentTrackBank ()).handleBankTrackSelection (index, Double.parseDouble (value) > 0);
+                {
+                    track.setSelected (isSelected);
+                    ((AbstractTrackBankImpl) this.model.getCurrentTrackBank ()).handleBankTrackSelection (track.getIndex (), isSelected);
+                }
                 break;
 
             case "number":
-                ((TrackImpl) track).setPosition (Integer.parseInt (value));
+                final int v = Integer.parseInt (value);
+                track.setIndex (v);
+                track.setPosition (v);
                 break;
 
             case "name":
-                ((ChannelImpl) track).setName (value);
+                track.setName (value);
                 break;
 
             case "volume":
                 if (parts.isEmpty ())
-                    ((ChannelImpl) track).setInternalVolume (this.valueChanger.fromNormalizedValue (Double.parseDouble (value)));
+                    track.setInternalVolume (this.valueChanger.fromNormalizedValue (Double.parseDouble (value)));
                 else if ("str".equals (parts.poll ()))
-                    ((ChannelImpl) track).setVolumeStr (value);
+                    track.setVolumeStr (value);
                 break;
 
             case "pan":
                 if (parts.isEmpty ())
-                    ((ChannelImpl) track).setInternalPan (this.valueChanger.fromNormalizedValue (Double.parseDouble (value)));
+                    track.setInternalPan (this.valueChanger.fromNormalizedValue (Double.parseDouble (value)));
                 else if ("str".equals (parts.poll ()))
-                    ((ChannelImpl) track).setPanStr (value);
+                    track.setPanStr (value);
                 break;
 
             case "vuleft":
-                ((ChannelImpl) track).setVuLeft (this.valueChanger.fromNormalizedValue (Double.parseDouble (value)));
+                track.setVuLeft (this.valueChanger.fromNormalizedValue (Double.parseDouble (value)));
                 break;
 
             case "vuright":
-                ((ChannelImpl) track).setVuRight (this.valueChanger.fromNormalizedValue (Double.parseDouble (value)));
+                track.setVuRight (this.valueChanger.fromNormalizedValue (Double.parseDouble (value)));
                 break;
 
             case "mute":
-                ((ChannelImpl) track).setMuteState (Double.parseDouble (value) > 0);
+                track.setMuteState (Double.parseDouble (value) > 0);
                 break;
 
             case "solo":
-                ((ChannelImpl) track).setSoloState (Double.parseDouble (value) > 0);
+                track.setSoloState (Double.parseDouble (value) > 0);
                 break;
 
             case "recarm":
-                ((TrackImpl) track).setRecArmState (Double.parseDouble (value) > 0);
+                track.setRecArmState (Double.parseDouble (value) > 0);
                 break;
 
             case "monitor":
-                ((TrackImpl) track).setMonitorState (Double.parseDouble (value) > 0);
+                track.setMonitorState (Double.parseDouble (value) > 0);
                 break;
 
             case "autoMonitor":
-                ((TrackImpl) track).setAutoMonitorState (Double.parseDouble (value) > 0);
+                track.setAutoMonitorState (Double.parseDouble (value) > 0);
                 break;
 
             case "automode":
@@ -324,19 +327,19 @@ public class MessageParser
                 switch ((int) Double.parseDouble (value))
                 {
                     case 0:
-                        ((TrackImpl) track).setAutomation (TrackImpl.AUTOMATION_TRIM);
+                        track.setAutomation (TrackImpl.AUTOMATION_TRIM);
                         break;
                     case 1:
-                        ((TrackImpl) track).setAutomation (TrackImpl.AUTOMATION_READ);
+                        track.setAutomation (TrackImpl.AUTOMATION_READ);
                         break;
                     case 2:
-                        ((TrackImpl) track).setAutomation (TrackImpl.AUTOMATION_TOUCH);
+                        track.setAutomation (TrackImpl.AUTOMATION_TOUCH);
                         break;
                     case 3:
-                        ((TrackImpl) track).setAutomation (TrackImpl.AUTOMATION_WRITE);
+                        track.setAutomation (TrackImpl.AUTOMATION_WRITE);
                         break;
                     case 4:
-                        ((TrackImpl) track).setAutomation (TrackImpl.AUTOMATION_LATCH);
+                        track.setAutomation (TrackImpl.AUTOMATION_LATCH);
                         break;
                 }
                 break;
@@ -344,7 +347,7 @@ public class MessageParser
             case "color":
                 final double [] color = this.parseColor (value);
                 if (color != null)
-                    ((TrackImpl) track).setColorState (color);
+                    track.setColorState (color);
                 break;
 
             case "send":
@@ -358,11 +361,11 @@ public class MessageParser
                 break;
 
             case "repeatActive":
-                ((TrackImpl) track).setInternalRepeat (Double.parseDouble (value) > 0);
+                track.setInternalRepeat (Double.parseDouble (value) > 0);
                 break;
 
             case "noterepeatlength":
-                ((TrackImpl) track).setInternalRepeatNoteLength (Integer.parseInt (value));
+                track.setInternalRepeatNoteLength (Integer.parseInt (value));
                 break;
 
             default:
