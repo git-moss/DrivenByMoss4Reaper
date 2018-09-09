@@ -1,5 +1,6 @@
 package de.mossgrabers.reaper.framework.daw;
 
+import de.mossgrabers.reaper.ui.utils.LogModel;
 import de.mossgrabers.reaper.ui.utils.SafeRunLater;
 
 import javax.swing.JFrame;
@@ -34,8 +35,10 @@ public class NotificationWindow
 
     /**
      * Constructor. Starts the count down timer.
+     * 
+     * @param logModel Where to log to
      */
-    public NotificationWindow ()
+    public NotificationWindow (final LogModel logModel)
     {
         this.popupStage.setTitle ("Notification");
         this.popupStage.setAlwaysOnTop (true);
@@ -58,7 +61,7 @@ public class NotificationWindow
             if (this.counter.decrementAndGet () == 0)
             {
                 // Needs to be run on the Swing tread
-                SafeRunLater.execute ( () -> {
+                SafeRunLater.execute (logModel, () -> {
                     this.popupStage.setVisible (false);
                 });
             }

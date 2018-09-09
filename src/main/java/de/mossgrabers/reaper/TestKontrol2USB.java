@@ -20,7 +20,7 @@ public class TestKontrol2USB
     final static int interfaceID = 0x03;
 
 
-    public static void main (String [] args)
+    public static void main (final String [] args)
     {
         int result;
         try
@@ -74,18 +74,18 @@ public class TestKontrol2USB
     }
 
 
-    private static void sendImage (DeviceHandle handle)
+    private static void sendImage (final DeviceHandle handle)
     {
         ///////////////////////////////
         // Display is 480 x 272
 
-        int display = 0;
-        int x = 0;
-        int y = 0;
-        int width = 480;
-        int height = 272;
+        final int display = 0;
+        final int x = 0;
+        final int y = 0;
+        final int width = 480;
+        final int height = 272;
 
-        ByteBuffer data = ByteBuffer.allocateDirect (width * height * 3);
+        final ByteBuffer data = ByteBuffer.allocateDirect (width * height * 3);
         for (int i = 0; i < width * height; i++)
         {
             data.put ((byte) 255);
@@ -124,7 +124,7 @@ public class TestKontrol2USB
                 }
                 if (descriptor.idVendor () == vendorId && descriptor.idProduct () == productId)
                 {
-                    DeviceHandle handle = new DeviceHandle ();
+                    final DeviceHandle handle = new DeviceHandle ();
                     try
                     {
                         result = LibUsb.open (device, handle);
@@ -132,7 +132,7 @@ public class TestKontrol2USB
                             return handle;
                         new LibUsbException (result).printStackTrace ();
                     }
-                    catch (org.usb4java.LibUsbException ex)
+                    catch (final org.usb4java.LibUsbException ex)
                     {
                         ex.printStackTrace ();
                     }

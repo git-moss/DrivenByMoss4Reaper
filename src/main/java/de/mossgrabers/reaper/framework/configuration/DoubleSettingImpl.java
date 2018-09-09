@@ -5,6 +5,7 @@
 package de.mossgrabers.reaper.framework.configuration;
 
 import de.mossgrabers.framework.configuration.IDoubleSetting;
+import de.mossgrabers.reaper.ui.utils.LogModel;
 import de.mossgrabers.reaper.ui.utils.PropertiesEx;
 import de.mossgrabers.reaper.ui.utils.SafeRunLater;
 
@@ -24,13 +25,15 @@ public class DoubleSettingImpl extends BaseSetting<JTextField, Double> implement
     /**
      * Constructor.
      *
+     * @param logModel The log model
      * @param label The name of the setting, must not be null
      * @param category The name of the category, may not be null
      * @param initialValue The value
      */
-    public DoubleSettingImpl (final String label, final String category, final double initialValue)
+    public DoubleSettingImpl (final LogModel logModel, final String label, final String category, final double initialValue)
     {
-        super (label, category, new JTextField (Double.toString (initialValue)));
+        super (logModel, label, category, new JTextField (Double.toString (initialValue)));
+
         this.value = initialValue;
 
         limitToNumbers (this.field, NUMBERS_AND_DOT);
@@ -62,7 +65,7 @@ public class DoubleSettingImpl extends BaseSetting<JTextField, Double> implement
         this.value = value;
         this.flush ();
 
-        SafeRunLater.execute ( () -> {
+        SafeRunLater.execute (this.logModel, () -> {
             final String v = this.field.getText ();
             final String doubleStr = Double.toString (this.value);
             if (!v.equals (doubleStr))

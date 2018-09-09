@@ -5,6 +5,7 @@
 package de.mossgrabers.reaper.framework.configuration;
 
 import de.mossgrabers.framework.configuration.ISignalSetting;
+import de.mossgrabers.reaper.ui.utils.LogModel;
 import de.mossgrabers.reaper.ui.utils.PropertiesEx;
 
 import javax.swing.JButton;
@@ -20,13 +21,14 @@ public class SignalSettingImpl extends BaseSetting<JButton, Void> implements ISi
     /**
      * Constructor.
      *
+     * @param logModel The log model
      * @param label The name of the setting, must not be null
      * @param category The name of the category, may not be null
      * @param title The title of the button
      */
-    public SignalSettingImpl (final String label, final String category, final String title)
+    public SignalSettingImpl (final LogModel logModel, final String label, final String category, final String title)
     {
-        super (label, category, new JButton (title));
+        super (logModel, label, category, new JButton (title));
 
         this.field.addActionListener (event -> this.notifyObservers (null));
     }

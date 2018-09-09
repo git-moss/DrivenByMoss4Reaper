@@ -23,28 +23,30 @@ import java.util.Map;
  */
 public abstract class AbstractModel implements IModel
 {
-    protected IHost                    host;
-    protected IApplication             application;
-    protected IMixer                   mixer;
-    protected ITransport               transport;
-    protected IGroove                  groove;
-    protected IProject                 project;
-    protected IBrowser                 browser;
-    protected IArranger                arranger;
-    protected IMarkerBank              markerBank;
-    protected ITrackBank               currentTrackBank;
-    protected ITrackBank               trackBank;
-    protected ITrackBank               effectTrackBank;
-    protected IMasterTrack             masterTrack;
-    protected ICursorDevice            primaryDevice;
-    protected ICursorDevice            cursorDevice;
-    protected ICursorDevice            drumDevice64;
-    protected Map<String, ICursorClip> cursorClips = new HashMap<> ();
+    protected IHost              host;
+    protected IApplication       application;
+    protected IMixer             mixer;
+    protected ITransport         transport;
+    protected IGroove            groove;
+    protected IProject           project;
+    protected IBrowser           browser;
+    protected IArranger          arranger;
+    protected IMarkerBank        markerBank;
+    protected ITrackBank         currentTrackBank;
+    protected ITrackBank         trackBank;
+    protected ITrackBank         effectTrackBank;
+    protected IMasterTrack       masterTrack;
+    protected ICursorDevice      primaryDevice;
+    protected ICursorDevice      cursorDevice;
+    protected ICursorDevice      drumDevice64;
+    protected Map<String, IClip> cursorClips = new HashMap<> ();
 
-    protected Scales                   scales;
-    protected ColorManager             colorManager;
-    protected IValueChanger            valueChanger;
-    protected ModelSetup               modelSetup;
+    protected Scales             scales;
+    protected ColorManager       colorManager;
+    protected IValueChanger      valueChanger;
+    protected ModelSetup         modelSetup;
+
+    private int                  lastSelection;
 
 
     /**
@@ -178,17 +180,16 @@ public abstract class AbstractModel implements IModel
 
     /** {@inheritDoc} */
     @Override
-    public ICursorClip getCursorClip ()
-    {
-        return this.getCursorClip (this.modelSetup.getNumTracks (), this.modelSetup.getNumScenes ());
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
     public void toggleCurrentTrackBank ()
     {
-        this.currentTrackBank = this.currentTrackBank == this.trackBank && this.effectTrackBank != null ? this.effectTrackBank : this.trackBank;
+        if (this.effectTrackBank == null)
+            return;
+
+        final ITrack selectedItem = this.getCurrentTrackBank ().getSelectedItem ();
+        final int selPosition = selectedItem == null ? -1 : selectedItem.getPosition ();
+        this.currentTrackBank = this.currentTrackBank == this.trackBank ? this.effectTrackBank : this.trackBank;
+        this.currentTrackBank.selectItemAtPosition (this.lastSelection);
+        this.lastSelection = selPosition;
     }
 
 

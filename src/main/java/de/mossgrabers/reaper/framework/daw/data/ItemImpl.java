@@ -20,8 +20,8 @@ public abstract class ItemImpl extends BaseImpl implements IItem
 {
     private int     index;
     private int     position;
-    private boolean exists;
-    private String  name = "";
+    private boolean exists = false;
+    private String  name   = "";
     private boolean selected;
 
 

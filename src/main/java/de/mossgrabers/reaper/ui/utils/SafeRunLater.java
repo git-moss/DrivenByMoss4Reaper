@@ -25,10 +25,11 @@ public class SafeRunLater
 
     /**
      * Execute the runnable later.
-     *
+     * 
+     * @param logModel For logging errors
      * @param runnable The runnable to execute
      */
-    public static void execute (final Runnable runnable)
+    public static void execute (final LogModel logModel, final Runnable runnable)
     {
         SwingUtilities.invokeLater ( () -> {
             try
@@ -37,7 +38,8 @@ public class SafeRunLater
             }
             catch (final RuntimeException ex)
             {
-                ex.printStackTrace ();
+                if (logModel != null)
+                    logModel.error ("Error in executing SafeRunLater.", ex);
             }
         });
     }

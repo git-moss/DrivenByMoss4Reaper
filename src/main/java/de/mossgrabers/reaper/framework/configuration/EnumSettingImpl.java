@@ -5,6 +5,7 @@
 package de.mossgrabers.reaper.framework.configuration;
 
 import de.mossgrabers.framework.configuration.IEnumSetting;
+import de.mossgrabers.reaper.ui.utils.LogModel;
 import de.mossgrabers.reaper.ui.utils.PropertiesEx;
 import de.mossgrabers.reaper.ui.utils.SafeRunLater;
 
@@ -25,15 +26,16 @@ public class EnumSettingImpl extends BaseSetting<JComboBox<String>, String> impl
     /**
      * Constructor.
      *
+     * @param logModel The log model
      * @param label The name of the setting, must not be null
      * @param category The name of the category, may not be null
      * @param options The string array that defines the allowed options for the button group or
      *            chooser
      * @param initialValue The initial value
      */
-    public EnumSettingImpl (final String label, final String category, final String [] options, final String initialValue)
+    public EnumSettingImpl (final LogModel logModel, final String label, final String category, final String [] options, final String initialValue)
     {
-        super (label, category, new JComboBox<> (new DefaultComboBoxModel<> (options)));
+        super (logModel, label, category, new JComboBox<> (new DefaultComboBoxModel<> (options)));
         this.value = initialValue;
 
         this.field.setSelectedItem (this.value);
@@ -48,7 +50,7 @@ public class EnumSettingImpl extends BaseSetting<JComboBox<String>, String> impl
         this.value = value;
         this.flush ();
 
-        SafeRunLater.execute ( () -> {
+        SafeRunLater.execute (this.logModel, () -> {
             if (this.value != null && !this.value.equals (this.field.getSelectedItem ()))
                 this.field.setSelectedItem (this.value);
         });

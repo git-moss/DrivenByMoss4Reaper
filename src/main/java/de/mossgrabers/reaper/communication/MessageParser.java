@@ -231,6 +231,7 @@ public class MessageParser
                 // The number of tracks
                 case "count":
                     ((AbstractTrackBankImpl) tb).setTrackCount (Integer.parseInt (value));
+                    ((TrackBankImpl) this.model.getTrackBank ()).markDirty ();
                     break;
 
                 default:
@@ -248,6 +249,11 @@ public class MessageParser
         {
             case "exists":
                 track.setExists (Double.parseDouble (value) > 0);
+                break;
+
+            case "depth":
+                track.setDepth (Integer.parseInt (value));
+                ((TrackBankImpl) this.model.getTrackBank ()).markDirty ();
                 break;
 
             case "active":
@@ -682,9 +688,12 @@ public class MessageParser
             this.host.error (str.toString ());
             return null;
         }
+        double d1 = Double.parseDouble (values[0]);
+        if (d1 < 0)
+            return null;
         return new double []
         {
-            Double.parseDouble (values[0]) / 255.0,
+            d1 / 255.0,
             Double.parseDouble (values[1]) / 255.0,
             Double.parseDouble (values[2]) / 255.0
         };

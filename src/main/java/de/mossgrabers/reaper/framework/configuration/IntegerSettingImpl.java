@@ -5,6 +5,7 @@
 package de.mossgrabers.reaper.framework.configuration;
 
 import de.mossgrabers.framework.configuration.IIntegerSetting;
+import de.mossgrabers.reaper.ui.utils.LogModel;
 import de.mossgrabers.reaper.ui.utils.PropertiesEx;
 import de.mossgrabers.reaper.ui.utils.SafeRunLater;
 
@@ -26,15 +27,17 @@ public class IntegerSettingImpl extends BaseSetting<JTextField, Integer> impleme
     /**
      * Constructor.
      *
+     * @param logModel The log model
      * @param label The name of the setting, must not be null
      * @param category The name of the category, may not be null
      * @param initialValue The value
      * @param minValue The minimum accepted value
      * @param maxValue The maximum accepted value
      */
-    public IntegerSettingImpl (final String label, final String category, final int initialValue, final int minValue, final int maxValue)
+    public IntegerSettingImpl (final LogModel logModel, final String label, final String category, final int initialValue, final int minValue, final int maxValue)
     {
-        super (label, category, new JTextField (Integer.toString (initialValue)));
+        super (logModel, label, category, new JTextField (Integer.toString (initialValue)));
+
         this.value = initialValue;
         this.minValue = minValue;
         this.maxValue = maxValue;
@@ -71,7 +74,7 @@ public class IntegerSettingImpl extends BaseSetting<JTextField, Integer> impleme
         this.value = value;
         this.flush ();
 
-        SafeRunLater.execute ( () -> {
+        SafeRunLater.execute (this.logModel, () -> {
             final String v = this.field.getText ();
             if (!v.equals (Integer.toString (this.value)))
                 this.field.setText (Integer.toString (this.value));

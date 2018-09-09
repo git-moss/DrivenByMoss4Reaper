@@ -5,7 +5,6 @@
 package de.mossgrabers.reaper;
 
 import de.mossgrabers.reaper.ui.MainFrame;
-import de.mossgrabers.reaper.ui.utils.SafeRunLater;
 
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
@@ -70,13 +69,13 @@ public class Controller
 
     /**
      * Update the data model.
-     * 
+     *
      * @param data The data to update the model with
      */
     public static void updateModel (final String data)
     {
         if (app != null)
-            SafeRunLater.execute ( () -> app.updateModel (data));
+            app.updateModel (data);
     }
 
 
@@ -96,6 +95,6 @@ public class Controller
     public static void displayWindow ()
     {
         if (app != null)
-            SafeRunLater.execute (app::showStage);
+            app.showStage ();
     }
 }

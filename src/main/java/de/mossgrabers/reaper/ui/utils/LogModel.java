@@ -51,7 +51,7 @@ public class LogModel
      */
     public void info (final String message)
     {
-        SafeRunLater.execute ( () -> {
+        SafeRunLater.execute (null, () -> {
             synchronized (this.logMessage)
             {
                 this.logMessage.append (message);

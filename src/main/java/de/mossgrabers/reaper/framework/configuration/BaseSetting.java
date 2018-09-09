@@ -6,6 +6,7 @@ package de.mossgrabers.reaper.framework.configuration;
 
 import de.mossgrabers.framework.configuration.IValueObserver;
 import de.mossgrabers.framework.utils.StringUtils;
+import de.mossgrabers.reaper.ui.utils.LogModel;
 import de.mossgrabers.reaper.ui.widget.WholeNumberDocument;
 
 import javax.swing.JComponent;
@@ -31,6 +32,7 @@ public abstract class BaseSetting<C extends JComponent, T> implements IfxSetting
     protected static final String        NUMBERS_AND_DOT        = ".0123456789";
     protected static final String        SIGNED_NUMBERS_AND_DOT = ".-0123456789";
 
+    protected final LogModel             logModel;
     protected final C                    field;
 
     private final JLabel                 labelWidget;
@@ -42,12 +44,14 @@ public abstract class BaseSetting<C extends JComponent, T> implements IfxSetting
     /**
      * Constructor
      *
+     * @param logModel The log model
      * @param label The name of the setting, must not be null
      * @param category The name of the category, may not be null
      * @param field The widget for editing the setting
      */
-    public BaseSetting (final String label, final String category, final C field)
+    public BaseSetting (final LogModel logModel, final String label, final String category, final C field)
     {
+        this.logModel = logModel;
         this.label = label;
         this.category = category;
         this.field = field;
@@ -142,6 +146,5 @@ public abstract class BaseSetting<C extends JComponent, T> implements IfxSetting
     protected static void limitToNumbers (final JTextField field, final String characters)
     {
         field.setDocument (new WholeNumberDocument ());
-
     }
 }

@@ -5,8 +5,8 @@
 package de.mossgrabers.reaper.framework.daw;
 
 import de.mossgrabers.framework.controller.IValueChanger;
-import de.mossgrabers.framework.daw.ICursorClip;
 import de.mossgrabers.framework.daw.IHost;
+import de.mossgrabers.framework.daw.INoteClip;
 import de.mossgrabers.reaper.communication.MessageSender;
 
 import java.util.ArrayList;
@@ -19,7 +19,7 @@ import java.util.List;
  *
  * @author J&uuml;rgen Mo&szlig;graber
  */
-public class CursorClipImpl extends BaseImpl implements ICursorClip
+public class CursorClipImpl extends BaseImpl implements INoteClip
 {
     private IValueChanger   valueChanger;
     private double          clipStart    = -1;
@@ -413,15 +413,6 @@ public class CursorClipImpl extends BaseImpl implements ICursorClip
     public double getStepLength ()
     {
         return this.stepLength;
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void scrollTo (final int step, final int row)
-    {
-        // Only paged scrolling supported
-        this.scrollToPage (step / this.numSteps);
     }
 
 

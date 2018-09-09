@@ -189,12 +189,30 @@ public class GraphicsContextImpl implements IGraphicsContext
     @Override
     public void drawTextInHeight (final String text, final double x, final double y, final double height, final ColorEx color, final double fontSize)
     {
+        this.drawTextInHeight (text, x, y, height, color, null, fontSize);
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void drawTextInHeight (String text, double x, double y, double height, ColorEx color, ColorEx backgroundColor, double fontSize)
+    {
         if (text == null || text.length () == 0)
             return;
 
-        this.setColor (color);
         this.gc.setFont (FONT_CACHE.getFont ((int) fontSize));
         final Dimension dim = this.getTextDims (text);
+
+        final double textDescent = this.getTextDescent (text);
+        final int posY = (int) (y + height - (height - dim.height) / 2 - textDescent);
+
+        if (backgroundColor != null)
+        {
+            final double inset = 12.0;
+            this.fillRoundedRectangle (x - inset, posY - dim.height - inset + textDescent, dim.width + 2 * inset, dim.height + 2 * inset, inset, backgroundColor);
+        }
+
+        this.setColor (color);
         this.gc.drawString (text, (int) x, (int) (y + height - (height - dim.height) / 2 - this.getTextDescent ("Hg")));
     }
 

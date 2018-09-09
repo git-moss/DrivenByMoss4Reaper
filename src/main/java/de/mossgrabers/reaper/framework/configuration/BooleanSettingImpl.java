@@ -5,6 +5,7 @@
 package de.mossgrabers.reaper.framework.configuration;
 
 import de.mossgrabers.framework.configuration.IBooleanSetting;
+import de.mossgrabers.reaper.ui.utils.LogModel;
 import de.mossgrabers.reaper.ui.utils.PropertiesEx;
 import de.mossgrabers.reaper.ui.utils.SafeRunLater;
 
@@ -23,14 +24,16 @@ public class BooleanSettingImpl extends BaseSetting<JCheckBox, Boolean> implemen
 
     /**
      * Constructor.
-     *
+     * 
+     * @param logModel The log model
      * @param label The name of the setting, must not be null
      * @param category The name of the category, may not be null
      * @param initialValue The initial value
      */
-    public BooleanSettingImpl (final String label, final String category, final boolean initialValue)
+    public BooleanSettingImpl (final LogModel logModel, final String label, final String category, final boolean initialValue)
     {
-        super (label, category, new JCheckBox ());
+        super (logModel, label, category, new JCheckBox ());
+
         this.value = initialValue;
 
         this.field.addActionListener (event -> this.set (this.field.isSelected ()));
@@ -52,7 +55,7 @@ public class BooleanSettingImpl extends BaseSetting<JCheckBox, Boolean> implemen
         this.value = value;
         this.flush ();
 
-        SafeRunLater.execute ( () -> {
+        SafeRunLater.execute (this.logModel, () -> {
             final boolean v = this.field.isSelected ();
             if (v != this.value)
                 this.field.setSelected (this.value);

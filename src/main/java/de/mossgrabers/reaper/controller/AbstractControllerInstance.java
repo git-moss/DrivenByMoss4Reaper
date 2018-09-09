@@ -95,7 +95,7 @@ public abstract class AbstractControllerInstance implements IControllerInstance
             this.logModel.info ("Starting controller '" + this.controllerDefinition.toString () + "'");
 
             this.host = new HostImpl (this.logModel, this.window);
-            this.settingsUI = new SettingsUI (this.controllerDefinition.getNumMidiInPorts (), this.controllerDefinition.getNumMidiOutPorts (), this.controllerDefinition.getMidiDiscoveryPairs (OperatingSystem.get ()));
+            this.settingsUI = new SettingsUI (this.logModel, this.controllerDefinition.getNumMidiInPorts (), this.controllerDefinition.getNumMidiOutPorts (), this.controllerDefinition.getMidiDiscoveryPairs (OperatingSystem.get ()));
 
             final File configFile = this.getFileName ();
             if (configFile.exists ())
@@ -119,7 +119,7 @@ public abstract class AbstractControllerInstance implements IControllerInstance
             this.setupFactory = new ReaperSetupFactory (this.iniFiles, this.sender, this.host, this.logModel, this.settingsUI.getSelectedMidiInputs (), this.settingsUI.getSelectedMidiOutputs ());
             this.controllerSetup = this.createControllerSetup (this.setupFactory);
 
-            SafeRunLater.execute ( () -> {
+            SafeRunLater.execute (this.logModel, () -> {
                 this.controllerSetup.init ();
 
                 this.settingsUI.load (this.controllerConfiguration);

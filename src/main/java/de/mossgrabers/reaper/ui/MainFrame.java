@@ -120,7 +120,7 @@ public class MainFrame extends JFrame implements MessageSender
         if (this.iniPath != null)
         {
             this.initUSB ();
-            SafeRunLater.execute (this::startupInfrastructure);
+            SafeRunLater.execute (this.logModel, this::startupInfrastructure);
         }
     }
 
@@ -358,7 +358,7 @@ public class MainFrame extends JFrame implements MessageSender
     private void startControllers ()
     {
         this.instanceManager.startAll ();
-        SafeRunLater.execute (this::sendRefreshCommand);
+        SafeRunLater.execute (this.logModel, this::sendRefreshCommand);
     }
 
 
@@ -529,21 +529,24 @@ public class MainFrame extends JFrame implements MessageSender
     {
         if (data == null || data.isEmpty ())
             return;
-        for (final String command: data.split ("\n"))
-        {
-            final String [] split = command.split (" ");
-            final String params = split.length == 1 ? null : command.substring (split[0].length () + 1);
-            try
+
+        SafeRunLater.execute (this.logModel, () -> {
+            for (final String command: data.split ("\n"))
             {
-                this.handleReceiveOSC (split[0], params);
+                final String [] split = command.split (" ");
+                final String params = split.length == 1 ? null : command.substring (split[0].length () + 1);
+                try
+                {
+                    this.handleReceiveOSC (split[0], params);
+                }
+                catch (final IllegalArgumentException ex)
+                {
+                    final StringWriter sw = new StringWriter ();
+                    ex.printStackTrace (new PrintWriter (sw));
+                    this.logModel.info (sw.toString ());
+                }
             }
-            catch (final IllegalArgumentException ex)
-            {
-                final StringWriter sw = new StringWriter ();
-                ex.printStackTrace (new PrintWriter (sw));
-                this.logModel.info (sw.toString ());
-            }
-        }
+        });
     }
 
 
@@ -620,7 +623,9 @@ public class MainFrame extends JFrame implements MessageSender
      */
     public void showStage ()
     {
-        this.setVisible (true);
-        this.toFront ();
+        SafeRunLater.execute (this.logModel, () -> {
+            this.setVisible (true);
+            this.toFront ();
+        });
     }
 }

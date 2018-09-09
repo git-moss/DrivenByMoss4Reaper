@@ -6,6 +6,7 @@ package de.mossgrabers.reaper.framework.configuration;
 
 import de.mossgrabers.framework.configuration.IColorSetting;
 import de.mossgrabers.framework.controller.color.ColorEx;
+import de.mossgrabers.reaper.ui.utils.LogModel;
 import de.mossgrabers.reaper.ui.utils.PropertiesEx;
 import de.mossgrabers.reaper.ui.utils.SafeRunLater;
 import de.mossgrabers.reaper.ui.widget.ColoredButton;
@@ -28,13 +29,14 @@ public class ColorSettingImpl extends BaseSetting<ColoredButton, double []> impl
     /**
      * Constructor.
      *
+     * @param logModel The log model
      * @param label The name of the setting, must not be null
      * @param category The name of the category, may not be null
      * @param initialValue The value
      */
-    public ColorSettingImpl (final String label, final String category, final ColorEx initialValue)
+    public ColorSettingImpl (final LogModel logModel, final String label, final String category, final ColorEx initialValue)
     {
-        super (label, category, new ColoredButton ());
+        super (logModel, label, category, new ColoredButton ());
         this.value = initialValue;
 
         this.field.setBackground (new Color ((float) initialValue.getRed (), (float) initialValue.getGreen (), (float) initialValue.getBlue ()));
@@ -69,7 +71,7 @@ public class ColorSettingImpl extends BaseSetting<ColoredButton, double []> impl
         this.value = value;
         this.flush ();
 
-        SafeRunLater.execute ( () -> {
+        SafeRunLater.execute (this.logModel, () -> {
             this.field.setBackground (new Color ((float) this.value.getRed (), (float) this.value.getGreen (), (float) this.value.getBlue ()));
         });
     }

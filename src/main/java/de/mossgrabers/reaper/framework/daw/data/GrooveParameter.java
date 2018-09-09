@@ -89,7 +89,7 @@ public class GrooveParameter extends ParameterImpl
                 break;
         }
 
-        this.value = fromIniValue (val);
+        this.value = this.fromIniValue (val);
 
         return super.getValue ();
     }

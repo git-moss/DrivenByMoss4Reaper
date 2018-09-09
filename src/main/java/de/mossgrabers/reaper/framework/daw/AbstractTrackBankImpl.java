@@ -9,7 +9,6 @@ import de.mossgrabers.framework.daw.DAWColors;
 import de.mossgrabers.framework.daw.IHost;
 import de.mossgrabers.framework.daw.ISceneBank;
 import de.mossgrabers.framework.daw.ITrackBank;
-import de.mossgrabers.framework.daw.data.EmptyTrackData;
 import de.mossgrabers.framework.daw.data.ITrack;
 import de.mossgrabers.reaper.communication.MessageSender;
 import de.mossgrabers.reaper.framework.daw.data.TrackImpl;
@@ -22,11 +21,13 @@ import de.mossgrabers.reaper.framework.daw.data.TrackImpl;
  */
 public abstract class AbstractTrackBankImpl extends AbstractBankImpl<ITrack> implements ITrackBank
 {
-    private int        numScenes;
-    private int        numSends;
-    private ISceneBank sceneBank;
+    protected final ITrack emptyTrack;
 
-    protected int      bankOffset = 0;
+    private int            numScenes;
+    private int            numSends;
+    private ISceneBank     sceneBank;
+
+    protected int          bankOffset = 0;
 
 
     /**
@@ -45,6 +46,7 @@ public abstract class AbstractTrackBankImpl extends AbstractBankImpl<ITrack> imp
         this.numScenes = numScenes;
         this.numSends = numSends;
 
+        this.emptyTrack = new TrackImpl (host, sender, valueChanger, -1, numTracks, numSends, numScenes);
         this.sceneBank = new SceneBankImpl (host, sender, this.numScenes);
     }
 
@@ -77,7 +79,7 @@ public abstract class AbstractTrackBankImpl extends AbstractBankImpl<ITrack> imp
             this.sendTrackOSC (selectedTrack.getPosition () + "/select", Integer.valueOf (0));
 
         // Select item on new page
-        int selIndex = Math.min (this.getItemCount () - 1, this.bankOffset + this.pageSize - 1);
+        final int selIndex = Math.min (this.getItemCount () - 1, this.bankOffset + this.pageSize - 1);
         this.sendTrackOSC (selIndex + "/select", Integer.valueOf (1));
     }
 
@@ -109,10 +111,10 @@ public abstract class AbstractTrackBankImpl extends AbstractBankImpl<ITrack> imp
 
     /** {@inheritDoc} */
     @Override
-    public ITrack getItem (int index)
+    public ITrack getItem (final int index)
     {
         final int id = this.bankOffset + index;
-        return id >= 0 && id < this.getItemCount () ? this.getTrack (id) : EmptyTrackData.INSTANCE;
+        return id >= 0 && id < this.getItemCount () ? this.getTrack (id) : this.emptyTrack;
     }
 
 
@@ -122,7 +124,7 @@ public abstract class AbstractTrackBankImpl extends AbstractBankImpl<ITrack> imp
      * @param index The index of the track
      * @return The track
      */
-    public TrackImpl getTrack (int index)
+    public TrackImpl getTrack (final int index)
     {
         synchronized (this.items)
         {

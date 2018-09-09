@@ -9,6 +9,7 @@ import de.mossgrabers.framework.daw.IHost;
 import de.mossgrabers.framework.daw.ISlotBank;
 import de.mossgrabers.framework.daw.NoteObserver;
 import de.mossgrabers.framework.daw.data.ITrack;
+import de.mossgrabers.framework.daw.resource.ChannelType;
 import de.mossgrabers.reaper.communication.MessageSender;
 import de.mossgrabers.reaper.framework.daw.SlotBankImpl;
 
@@ -47,6 +48,7 @@ public class TrackImpl extends ChannelImpl implements ITrack
     private boolean            isRepeat;
     private int                repeatNoteLength;
     private int                numTracks;
+    private int                depth;
 
 
     /**
@@ -90,8 +92,7 @@ public class TrackImpl extends ChannelImpl implements ITrack
     @Override
     public boolean isGroup ()
     {
-        // Always flat
-        return false;
+        return this.getType () == ChannelType.GROUP;
     }
 
 
@@ -384,5 +385,27 @@ public class TrackImpl extends ChannelImpl implements ITrack
     public void addNoteObserver (final NoteObserver observer)
     {
         // Monitoring played notes from the DAW is not supported
+    }
+
+
+    /**
+     * Set the 'depth' of the track.
+     *
+     * @param depth The level of the track if nested in folders
+     */
+    public void setDepth (final int depth)
+    {
+        this.depth = depth;
+    }
+
+
+    /**
+     * Get the depth of the track.
+     *
+     * @return The depth
+     */
+    public int getDepth ()
+    {
+        return this.depth;
     }
 }

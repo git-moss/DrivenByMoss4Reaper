@@ -38,12 +38,12 @@ public class TransportImpl extends BaseImpl implements ITransport
     private IValueChanger       valueChanger;
     private IniFiles            iniFiles;
 
-    private int                 crossfade              = 0;
+    private int                 crossfade;
     private double              position               = 0;        // Time
     private String              positionStr            = "";
     private double              tempo                  = 120.0;
     private String              beatsStr               = "";
-    private int                 metroVolume            = 512;
+    private int                 metroVolume;
 
     private boolean             isMetronomeOn          = false;
     private boolean             isPlaying              = false;
@@ -74,6 +74,10 @@ public class TransportImpl extends BaseImpl implements ITransport
         this.iniFiles = iniFiles;
         this.trackBank = trackBank;
         this.valueChanger = valueChanger;
+
+        final int middle = valueChanger.getUpperBound () / 2;
+        this.crossfade = middle;
+        this.metroVolume = middle;
     }
 
 

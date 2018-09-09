@@ -5,6 +5,7 @@
 package de.mossgrabers.reaper.framework.configuration;
 
 import de.mossgrabers.framework.configuration.IStringSetting;
+import de.mossgrabers.reaper.ui.utils.LogModel;
 import de.mossgrabers.reaper.ui.utils.PropertiesEx;
 import de.mossgrabers.reaper.ui.utils.SafeRunLater;
 
@@ -24,13 +25,14 @@ public class StringSettingImpl extends BaseSetting<JTextField, String> implement
     /**
      * Constructor.
      *
+     * @param logModel The log model
      * @param label The name of the setting, must not be null
      * @param category The name of the category, may not be null
      * @param initialValue The initial value
      */
-    public StringSettingImpl (final String label, final String category, final String initialValue)
+    public StringSettingImpl (final LogModel logModel, final String label, final String category, final String initialValue)
     {
-        super (label, category, new JTextField (initialValue));
+        super (logModel, label, category, new JTextField (initialValue));
         this.value = initialValue;
 
         this.field.addActionListener (event -> this.set (this.field.getText ()));
@@ -44,7 +46,7 @@ public class StringSettingImpl extends BaseSetting<JTextField, String> implement
         this.value = value;
         this.flush ();
 
-        SafeRunLater.execute ( () -> {
+        SafeRunLater.execute (this.logModel, () -> {
             final String v = this.field.getText ();
             if (v == null || !v.equals (this.value))
                 this.field.setText (this.value);

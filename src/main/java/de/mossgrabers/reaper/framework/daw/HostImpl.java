@@ -47,25 +47,27 @@ import java.util.concurrent.TimeUnit;
 public class HostImpl implements IHost
 {
     private final Window                   owner;
-    private final LogModel                 model;
-    private final ScheduledExecutorService executor           = Executors.newSingleThreadScheduledExecutor ();
-    private final List<UsbMatcher>         usbDeviceInfos     = new ArrayList<> ();
-    private final List<IUsbDevice>         usbDevices         = new ArrayList<> ();
+    private final LogModel                 logModel;
+    private final ScheduledExecutorService executor       = Executors.newSingleThreadScheduledExecutor ();
+    private final List<UsbMatcher>         usbDeviceInfos = new ArrayList<> ();
+    private final List<IUsbDevice>         usbDevices     = new ArrayList<> ();
     private OSCPortOut                     oscSender;
     private OSCPortIn                      oscReceiver;
-    private final NotificationWindow       notificationWindow = new NotificationWindow ();
+    private final NotificationWindow       notificationWindow;
 
 
     /**
      * Constructor.
      *
-     * @param model The logging model
+     * @param logModel The logging model
      * @param owner The owner window for the bitmap display window
      */
-    public HostImpl (final LogModel model, final Window owner)
+    public HostImpl (final LogModel logModel, final Window owner)
     {
-        this.model = model;
+        this.logModel = logModel;
         this.owner = owner;
+
+        this.notificationWindow = new NotificationWindow (logModel);
     }
 
 
@@ -154,7 +156,7 @@ public class HostImpl implements IHost
     @Override
     public void error (final String text)
     {
-        this.model.info (text);
+        this.logModel.info (text);
     }
 
 
@@ -162,7 +164,7 @@ public class HostImpl implements IHost
     @Override
     public void error (final String text, final Throwable ex)
     {
-        this.model.error (text, ex);
+        this.logModel.error (text, ex);
     }
 
 
@@ -170,7 +172,7 @@ public class HostImpl implements IHost
     @Override
     public void println (final String text)
     {
-        this.model.info (text);
+        this.logModel.info (text);
     }
 
 
@@ -178,7 +180,7 @@ public class HostImpl implements IHost
     @Override
     public void showNotification (final String message)
     {
-        SafeRunLater.execute ( () -> this.notificationWindow.displayMessage (message));
+        SafeRunLater.execute (this.logModel, () -> this.notificationWindow.displayMessage (message));
     }
 
 
@@ -283,7 +285,7 @@ public class HostImpl implements IHost
             return;
         }
 
-        this.oscReceiver.addListener (messageAddress -> true, (OSCListener) (time, message) -> SafeRunLater.execute ( () -> callback.handle (new OpenSoundControlMessageImpl (message))));
+        this.oscReceiver.addListener (messageAddress -> true, (OSCListener) (time, message) -> SafeRunLater.execute (this.logModel, () -> callback.handle (new OpenSoundControlMessageImpl (message))));
         this.oscReceiver.startListening ();
     }
 

@@ -7,8 +7,9 @@ package de.mossgrabers.reaper.framework.daw;
 import de.mossgrabers.framework.controller.IValueChanger;
 import de.mossgrabers.framework.controller.color.ColorManager;
 import de.mossgrabers.framework.daw.AbstractModel;
-import de.mossgrabers.framework.daw.ICursorClip;
+import de.mossgrabers.framework.daw.IClip;
 import de.mossgrabers.framework.daw.IHost;
+import de.mossgrabers.framework.daw.INoteClip;
 import de.mossgrabers.framework.daw.ITrackBank;
 import de.mossgrabers.framework.daw.ModelSetup;
 import de.mossgrabers.framework.scale.Scales;
@@ -91,12 +92,30 @@ public class ModelImpl extends AbstractModel
 
     /** {@inheritDoc} */
     @Override
-    public ICursorClip getCursorClip (final int cols, final int rows)
+    public INoteClip getNoteClip (final int cols, final int rows)
     {
         synchronized (this.cursorClips)
         {
-            return this.cursorClips.computeIfAbsent (cols + "-" + rows, k -> new CursorClipImpl (this.host, this.sender, this.valueChanger, cols, rows));
+            return (INoteClip) this.cursorClips.computeIfAbsent (cols + "-" + rows, k -> new CursorClipImpl (this.host, this.sender, this.valueChanger, cols, rows));
         }
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public IClip getClip ()
+    {
+        if (this.cursorClips.isEmpty ())
+            throw new RuntimeException ("No cursor clip created!");
+        return this.cursorClips.values ().iterator ().next ();
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void ensureClip ()
+    {
+        this.getNoteClip (0, 0);
     }
 
 
@@ -156,7 +175,7 @@ public class ModelImpl extends AbstractModel
 
         synchronized (this.cursorClips)
         {
-            for (final ICursorClip clip: this.cursorClips.values ())
+            for (final IClip clip: this.cursorClips.values ())
                 ((CursorClipImpl) clip).setNotes (notes);
         }
     }
@@ -171,7 +190,7 @@ public class ModelImpl extends AbstractModel
     {
         synchronized (this.cursorClips)
         {
-            for (final ICursorClip clip: this.cursorClips.values ())
+            for (final IClip clip: this.cursorClips.values ())
                 ((CursorClipImpl) clip).setPlayStart (start);
         }
     }
@@ -186,7 +205,7 @@ public class ModelImpl extends AbstractModel
     {
         synchronized (this.cursorClips)
         {
-            for (final ICursorClip clip: this.cursorClips.values ())
+            for (final IClip clip: this.cursorClips.values ())
                 ((CursorClipImpl) clip).setPlayEnd (end);
         }
     }
@@ -201,7 +220,7 @@ public class ModelImpl extends AbstractModel
     {
         synchronized (this.cursorClips)
         {
-            for (final ICursorClip clip: this.cursorClips.values ())
+            for (final IClip clip: this.cursorClips.values ())
                 ((CursorClipImpl) clip).setPlayPosition (playPosition);
         }
     }
@@ -209,14 +228,14 @@ public class ModelImpl extends AbstractModel
 
     /**
      * Set clip color value.
-     * 
+     *
      * @param color Array with 3 elements: red, green, blue (0..1)
      */
     public void setCursorClipColorValue (final double [] color)
     {
         synchronized (this.cursorClips)
         {
-            for (final ICursorClip clip: this.cursorClips.values ())
+            for (final IClip clip: this.cursorClips.values ())
                 ((CursorClipImpl) clip).setColorValue (color);
         }
     }
