@@ -180,7 +180,7 @@ public class ConfigurationDialog extends BasicDialog
         }
         catch (final MidiUnavailableException ex)
         {
-            this.model.addLogMessage (ex.getLocalizedMessage ());
+            this.model.error ("Could not update MIDI devices.", ex);
         }
     }
 

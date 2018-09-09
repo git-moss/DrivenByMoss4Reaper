@@ -7,6 +7,7 @@ package de.mossgrabers.reaper.framework.daw;
 import de.mossgrabers.framework.controller.IValueChanger;
 import de.mossgrabers.framework.daw.IHost;
 import de.mossgrabers.framework.daw.data.ISend;
+import de.mossgrabers.framework.daw.data.ITrack;
 import de.mossgrabers.reaper.communication.MessageSender;
 
 
@@ -32,6 +33,27 @@ public class TrackBankImpl extends AbstractTrackBankImpl
     public TrackBankImpl (final IHost host, final MessageSender sender, final IValueChanger valueChanger, final int numTracks, final int numScenes, final int numSends, final boolean hasFlatTrackList)
     {
         super (host, sender, valueChanger, numTracks, numScenes, numSends);
+    }
+
+
+    /**
+     * Handles track changes. Notifies all track change observers.
+     * 
+     * @param track The de-/selected track
+     * @param isSelected True if selected
+     */
+    public void handleBankTrackSelection (final ITrack track, final boolean isSelected)
+    {
+        final int position = track.getPosition ();
+
+        if (isSelected)
+        {
+            // Is track on current page? If not adjust the page
+            if (position < this.bankOffset || position >= this.bankOffset + this.pageSize)
+                this.bankOffset = (position / this.pageSize) * this.pageSize;
+        }
+
+        this.notifySelectionObservers (track.getIndex (), isSelected);
     }
 
 

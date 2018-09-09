@@ -179,12 +179,11 @@ public class IniFiles
                 iniFile.load (file.getAbsolutePath ());
                 return true;
             }
-            logModel.addLogMessage (filename + " not present, skipped loading.");
+            logModel.info (filename + " not present, skipped loading.");
         }
         catch (final IOException ex)
         {
-            logModel.addLogMessage ("Could not load file: " + filename);
-            logModel.addLogMessage (ex.getClass () + ":" + ex.getMessage ());
+            logModel.error ("Could not load file: " + filename, ex);
         }
         return false;
     }
@@ -205,8 +204,7 @@ public class IniFiles
         }
         catch (final IOException ex)
         {
-            this.logModel.addLogMessage ("Could not store file: " + filename);
-            this.logModel.addLogMessage (ex.getClass () + ":" + ex.getMessage ());
+            this.logModel.error ("Could not store main configuration: " + filename, ex);
         }
     }
 

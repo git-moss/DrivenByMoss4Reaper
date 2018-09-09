@@ -92,7 +92,7 @@ public abstract class AbstractControllerInstance implements IControllerInstance
             if (this.isRunning)
                 return;
 
-            this.logModel.addLogMessage ("Starting controller '" + this.controllerDefinition.toString () + "'");
+            this.logModel.info ("Starting controller '" + this.controllerDefinition.toString () + "'");
 
             this.host = new HostImpl (this.logModel, this.window);
             this.settingsUI = new SettingsUI (this.controllerDefinition.getNumMidiInPorts (), this.controllerDefinition.getNumMidiOutPorts (), this.controllerDefinition.getMidiDiscoveryPairs (OperatingSystem.get ()));
@@ -106,7 +106,7 @@ public abstract class AbstractControllerInstance implements IControllerInstance
                 }
                 catch (final IOException ex)
                 {
-                    this.logModel.addLogMessage ("Could not load controller configuration file: " + ex.getLocalizedMessage ());
+                    this.logModel.error ("Could not load controller configuration file.", ex);
                 }
             }
 
@@ -137,7 +137,7 @@ public abstract class AbstractControllerInstance implements IControllerInstance
                     }
                     catch (final RuntimeException ex)
                     {
-                        this.logModel.addLogMessage (ex.getMessage ());
+                        this.logModel.error ("Could not start controller.", ex);
                     }
                 }, 1000);
 
@@ -167,19 +167,19 @@ public abstract class AbstractControllerInstance implements IControllerInstance
             if (!this.isRunning)
                 return;
 
-            this.logModel.addLogMessage ("Closing controller...");
+            this.logModel.info ("Closing controller...");
             if (this.controllerSetup != null)
                 this.controllerSetup.exit ();
 
             if (this.host != null)
             {
                 this.host.shutdown ();
-                this.logModel.addLogMessage ("Release resources...");
+                this.logModel.info ("Release resources...");
                 this.host.releaseUsbDevices ();
                 this.host.releaseOSC ();
             }
 
-            this.logModel.addLogMessage ("Closing midi connections...");
+            this.logModel.info ("Closing midi connections...");
             if (this.setupFactory != null)
                 this.setupFactory.cleanup ();
 
@@ -225,7 +225,7 @@ public abstract class AbstractControllerInstance implements IControllerInstance
         }
         catch (final IOException ex)
         {
-            this.logModel.addLogMessage ("Could not load controller configuration file: " + ex.getLocalizedMessage ());
+            this.logModel.error ("Could not load controller configuration file.", ex);
         }
     }
 

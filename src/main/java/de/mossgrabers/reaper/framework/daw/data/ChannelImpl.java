@@ -57,9 +57,9 @@ public class ChannelImpl extends ItemImpl implements IChannel
         super (host, sender, index);
         this.valueChanger = valueChanger;
 
-        this.setName ("Track " + (index + 1));
+        this.setName ("Track");
 
-        this.sendBank = new SendBankImpl (host, sender, valueChanger, index, numSends);
+        this.sendBank = new SendBankImpl (host, sender, valueChanger, this, numSends);
     }
 
 
@@ -547,6 +547,6 @@ public class ChannelImpl extends ItemImpl implements IChannel
 
     protected void sendTrackOSC (final String command, final Object value)
     {
-        this.sender.sendOSC ("/track/" + (this.getIndex () + 1) + "/" + command, value);
+        this.sender.sendOSC ("/track/" + this.getPosition () + "/" + command, value);
     }
 }

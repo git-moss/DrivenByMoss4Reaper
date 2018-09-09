@@ -46,6 +46,7 @@ public class TrackImpl extends ChannelImpl implements ITrack
 
     private boolean            isRepeat;
     private int                repeatNoteLength;
+    private int                numTracks;
 
 
     /**
@@ -55,14 +56,25 @@ public class TrackImpl extends ChannelImpl implements ITrack
      * @param sender The OSC sender
      * @param valueChanger The value changer
      * @param index The index of the track in the page
+     * @param numTracks The number of tracks of a bank
      * @param numSends The number of sends of a bank
      * @param numScenes The number of scenes of a bank
      */
-    public TrackImpl (final IHost host, final MessageSender sender, final IValueChanger valueChanger, final int index, final int numSends, final int numScenes)
+    public TrackImpl (final IHost host, final MessageSender sender, final IValueChanger valueChanger, final int index, final int numTracks, final int numSends, final int numScenes)
     {
         super (host, sender, valueChanger, index, numSends);
 
+        this.numTracks = numTracks;
         this.slotBank = new SlotBankImpl (host, sender, valueChanger, index, numScenes);
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public int getIndex ()
+    {
+        // Apply paging
+        return super.getIndex () % this.numTracks;
     }
 
 

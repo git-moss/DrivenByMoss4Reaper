@@ -154,7 +154,7 @@ public class HostImpl implements IHost
     @Override
     public void error (final String text)
     {
-        this.model.addLogMessage (text);
+        this.model.info (text);
     }
 
 
@@ -162,8 +162,7 @@ public class HostImpl implements IHost
     @Override
     public void error (final String text, final Throwable ex)
     {
-        this.model.addLogMessage (text);
-        this.model.addLogMessage (ex.getClass () + ":" + ex.getMessage ());
+        this.model.error (text, ex);
     }
 
 
@@ -171,7 +170,7 @@ public class HostImpl implements IHost
     @Override
     public void println (final String text)
     {
-        this.model.addLogMessage (text);
+        this.model.info (text);
     }
 
 

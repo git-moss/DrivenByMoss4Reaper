@@ -7,6 +7,7 @@ package de.mossgrabers.reaper.framework.daw;
 import de.mossgrabers.framework.controller.IValueChanger;
 import de.mossgrabers.framework.daw.IHost;
 import de.mossgrabers.framework.daw.ISendBank;
+import de.mossgrabers.framework.daw.data.IChannel;
 import de.mossgrabers.framework.daw.data.ISend;
 import de.mossgrabers.reaper.communication.MessageSender;
 import de.mossgrabers.reaper.framework.daw.data.SendImpl;
@@ -19,7 +20,7 @@ import de.mossgrabers.reaper.framework.daw.data.SendImpl;
  */
 public class SendBankImpl extends AbstractBankImpl<ISend> implements ISendBank
 {
-    private final int trackIndex;
+    private final IChannel channel;
 
 
     /**
@@ -28,13 +29,13 @@ public class SendBankImpl extends AbstractBankImpl<ISend> implements ISendBank
      * @param host The DAW host
      * @param sender The OSC sender
      * @param valueChanger The value changer
-     * @param trackIndex The index of the track to which the send bank belongs
+     * @param channel The track to which the send bank belongs
      * @param numSends The number of sends in the page of the bank
      */
-    public SendBankImpl (final IHost host, final MessageSender sender, final IValueChanger valueChanger, final int trackIndex, final int numSends)
+    public SendBankImpl (final IHost host, final MessageSender sender, final IValueChanger valueChanger, final IChannel channel, final int numSends)
     {
         super (host, sender, valueChanger, numSends);
-        this.trackIndex = trackIndex;
+        this.channel = channel;
         this.initItems ();
     }
 
@@ -44,6 +45,6 @@ public class SendBankImpl extends AbstractBankImpl<ISend> implements ISendBank
     protected void initItems ()
     {
         for (int i = 0; i < this.pageSize; i++)
-            this.items.add (new SendImpl (this.host, this.sender, this.valueChanger, this.trackIndex, i));
+            this.items.add (new SendImpl (this.host, this.sender, this.valueChanger, this.channel, i));
     }
 }

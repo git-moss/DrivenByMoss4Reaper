@@ -467,12 +467,11 @@ public class DeviceManager
             if (path.toFile ().exists ())
                 Files.readAllLines (path, Charset.forName ("UTF-8")).forEach (this::parseJSDevice);
             else
-                logModel.addLogMessage (filename + " not present, skipped loading.");
+                logModel.info (filename + " not present, skipped loading.");
         }
         catch (final IOException ex)
         {
-            logModel.addLogMessage ("Could not load file: " + path);
-            logModel.addLogMessage (ex.getClass () + ":" + ex.getMessage ());
+            logModel.error ("Could not load file: " + path, ex);
         }
     }
 

@@ -96,7 +96,7 @@ public abstract class AbstractBankImpl<T extends IItem> extends AbstractBank<T>
     @Override
     public boolean canScrollBackwards ()
     {
-        return !this.items.isEmpty () && this.items.get (0).getPosition () > 0;
+        return !this.items.isEmpty () && this.getItem (0).getPosition () > 0;
     }
 
 

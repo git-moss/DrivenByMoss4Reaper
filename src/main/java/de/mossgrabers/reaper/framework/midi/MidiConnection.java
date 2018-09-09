@@ -75,7 +75,7 @@ public class MidiConnection
         }
         catch (final MidiUnavailableException ex)
         {
-            this.model.addLogMessage (ex.getLocalizedMessage ());
+            this.model.error ("Midi not available.", ex);
         }
     }
 
@@ -111,7 +111,7 @@ public class MidiConnection
         }
         catch (final MidiUnavailableException ex)
         {
-            this.model.addLogMessage (ex.getLocalizedMessage ());
+            this.model.error ("Midi not available.", ex);
         }
     }
 
@@ -146,7 +146,7 @@ public class MidiConnection
         }
         catch (final InvalidMidiDataException ex)
         {
-            this.model.addLogMessage (ex.getLocalizedMessage ());
+            this.model.error ("Invalid Midi data.", ex);
         }
     }
 
@@ -167,7 +167,7 @@ public class MidiConnection
         }
         catch (final InvalidMidiDataException ex)
         {
-            this.model.addLogMessage (ex.getLocalizedMessage ());
+            this.model.error ("Invalid Midi data.", ex);
         }
     }
 
@@ -189,7 +189,7 @@ public class MidiConnection
         }
         catch (final InvalidMidiDataException ex)
         {
-            this.model.addLogMessage (ex.getLocalizedMessage ());
+            this.model.error ("Invalid Note?!", ex);
         }
     }
 
@@ -209,7 +209,7 @@ public class MidiConnection
         }
         catch (final InvalidMidiDataException ex)
         {
-            this.model.addLogMessage (ex.getLocalizedMessage ());
+            this.model.error ("Invalid Midi pitchbend data?!", ex);
         }
     }
 
@@ -231,7 +231,7 @@ public class MidiConnection
         }
         catch (final InvalidMidiDataException ex)
         {
-            this.model.addLogMessage (ex.getLocalizedMessage ());
+            this.model.error ("Invalid Midi data.", ex);
         }
     }
 

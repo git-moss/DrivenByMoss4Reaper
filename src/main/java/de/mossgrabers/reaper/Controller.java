@@ -69,6 +69,18 @@ public class Controller
 
 
     /**
+     * Update the data model.
+     * 
+     * @param data The data to update the model with
+     */
+    public static void updateModel (final String data)
+    {
+        if (app != null)
+            SafeRunLater.execute ( () -> app.updateModel (data));
+    }
+
+
+    /**
      * Shutdown the application.
      */
     public static void shutdown ()

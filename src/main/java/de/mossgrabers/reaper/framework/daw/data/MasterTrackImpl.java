@@ -31,10 +31,11 @@ public class MasterTrackImpl extends TrackImpl implements IMasterTrack
      * @param host The DAW host
      * @param sender The OSC sender
      * @param valueChanger The valueChanger
+     * @param numSends The number of sends on a page
      */
-    public MasterTrackImpl (final IHost host, final MessageSender sender, final IValueChanger valueChanger)
+    public MasterTrackImpl (final IHost host, final MessageSender sender, final IValueChanger valueChanger, final int numSends)
     {
-        super (host, sender, valueChanger, -1, 8, 0);
+        super (host, sender, valueChanger, 0, 1, numSends, 0);
         // Master channel does always exist
         this.setExists (true);
         this.valueChanger = valueChanger;

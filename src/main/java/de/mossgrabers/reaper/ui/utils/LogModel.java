@@ -2,6 +2,9 @@ package de.mossgrabers.reaper.ui.utils;
 
 import javax.swing.JTextArea;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
 
 /**
  * Contains the data for the display content.
@@ -30,14 +33,31 @@ public class LogModel
      * Adds a logging message.
      *
      * @param message The message to add
+     * @param ex The exception to log
      */
-    public synchronized void addLogMessage (final String message)
+    public void error (final String message, final Throwable ex)
+    {
+        this.info (message);
+        final StringWriter writer = new StringWriter ();
+        ex.printStackTrace (new PrintWriter (writer));
+        this.info (writer.toString ());
+    }
+
+
+    /**
+     * Adds a logging message.
+     *
+     * @param message The message to add
+     */
+    public void info (final String message)
     {
         SafeRunLater.execute ( () -> {
-
-            this.logMessage.append (message);
-            this.logMessage.append ("\n");
-            System.out.println (message);
+            synchronized (this.logMessage)
+            {
+                this.logMessage.append (message);
+                this.logMessage.append ("\n");
+                System.out.println (message);
+            }
         });
     }
 
@@ -45,8 +65,11 @@ public class LogModel
     /**
      * Clear the messages.
      */
-    public synchronized void clearLogMessage ()
+    public void clearLogMessage ()
     {
-        this.logMessage.setText ("");
+        synchronized (this.logMessage)
+        {
+            this.logMessage.setText ("");
+        }
     }
 }

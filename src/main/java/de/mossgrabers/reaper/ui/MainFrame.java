@@ -6,8 +6,6 @@ package de.mossgrabers.reaper.ui;
 
 import de.mossgrabers.framework.controller.IControllerDefinition;
 import de.mossgrabers.framework.utils.OperatingSystem;
-import de.mossgrabers.reaper.communication.DataModelUpdateExecutor;
-import de.mossgrabers.reaper.communication.DataModelUpdater;
 import de.mossgrabers.reaper.communication.MessageSender;
 import de.mossgrabers.reaper.controller.ControllerInstanceManager;
 import de.mossgrabers.reaper.controller.IControllerInstance;
@@ -53,7 +51,7 @@ import java.net.URL;
  *
  * @author J&uuml;rgen Mo&szlig;graber
  */
-public class MainFrame extends JFrame implements MessageSender, DataModelUpdater
+public class MainFrame extends JFrame implements MessageSender
 {
     private static final long                serialVersionUID  = 4251131641194938848L;
     private static final int                 GAP               = 14;
@@ -67,7 +65,6 @@ public class MainFrame extends JFrame implements MessageSender, DataModelUpdater
 
     private ControllerInstanceManager        instanceManager;
     private final Timer                      animationTimer;
-    private final DataModelUpdateExecutor    modelUpdater      = new DataModelUpdateExecutor (this);
     private String                           iniPath;
     private IniFiles                         iniFiles          = new IniFiles ();
 
@@ -87,8 +84,9 @@ public class MainFrame extends JFrame implements MessageSender, DataModelUpdater
 
         // To not again loose any exception from executors or delayed methods...
         Thread.setDefaultUncaughtExceptionHandler ( (thread, throwable) -> {
-            throwable.printStackTrace ();
-            this.logModel.addLogMessage (throwable.getMessage ());
+            final StringWriter writer = new StringWriter ();
+            throwable.printStackTrace (new PrintWriter (writer));
+            this.logModel.info (writer.toString ());
         });
 
         this.instanceManager = new ControllerInstanceManager (this.logModel, this, this, this.iniFiles);
@@ -98,7 +96,7 @@ public class MainFrame extends JFrame implements MessageSender, DataModelUpdater
         this.updateTitle ();
 
         if (this.iniPath.isEmpty ())
-            this.logModel.addLogMessage ("Missing INI path parameter! Cannot start the application.");
+            this.logModel.info ("Missing INI path parameter! Cannot start the application.");
         else
         {
             this.loadConfig ();
@@ -108,7 +106,16 @@ public class MainFrame extends JFrame implements MessageSender, DataModelUpdater
         this.createUI ();
         this.showStage (this);
 
-        this.animationTimer = new Timer (20, event -> this.flushToController ());
+        this.animationTimer = new Timer (20, event -> {
+            try
+            {
+                this.flushToController ();
+            }
+            catch (final RuntimeException ex)
+            {
+                this.logModel.error ("Crash in flush timer.", ex);
+            }
+        });
 
         if (this.iniPath != null)
         {
@@ -135,7 +142,7 @@ public class MainFrame extends JFrame implements MessageSender, DataModelUpdater
         }
         catch (final LibUsbException ex)
         {
-            this.logModel.addLogMessage (ex.getLocalizedMessage ());
+            this.logModel.error ("Could not initialise LibUsb.", ex);
         }
     }
 
@@ -198,24 +205,22 @@ public class MainFrame extends JFrame implements MessageSender, DataModelUpdater
      */
     public void exit ()
     {
-        this.logModel.addLogMessage ("Exiting platform...");
+        this.logModel.info ("Exiting platform...");
 
-        this.modelUpdater.stopUpdater ();
-
-        this.logModel.addLogMessage ("Stopping flush timer...");
+        this.logModel.info ("Stopping flush timer...");
         this.animationTimer.stop ();
 
         this.instanceManager.stopAll ();
 
         SVGImage.clearCache ();
 
-        this.logModel.addLogMessage ("Storing configuration...");
+        this.logModel.info ("Storing configuration...");
         this.instanceManager.save (this.mainConfiguration);
         this.saveConfig ();
 
         MidiConnection.cleanupUnusedDevices ();
 
-        this.logModel.addLogMessage ("Shutting down USB...");
+        this.logModel.info ("Shutting down USB...");
         // Don't execute on Mac since it hangs in the function, the memory is cleaned up on exit
         // anyway
         if (OperatingSystem.get () != OperatingSystem.MAC)
@@ -274,7 +279,7 @@ public class MainFrame extends JFrame implements MessageSender, DataModelUpdater
         }
         catch (final IOException ex)
         {
-            this.logModel.addLogMessage ("Could not load main configuration: " + ex.getLocalizedMessage ());
+            this.logModel.error ("Could not load main configuration.", ex);
         }
 
         this.mainConfiguration.restoreStagePlacement (this);
@@ -298,8 +303,7 @@ public class MainFrame extends JFrame implements MessageSender, DataModelUpdater
         }
         catch (final IOException ex)
         {
-            final String message = new StringBuilder ("Could not store configuration file: ").append (ex.getLocalizedMessage ()).toString ();
-            this.logModel.addLogMessage (message);
+            this.logModel.error ("Could not store configuration file.", ex);
         }
     }
 
@@ -317,7 +321,7 @@ public class MainFrame extends JFrame implements MessageSender, DataModelUpdater
         }
         catch (final MidiUnavailableException ex)
         {
-            this.logModel.addLogMessage (ex.getLocalizedMessage ());
+            this.logModel.error ("Midi not available.", ex);
         }
 
         this.instanceManager.load (this.mainConfiguration);
@@ -328,9 +332,6 @@ public class MainFrame extends JFrame implements MessageSender, DataModelUpdater
             items.addElement (instance);
 
         this.updateWidgetStates ();
-
-        // Start the loop to read data from Reaper
-        this.modelUpdater.execute ();
 
         this.startControllers ();
     }
@@ -404,7 +405,7 @@ public class MainFrame extends JFrame implements MessageSender, DataModelUpdater
         }
         catch (final IOException ex)
         {
-            this.logModel.addLogMessage ("Could not close socket: " + ex.getLocalizedMessage ());
+            this.logModel.error ("Could not close socket.", ex);
         }
     }
 
@@ -442,17 +443,8 @@ public class MainFrame extends JFrame implements MessageSender, DataModelUpdater
         else if (value instanceof Boolean)
             this.processIntArg (command, ((Boolean) value).booleanValue () ? 1 : 0);
         else
-            this.logModel.addLogMessage ("Unsupported type: " + value.getClass ().toString ());
+            this.logModel.info ("Unsupported type: " + value.getClass ().toString ());
     }
-
-
-    /**
-     * Retrieve data from Reaper via the DLL.
-     *
-     * @param dump Resend all data, ignore cache
-     * @return The data formatted in an OSC style with line separators
-     */
-    public native String receiveModelData (final boolean dump);
 
 
     /**
@@ -528,41 +520,36 @@ public class MainFrame extends JFrame implements MessageSender, DataModelUpdater
     }
 
 
-    /** {@inheritDoc} */
-    @Override
-    public void updateDataModel (final boolean dump)
+    /**
+     * Update the data model.
+     *
+     * @param data The data formatted as pseudo OSC commands, separated by line breaks
+     */
+    public void updateModel (final String data)
     {
-        try
+        if (data == null || data.isEmpty ())
+            return;
+        for (final String command: data.split ("\n"))
         {
-            final String data = this.receiveModelData (dump);
-            if (data == null || data.isEmpty ())
-                return;
-            for (final String command: data.split ("\n"))
+            final String [] split = command.split (" ");
+            final String params = split.length == 1 ? null : command.substring (split[0].length () + 1);
+            try
             {
-                final String [] split = command.split (" ");
-                final String params = split.length == 1 ? null : command.substring (split[0].length () + 1);
-                try
-                {
-                    this.handleReceiveOSC (split[0], params);
-                }
-                catch (final IllegalArgumentException ex)
-                {
-                    final StringWriter sw = new StringWriter ();
-                    ex.printStackTrace (new PrintWriter (sw));
-                    this.logModel.addLogMessage (sw.toString ());
-                }
+                this.handleReceiveOSC (split[0], params);
             }
-        }
-        catch (final UnsatisfiedLinkError error)
-        {
-            this.logModel.addLogMessage ("Native callback method not installed?!");
+            catch (final IllegalArgumentException ex)
+            {
+                final StringWriter sw = new StringWriter ();
+                ex.printStackTrace (new PrintWriter (sw));
+                this.logModel.info (sw.toString ());
+            }
         }
     }
 
 
     private void sendRefreshCommand ()
     {
-        this.modelUpdater.executeDump ();
+        this.sendOSC ("/refresh", null);
     }
 
 
@@ -577,7 +564,7 @@ public class MainFrame extends JFrame implements MessageSender, DataModelUpdater
             item.addActionListener (event -> {
                 if (this.instanceManager.isInstantiated (index))
                 {
-                    this.logModel.addLogMessage ("Only one instance of a controller type is supported!");
+                    this.logModel.info ("Only one instance of a controller type is supported!");
                     return;
                 }
                 final IControllerInstance inst = this.instanceManager.instantiate (index);
@@ -622,7 +609,7 @@ public class MainFrame extends JFrame implements MessageSender, DataModelUpdater
      */
     private final void loadINIFiles (final String path)
     {
-        this.logModel.addLogMessage ("Loading device INI files from " + path + " ...");
+        this.logModel.info ("Loading device INI files from " + path + " ...");
         this.iniFiles.init (path, this.logModel);
         DeviceManager.get ().parseINIFiles (this.iniFiles, this.logModel);
     }

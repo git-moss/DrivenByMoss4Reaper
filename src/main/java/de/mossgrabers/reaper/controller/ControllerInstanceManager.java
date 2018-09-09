@@ -223,8 +223,7 @@ public class ControllerInstanceManager
                 final StringBuilder sb = new StringBuilder ("Could not parse OSC message: ").append (address).append (" ");
                 if (argument != null)
                     sb.append (argument);
-                sb.append (" / ").append (ex.getMessage ());
-                this.logModel.addLogMessage (sb.toString ());
+                this.logModel.error (sb.toString (), ex);
             }
         });
     }
@@ -307,7 +306,7 @@ public class ControllerInstanceManager
         {
             final Class<?> clazz = lookupClass (className);
             if (clazz == null)
-                this.logModel.addLogMessage ("Unknown controller  class: " + className);
+                this.logModel.info ("Unknown controller  class: " + className);
             else
                 this.instantiateController (clazz);
             counter++;
@@ -342,7 +341,7 @@ public class ControllerInstanceManager
         }
         catch (final InstantiationException | IllegalAccessException | NoSuchMethodException | SecurityException | InvocationTargetException ex)
         {
-            this.logModel.addLogMessage ("Could not instantiate controller  class: " + clazz.getName () + ". " + ex.getMessage ());
+            this.logModel.error ("Could not instantiate controller  class: " + clazz.getName () + ".", ex);
             return null;
         }
     }
