@@ -327,7 +327,10 @@ public class CursorClipImpl extends BaseImpl implements INoteClip
     @Override
     public int getStep (final int step, final int row)
     {
-        return row < 0 ? 0 : this.data[step][row];
+        synchronized (this.notes)
+        {
+            return row < 0 ? 0 : this.data[step][row];
+        }
     }
 
 
@@ -370,10 +373,13 @@ public class CursorClipImpl extends BaseImpl implements INoteClip
     @Override
     public boolean hasRowData (final int row)
     {
-        for (int step = 0; step < this.numSteps; step++)
-            if (this.data[step][row] > 0)
-                return true;
-        return false;
+        synchronized (this.notes)
+        {
+            for (int step = 0; step < this.numSteps; step++)
+                if (this.data[step][row] > 0)
+                    return true;
+            return false;
+        }
     }
 
 
@@ -520,22 +526,22 @@ public class CursorClipImpl extends BaseImpl implements INoteClip
         {
             this.notes.clear ();
             this.notes.addAll (notes);
+            this.updateNoteData ();
         }
-        this.updateNoteData ();
     }
 
 
     private void updateNoteData ()
     {
-        // Clear the data array
-        for (int row = 0; row < this.numRows; row++)
-        {
-            for (int step = 0; step < this.numSteps; step++)
-                this.data[step][row] = 0;
-        }
-
         synchronized (this.notes)
         {
+            // Clear the data array
+            for (int row = 0; row < this.numRows; row++)
+            {
+                for (int step = 0; step < this.numSteps; step++)
+                    this.data[step][row] = 0;
+            }
+
             for (final NoteImpl note: this.notes)
             {
                 // Is the note on the current page window?
