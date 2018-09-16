@@ -22,7 +22,9 @@ import java.util.List;
  */
 public class SlotBankImpl extends AbstractBankImpl<ISlot> implements ISlotBank
 {
-    private int trackIndex;
+    protected final ISlot emptySlot;
+    protected int         bankOffset = 0;
+    private int           trackIndex;
 
 
     /**
@@ -38,6 +40,8 @@ public class SlotBankImpl extends AbstractBankImpl<ISlot> implements ISlotBank
     {
         super (host, sender, valueChanger, numSlots);
         this.initItems ();
+
+        this.emptySlot = new SlotImpl (host, sender, trackIndex, -1);
     }
 
 
@@ -62,6 +66,8 @@ public class SlotBankImpl extends AbstractBankImpl<ISlot> implements ISlotBank
     @Override
     public ISlot getEmptySlot (final int startFrom)
     {
+        // TODO
+
         // There are no slots in Reaper but to make it possible to create a midi item on a track
         // we return a fake slot.
         return this.items.get (0);
@@ -70,9 +76,83 @@ public class SlotBankImpl extends AbstractBankImpl<ISlot> implements ISlotBank
 
     /** {@inheritDoc} */
     @Override
+    public boolean canScrollBackwards ()
+    {
+        return this.bankOffset - this.pageSize >= 0;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean canScrollForwards ()
+    {
+        return this.bankOffset + this.pageSize < this.getItemCount ();
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void scrollPageBackwards ()
+    {
+        this.bankOffset = Math.max (0, this.bankOffset - this.pageSize);
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void scrollPageForwards ()
+    {
+        if (this.bankOffset + this.pageSize < this.getItemCount ())
+            this.bankOffset += this.pageSize;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public ISlot getItem (final int index)
+    {
+        final int id = this.bankOffset + index;
+        return id >= 0 && id < this.getItemCount () ? this.getSlot (id) : this.emptySlot;
+    }
+
+
+    /**
+     * Get a slot from the slot list. No paging is applied.
+     *
+     * @param position The position of the slot
+     * @return The slot
+     */
+    public SlotImpl getSlot (final int position)
+    {
+        synchronized (this.items)
+        {
+            final int size = this.items.size ();
+            final int diff = position - size + 1;
+            if (diff > 0)
+            {
+                for (int i = 0; i < diff; i++)
+                    this.items.add (new SlotImpl (this.host, this.sender, this.trackIndex, this.pageSize == 0 ? 0 : (size + i) % this.pageSize));
+            }
+            return (SlotImpl) this.items.get (position);
+        }
+    }
+
+
+    /**
+     * Sets the number of slots.
+     *
+     * @param slotCount The number of slots
+     */
+    public void setSlotCount (final int slotCount)
+    {
+        this.itemCount = slotCount;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
     protected void initItems ()
     {
-        for (int i = 0; i < this.pageSize; i++)
-            this.items.add (new SlotImpl (this.host, this.sender, this.trackIndex, i));
+        // Items are added on the fly in getItem
     }
 }

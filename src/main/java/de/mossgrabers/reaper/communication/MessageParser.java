@@ -345,7 +345,7 @@ public class MessageParser
                 break;
 
             case "color":
-                final double [] color = this.parseColor (value);
+                final double [] color = ((ModelImpl) this.model).parseColor (value);
                 if (color != null)
                     track.setColorState (color);
                 break;
@@ -599,7 +599,7 @@ public class MessageParser
                 break;
 
             case "color":
-                final double [] color = this.parseColor (value);
+                final double [] color = ((ModelImpl) this.model).parseColor (value);
                 if (color != null)
                     ((MarkerImpl) marker).setColorState (color);
                 break;
@@ -614,28 +614,33 @@ public class MessageParser
     private void parseClipValue (final Queue<String> parts, final String value)
     {
         final String command = parts.poll ();
+        final ModelImpl modelImpl = (ModelImpl) this.model;
         switch (command)
         {
             case "start":
-                ((ModelImpl) this.model).setCursorClipPlayStart (Double.parseDouble (value));
+                modelImpl.setCursorClipPlayStart (Double.parseDouble (value));
                 break;
 
             case "end":
-                ((ModelImpl) this.model).setCursorClipPlayEnd (Double.parseDouble (value));
+                modelImpl.setCursorClipPlayEnd (Double.parseDouble (value));
                 break;
 
             case "playposition":
-                ((ModelImpl) this.model).setCursorClipPlayPosition (Double.parseDouble (value));
+                modelImpl.setCursorClipPlayPosition (Double.parseDouble (value));
                 break;
 
             case "color":
-                final double [] color = this.parseColor (value);
+                final double [] color = modelImpl.parseColor (value);
                 if (color != null)
-                    ((ModelImpl) this.model).setCursorClipColorValue (color);
+                    modelImpl.setCursorClipColorValue (color);
                 break;
 
             case "notes":
-                ((ModelImpl) this.model).setCursorClipNotes (value);
+                modelImpl.setCursorClipNotes (value);
+                break;
+
+            case "all":
+                modelImpl.setClips (value);
                 break;
 
             default:
@@ -655,29 +660,5 @@ public class MessageParser
         // Remove first empty element
         oscParts.poll ();
         return oscParts;
-    }
-
-
-    private double [] parseColor (final String value)
-    {
-        final String [] values = value.split (" ");
-        if (values.length != 3)
-        {
-            this.host.error ("Color: Wrong number of arguments: " + values.length);
-            final StringBuilder str = new StringBuilder ();
-            for (final String value2: values)
-                str.append (value2).append (':');
-            this.host.error (str.toString ());
-            return null;
-        }
-        double d1 = Double.parseDouble (values[0]);
-        if (d1 < 0)
-            return null;
-        return new double []
-        {
-            d1 / 255.0,
-            Double.parseDouble (values[1]) / 255.0,
-            Double.parseDouble (values[2]) / 255.0
-        };
     }
 }

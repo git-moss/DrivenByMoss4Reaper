@@ -16,6 +16,8 @@ import de.mossgrabers.framework.scale.Scales;
 import de.mossgrabers.reaper.communication.MessageSender;
 import de.mossgrabers.reaper.framework.IniFiles;
 import de.mossgrabers.reaper.framework.daw.data.MasterTrackImpl;
+import de.mossgrabers.reaper.framework.daw.data.SlotImpl;
+import de.mossgrabers.reaper.framework.daw.data.TrackImpl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -238,5 +240,74 @@ public class ModelImpl extends AbstractModel
             for (final IClip clip: this.cursorClips.values ())
                 ((CursorClipImpl) clip).setColorValue (color);
         }
+    }
+
+
+    /**
+     * Set all clips.
+     *
+     * @param clipsStr The encoded clips formatted like
+     *            "trackindex1:clipindex1:name1:position1:color1;..."
+     */
+    public void setClips (final String clipsStr)
+    {
+        if (clipsStr == null)
+            return;
+
+        final String [] clipParts = clipsStr.trim ().split (";");
+        int pos = 0;
+        while (pos < clipParts.length)
+        {
+            final int trackIndex = Integer.parseInt (clipParts[pos++]);
+            final TrackImpl track = ((TrackBankImpl) this.trackBank).getTrack (trackIndex);
+            final SlotBankImpl slotBank = (SlotBankImpl) track.getSlotBank ();
+
+            final int numClips = Integer.parseInt (clipParts[pos++]);
+            slotBank.setSlotCount (numClips);
+
+            for (int i = 0; i < numClips; i++)
+            {
+                final String name = clipParts[pos++];
+                final boolean isSelected = Boolean.parseBoolean (clipParts[pos++]);
+                final double [] color = this.parseColor (clipParts[pos++]);
+
+                final SlotImpl slot = slotBank.getSlot (i);
+                slot.setSelected (isSelected);
+                slot.setName (name);
+                if (color != null)
+                    slot.setColor (color[0], color[1], color[2]);
+                slot.setExists (true);
+            }
+        }
+    }
+
+
+    /**
+     * Parse three double values separated by a space character.
+     *
+     * @param value The string to parse
+     * @return The three double values
+     */
+    public double [] parseColor (final String value)
+    {
+        final String [] values = value.split (" ");
+        if (values.length != 3)
+        {
+            this.host.error ("Color: Wrong number of arguments: " + values.length);
+            final StringBuilder str = new StringBuilder ();
+            for (final String value2: values)
+                str.append (value2).append (':');
+            this.host.error (str.toString ());
+            return null;
+        }
+        double d1 = Double.parseDouble (values[0]);
+        if (d1 < 0)
+            return null;
+        return new double []
+        {
+            d1 / 255.0,
+            Double.parseDouble (values[1]) / 255.0,
+            Double.parseDouble (values[2]) / 255.0
+        };
     }
 }

@@ -6,7 +6,6 @@ package de.mossgrabers.reaper.framework.daw.data;
 
 import de.mossgrabers.framework.daw.IHost;
 import de.mossgrabers.framework.daw.data.ISlot;
-import de.mossgrabers.framework.utils.StringUtils;
 import de.mossgrabers.reaper.communication.MessageSender;
 
 
@@ -17,7 +16,13 @@ import de.mossgrabers.reaper.communication.MessageSender;
  */
 public class SlotImpl extends ItemImpl implements ISlot
 {
-    private final int trackIndex;
+    private final int       trackIndex;
+    private final double [] color = new double []
+    {
+        0,
+        0,
+        0
+    };
 
 
     /**
@@ -38,25 +43,9 @@ public class SlotImpl extends ItemImpl implements ISlot
 
     /** {@inheritDoc} */
     @Override
-    public String getName ()
-    {
-        return "Slot " + this.getIndex ();
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public String getName (final int limit)
-    {
-        return StringUtils.optimizeName (this.getName (), limit);
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
     public boolean hasContent ()
     {
-        return false;
+        return this.doesExist ();
     }
 
 
@@ -104,12 +93,7 @@ public class SlotImpl extends ItemImpl implements ISlot
     @Override
     public double [] getColor ()
     {
-        return new double []
-        {
-            0,
-            0,
-            0
-        };
+        return this.color;
     }
 
 
@@ -117,7 +101,9 @@ public class SlotImpl extends ItemImpl implements ISlot
     @Override
     public void setColor (final double red, final double green, final double blue)
     {
-        // Not supported
+        this.color[0] = red;
+        this.color[1] = green;
+        this.color[2] = blue;
     }
 
 
@@ -125,7 +111,7 @@ public class SlotImpl extends ItemImpl implements ISlot
     @Override
     public void launch ()
     {
-        // Not supported
+        // TODO
     }
 
 
@@ -133,7 +119,7 @@ public class SlotImpl extends ItemImpl implements ISlot
     @Override
     public void record ()
     {
-        // Not supported
+        // TODO
     }
 
 
@@ -141,7 +127,7 @@ public class SlotImpl extends ItemImpl implements ISlot
     @Override
     public void create (final int length)
     {
-        this.sender.sendOSC ("/track/" + (this.trackIndex + 1) + "/createClip", Integer.valueOf (length));
+        this.sender.sendOSC ("/track/" + this.trackIndex + "/createClip", Integer.valueOf (length));
     }
 
 
@@ -149,7 +135,7 @@ public class SlotImpl extends ItemImpl implements ISlot
     @Override
     public void remove ()
     {
-        // Not supported
+        // TODO
     }
 
 
