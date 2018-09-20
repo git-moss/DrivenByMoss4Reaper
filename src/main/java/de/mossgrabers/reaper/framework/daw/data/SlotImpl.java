@@ -16,7 +16,7 @@ import de.mossgrabers.reaper.communication.MessageSender;
  */
 public class SlotImpl extends ItemImpl implements ISlot
 {
-    private final int       trackIndex;
+    private int             trackIndex;
     private final double [] color = new double []
     {
         0,
@@ -109,9 +109,17 @@ public class SlotImpl extends ItemImpl implements ISlot
 
     /** {@inheritDoc} */
     @Override
+    public void select ()
+    {
+        this.sendTrackClipOSC ("select");
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
     public void launch ()
     {
-        // TODO
+        this.sendTrackClipOSC ("launch");
     }
 
 
@@ -119,7 +127,7 @@ public class SlotImpl extends ItemImpl implements ISlot
     @Override
     public void record ()
     {
-        // TODO
+        this.sendTrackClipOSC ("record");
     }
 
 
@@ -135,7 +143,7 @@ public class SlotImpl extends ItemImpl implements ISlot
     @Override
     public void remove ()
     {
-        // TODO
+        this.sendTrackClipOSC ("remove");
     }
 
 
@@ -152,5 +160,22 @@ public class SlotImpl extends ItemImpl implements ISlot
     public void browse ()
     {
         // Not supported
+    }
+
+
+    private void sendTrackClipOSC (final String command)
+    {
+        this.sender.sendOSC ("/track/" + this.trackIndex + "/clip/" + this.getPosition () + "/" + command, null);
+    }
+
+
+    /**
+     * Update the track to which the slot belongs.
+     *
+     * @param trackIndex The index of the track
+     */
+    public void setTrack (final int trackIndex)
+    {
+        this.trackIndex = trackIndex;
     }
 }

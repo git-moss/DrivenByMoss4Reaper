@@ -229,7 +229,18 @@ public abstract class AbstractTrackBankImpl extends AbstractBankImpl<ITrack> imp
     @Override
     public void scrollTo (final int position)
     {
-        if (position >= 0 && position < this.getItemCount ())
-            this.sendTrackOSC (position + "/scrollto", null);
+        this.scrollTo (position, true);
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void scrollTo (final int position, final boolean adjustPage)
+    {
+        if (position < 0 || position >= this.getItemCount ())
+            return;
+        final int pageSize = this.getPageSize ();
+        final int pos = adjustPage ? position / pageSize * pageSize : position;
+        this.sendTrackOSC (pos + "/scrollto", null);
     }
 }

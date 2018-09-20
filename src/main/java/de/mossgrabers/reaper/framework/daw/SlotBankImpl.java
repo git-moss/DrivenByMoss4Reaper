@@ -153,4 +153,20 @@ public class SlotBankImpl extends AbstractBankImpl<ISlot> implements ISlotBank
     {
         // Items are added on the fly in getItem
     }
+
+
+    /**
+     * Update the track to which the slot bank belongs.
+     *
+     * @param trackIndex The index of the track
+     */
+    public void setTrack (final int trackIndex)
+    {
+        this.trackIndex = trackIndex;
+        synchronized (this.items)
+        {
+            for (final ISlot slot: this.items)
+                ((SlotImpl) slot).setTrack (trackIndex);
+        }
+    }
 }

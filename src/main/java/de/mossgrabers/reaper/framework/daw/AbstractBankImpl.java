@@ -116,6 +116,14 @@ public abstract class AbstractBankImpl<T extends IItem> extends AbstractBank<T>
     @Override
     public void scrollTo (final int position)
     {
+        this.scrollTo (position, true);
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void scrollTo (final int position, final boolean adjustPage)
+    {
         // Overwrite to support
     }
 }

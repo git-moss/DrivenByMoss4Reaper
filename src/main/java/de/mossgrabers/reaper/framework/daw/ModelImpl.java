@@ -265,6 +265,7 @@ public class ModelImpl extends AbstractModel
             final int trackIndex = Integer.parseInt (clipParts[pos++]);
             final TrackImpl track = ((TrackBankImpl) this.trackBank).getTrack (trackIndex);
             final SlotBankImpl slotBank = (SlotBankImpl) track.getSlotBank ();
+            slotBank.setTrack (trackIndex);
 
             final int numClips = Integer.parseInt (clipParts[pos++]);
             slotBank.setSlotCount (numClips);
@@ -272,10 +273,11 @@ public class ModelImpl extends AbstractModel
             for (int i = 0; i < numClips; i++)
             {
                 final String name = clipParts[pos++];
-                final boolean isSelected = Boolean.parseBoolean (clipParts[pos++]);
+                final boolean isSelected = Integer.parseInt (clipParts[pos++]) > 0;
                 final double [] color = this.parseColor (clipParts[pos++]);
 
                 final SlotImpl slot = slotBank.getSlot (i);
+                slot.setPosition (i);
                 slot.setSelected (isSelected);
                 slot.setName (name);
                 if (color != null)
