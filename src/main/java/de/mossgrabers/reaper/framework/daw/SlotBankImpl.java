@@ -99,7 +99,7 @@ public class SlotBankImpl extends AbstractBankImpl<ISlot> implements ISlotBank
     @Override
     public void scrollPageBackwards ()
     {
-        this.bankOffset = Math.max (0, this.bankOffset - this.pageSize);
+        throw new RuntimeException ("Clips must be scrolled via SceneBank!");
     }
 
 
@@ -107,8 +107,7 @@ public class SlotBankImpl extends AbstractBankImpl<ISlot> implements ISlotBank
     @Override
     public void scrollPageForwards ()
     {
-        if (this.bankOffset + this.pageSize < this.getItemCount ())
-            this.bankOffset += this.pageSize;
+        throw new RuntimeException ("Clips must be scrolled via SceneBank!");
     }
 
 
@@ -154,6 +153,21 @@ public class SlotBankImpl extends AbstractBankImpl<ISlot> implements ISlotBank
     }
 
 
+    /**
+     * Sets the maximum number of slots over all tracks.
+     *
+     * @param maxSlotCount The maximum number of slots
+     */
+    public void setMaxSlotCount (final int maxSlotCount)
+    {
+        // Make sure that there are no 'old' entries in the list if we increase it
+        while (this.items.size () > this.itemCount)
+            this.items.remove (this.items.size () - 1);
+
+        this.itemCount = maxSlotCount;
+    }
+
+
     /** {@inheritDoc} */
     @Override
     protected void initItems ()
@@ -175,5 +189,16 @@ public class SlotBankImpl extends AbstractBankImpl<ISlot> implements ISlotBank
             for (final ISlot slot: this.items)
                 ((SlotImpl) slot).setTrack (trackIndex);
         }
+    }
+
+
+    /**
+     * Set the bank offset. Used for keeping in sync with scene bank.
+     *
+     * @param bankOffset The bank offset
+     */
+    public void setBankOffset (final int bankOffset)
+    {
+        this.bankOffset = bankOffset;
     }
 }

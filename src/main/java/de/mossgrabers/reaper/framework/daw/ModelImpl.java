@@ -260,14 +260,18 @@ public class ModelImpl extends AbstractModel
 
         final String [] clipParts = clipsStr.trim ().split (";");
         int pos = 0;
+        int maxSlotCount = 0;
+        final TrackBankImpl tb = (TrackBankImpl) this.trackBank;
         while (pos < clipParts.length)
         {
             final int trackIndex = Integer.parseInt (clipParts[pos++]);
-            final TrackImpl track = ((TrackBankImpl) this.trackBank).getTrack (trackIndex);
+            final TrackImpl track = tb.getTrack (trackIndex);
             final SlotBankImpl slotBank = (SlotBankImpl) track.getSlotBank ();
             slotBank.setTrack (trackIndex);
 
             final int numClips = Integer.parseInt (clipParts[pos++]);
+            if (numClips > maxSlotCount)
+                maxSlotCount = numClips;
             slotBank.setSlotCount (numClips);
 
             for (int i = 0; i < numClips; i++)
@@ -284,6 +288,15 @@ public class ModelImpl extends AbstractModel
                     slot.setColor (color[0], color[1], color[2]);
                 slot.setExists (true);
             }
+        }
+
+        // Set all scene banks to the same size
+        final int size = tb.getItemCount ();
+        for (int i = 0; i < size; i++)
+        {
+            final TrackImpl track = tb.getTrack (i);
+            final SlotBankImpl slotBank = (SlotBankImpl) track.getSlotBank ();
+            slotBank.setMaxSlotCount (maxSlotCount);
         }
     }
 

@@ -245,4 +245,12 @@ public abstract class AbstractTrackBankImpl extends AbstractBankImpl<ITrack> imp
         final int pos = adjustPage ? position / pageSize * pageSize : position;
         this.sendTrackOSC (pos + "/scrollto", null);
     }
+
+
+    protected void updateSlotBanks (final int slotBankOffset)
+    {
+        final int trackCount = this.items.size ();
+        for (int position = 0; position < trackCount; position++)
+            ((SlotBankImpl) this.getTrack (position).getSlotBank ()).setBankOffset (slotBankOffset);
+    }
 }
