@@ -1,4 +1,5 @@
-3.21
+3.30
+- New: Integrated DrivenByMoss 3.30.
 - Fixed: Push 2: Clip piano roll: Note texts could not be seen when notes were black.
 - Fixed: Scrolling of clips did not work.
 
