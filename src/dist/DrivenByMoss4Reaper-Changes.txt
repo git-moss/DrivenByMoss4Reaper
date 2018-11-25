@@ -1,4 +1,8 @@
 4.02
+- Integrated DrivenByMoss 4.02
+    * Ableton Push / Push 2 11.02
+        - New: Mute and Solo work now in all modes (not only in track modes).
+        - Fixed: Fixed a crash in the Browser.
 - Fixed: The track for setting the automation mode was off by 1.
 - Fixed: Komplete Kontrol 2 plugin browsing and selection works now.
 
