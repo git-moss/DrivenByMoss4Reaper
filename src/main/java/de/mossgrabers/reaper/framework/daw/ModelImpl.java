@@ -64,7 +64,7 @@ public class ModelImpl extends AbstractModel
         final int numParams = modelSetup.getNumParams ();
         final int numDeviceLayers = modelSetup.getNumDeviceLayers ();
         final int numDrumPadLayers = modelSetup.getNumDrumPadLayers ();
-        this.primaryDevice = new CursorDeviceImpl (host, sender, valueChanger, numSends, numParams, numDevicesInBank, numDeviceLayers, numDrumPadLayers);
+        this.instrumentDevice = new CursorDeviceImpl (host, sender, valueChanger, numSends, numParams, numDevicesInBank, numDeviceLayers, numDrumPadLayers);
         this.cursorDevice = new CursorDeviceImpl (host, sender, valueChanger, numSends, numParams, numDevicesInBank, numDeviceLayers, numDrumPadLayers);
         if (numDrumPadLayers > 0)
             this.drumDevice64 = new CursorDeviceImpl (host, sender, valueChanger, 0, 0, 0, 64, 64);

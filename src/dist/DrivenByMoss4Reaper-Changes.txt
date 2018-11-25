@@ -1,3 +1,7 @@
+4.02
+- Fixed: The track for setting the automation mode was off by 1.
+- Fixed: Komplete Kontrol 2 plugin browsing and selection works now.
+
 4.01
 - Integrated DrivenByMoss 4.01
     * Ableton Push / Push 2 11.01

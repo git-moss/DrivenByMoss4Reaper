@@ -38,7 +38,6 @@ import javax.swing.border.EmptyBorder;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridLayout;
-import java.awt.SystemTray;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -104,7 +103,7 @@ public class MainFrame extends JFrame implements MessageSender
         }
 
         this.createUI ();
-        this.showStage (this);
+        this.configureFrame (this);
 
         this.animationTimer = new Timer (20, event -> {
             try
@@ -249,11 +248,11 @@ public class MainFrame extends JFrame implements MessageSender
     /**
      * Configures and shows the stage.
      *
-     * @param stage The stage to start
+     * @param frame The main frame
      */
-    protected void showStage (final JFrame stage)
+    protected void configureFrame (final JFrame frame)
     {
-        stage.setMinimumSize (new Dimension (840, 500));
+        frame.setMinimumSize (new Dimension (840, 500));
 
         final URL url = ClassLoader.getSystemResource ("images/AppIcon.gif");
         if (url != null)
@@ -261,9 +260,6 @@ public class MainFrame extends JFrame implements MessageSender
             final ImageIcon imageIcon = new ImageIcon (url);
             this.setIconImage (imageIcon.getImage ());
         }
-
-        if (!SystemTray.isSupported ())
-            stage.setVisible (true);
     }
 
 

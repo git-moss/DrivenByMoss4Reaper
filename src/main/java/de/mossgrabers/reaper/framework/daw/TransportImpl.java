@@ -407,7 +407,7 @@ public class TransportImpl extends BaseImpl implements ITransport
     {
         final ITrack selectedTrack = this.trackBank.getSelectedItem ();
         if (selectedTrack != null)
-            this.sender.sendOSC ("/track/" + (selectedTrack.getIndex () + 1) + "/auto" + mode, Double.valueOf (1));
+            this.sender.sendOSC ("/track/" + selectedTrack.getIndex () + "/auto" + mode, Double.valueOf (1));
     }
 
 

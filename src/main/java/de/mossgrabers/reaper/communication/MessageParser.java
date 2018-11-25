@@ -62,6 +62,7 @@ public class MessageParser
     private final TransportImpl    transport;
     private final IValueChanger    valueChanger;
     private final CursorDeviceImpl cursorDevice;
+    private final CursorDeviceImpl instrumentDevice;
     private final IBrowser         browser;
     private final IModel           model;
 
@@ -82,6 +83,7 @@ public class MessageParser
         this.masterTrack = (MasterTrackImpl) this.model.getMasterTrack ();
         this.valueChanger = this.model.getValueChanger ();
         this.cursorDevice = (CursorDeviceImpl) this.model.getCursorDevice ();
+        this.instrumentDevice = (CursorDeviceImpl) this.model.getInstrumentDevice ();
         this.browser = this.model.getBrowser ();
     }
 
@@ -130,7 +132,11 @@ public class MessageParser
                 break;
 
             case "device":
-                this.parseDevice (value, parts);
+                this.parseDevice (this.cursorDevice, value, parts);
+                break;
+
+            case "primary":
+                this.parseDevice (this.instrumentDevice, value, parts);
                 break;
 
             case "clip":
@@ -410,44 +416,44 @@ public class MessageParser
     }
 
 
-    private void parseDevice (final String value, final Queue<String> parts)
+    private void parseDevice (final CursorDeviceImpl device, final String value, final Queue<String> parts)
     {
         final String command = parts.poll ();
         switch (command)
         {
             case "count":
-                this.cursorDevice.setDeviceCount (Integer.parseInt (value));
+                device.setDeviceCount (Integer.parseInt (value));
                 break;
 
             case "exists":
-                this.cursorDevice.setExists (Integer.parseInt (value) > 0);
+                device.setExists (Integer.parseInt (value) > 0);
                 break;
 
             case "position":
-                this.cursorDevice.setPosition (Integer.parseInt (value));
+                device.setPosition (Integer.parseInt (value));
                 break;
 
             case "bypass":
-                this.cursorDevice.setEnabled (Integer.parseInt (value) == 0);
+                device.setEnabled (Integer.parseInt (value) == 0);
                 break;
 
             case "name":
-                this.cursorDevice.setName (value);
+                device.setName (value);
                 break;
 
             case "window":
-                this.cursorDevice.setWindowOpen (Double.parseDouble (value) > 0);
+                device.setWindowOpen (Double.parseDouble (value) > 0);
                 break;
 
             case "expand":
-                this.cursorDevice.setExpanded (Double.parseDouble (value) > 0);
+                device.setExpanded (Double.parseDouble (value) > 0);
                 break;
 
             case "sibling":
                 try
                 {
                     final int siblingNo = Integer.parseInt (parts.poll ()) - 1;
-                    final IDeviceBank deviceBank = this.cursorDevice.getDeviceBank ();
+                    final IDeviceBank deviceBank = device.getDeviceBank ();
                     if (siblingNo < deviceBank.getPageSize ())
                     {
                         final ItemImpl sibling = (ItemImpl) deviceBank.getItem (siblingNo);
@@ -475,7 +481,7 @@ public class MessageParser
                 try
                 {
                     final int paramNo = Integer.parseInt (cmd);
-                    final ParameterBankImpl parameterBank = (ParameterBankImpl) this.cursorDevice.getParameterBank ();
+                    final ParameterBankImpl parameterBank = (ParameterBankImpl) device.getParameterBank ();
                     if (parameterBank != null)
                         this.parseDeviceParamValue (paramNo, parameterBank.getParameter (paramNo), parts, value);
                 }
@@ -484,7 +490,7 @@ public class MessageParser
                     switch (cmd)
                     {
                         case "count":
-                            this.cursorDevice.setParameterCount (Integer.parseInt (value));
+                            device.setParameterCount (Integer.parseInt (value));
                             break;
 
                         default:
