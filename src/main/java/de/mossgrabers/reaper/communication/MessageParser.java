@@ -16,7 +16,6 @@ import de.mossgrabers.framework.daw.ISceneBank;
 import de.mossgrabers.framework.daw.ISendBank;
 import de.mossgrabers.framework.daw.ITrackBank;
 import de.mossgrabers.framework.daw.data.IMarker;
-import de.mossgrabers.framework.daw.data.IMasterTrack;
 import de.mossgrabers.framework.daw.data.IParameter;
 import de.mossgrabers.framework.daw.data.IScene;
 import de.mossgrabers.framework.daw.data.ISend;
@@ -282,8 +281,7 @@ public class MessageParser
             case "select":
                 final boolean isSelected = Double.parseDouble (value) > 0;
                 track.setSelected (isSelected);
-                if (!(track instanceof IMasterTrack))
-                    ((TrackBankImpl) this.model.getCurrentTrackBank ()).handleBankTrackSelection (track, isSelected);
+                ((TrackBankImpl) this.model.getCurrentTrackBank ()).handleBankTrackSelection (track, isSelected);
                 break;
 
             case "number":

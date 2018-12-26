@@ -7,6 +7,7 @@ package de.mossgrabers.reaper.framework.daw;
 import de.mossgrabers.framework.controller.IValueChanger;
 import de.mossgrabers.framework.daw.IHost;
 import de.mossgrabers.framework.daw.ISendBank;
+import de.mossgrabers.framework.daw.data.IMasterTrack;
 import de.mossgrabers.framework.daw.data.ISend;
 import de.mossgrabers.framework.daw.data.ITrack;
 import de.mossgrabers.reaper.communication.MessageSender;
@@ -26,6 +27,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class TrackBankImpl extends AbstractTrackBankImpl
 {
     private final boolean       hasFlatTrackList;
+    private final ITrack        master;
     private final AtomicBoolean isDirty       = new AtomicBoolean (false);
     private TreeNode<TrackImpl> rootTrack     = new TreeNode<> ();
     private TreeNode<TrackImpl> currentFolder = this.rootTrack;
@@ -42,12 +44,14 @@ public class TrackBankImpl extends AbstractTrackBankImpl
      * @param numSends The number of sends in a bank page
      * @param hasFlatTrackList True if group navigation should not be supported, instead all tracks
      *            are flat
+     * @param master If set the track navigation should include master tracks if flat
      */
-    public TrackBankImpl (final IHost host, final MessageSender sender, final IValueChanger valueChanger, final int numTracks, final int numScenes, final int numSends, final boolean hasFlatTrackList)
+    public TrackBankImpl (final IHost host, final MessageSender sender, final IValueChanger valueChanger, final int numTracks, final int numScenes, final int numSends, final boolean hasFlatTrackList, final ITrack master)
     {
         super (host, sender, valueChanger, numTracks, numScenes, numSends);
 
         this.hasFlatTrackList = hasFlatTrackList;
+        this.master = master;
     }
 
 
@@ -107,9 +111,21 @@ public class TrackBankImpl extends AbstractTrackBankImpl
     {
         if (this.hasFlatTrackList)
         {
-            final int position = track.getPosition ();
+            if (track instanceof IMasterTrack)
+            {
+                if (this.master != null && isSelected)
+                {
+                    final int position = super.getItemCount ();
+                    // Is mastertrack on current page? If not adjust the page
+                    if (position < this.bankOffset || position >= this.bankOffset + this.pageSize)
+                        this.bankOffset = position / this.pageSize * this.pageSize;
+                }
+                return;
+            }
+
             if (isSelected)
             {
+                final int position = track.getPosition ();
                 // Is track on current page? If not adjust the page
                 if (position < this.bankOffset || position >= this.bankOffset + this.pageSize)
                     this.bankOffset = position / this.pageSize * this.pageSize;
@@ -117,6 +133,9 @@ public class TrackBankImpl extends AbstractTrackBankImpl
         }
         else
         {
+            if (track instanceof IMasterTrack)
+                return;
+
             // Find the selected track in the tree, focus the page and select its parent as the new
             // folder
             findSelectedTrack (this.rootTrack);
@@ -191,12 +210,16 @@ public class TrackBankImpl extends AbstractTrackBankImpl
     {
         this.recalcTree ();
 
+        final int id = this.bankOffset + index;
+
         if (this.hasFlatTrackList)
+        {
+            if (this.master != null && super.getItemCount () == id)
+                return this.master;
             return super.getItem (index);
+        }
 
         final List<TreeNode<TrackImpl>> children = this.currentFolder.getChildren ();
-
-        final int id = this.bankOffset + index;
         return id < children.size () ? children.get (id).getData () : this.emptyTrack;
     }
 
@@ -208,7 +231,12 @@ public class TrackBankImpl extends AbstractTrackBankImpl
         this.recalcTree ();
 
         if (this.hasFlatTrackList)
-            return super.getItemCount ();
+        {
+            int size = super.getItemCount ();
+            if (this.master != null)
+                size++;
+            return size;
+        }
 
         return this.currentFolder.getChildren ().size ();
     }
