@@ -1,5 +1,5 @@
 // Written by Jürgen Moßgraber - mossgrabers.de
-// (c) 2017-2018
+// (c) 2017-2019
 // Licensed under LGPLv3 - http://www.gnu.org/licenses/lgpl-3.0.txt
 
 package de.mossgrabers.framework.mode;
@@ -60,6 +60,15 @@ public interface Mode
      * @param value The value the knob sent
      */
     void onValueKnob (int index, int value);
+
+
+    /**
+     * Get the value of the parameter that is controlled by the knob.
+     *
+     * @param index The index of the knob
+     * @return The value or -1
+     */
+    int getKnobValue (int index);
 
 
     /**

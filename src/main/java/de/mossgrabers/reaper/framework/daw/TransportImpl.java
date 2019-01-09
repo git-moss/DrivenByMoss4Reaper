@@ -661,7 +661,7 @@ public class TransportImpl extends BaseImpl implements ITransport
 
     /** {@inheritDoc} */
     @Override
-    public void setCrossfade (final int value)
+    public void setCrossfade (final double value)
     {
         // Not supported
     }

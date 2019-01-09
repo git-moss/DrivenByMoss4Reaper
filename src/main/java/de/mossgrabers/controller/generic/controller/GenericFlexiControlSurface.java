@@ -1,5 +1,5 @@
 // Written by Jürgen Moßgraber - mossgrabers.de
-// (c) 2017-2018
+// (c) 2017-2019
 // Licensed under LGPLv3 - http://www.gnu.org/licenses/lgpl-3.0.txt
 
 package de.mossgrabers.controller.generic.controller;
@@ -25,6 +25,8 @@ import de.mossgrabers.framework.daw.data.ISlot;
 import de.mossgrabers.framework.daw.data.ITrack;
 import de.mossgrabers.framework.daw.midi.IMidiInput;
 import de.mossgrabers.framework.daw.midi.IMidiOutput;
+import de.mossgrabers.framework.mode.Mode;
+import de.mossgrabers.framework.mode.SimpleMode;
 import de.mossgrabers.framework.utils.ButtonEvent;
 
 import java.io.File;
@@ -76,49 +78,70 @@ public class GenericFlexiControlSurface extends AbstractControlSurface<GenericFl
         Arrays.fill (this.valueCache, -1);
         this.model = model;
 
-        this.configuration.addSettingObserver (GenericFlexiConfiguration.BUTTON_EXPORT, () -> {
-            final String filename = this.configuration.getFilename ();
-            if (filename == null || filename.trim ().isEmpty ())
-            {
-                this.host.showNotification ("Please enter a filename first.");
-                return;
-            }
-            final File file = new File (filename);
-            try
-            {
-                this.configuration.exportTo (file);
-                this.host.showNotification ("Exported to: " + file);
-            }
-            catch (final IOException ex)
-            {
-                this.host.showNotification ("Error writing file: " + ex.getMessage ());
-            }
-        });
+        this.configuration.addSettingObserver (GenericFlexiConfiguration.BUTTON_EXPORT, this::importFile);
+        this.configuration.addSettingObserver (GenericFlexiConfiguration.BUTTON_IMPORT, this::exportFile);
+    }
 
-        this.configuration.addSettingObserver (GenericFlexiConfiguration.BUTTON_IMPORT, () -> {
-            final String filename = this.configuration.getFilename ();
-            if (filename == null || filename.trim ().isEmpty ())
-            {
-                this.host.showNotification ("Please enter a filename first.");
-                return;
-            }
-            final File file = new File (filename);
-            if (!file.exists ())
-            {
-                this.host.showNotification ("The entered file does not exist.");
-                return;
-            }
 
-            try
-            {
-                this.configuration.importFrom (file);
-                this.host.showNotification ("Imported from: " + file);
-            }
-            catch (final IOException ex)
-            {
-                this.host.showNotification ("Error reading file: " + ex.getMessage ());
-            }
-        });
+    /**
+     * Export all settings to a file.
+     */
+    private void exportFile ()
+    {
+        final File file = getFile ();
+        if (file == null)
+            return;
+        if (!file.exists ())
+        {
+            this.host.showNotification ("The entered file does not exist.");
+            return;
+        }
+        try
+        {
+            this.configuration.importFrom (file);
+            this.host.showNotification ("Imported from: " + file);
+        }
+        catch (final IOException ex)
+        {
+            this.host.showNotification ("Error reading file: " + ex.getMessage ());
+        }
+    }
+
+
+    /**
+     * Import all settings from a file.
+     */
+    private void importFile ()
+    {
+        final File file = this.getFile ();
+        if (file == null)
+            return;
+        try
+        {
+            this.configuration.exportTo (file);
+            this.host.showNotification ("Exported to: " + file);
+        }
+        catch (final IOException ex)
+        {
+            this.host.showNotification ("Error writing file: " + ex.getMessage ());
+        }
+    }
+
+
+    /**
+     * Get a the im-/export file.
+     *
+     * @return The file or null
+     */
+    private File getFile ()
+    {
+        final String filename = this.configuration.getFilename ();
+        if (filename == null || filename.trim ().isEmpty ())
+        {
+            this.host.showNotification ("Please enter a filename first.");
+            return null;
+        }
+        return new File (filename);
     }
 
 
@@ -132,17 +155,31 @@ public class GenericFlexiControlSurface extends AbstractControlSurface<GenericFl
         final CommandSlot [] slots = this.configuration.getCommandSlots ();
         for (int i = 0; i < slots.length; i++)
         {
-            if (slots[i].getType () != CommandSlot.TYPE_CC)
-                continue;
             final FlexiCommand command = slots[i].getCommand ();
             if (command == FlexiCommand.OFF || !slots[i].isSendValue ())
                 continue;
+
             final int value = this.getCommandValue (command);
             if (this.valueCache[i] == value)
                 continue;
             this.valueCache[i] = value;
-            if (value >= 0 && value <= 127)
-                this.getOutput ().sendCC (slots[i].getNumber (), value);
+
+            switch (slots[i].getType ())
+            {
+                case GenericFlexiConfiguration.TYPE_CC:
+                    if (value >= 0 && value <= 127)
+                        this.getOutput ().sendCCEx (slots[i].getMidiChannel (), slots[i].getNumber (), value);
+                    break;
+
+                case GenericFlexiConfiguration.TYPE_PITCH_BEND:
+                    if (value >= 0 && value <= 127)
+                        this.getOutput ().sendPitchbend (slots[i].getMidiChannel (), 0, value);
+                    break;
+
+                default:
+                    // Other types not supported
+                    break;
+            }
         }
     }
 
@@ -476,6 +513,9 @@ public class GenericFlexiControlSurface extends AbstractControlSurface<GenericFl
             case MASTER_TOGGLE_ARM:
                 return this.model.getMasterTrack ().isRecArm () ? 127 : 0;
 
+            case MASTER_CROSSFADER:
+                return this.model.getTransport ().getCrossfade ();
+
             case DEVICE_TOGGLE_WINDOW:
                 return this.model.getCursorDevice ().isWindowOpen () ? 127 : 0;
 
@@ -570,6 +610,49 @@ public class GenericFlexiControlSurface extends AbstractControlSurface<GenericFl
             case MARKER_SELECT_NEXT_BANK:
                 return -1;
 
+            case MODES_KNOB1:
+                return this.getModeManager ().getActiveOrTempMode ().getKnobValue (0);
+            case MODES_KNOB2:
+                return this.getModeManager ().getActiveOrTempMode ().getKnobValue (1);
+            case MODES_KNOB3:
+                return this.getModeManager ().getActiveOrTempMode ().getKnobValue (2);
+            case MODES_KNOB4:
+                return this.getModeManager ().getActiveOrTempMode ().getKnobValue (3);
+            case MODES_KNOB5:
+                return this.getModeManager ().getActiveOrTempMode ().getKnobValue (4);
+            case MODES_KNOB6:
+                return this.getModeManager ().getActiveOrTempMode ().getKnobValue (5);
+            case MODES_KNOB7:
+                return this.getModeManager ().getActiveOrTempMode ().getKnobValue (6);
+            case MODES_KNOB8:
+                return this.getModeManager ().getActiveOrTempMode ().getKnobValue (7);
+
+            case MODES_BUTTON1:
+            case MODES_BUTTON2:
+            case MODES_BUTTON3:
+            case MODES_BUTTON4:
+            case MODES_BUTTON5:
+            case MODES_BUTTON6:
+            case MODES_BUTTON7:
+            case MODES_BUTTON8:
+            case MODES_NEXT_PAGE:
+            case MODES_PREV_PAGE:
+            case MODES_SELECT_MODE_TRACK:
+            case MODES_SELECT_MODE_VOLUME:
+            case MODES_SELECT_MODE_PAN:
+            case MODES_SELECT_MODE_SEND1:
+            case MODES_SELECT_MODE_SEND2:
+            case MODES_SELECT_MODE_SEND3:
+            case MODES_SELECT_MODE_SEND4:
+            case MODES_SELECT_MODE_SEND5:
+            case MODES_SELECT_MODE_SEND6:
+            case MODES_SELECT_MODE_SEND7:
+            case MODES_SELECT_MODE_SEND8:
+            case MODES_SELECT_MODE_DEVICE:
+            case MODES_SELECT_MODE_NEXT:
+            case MODES_SELECT_MODE_PREV:
+                return -1;
+
             default:
                 return -1;
         }
@@ -590,22 +673,27 @@ public class GenericFlexiControlSurface extends AbstractControlSurface<GenericFl
         {
             // Note on/off
             case 0x90:
-                this.configuration.setAddValues (CommandSlot.OPTIONS_TYPE[CommandSlot.TYPE_NOTE], data1, channel);
-                slotIndex = this.configuration.getSlotCommand (CommandSlot.TYPE_NOTE, data1, channel);
+                this.configuration.setLearnValues (GenericFlexiConfiguration.OPTIONS_TYPE[GenericFlexiConfiguration.TYPE_NOTE + 1], data1, channel);
+                slotIndex = this.configuration.getSlotCommand (GenericFlexiConfiguration.TYPE_NOTE, data1, channel);
                 break;
 
             // Program Change
             case 0xC0:
-                this.configuration.setAddValues (CommandSlot.OPTIONS_TYPE[CommandSlot.TYPE_PROGRAM_CHANGE], data1, channel);
-                slotIndex = this.configuration.getSlotCommand (CommandSlot.TYPE_PROGRAM_CHANGE, data1, channel);
+                this.configuration.setLearnValues (GenericFlexiConfiguration.OPTIONS_TYPE[GenericFlexiConfiguration.TYPE_PROGRAM_CHANGE + 1], data1, channel);
+                slotIndex = this.configuration.getSlotCommand (GenericFlexiConfiguration.TYPE_PROGRAM_CHANGE, data1, channel);
                 value = 127;
-                this.updateKeyTranslation ();
                 break;
 
             // CC
             case 0xB0:
-                this.configuration.setAddValues (CommandSlot.OPTIONS_TYPE[CommandSlot.TYPE_CC], data1, channel);
-                slotIndex = this.configuration.getSlotCommand (CommandSlot.TYPE_CC, data1, channel);
+                this.configuration.setLearnValues (GenericFlexiConfiguration.OPTIONS_TYPE[GenericFlexiConfiguration.TYPE_CC + 1], data1, channel);
+                slotIndex = this.configuration.getSlotCommand (GenericFlexiConfiguration.TYPE_CC, data1, channel);
+                break;
+
+            // Pitchbend
+            case 0xE0:
+                this.configuration.setLearnValues (GenericFlexiConfiguration.OPTIONS_TYPE[GenericFlexiConfiguration.TYPE_PITCH_BEND + 1], data1, channel);
+                slotIndex = this.configuration.getSlotCommand (GenericFlexiConfiguration.TYPE_PITCH_BEND, data1, channel);
                 break;
 
             default:
@@ -1212,6 +1300,10 @@ public class GenericFlexiControlSurface extends AbstractControlSurface<GenericFl
                 if (value > 0)
                     this.model.getMasterTrack ().toggleRecArm ();
                 break;
+            // Master: Crossfader
+            case MASTER_CROSSFADER:
+                this.changeMasterCrossfader (commandSlot.getKnobMode (), value);
+                break;
 
             // Device: Toggle Window
             case DEVICE_TOGGLE_WINDOW:
@@ -1471,6 +1563,68 @@ public class GenericFlexiControlSurface extends AbstractControlSurface<GenericFl
             case MARKER_SELECT_NEXT_BANK:
                 this.model.getMarkerBank ().selectNextPage ();
                 break;
+
+            case MODES_KNOB1:
+            case MODES_KNOB2:
+            case MODES_KNOB3:
+            case MODES_KNOB4:
+            case MODES_KNOB5:
+            case MODES_KNOB6:
+            case MODES_KNOB7:
+            case MODES_KNOB8:
+                this.changeModeValue (commandSlot.getKnobMode (), command.ordinal () - FlexiCommand.MODES_KNOB1.ordinal (), value);
+                break;
+
+            // TODO
+            case MODES_BUTTON1:
+                break;
+            case MODES_BUTTON2:
+                break;
+            case MODES_BUTTON3:
+                break;
+            case MODES_BUTTON4:
+                break;
+            case MODES_BUTTON5:
+                break;
+            case MODES_BUTTON6:
+                break;
+            case MODES_BUTTON7:
+                break;
+            case MODES_BUTTON8:
+                break;
+            case MODES_NEXT_PAGE:
+                break;
+            case MODES_PREV_PAGE:
+                break;
+            case MODES_SELECT_MODE_TRACK:
+                break;
+            case MODES_SELECT_MODE_VOLUME:
+                break;
+            case MODES_SELECT_MODE_PAN:
+                break;
+            case MODES_SELECT_MODE_SEND1:
+                break;
+            case MODES_SELECT_MODE_SEND2:
+                break;
+            case MODES_SELECT_MODE_SEND3:
+                break;
+            case MODES_SELECT_MODE_SEND4:
+                break;
+            case MODES_SELECT_MODE_SEND5:
+                break;
+            case MODES_SELECT_MODE_SEND6:
+                break;
+            case MODES_SELECT_MODE_SEND7:
+                break;
+            case MODES_SELECT_MODE_SEND8:
+                break;
+            case MODES_SELECT_MODE_DEVICE:
+                break;
+            case MODES_SELECT_MODE_NEXT:
+                break;
+            case MODES_SELECT_MODE_PREV:
+                break;
+
         }
 
         this.host.scheduleTask ( () -> {
@@ -1597,6 +1751,24 @@ public class GenericFlexiControlSurface extends AbstractControlSurface<GenericFl
             track.setPan (value);
         else
             track.setPan (track.getPan () + this.getRelativeSpeed (knobMode, value));
+    }
+
+
+    private void changeMasterCrossfader (final int knobMode, final int value)
+    {
+        final ITransport transport = this.model.getTransport ();
+        if (knobMode == KNOB_MODE_ABSOLUTE)
+            transport.setCrossfade (value);
+        else
+            transport.setCrossfade (transport.getCrossfade () + this.getRelativeSpeed (knobMode, value));
+    }
+
+
+    private void changeModeValue (final int knobMode, final int knobIndex, final int value)
+    {
+        final Mode mode = this.getModeManager ().getActiveOrTempMode ();
+        ((SimpleMode<?, ?>) mode).setAbsolute (knobMode == KNOB_MODE_ABSOLUTE);
+        mode.onValueKnob (knobIndex, value);
     }
 
 
