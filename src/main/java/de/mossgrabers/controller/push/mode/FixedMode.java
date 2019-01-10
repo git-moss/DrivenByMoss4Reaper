@@ -32,7 +32,7 @@ public class FixedMode extends BaseMode
      */
     public FixedMode (final PushControlSurface surface, final IModel model)
     {
-        super (surface, model);
+        super ("Fixed", surface, model);
         this.isTemporary = false;
     }
 

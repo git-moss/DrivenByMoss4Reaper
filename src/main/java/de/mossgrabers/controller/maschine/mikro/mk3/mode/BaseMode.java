@@ -20,11 +20,12 @@ public abstract class BaseMode extends SimpleMode<MaschineMikroMk3ControlSurface
     /**
      * Constructor.
      *
+     * @param name The name of the mode
      * @param surface The control surface
      * @param model The model
      */
-    public BaseMode (final MaschineMikroMk3ControlSurface surface, final IModel model)
+    public BaseMode (final String name, final MaschineMikroMk3ControlSurface surface, final IModel model)
     {
-        super (surface, model, false);
+        super (name, surface, model, false);
     }
 }

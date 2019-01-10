@@ -39,12 +39,13 @@ public abstract class AbstractTrackMode extends BaseMode
     /**
      * Constructor.
      *
+     * @param name The name of the mode
      * @param surface The control surface
      * @param model The model
      */
-    public AbstractTrackMode (final PushControlSurface surface, final IModel model)
+    public AbstractTrackMode (final String name, final PushControlSurface surface, final IModel model)
     {
-        super (surface, model);
+        super (name, surface, model);
         this.isTemporary = false;
 
         for (int i = 0; i < 8; i++)

@@ -30,7 +30,7 @@ public class SessionMode extends AbstractMode<SLControlSurface, SLConfiguration>
      */
     public SessionMode (final SLControlSurface surface, final IModel model)
     {
-        super (surface, model);
+        super ("Session", surface, model);
         this.isTemporary = false;
     }
 
@@ -53,7 +53,7 @@ public class SessionMode extends AbstractMode<SLControlSurface, SLConfiguration>
 
     /** {@inheritDoc} */
     @Override
-    public void onRowButton (final int row, final int index, final ButtonEvent event)
+    public void onButton (final int row, final int index, final ButtonEvent event)
     {
         // Intentionally empty
     }

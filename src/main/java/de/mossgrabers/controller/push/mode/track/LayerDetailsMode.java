@@ -32,7 +32,7 @@ public class LayerDetailsMode extends BaseMode
      */
     public LayerDetailsMode (final PushControlSurface surface, final IModel model)
     {
-        super (surface, model);
+        super ("Layer details", surface, model);
     }
 
 

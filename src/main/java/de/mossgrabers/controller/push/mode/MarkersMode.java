@@ -46,7 +46,7 @@ public class MarkersMode extends BaseMode
      */
     public MarkersMode (final PushControlSurface surface, final IModel model)
     {
-        super (surface, model);
+        super ("Marker", surface, model);
     }
 
 

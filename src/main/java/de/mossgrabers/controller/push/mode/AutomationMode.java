@@ -30,7 +30,7 @@ public class AutomationMode extends BaseMode
      */
     public AutomationMode (final PushControlSurface surface, final IModel model)
     {
-        super (surface, model);
+        super ("Automation", surface, model);
     }
 
 

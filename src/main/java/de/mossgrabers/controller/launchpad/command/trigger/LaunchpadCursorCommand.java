@@ -231,7 +231,7 @@ public class LaunchpadCursorCommand extends CursorCommand<LaunchpadControlSurfac
         // VIEW_SESSION, VIEW_VOLUME, VIEW_PAN, VIEW_SENDS
         final Mode mode = this.surface.getModeManager ().getMode (Modes.MODE_VOLUME);
         if (mode != null)
-            mode.selectPreviousTrack ();
+            mode.selectPreviousItem ();
     }
 
 
@@ -280,7 +280,7 @@ public class LaunchpadCursorCommand extends CursorCommand<LaunchpadControlSurfac
         // VIEW_SESSION, VIEW_VOLUME, VIEW_PAN, VIEW_SENDS
         final Mode mode = this.surface.getModeManager ().getMode (Modes.MODE_VOLUME);
         if (mode != null)
-            mode.selectNextTrack ();
+            mode.selectNextItem ();
     }
 
 

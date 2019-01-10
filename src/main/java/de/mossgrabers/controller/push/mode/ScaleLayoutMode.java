@@ -33,7 +33,7 @@ public class ScaleLayoutMode extends BaseMode
      */
     public ScaleLayoutMode (final PushControlSurface surface, final IModel model)
     {
-        super (surface, model);
+        super ("Scale Layout", surface, model);
         this.scales = model.getScales ();
     }
 

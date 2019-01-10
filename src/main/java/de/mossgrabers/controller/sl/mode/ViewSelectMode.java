@@ -30,7 +30,7 @@ public class ViewSelectMode extends AbstractMode<SLControlSurface, SLConfigurati
      */
     public ViewSelectMode (final SLControlSurface surface, final IModel model)
     {
-        super (surface, model);
+        super ("View select", surface, model);
     }
 
 
@@ -53,7 +53,7 @@ public class ViewSelectMode extends AbstractMode<SLControlSurface, SLConfigurati
 
     /** {@inheritDoc} */
     @Override
-    public void onRowButton (final int row, final int index, final ButtonEvent event)
+    public void onButton (final int row, final int index, final ButtonEvent event)
     {
         // Intentionally empty
     }

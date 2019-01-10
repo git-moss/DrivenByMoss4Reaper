@@ -23,6 +23,6 @@ public class StopClipMode extends AbstractTrackMode
      */
     public StopClipMode (final LaunchpadControlSurface surface, final IModel model)
     {
-        super (surface, model);
+        super ("Stop CLip", surface, model);
     }
 }

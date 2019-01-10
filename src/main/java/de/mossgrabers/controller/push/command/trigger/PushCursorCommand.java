@@ -128,7 +128,7 @@ public class PushCursorCommand extends de.mossgrabers.framework.command.trigger.
 
         final Mode activeMode = this.surface.getModeManager ().getActiveOrTempMode ();
         if (activeMode != null)
-            activeMode.selectPreviousTrack ();
+            activeMode.selectPreviousItem ();
     }
 
 
@@ -171,6 +171,6 @@ public class PushCursorCommand extends de.mossgrabers.framework.command.trigger.
 
         final Mode activeMode = this.surface.getModeManager ().getActiveOrTempMode ();
         if (activeMode != null)
-            activeMode.selectNextTrack ();
+            activeMode.selectNextItem ();
     }
 }

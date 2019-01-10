@@ -48,6 +48,6 @@ public class DeviceKnobRowCommand extends AbstractContinuousCommand<SLControlSur
         final ModeManager modeManager = this.surface.getModeManager ();
         if (!modeManager.isActiveOrTempMode (Modes.MODE_PARAMS))
             modeManager.setActiveMode (Modes.MODE_PARAMS);
-        modeManager.getMode (Modes.MODE_PARAMS).onValueKnob (this.index, v);
+        modeManager.getMode (Modes.MODE_PARAMS).onKnobValue (this.index, v);
     }
 }

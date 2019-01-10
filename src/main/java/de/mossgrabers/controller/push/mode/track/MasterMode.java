@@ -38,7 +38,7 @@ public class MasterMode extends BaseMode
      */
     public MasterMode (final PushControlSurface surface, final IModel model, final boolean isTemporary)
     {
-        super (surface, model);
+        super ("Master", surface, model);
         this.isTemporary = isTemporary;
     }
 
@@ -61,7 +61,7 @@ public class MasterMode extends BaseMode
 
     /** {@inheritDoc} */
     @Override
-    public void onValueKnob (final int index, final int value)
+    public void onKnobValue (final int index, final int value)
     {
         if (index == 0)
             this.model.getMasterTrack ().changeVolume (value);
@@ -72,7 +72,7 @@ public class MasterMode extends BaseMode
 
     /** {@inheritDoc} */
     @Override
-    public void onValueKnobTouch (final int index, final boolean isTouched)
+    public void onKnobTouch (final int index, final boolean isTouched)
     {
         this.isKnobTouched[index] = isTouched;
 

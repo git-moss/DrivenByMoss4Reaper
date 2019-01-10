@@ -26,13 +26,13 @@ public class VolumeMode extends AbstractTrackMode
      */
     public VolumeMode (final MCUControlSurface surface, final IModel model)
     {
-        super (surface, model);
+        super ("Volume", surface, model);
     }
 
 
     /** {@inheritDoc} */
     @Override
-    public void onValueKnob (final int index, final int value)
+    public void onKnobValue (final int index, final int value)
     {
         final int channel = this.surface.getExtenderOffset () + index;
         this.model.getCurrentTrackBank ().getItem (channel).changeVolume (value);

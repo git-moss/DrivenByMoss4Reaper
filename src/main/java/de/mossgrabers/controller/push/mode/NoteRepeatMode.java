@@ -31,7 +31,7 @@ public class NoteRepeatMode extends BaseMode
      */
     public NoteRepeatMode (final PushControlSurface surface, final IModel model)
     {
-        super (surface, model);
+        super ("Note Repeat", surface, model);
         this.isTemporary = true;
     }
 

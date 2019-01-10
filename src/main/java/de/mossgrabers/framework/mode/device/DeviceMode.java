@@ -33,13 +33,13 @@ public class DeviceMode<S extends IControlSurface<C>, C extends Configuration> e
      */
     public DeviceMode (final S surface, final IModel model, final boolean isAbsolute)
     {
-        super (surface, model, isAbsolute);
+        super ("Parameters", surface, model, isAbsolute);
     }
 
 
     /** {@inheritDoc} */
     @Override
-    public void onValueKnob (final int index, final int value)
+    public void onKnobValue (final int index, final int value)
     {
         final ICursorDevice cursorDevice = this.model.getCursorDevice ();
         if (cursorDevice == null)
@@ -56,7 +56,7 @@ public class DeviceMode<S extends IControlSurface<C>, C extends Configuration> e
 
     /** {@inheritDoc} */
     @Override
-    public void onValueKnobTouch (final int index, final boolean isTouched)
+    public void onKnobTouch (final int index, final boolean isTouched)
     {
         if (!isTouched)
             return;

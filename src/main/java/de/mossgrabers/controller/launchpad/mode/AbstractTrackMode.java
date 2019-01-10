@@ -20,11 +20,12 @@ public class AbstractTrackMode extends SimpleMode<LaunchpadControlSurface, Launc
     /**
      * Constructor.
      *
+     * @param name The name of the mode
      * @param surface The surface
      * @param model The model
      */
-    public AbstractTrackMode (final LaunchpadControlSurface surface, final IModel model)
+    public AbstractTrackMode (final String name, final LaunchpadControlSurface surface, final IModel model)
     {
-        super (surface, model, true);
+        super (name, surface, model, true);
     }
 }

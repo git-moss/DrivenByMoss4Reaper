@@ -23,12 +23,13 @@ public abstract class AbstractTrackMode extends BaseMode
     /**
      * Constructor.
      *
+     * @param name The name of the mode
      * @param surface The control surface
      * @param model The model
      */
-    public AbstractTrackMode (final MCUControlSurface surface, final IModel model)
+    public AbstractTrackMode (final String name, final MCUControlSurface surface, final IModel model)
     {
-        super (surface, model);
+        super (name, surface, model);
     }
 
 

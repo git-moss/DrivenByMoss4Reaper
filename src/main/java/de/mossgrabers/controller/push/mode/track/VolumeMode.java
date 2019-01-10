@@ -29,13 +29,13 @@ public class VolumeMode extends AbstractTrackMode
      */
     public VolumeMode (final PushControlSurface surface, final IModel model)
     {
-        super (surface, model);
+        super ("Volume", surface, model);
     }
 
 
     /** {@inheritDoc} */
     @Override
-    public void onValueKnob (final int index, final int value)
+    public void onKnobValue (final int index, final int value)
     {
         this.model.getCurrentTrackBank ().getItem (index).changeVolume (value);
     }
@@ -43,7 +43,7 @@ public class VolumeMode extends AbstractTrackMode
 
     /** {@inheritDoc} */
     @Override
-    public void onValueKnobTouch (final int index, final boolean isTouched)
+    public void onKnobTouch (final int index, final boolean isTouched)
     {
         this.isKnobTouched[index] = isTouched;
 

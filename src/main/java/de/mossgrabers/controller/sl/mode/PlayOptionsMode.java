@@ -27,7 +27,7 @@ public class PlayOptionsMode extends AbstractMode<SLControlSurface, SLConfigurat
      */
     public PlayOptionsMode (final SLControlSurface surface, final IModel model)
     {
-        super (surface, model);
+        super ("Play options", surface, model);
         this.isTemporary = false;
     }
 
@@ -43,7 +43,7 @@ public class PlayOptionsMode extends AbstractMode<SLControlSurface, SLConfigurat
 
     /** {@inheritDoc} */
     @Override
-    public void onRowButton (final int row, final int index, final ButtonEvent event)
+    public void onButton (final int row, final int index, final ButtonEvent event)
     {
         // Intentionally empty
     }

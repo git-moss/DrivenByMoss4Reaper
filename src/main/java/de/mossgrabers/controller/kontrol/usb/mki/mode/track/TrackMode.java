@@ -30,7 +30,7 @@ public class TrackMode extends AbstractKontrol1Mode
      */
     public TrackMode (final Kontrol1ControlSurface surface, final IModel model)
     {
-        super (surface, model);
+        super ("Track", surface, model);
     }
 
 
@@ -75,7 +75,7 @@ public class TrackMode extends AbstractKontrol1Mode
 
     /** {@inheritDoc} */
     @Override
-    public void onValueKnob (final int index, final int value)
+    public void onKnobValue (final int index, final int value)
     {
         final ITrackBank tb = this.model.getCurrentTrackBank ();
         final ITrack selectedTrack = tb.getSelectedItem ();

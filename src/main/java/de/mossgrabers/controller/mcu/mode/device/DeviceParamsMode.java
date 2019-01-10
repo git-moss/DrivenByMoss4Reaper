@@ -29,13 +29,13 @@ public class DeviceParamsMode extends BaseMode
      */
     public DeviceParamsMode (final MCUControlSurface surface, final IModel model)
     {
-        super (surface, model);
+        super ("Parameters", surface, model);
     }
 
 
     /** {@inheritDoc} */
     @Override
-    public void onValueKnob (final int index, final int value)
+    public void onKnobValue (final int index, final int value)
     {
         final int extenderOffset = this.surface.getExtenderOffset ();
         this.model.getCursorDevice ().getParameterBank ().getItem (extenderOffset + index).changeValue (value);

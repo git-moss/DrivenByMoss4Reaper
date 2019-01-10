@@ -6,6 +6,7 @@ package de.mossgrabers.controller.generic.controller;
 
 import de.mossgrabers.controller.generic.CommandSlot;
 import de.mossgrabers.controller.generic.GenericFlexiConfiguration;
+import de.mossgrabers.controller.generic.mode.Modes;
 import de.mossgrabers.framework.command.trigger.clip.NewCommand;
 import de.mossgrabers.framework.controller.AbstractControlSurface;
 import de.mossgrabers.framework.controller.IValueChanger;
@@ -611,21 +612,21 @@ public class GenericFlexiControlSurface extends AbstractControlSurface<GenericFl
                 return -1;
 
             case MODES_KNOB1:
-                return this.getModeManager ().getActiveOrTempMode ().getKnobValue (0);
+                return this.modeManager.getActiveOrTempMode ().getKnobValue (0);
             case MODES_KNOB2:
-                return this.getModeManager ().getActiveOrTempMode ().getKnobValue (1);
+                return this.modeManager.getActiveOrTempMode ().getKnobValue (1);
             case MODES_KNOB3:
-                return this.getModeManager ().getActiveOrTempMode ().getKnobValue (2);
+                return this.modeManager.getActiveOrTempMode ().getKnobValue (2);
             case MODES_KNOB4:
-                return this.getModeManager ().getActiveOrTempMode ().getKnobValue (3);
+                return this.modeManager.getActiveOrTempMode ().getKnobValue (3);
             case MODES_KNOB5:
-                return this.getModeManager ().getActiveOrTempMode ().getKnobValue (4);
+                return this.modeManager.getActiveOrTempMode ().getKnobValue (4);
             case MODES_KNOB6:
-                return this.getModeManager ().getActiveOrTempMode ().getKnobValue (5);
+                return this.modeManager.getActiveOrTempMode ().getKnobValue (5);
             case MODES_KNOB7:
-                return this.getModeManager ().getActiveOrTempMode ().getKnobValue (6);
+                return this.modeManager.getActiveOrTempMode ().getKnobValue (6);
             case MODES_KNOB8:
-                return this.getModeManager ().getActiveOrTempMode ().getKnobValue (7);
+                return this.modeManager.getActiveOrTempMode ().getKnobValue (7);
 
             case MODES_BUTTON1:
             case MODES_BUTTON2:
@@ -1575,54 +1576,75 @@ public class GenericFlexiControlSurface extends AbstractControlSurface<GenericFl
                 this.changeModeValue (commandSlot.getKnobMode (), command.ordinal () - FlexiCommand.MODES_KNOB1.ordinal (), value);
                 break;
 
-            // TODO
             case MODES_BUTTON1:
-                break;
             case MODES_BUTTON2:
-                break;
             case MODES_BUTTON3:
-                break;
             case MODES_BUTTON4:
-                break;
             case MODES_BUTTON5:
-                break;
             case MODES_BUTTON6:
-                break;
             case MODES_BUTTON7:
-                break;
             case MODES_BUTTON8:
+                if (value > 0)
+                    this.modeManager.getActiveOrTempMode ().selectItem (command.ordinal () - FlexiCommand.MODES_BUTTON1.ordinal ());
+                break;
+
+            case MODES_NEXT_ITEM:
+                if (value > 0)
+                    this.modeManager.getActiveOrTempMode ().selectNextItem ();
+                break;
+            case MODES_PREV_ITEM:
+                if (value > 0)
+                    this.modeManager.getActiveOrTempMode ().selectPreviousItem ();
                 break;
             case MODES_NEXT_PAGE:
+                if (value > 0)
+                    this.modeManager.getActiveOrTempMode ().selectNextItemPage ();
                 break;
             case MODES_PREV_PAGE:
+                if (value > 0)
+                    this.modeManager.getActiveOrTempMode ().selectPreviousItemPage ();
                 break;
             case MODES_SELECT_MODE_TRACK:
+                this.activateMode (Modes.MODE_TRACK);
                 break;
             case MODES_SELECT_MODE_VOLUME:
+                this.activateMode (Modes.MODE_VOLUME);
                 break;
             case MODES_SELECT_MODE_PAN:
+                this.activateMode (Modes.MODE_PAN);
                 break;
             case MODES_SELECT_MODE_SEND1:
+                this.activateMode (Modes.MODE_SEND1);
                 break;
             case MODES_SELECT_MODE_SEND2:
+                this.activateMode (Modes.MODE_SEND2);
                 break;
             case MODES_SELECT_MODE_SEND3:
+                this.activateMode (Modes.MODE_SEND3);
                 break;
             case MODES_SELECT_MODE_SEND4:
+                this.activateMode (Modes.MODE_SEND4);
                 break;
             case MODES_SELECT_MODE_SEND5:
+                this.activateMode (Modes.MODE_SEND5);
                 break;
             case MODES_SELECT_MODE_SEND6:
+                this.activateMode (Modes.MODE_SEND6);
                 break;
             case MODES_SELECT_MODE_SEND7:
+                this.activateMode (Modes.MODE_SEND7);
                 break;
             case MODES_SELECT_MODE_SEND8:
+                this.activateMode (Modes.MODE_SEND8);
                 break;
             case MODES_SELECT_MODE_DEVICE:
+                this.activateMode (Modes.MODE_DEVICE);
                 break;
             case MODES_SELECT_MODE_NEXT:
+                // TODO
                 break;
             case MODES_SELECT_MODE_PREV:
+                // TODO
                 break;
 
         }
@@ -1632,6 +1654,13 @@ public class GenericFlexiControlSurface extends AbstractControlSurface<GenericFl
             this.isUpdatingValue = false;
         }, 400);
 
+    }
+
+
+    private void activateMode (final Integer modeID)
+    {
+        this.modeManager.setActiveMode (modeID);
+        this.host.showNotification (this.modeManager.getMode (modeID).getName ());
     }
 
 
@@ -1766,9 +1795,9 @@ public class GenericFlexiControlSurface extends AbstractControlSurface<GenericFl
 
     private void changeModeValue (final int knobMode, final int knobIndex, final int value)
     {
-        final Mode mode = this.getModeManager ().getActiveOrTempMode ();
+        final Mode mode = this.modeManager.getActiveOrTempMode ();
         ((SimpleMode<?, ?>) mode).setAbsolute (knobMode == KNOB_MODE_ABSOLUTE);
-        mode.onValueKnob (knobIndex, value);
+        mode.onKnobValue (knobIndex, value);
     }
 
 

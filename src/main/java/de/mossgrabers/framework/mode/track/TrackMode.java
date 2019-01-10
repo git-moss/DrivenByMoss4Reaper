@@ -32,13 +32,13 @@ public class TrackMode<S extends IControlSurface<C>, C extends Configuration> ex
      */
     public TrackMode (final S surface, final IModel model, final boolean isAbsolute)
     {
-        super (surface, model, isAbsolute);
+        super ("Track", surface, model, isAbsolute);
     }
 
 
     /** {@inheritDoc} */
     @Override
-    public void onValueKnob (final int index, final int value)
+    public void onKnobValue (final int index, final int value)
     {
         final ITrack track = this.model.getCurrentTrackBank ().getItem (index);
         if (track == null)
@@ -72,7 +72,7 @@ public class TrackMode<S extends IControlSurface<C>, C extends Configuration> ex
 
     /** {@inheritDoc} */
     @Override
-    public void onValueKnobTouch (final int index, final boolean isTouched)
+    public void onKnobTouch (final int index, final boolean isTouched)
     {
         if (!isTouched)
             return;

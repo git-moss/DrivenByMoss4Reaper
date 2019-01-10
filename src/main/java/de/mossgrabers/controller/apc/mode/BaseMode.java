@@ -29,14 +29,15 @@ public abstract class BaseMode extends AbstractMode<APCControlSurface, APCConfig
     /**
      * Constructor.
      *
+     * @param name The name of the mode
      * @param surface The control surface
      * @param model The model
      * @param ledMode The mode for the knob LEDs
      * @param defaultValue Default value to use
      */
-    public BaseMode (final APCControlSurface surface, final IModel model, final int ledMode, final int defaultValue)
+    public BaseMode (final String name, final APCControlSurface surface, final IModel model, final int ledMode, final int defaultValue)
     {
-        super (surface, model);
+        super (name, surface, model);
 
         this.isTemporary = false;
 
@@ -80,7 +81,7 @@ public abstract class BaseMode extends AbstractMode<APCControlSurface, APCConfig
 
     /** {@inheritDoc} */
     @Override
-    public void onValueKnob (final int index, final int value)
+    public void onKnobValue (final int index, final int value)
     {
         this.setValue (index, value);
 
@@ -126,7 +127,7 @@ public abstract class BaseMode extends AbstractMode<APCControlSurface, APCConfig
 
     /** {@inheritDoc} */
     @Override
-    public void onRowButton (final int row, final int index, final ButtonEvent event)
+    public void onButton (final int row, final int index, final ButtonEvent event)
     {
         // Intentionally empty
     }

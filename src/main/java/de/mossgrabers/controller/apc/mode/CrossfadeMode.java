@@ -24,7 +24,7 @@ public class CrossfadeMode extends BaseMode
      */
     public CrossfadeMode (final APCControlSurface surface, final IModel model)
     {
-        super (surface, model, 3, 64);
+        super ("Crossfade", surface, model, 3, 64);
     }
 
 
@@ -32,6 +32,7 @@ public class CrossfadeMode extends BaseMode
     @Override
     public void setValue (final int index, final int value)
     {
+        // TODO this is wrong
         this.model.getCurrentTrackBank ().getItem (index).setPan (value);
     }
 

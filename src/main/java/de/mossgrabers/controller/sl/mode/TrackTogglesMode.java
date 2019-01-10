@@ -33,7 +33,7 @@ public class TrackTogglesMode extends AbstractMode<SLControlSurface, SLConfigura
      */
     public TrackTogglesMode (final SLControlSurface surface, final IModel model)
     {
-        super (surface, model);
+        super ("Track", surface, model);
         this.isTemporary = false;
     }
 
@@ -71,7 +71,7 @@ public class TrackTogglesMode extends AbstractMode<SLControlSurface, SLConfigura
 
     /** {@inheritDoc} */
     @Override
-    public void onRowButton (final int row, final int index, final ButtonEvent event)
+    public void onButton (final int row, final int index, final ButtonEvent event)
     {
         // Intentionally empty
     }

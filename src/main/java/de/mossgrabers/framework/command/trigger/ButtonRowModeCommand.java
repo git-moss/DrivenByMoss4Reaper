@@ -48,6 +48,6 @@ public class ButtonRowModeCommand<S extends IControlSurface<C>, C extends Config
     {
         final Mode m = this.surface.getModeManager ().getActiveOrTempMode ();
         if (m != null)
-            m.onRowButton (this.row, this.index, event);
+            m.onButton (this.row, this.index, event);
     }
 }

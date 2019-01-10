@@ -59,6 +59,6 @@ public class P2ButtonCommand extends AbstractTriggerCommand<SLControlSurface, SL
         }
         final Mode activeMode = this.surface.getModeManager ().getActiveOrTempMode ();
         if (activeMode != null)
-            activeMode.selectTrack (0);
+            activeMode.selectItem (0);
     }
 }

@@ -23,6 +23,6 @@ public class MuteMode extends AbstractTrackMode
      */
     public MuteMode (final LaunchpadControlSurface surface, final IModel model)
     {
-        super (surface, model);
+        super ("Mute", surface, model);
     }
 }

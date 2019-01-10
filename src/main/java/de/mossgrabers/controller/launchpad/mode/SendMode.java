@@ -23,6 +23,6 @@ public class SendMode extends AbstractTrackMode
      */
     public SendMode (final LaunchpadControlSurface surface, final IModel model)
     {
-        super (surface, model);
+        super ("Send", surface, model);
     }
 }

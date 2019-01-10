@@ -106,7 +106,7 @@ public class FrameMode extends BaseMode
      */
     public FrameMode (final PushControlSurface surface, final IModel model)
     {
-        super (surface, model);
+        super ("Frame", surface, model);
     }
 
 

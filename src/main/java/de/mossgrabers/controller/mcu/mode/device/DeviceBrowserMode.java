@@ -38,7 +38,7 @@ public class DeviceBrowserMode extends BaseMode
      */
     public DeviceBrowserMode (final MCUControlSurface surface, final IModel model)
     {
-        super (surface, model);
+        super ("Browser", surface, model);
 
         this.isTemporary = false;
 
@@ -57,7 +57,7 @@ public class DeviceBrowserMode extends BaseMode
 
     /** {@inheritDoc} */
     @Override
-    public void onValueKnob (final int index, final int value)
+    public void onKnobValue (final int index, final int value)
     {
         int speed = (int) this.model.getValueChanger ().calcKnobSpeed (value, 1);
         final boolean direction = speed > 0;

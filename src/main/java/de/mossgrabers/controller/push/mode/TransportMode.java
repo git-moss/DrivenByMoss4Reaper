@@ -33,13 +33,13 @@ public class TransportMode extends BaseMode
      */
     public TransportMode (final PushControlSurface surface, final IModel model)
     {
-        super (surface, model);
+        super ("Transport", surface, model);
     }
 
 
     /** {@inheritDoc} */
     @Override
-    public void onValueKnob (final int index, final int value)
+    public void onKnobValue (final int index, final int value)
     {
         // Deactivated knobs to prevent accidental changes when using the small knobs
     }
@@ -47,7 +47,7 @@ public class TransportMode extends BaseMode
 
     /** {@inheritDoc} */
     @Override
-    public void onValueKnobTouch (final int index, final boolean isTouched)
+    public void onKnobTouch (final int index, final boolean isTouched)
     {
         this.isKnobTouched[index] = isTouched;
     }

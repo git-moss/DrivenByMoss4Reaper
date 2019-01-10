@@ -28,7 +28,7 @@ public class VolumeMode extends AbstractKontrol1Mode
      */
     public VolumeMode (final Kontrol1ControlSurface surface, final IModel model)
     {
-        super (surface, model);
+        super ("Volume", surface, model);
     }
 
 
@@ -72,7 +72,7 @@ public class VolumeMode extends AbstractKontrol1Mode
 
     /** {@inheritDoc} */
     @Override
-    public void onValueKnob (final int index, final int value)
+    public void onKnobValue (final int index, final int value)
     {
         this.model.getCurrentTrackBank ().getItem (index).changeVolume (value);
     }

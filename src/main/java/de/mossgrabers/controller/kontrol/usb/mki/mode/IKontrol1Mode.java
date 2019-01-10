@@ -26,30 +26,6 @@ public interface IKontrol1Mode
 
 
     /**
-     * Scroll left.
-     */
-    void scrollLeft ();
-
-
-    /**
-     * Scroll right.
-     */
-    void scrollRight ();
-
-
-    /**
-     * Scroll up.
-     */
-    void scrollUp ();
-
-
-    /**
-     * Scroll down.
-     */
-    void scrollDown ();
-
-
-    /**
      * The back button was pressed.
      */
     void onBack ();

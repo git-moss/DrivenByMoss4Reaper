@@ -28,13 +28,13 @@ public class CrossfaderMode extends AbstractTrackMode
      */
     public CrossfaderMode (final PushControlSurface surface, final IModel model)
     {
-        super (surface, model);
+        super ("Crossfader", surface, model);
     }
 
 
     /** {@inheritDoc} */
     @Override
-    public void onValueKnobTouch (final int index, final boolean isTouched)
+    public void onKnobTouch (final int index, final boolean isTouched)
     {
         this.isKnobTouched[index] = isTouched;
 
@@ -59,7 +59,7 @@ public class CrossfaderMode extends AbstractTrackMode
 
     /** {@inheritDoc} */
     @Override
-    public void onValueKnob (final int index, final int value)
+    public void onKnobValue (final int index, final int value)
     {
         if (this.increaseKnobMovement ())
             this.model.getCurrentTrackBank ().getItem (index).changeCrossfadeModeAsNumber (value);

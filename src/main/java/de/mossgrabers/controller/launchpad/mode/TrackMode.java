@@ -23,6 +23,6 @@ public class TrackMode extends AbstractTrackMode
      */
     public TrackMode (final LaunchpadControlSurface surface, final IModel model)
     {
-        super (surface, model);
+        super ("Track", surface, model);
     }
 }

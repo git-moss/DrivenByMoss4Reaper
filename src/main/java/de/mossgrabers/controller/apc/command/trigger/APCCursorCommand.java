@@ -45,7 +45,7 @@ public class APCCursorCommand extends CursorCommand<APCControlSurface, APCConfig
     {
         final Mode activeMode = this.surface.getModeManager ().getActiveOrTempMode ();
         if (activeMode != null)
-            activeMode.selectPreviousTrack ();
+            activeMode.selectPreviousItem ();
     }
 
 
@@ -55,7 +55,7 @@ public class APCCursorCommand extends CursorCommand<APCControlSurface, APCConfig
     {
         final Mode activeMode = this.surface.getModeManager ().getActiveOrTempMode ();
         if (activeMode != null)
-            activeMode.selectNextTrack ();
+            activeMode.selectNextItem ();
 
     }
 }

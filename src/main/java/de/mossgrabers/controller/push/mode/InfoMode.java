@@ -26,7 +26,7 @@ public class InfoMode extends BaseMode
      */
     public InfoMode (final PushControlSurface surface, final IModel model)
     {
-        super (surface, model);
+        super ("Info", surface, model);
         this.isTemporary = false;
     }
 

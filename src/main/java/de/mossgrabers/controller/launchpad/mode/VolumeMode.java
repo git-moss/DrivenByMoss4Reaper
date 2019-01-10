@@ -23,6 +23,6 @@ public class VolumeMode extends AbstractTrackMode
      */
     public VolumeMode (final LaunchpadControlSurface surface, final IModel model)
     {
-        super (surface, model);
+        super ("Volume", surface, model);
     }
 }

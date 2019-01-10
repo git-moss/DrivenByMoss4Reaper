@@ -27,14 +27,14 @@ public class SetupMode extends BaseMode
      */
     public SetupMode (final PushControlSurface surface, final IModel model)
     {
-        super (surface, model);
+        super ("Setup", surface, model);
         this.isTemporary = false;
     }
 
 
     /** {@inheritDoc} */
     @Override
-    public void onValueKnob (final int index, final int value)
+    public void onKnobValue (final int index, final int value)
     {
         final PushConfiguration config = this.surface.getConfiguration ();
         switch (index)
@@ -63,7 +63,7 @@ public class SetupMode extends BaseMode
 
     /** {@inheritDoc} */
     @Override
-    public void onValueKnobTouch (final int index, final boolean isTouched)
+    public void onKnobTouch (final int index, final boolean isTouched)
     {
         this.isKnobTouched[index] = isTouched;
 

@@ -26,14 +26,15 @@ public class SimpleMode<S extends IControlSurface<C>, C extends Configuration> e
     /**
      * Constructor.
      *
+     * @param name The name of the mode
      * @param surface The control surface
      * @param model The model
      * @param isAbsolute If true the value change is happending with a setter otherwise relative
      *            change method is used
      */
-    public SimpleMode (final S surface, final IModel model, final boolean isAbsolute)
+    public SimpleMode (final String name, final S surface, final IModel model, final boolean isAbsolute)
     {
-        super (surface, model);
+        super (name, surface, model);
         this.isAbsolute = isAbsolute;
     }
 
@@ -48,7 +49,7 @@ public class SimpleMode<S extends IControlSurface<C>, C extends Configuration> e
 
     /** {@inheritDoc} */
     @Override
-    public void onRowButton (final int row, final int index, final ButtonEvent event)
+    public void onButton (final int row, final int index, final ButtonEvent event)
     {
         // Intentionally empty
     }

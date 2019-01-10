@@ -28,13 +28,13 @@ public class TrackMode extends AbstractTrackMode
      */
     public TrackMode (final MCUControlSurface surface, final IModel model)
     {
-        super (surface, model);
+        super ("Track", surface, model);
     }
 
 
     /** {@inheritDoc} */
     @Override
-    public void onValueKnob (final int index, final int value)
+    public void onKnobValue (final int index, final int value)
     {
         final ITrack selectedTrack = this.model.getSelectedTrack ();
         if (selectedTrack == null)

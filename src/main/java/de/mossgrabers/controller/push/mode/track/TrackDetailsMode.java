@@ -34,7 +34,7 @@ public class TrackDetailsMode extends BaseMode
      */
     public TrackDetailsMode (final PushControlSurface surface, final IModel model)
     {
-        super (surface, model);
+        super ("Track details", surface, model);
     }
 
 

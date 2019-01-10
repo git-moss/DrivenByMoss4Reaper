@@ -35,13 +35,13 @@ public class DeviceLayerModeSend extends DeviceLayerMode
      */
     public DeviceLayerModeSend (final PushControlSurface surface, final IModel model)
     {
-        super (surface, model);
+        super ("Layer Send", surface, model);
     }
 
 
     /** {@inheritDoc} */
     @Override
-    public void onValueKnob (final int index, final int value)
+    public void onKnobValue (final int index, final int value)
     {
         final ICursorDevice cd = this.model.getCursorDevice ();
 
@@ -55,7 +55,7 @@ public class DeviceLayerModeSend extends DeviceLayerMode
 
     /** {@inheritDoc} */
     @Override
-    public void onValueKnobTouch (final int index, final boolean isTouched)
+    public void onKnobTouch (final int index, final boolean isTouched)
     {
         this.isKnobTouched[index] = isTouched;
 

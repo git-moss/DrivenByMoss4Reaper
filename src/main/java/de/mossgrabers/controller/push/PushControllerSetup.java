@@ -280,7 +280,7 @@ public class PushControllerSetup extends AbstractControllerSetup<PushControlSurf
         modeManager.registerMode (Modes.MODE_TRANSPORT, new TransportMode (surface, this.model));
 
         modeManager.registerMode (Modes.MODE_DEVICE_PARAMS, new DeviceParamsMode (surface, this.model));
-        modeManager.registerMode (Modes.MODE_DEVICE_LAYER, new DeviceLayerMode (surface, this.model));
+        modeManager.registerMode (Modes.MODE_DEVICE_LAYER, new DeviceLayerMode ("Layer", surface, this.model));
 
         modeManager.registerMode (Modes.MODE_BROWSER, new DeviceBrowserMode (surface, this.model));
 

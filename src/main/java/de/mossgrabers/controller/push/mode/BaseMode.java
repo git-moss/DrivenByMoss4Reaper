@@ -33,12 +33,13 @@ public abstract class BaseMode extends AbstractMode<PushControlSurface, PushConf
     /**
      * Constructor.
      *
+     * @param name The name of the mode
      * @param surface The control surface
      * @param model The model
      */
-    public BaseMode (final PushControlSurface surface, final IModel model)
+    public BaseMode (final String name, final PushControlSurface surface, final IModel model)
     {
-        super (surface, model);
+        super (name, surface, model);
 
         this.isPush2 = this.surface.getConfiguration ().isPush2 ();
 
@@ -88,7 +89,7 @@ public abstract class BaseMode extends AbstractMode<PushControlSurface, PushConf
 
     /** {@inheritDoc} */
     @Override
-    public void onRowButton (final int row, final int index, final ButtonEvent event)
+    public void onButton (final int row, final int index, final ButtonEvent event)
     {
         if (row == 0)
             this.onFirstRow (index, event);

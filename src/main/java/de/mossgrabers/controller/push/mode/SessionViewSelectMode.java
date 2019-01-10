@@ -53,7 +53,7 @@ public class SessionViewSelectMode extends BaseMode
      */
     public SessionViewSelectMode (final PushControlSurface surface, final IModel model)
     {
-        super (surface, model);
+        super ("Session View", surface, model);
     }
 
 

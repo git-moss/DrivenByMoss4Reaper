@@ -64,6 +64,6 @@ public class SmallKnobTouchCommand extends AbstractTriggerCommand<PushControlSur
         else
             modeManager.restoreMode ();
 
-        modeManager.getMode (Modes.MODE_TRANSPORT).onValueKnobTouch (this.isTempo ? 4 : 6, isTouched);
+        modeManager.getMode (Modes.MODE_TRANSPORT).onKnobTouch (this.isTempo ? 4 : 6, isTouched);
     }
 }

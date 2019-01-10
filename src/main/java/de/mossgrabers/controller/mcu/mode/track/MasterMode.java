@@ -30,7 +30,7 @@ public class MasterMode extends BaseMode
      */
     public MasterMode (final MCUControlSurface surface, final IModel model, final boolean isTemporary)
     {
-        super (surface, model);
+        super ("Master", surface, model);
         this.isTemporary = isTemporary;
     }
 
@@ -53,7 +53,7 @@ public class MasterMode extends BaseMode
 
     /** {@inheritDoc} */
     @Override
-    public void onValueKnob (final int index, final int value)
+    public void onKnobValue (final int index, final int value)
     {
         if (index == 0)
             this.model.getMasterTrack ().changeVolume (value);
@@ -64,7 +64,7 @@ public class MasterMode extends BaseMode
 
     /** {@inheritDoc} */
     @Override
-    public void onRowButton (final int row, final int index, final ButtonEvent event)
+    public void onButton (final int row, final int index, final ButtonEvent event)
     {
         if (event == ButtonEvent.DOWN && row > 0)
         {

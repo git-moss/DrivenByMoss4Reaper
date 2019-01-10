@@ -36,7 +36,7 @@ public class ScalesMode extends BaseMode
      */
     public ScalesMode (final PushControlSurface surface, final IModel model)
     {
-        super (surface, model);
+        super ("Scale", surface, model);
         this.isTemporary = false;
         this.scales = model.getScales ();
     }
@@ -44,7 +44,7 @@ public class ScalesMode extends BaseMode
 
     /** {@inheritDoc} */
     @Override
-    public void onValueKnob (final int index, final int value)
+    public void onKnobValue (final int index, final int value)
     {
         if (index != 0)
             return;

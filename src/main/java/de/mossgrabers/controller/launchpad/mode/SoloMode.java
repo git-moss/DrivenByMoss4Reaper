@@ -23,6 +23,6 @@ public class SoloMode extends AbstractTrackMode
      */
     public SoloMode (final LaunchpadControlSurface surface, final IModel model)
     {
-        super (surface, model);
+        super ("Solo", surface, model);
     }
 }

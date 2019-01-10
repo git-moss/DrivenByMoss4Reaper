@@ -34,14 +34,14 @@ public class SelectedSendMode<S extends IControlSurface<C>, C extends Configurat
      */
     public SelectedSendMode (final int sendIndex, final S surface, final IModel model)
     {
-        super (surface, model, false);
+        super ("Send " + sendIndex, surface, model, false);
         this.sendIndex = sendIndex;
     }
 
 
     /** {@inheritDoc} */
     @Override
-    public void onValueKnob (final int index, final int value)
+    public void onKnobValue (final int index, final int value)
     {
         final ITrack selectedTrack = this.model.getCurrentTrackBank ().getSelectedItem ();
         if (selectedTrack != null)
@@ -51,7 +51,7 @@ public class SelectedSendMode<S extends IControlSurface<C>, C extends Configurat
 
     /** {@inheritDoc} */
     @Override
-    public void onValueKnobTouch (final int index, final boolean isTouched)
+    public void onKnobTouch (final int index, final boolean isTouched)
     {
         if (!isTouched)
             return;

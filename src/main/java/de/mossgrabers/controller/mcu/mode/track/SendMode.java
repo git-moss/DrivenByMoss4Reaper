@@ -28,13 +28,13 @@ public class SendMode extends AbstractTrackMode
      */
     public SendMode (final MCUControlSurface surface, final IModel model)
     {
-        super (surface, model);
+        super ("Send", surface, model);
     }
 
 
     /** {@inheritDoc} */
     @Override
-    public void onValueKnob (final int index, final int value)
+    public void onKnobValue (final int index, final int value)
     {
         final int extenderOffset = this.surface.getExtenderOffset ();
         this.model.getCurrentTrackBank ().getItem (extenderOffset + index).getSendBank ().getItem (this.getCurrentSendIndex ()).changeValue (value);

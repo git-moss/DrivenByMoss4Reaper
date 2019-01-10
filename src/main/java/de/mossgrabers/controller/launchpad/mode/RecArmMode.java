@@ -23,6 +23,6 @@ public class RecArmMode extends AbstractTrackMode
      */
     public RecArmMode (final LaunchpadControlSurface surface, final IModel model)
     {
-        super (surface, model);
+        super ("Rec Arm", surface, model);
     }
 }

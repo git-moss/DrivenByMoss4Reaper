@@ -128,7 +128,7 @@ public class ButtonRowSelectCommand<S extends IControlSurface<C>, C extends Conf
             return;
         final Mode activeMode = modeManager.getActiveOrTempMode ();
         if (activeMode != null)
-            activeMode.selectTrack (0);
+            activeMode.selectItem (0);
     }
 
 

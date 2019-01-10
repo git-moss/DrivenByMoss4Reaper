@@ -61,7 +61,7 @@ public class NoteViewSelectMode extends BaseMode
      */
     public NoteViewSelectMode (final PushControlSurface surface, final IModel model)
     {
-        super (surface, model);
+        super ("Note View Select", surface, model);
     }
 
 

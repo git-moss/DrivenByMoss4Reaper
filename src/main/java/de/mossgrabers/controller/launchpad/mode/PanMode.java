@@ -23,6 +23,6 @@ public class PanMode extends AbstractTrackMode
      */
     public PanMode (final LaunchpadControlSurface surface, final IModel model)
     {
-        super (surface, model);
+        super ("Panorama", surface, model);
     }
 }

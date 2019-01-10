@@ -27,7 +27,7 @@ public class MarkerMode extends BaseMode
      */
     public MarkerMode (final MCUControlSurface surface, final IModel model)
     {
-        super (surface, model);
+        super ("Marker", surface, model);
 
         this.isTemporary = true;
     }
@@ -35,7 +35,7 @@ public class MarkerMode extends BaseMode
 
     /** {@inheritDoc} */
     @Override
-    public void onValueKnob (final int index, final int value)
+    public void onKnobValue (final int index, final int value)
     {
         // Intentionally empty
     }

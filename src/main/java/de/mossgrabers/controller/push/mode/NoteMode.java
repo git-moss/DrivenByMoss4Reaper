@@ -38,7 +38,7 @@ public class NoteMode extends BaseMode
      */
     public NoteMode (final PushControlSurface surface, final IModel model)
     {
-        super (surface, model);
+        super ("Note", surface, model);
     }
 
 
@@ -63,7 +63,7 @@ public class NoteMode extends BaseMode
 
     /** {@inheritDoc} */
     @Override
-    public void onValueKnob (final int index, final int value)
+    public void onKnobValue (final int index, final int value)
     {
         final IValueChanger valueChanger = this.model.getValueChanger ();
         switch (index)

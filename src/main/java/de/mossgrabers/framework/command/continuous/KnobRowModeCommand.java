@@ -44,6 +44,6 @@ public class KnobRowModeCommand<S extends IControlSurface<C>, C extends Configur
     {
         final Mode m = this.surface.getModeManager ().getActiveOrTempMode ();
         if (m != null)
-            m.onValueKnob (this.index, value);
+            m.onKnobValue (this.index, value);
     }
 }
