@@ -231,9 +231,7 @@ public class MainFrame extends JFrame implements MessageSender
     protected void updateTitle ()
     {
         final StringBuilder sb = new StringBuilder ("DrivenByMoss 4 Reaper");
-
-        // TODO Update to Java 9
-        final Package p = Package.getPackage ("de.mossgrabers.reaper");
+        final Package p = this.getClass ().getClassLoader ().getDefinedPackage ("de.mossgrabers.reaper");
         if (p != null)
         {
             final String implementationVersion = p.getImplementationVersion ();

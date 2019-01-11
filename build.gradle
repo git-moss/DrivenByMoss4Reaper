@@ -30,18 +30,15 @@ distTar.enabled = false
 startScripts.enabled = false
 
 applicationDistribution.from('build/reports/dependency-license') {
-    into "license/dependency"
+    into "docs/license/dependency"
 }
 
 installDist {
     doLast {
-        File pluginFolder = new File (destinationDir, 'plugin')
-        new File (destinationDir, 'lib').renameTo(pluginFolder)
-        File subdir = new File (pluginFolder, 'drivenbymoss-libs')
-        subdir.mkdirs ()
-        String sourceDir = pluginFolder.getAbsolutePath()
-        String destDir = subdir.getAbsolutePath()
-        
+        // Collect and move JAR files
+        File javaLibsDir = new File (destinationDir, 'drivenbymoss-libs')
+        javaLibsDir.mkdirs ()
+        File sourceDir = new File (destinationDir, '/lib')
         ant.delete () {
             fileset(dir: sourceDir) {
                 include(name: 'purejavahidapi-*-javadoc.jar')
@@ -52,34 +49,29 @@ installDist {
                 include(name: 'libusb4java-1.3.0-win32-x86.jar')
             }
         }
-        ant.move (todir: destDir) {
+        ant.move (todir: javaLibsDir) {
             fileset(dir: sourceDir) {
                 include(name: '**.jar')
             }
         }
+        sourceDir.delete()
 
         // Windows
-        String zipFileName = 'build/DrivenByMoss4Reaper-' + version + '-Windows.zip'
-        String runtimeDir = new File ('runtime', 'windows').getAbsolutePath()
-        ant.zip (destfile: zipFileName) {
+        ant.zip (destfile: 'build/DrivenByMoss4Reaper-' + version + '-Windows.zip') {
             fileset(dir: destinationDir)
-            fileset(dir: runtimeDir)
+            fileset(dir: new File ('runtime', 'windows'))
         }
 
         // Mac
-        zipFileName = 'build/DrivenByMoss4Reaper-' + version + '-Macos.zip'
-        runtimeDir = new File ('runtime', 'macos').getAbsolutePath()
-        ant.zip (destfile: zipFileName) {
+        ant.zip (destfile: 'build/DrivenByMoss4Reaper-' + version + '-Macos.zip') {
             fileset(dir: destinationDir)
-            fileset(dir: runtimeDir)
+            fileset(dir: new File ('runtime', 'macos'))
         }
 
         // Linux
-        zipFileName = 'build/DrivenByMoss4Reaper-' + version + '-Linux.zip'
-        runtimeDir = new File ('runtime', 'linux').getAbsolutePath()
-        ant.zip (destfile: zipFileName) {
+        ant.zip (destfile: 'build/DrivenByMoss4Reaper-' + version + '-Linux.zip') {
             fileset(dir: destinationDir)
-            fileset(dir: runtimeDir)
+            fileset(dir: new File ('runtime', 'linux'))
         }
     }
 }
