@@ -1,2 +1,5 @@
 "%JAVA_HOME%/bin/jdeps" --print-module-deps *
 "%JAVA_HOME%/bin/jlink" --no-header-files --no-man-pages --compress=2 --strip-debug --add-modules java.desktop,java.xml,java.naming --output java-runtime
+
+Fix for large Linux file:
+strip -p --strip-unneeded lib/server/libjvm.so
