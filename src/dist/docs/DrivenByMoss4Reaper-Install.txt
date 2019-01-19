@@ -1,6 +1,12 @@
+Requires Reaper 64 bit, 5.95+ version!
+
 1) Unzip the downloaded file "DrivenByMoss4Reaper-X.XX-PLATFORM.zip" to the 
    Reaper UserPlugins folder (make sure you keep the folder structure of the ZIP 
    file intact!).
+
+   Note: For the Portable Reaper installation drop the files into the "Plugins" 
+   folder of your portable installation.
+
    You find the UserPlugins folder at the following locations:
 
    a) Windows 10
@@ -8,12 +14,12 @@
       Note that the AppData folder is hidden, you need to make it visible
       by enabling "Show hidden files" in the View tab of explorer.
 
-   b) Mac OS X
+   b) Mac OS X (minimum version 10.12 Sierra)
           ~/Library/Application Support/REAPER/UserPlugins
       These folders are hidden as well. Press cmd+shift+. in the finder
       to make them visible.
 
-   c) Linux (Ubuntu)
+   c) Linux (I am testing on Ubuntu Studio)
       Look up the location at which you have installed Reaper. 
       Install the *.so file into ~/.config/REAPER/UserPlugins or in the case of a 
       portable install into REAPER/UserPlugins.

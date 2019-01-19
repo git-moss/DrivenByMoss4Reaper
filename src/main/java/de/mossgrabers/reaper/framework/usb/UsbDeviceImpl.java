@@ -72,23 +72,23 @@ public class UsbDeviceImpl implements IUsbDevice
         }
         finally
         {
-            if (this.handle == null)
-                return;
-
-            // Prevent further sending
-            final DeviceHandle h = this.handle;
-            this.handle = null;
-
-            this.endpointCache.forEach (UsbEndpointImpl::clear);
-
-            for (final Byte interf: this.interfaces)
+            if (this.handle != null)
             {
-                final int result = LibUsb.releaseInterface (h, interf.byteValue ());
-                if (result != LibUsb.SUCCESS)
-                    this.host.error ("Unable to release interface", new LibUsbException (result));
-            }
+                // Prevent further sending
+                final DeviceHandle h = this.handle;
+                this.handle = null;
 
-            LibUsb.close (h);
+                this.endpointCache.forEach (UsbEndpointImpl::clear);
+
+                for (final Byte interf: this.interfaces)
+                {
+                    final int result = LibUsb.releaseInterface (h, interf.byteValue ());
+                    if (result != LibUsb.SUCCESS)
+                        this.host.error ("Unable to release interface", new LibUsbException (result));
+                }
+
+                LibUsb.close (h);
+            }
         }
     }
 
@@ -114,26 +114,15 @@ public class UsbDeviceImpl implements IUsbDevice
             UsbException ex = null;
             while (iterator.hasNext ())
             {
-                final Device device = iterator.next ();
-                final DeviceDescriptor descriptor = new DeviceDescriptor ();
-                result = LibUsb.getDeviceDescriptor (device, descriptor);
-                if (result != LibUsb.SUCCESS)
+                try
                 {
-                    ex = new UsbException ("Unable to read device descriptor.", new LibUsbException (result));
-                    // Continue, maybe there is a working device
-                    continue;
+                    final DeviceHandle handle = testAndOpenDevice (iterator.next (), vendorId, productId);
+                    if (handle != null)
+                        return handle;
                 }
-                if (descriptor.idVendor () == vendorId && descriptor.idProduct () == productId)
+                catch (final UsbException exception)
                 {
-                    final DeviceHandle handle = new DeviceHandle ();
-                    result = LibUsb.open (device, handle);
-                    if (result != LibUsb.SUCCESS)
-                    {
-                        ex = new UsbException ("Unable to read device descriptor.", new LibUsbException (result));
-                        // Continue, maybe there is a working device
-                        continue;
-                    }
-                    return handle;
+                    ex = exception;
                 }
             }
 
@@ -146,6 +135,35 @@ public class UsbDeviceImpl implements IUsbDevice
         }
 
         return null;
+    }
+
+
+    /**
+     * Test if the given device matches the vendor and product id. If yes, open it and return the
+     * handle.
+     *
+     * @param device The device to test
+     * @param vendorId The vendor ID
+     * @param productId The product ID
+     * @return The handle or null if it does not match
+     * @throws UsbException Error opening the matching device
+     */
+    private static DeviceHandle testAndOpenDevice (final Device device, final short vendorId, final short productId) throws UsbException
+    {
+        final DeviceDescriptor descriptor = new DeviceDescriptor ();
+        int result = LibUsb.getDeviceDescriptor (device, descriptor);
+        if (result != LibUsb.SUCCESS)
+            throw new UsbException ("Unable to read device descriptor.", new LibUsbException (result));
+
+        if (descriptor.idVendor () != vendorId || descriptor.idProduct () != productId)
+            return null;
+
+        final DeviceHandle handle = new DeviceHandle ();
+        result = LibUsb.open (device, handle);
+        if (result != LibUsb.SUCCESS)
+            throw new UsbException ("Unable to read device descriptor.", new LibUsbException (result));
+
+        return handle;
     }
 
 
