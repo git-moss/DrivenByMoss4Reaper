@@ -1,6 +1,9 @@
+5.02
+- Fixed: Textfields in configuration dialog did not update their values.
+
 5.01
-- Fixed "error -99" on Macos with Push 2.
-- Fixed NullPointerException in Color Picker, if Cancel is selected.
+- Fixed: "error -99" on Macos with Push 2.
+- Fixed: NullPointerException in Color Picker, if Cancel is selected.
 
 5.00
 - Integrated DrivenByMoss 5.0

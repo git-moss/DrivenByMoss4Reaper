@@ -11,6 +11,9 @@ import de.mossgrabers.reaper.ui.utils.SafeRunLater;
 
 import javax.swing.JTextField;
 
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+
 
 /**
  * Reaper implementation of a string setting.
@@ -35,7 +38,17 @@ public class StringSettingImpl extends BaseSetting<JTextField, String> implement
         super (logModel, label, category, new JTextField (initialValue));
         this.value = initialValue;
 
-        this.field.addActionListener (event -> this.set (this.field.getText ()));
+        this.field.addKeyListener (new KeyAdapter ()
+        {
+            /** {@inheritDoc} */
+            @Override
+            public void keyTyped (final KeyEvent e)
+            {
+                SafeRunLater.execute (StringSettingImpl.this.logModel, () -> {
+                    StringSettingImpl.this.set (StringSettingImpl.this.field.getText ());
+                });
+            }
+        });
     }
 
 

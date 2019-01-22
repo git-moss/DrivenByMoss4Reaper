@@ -11,6 +11,8 @@ import de.mossgrabers.reaper.ui.utils.SafeRunLater;
 
 import javax.swing.JFormattedTextField;
 
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.text.NumberFormat;
 
 
@@ -45,17 +47,24 @@ public class IntegerSettingImpl extends BaseSetting<JFormattedTextField, Integer
         this.maxValue = maxValue;
 
         this.field.setValue (Integer.valueOf (initialValue));
-        this.field.addActionListener (event -> {
-            try
+        this.field.addKeyListener (new KeyAdapter ()
+        {
+            /** {@inheritDoc} */
+            @Override
+            public void keyTyped (final KeyEvent e)
             {
-                this.set (Integer.parseInt (this.field.getText ()));
-            }
-            catch (final NumberFormatException ex)
-            {
-                // Ignore
+                SafeRunLater.execute (IntegerSettingImpl.this.logModel, () -> {
+                    try
+                    {
+                        IntegerSettingImpl.this.set (Integer.parseInt (IntegerSettingImpl.this.field.getText ()));
+                    }
+                    catch (final NumberFormatException ex)
+                    {
+                        // Ignore
+                    }
+                });
             }
         });
-
     }
 
 

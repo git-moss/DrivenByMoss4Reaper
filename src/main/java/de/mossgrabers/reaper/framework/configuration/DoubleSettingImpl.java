@@ -11,6 +11,8 @@ import de.mossgrabers.reaper.ui.utils.SafeRunLater;
 
 import javax.swing.JFormattedTextField;
 
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.text.NumberFormat;
 
 
@@ -39,14 +41,22 @@ public class DoubleSettingImpl extends BaseSetting<JFormattedTextField, Double> 
         this.value = initialValue;
 
         this.field.setValue (Double.valueOf (initialValue));
-        this.field.addActionListener (event -> {
-            try
+        this.field.addKeyListener (new KeyAdapter ()
+        {
+            /** {@inheritDoc} */
+            @Override
+            public void keyTyped (final KeyEvent e)
             {
-                this.set (Double.parseDouble (this.field.getText ()));
-            }
-            catch (final NumberFormatException ex)
-            {
-                // Ignore
+                SafeRunLater.execute (DoubleSettingImpl.this.logModel, () -> {
+                    try
+                    {
+                        DoubleSettingImpl.this.set (Double.parseDouble (DoubleSettingImpl.this.field.getText ()));
+                    }
+                    catch (final NumberFormatException ex)
+                    {
+                        // Ignore
+                    }
+                });
             }
         });
     }
