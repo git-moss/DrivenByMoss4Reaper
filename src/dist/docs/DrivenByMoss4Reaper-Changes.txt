@@ -1,4 +1,5 @@
 5.03
+- New: Menu for adding controllers is now hierarchical
 - Fixed: MIDI editor is no longer closing when executing quantize from a controller, 
          if it was already open.
 

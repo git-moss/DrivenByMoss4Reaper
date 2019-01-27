@@ -27,6 +27,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -43,6 +44,8 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.Socket;
 import java.net.URL;
+import java.util.Map;
+import java.util.TreeMap;
 
 
 /**
@@ -542,11 +545,16 @@ public class MainFrame extends JFrame implements MessageSender
 
     private void configureAddButton (final JButton addButton)
     {
+        final Map<String, JMenu> menus = new TreeMap<> ();
+
         final JPopupMenu popup = new JPopupMenu ();
         final IControllerDefinition [] definitions = this.instanceManager.getDefinitions ();
         for (int i = 0; i < definitions.length; i++)
         {
-            final JMenuItem item = new JMenuItem (definitions[i].toString ());
+            final String vendor = definitions[i].getHardwareVendor ();
+            final JMenu menu = menus.computeIfAbsent (vendor, JMenu::new);
+
+            final JMenuItem item = new JMenuItem (new StringBuilder (definitions[i].getHardwareModel ()).append (" (").append (definitions[i].getVersion ()).append (')').toString ());
             final int index = i;
             item.addActionListener (event -> {
                 if (this.instanceManager.isInstantiated (index))
@@ -561,8 +569,10 @@ public class MainFrame extends JFrame implements MessageSender
                 inst.start ();
                 this.sendRefreshCommand ();
             });
-            popup.add (item);
+            menu.add (item);
         }
+        for (final JMenu menu: menus.values ())
+            popup.add (menu);
         addButton.addActionListener (event -> popup.show (addButton, 0, addButton.getHeight ()));
     }
 

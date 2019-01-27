@@ -56,7 +56,7 @@ public class ModelImpl extends AbstractModel
         final int numScenes = modelSetup.getNumScenes ();
         final int numSends = modelSetup.getNumSends ();
         this.masterTrack = new MasterTrackImpl (host, sender, valueChanger, numSends);
-        this.trackBank = new TrackBankImpl (host, sender, valueChanger, numTracks, numScenes, numSends, modelSetup.hasFlatTrackList (), this.masterTrack);
+        this.trackBank = new TrackBankImpl (host, sender, valueChanger, numTracks, numScenes, numSends, modelSetup.hasFlatTrackList (), modelSetup.hasFullFlatTrackList (), this.masterTrack);
         this.trackBanks.add (this.trackBank);
         this.effectTrackBank = null;
 
@@ -90,7 +90,7 @@ public class ModelImpl extends AbstractModel
     @Override
     public ITrackBank createSceneViewTrackBank (final int numTracks, final int numScenes)
     {
-        final TrackBankImpl tb = new TrackBankImpl (this.host, this.sender, this.valueChanger, numTracks, numScenes, this.modelSetup.getNumSends (), true, null);
+        final TrackBankImpl tb = new TrackBankImpl (this.host, this.sender, this.valueChanger, numTracks, numScenes, this.modelSetup.getNumSends (), true, false, null);
         this.trackBanks.add (tb);
         return tb;
     }

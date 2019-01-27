@@ -27,6 +27,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class TrackBankImpl extends AbstractTrackBankImpl
 {
     private final boolean       hasFlatTrackList;
+    private final boolean       hasFullFlatTrackList;
     private final ITrack        master;
     private final AtomicBoolean isDirty       = new AtomicBoolean (false);
     private TreeNode<TrackImpl> rootTrack     = new TreeNode<> ();
@@ -44,13 +45,16 @@ public class TrackBankImpl extends AbstractTrackBankImpl
      * @param numSends The number of sends in a bank page
      * @param hasFlatTrackList True if group navigation should not be supported, instead all tracks
      *            are flat
+     * @param hasFullFlatTrackList True if the track navigation should include effect and master
+     *            tracks if flat
      * @param master If set the track navigation should include master tracks if flat
      */
-    public TrackBankImpl (final IHost host, final MessageSender sender, final IValueChanger valueChanger, final int numTracks, final int numScenes, final int numSends, final boolean hasFlatTrackList, final ITrack master)
+    public TrackBankImpl (final IHost host, final MessageSender sender, final IValueChanger valueChanger, final int numTracks, final int numScenes, final int numSends, final boolean hasFlatTrackList, final boolean hasFullFlatTrackList, final ITrack master)
     {
         super (host, sender, valueChanger, numTracks, numScenes, numSends);
 
         this.hasFlatTrackList = hasFlatTrackList;
+        this.hasFullFlatTrackList = hasFullFlatTrackList;
         this.master = master;
     }
 
@@ -211,7 +215,7 @@ public class TrackBankImpl extends AbstractTrackBankImpl
 
         if (this.hasFlatTrackList)
         {
-            if (this.master != null && super.getItemCount () == id)
+            if (this.hasFullFlatTrackList && this.master != null && super.getItemCount () == id)
                 return this.master;
             return super.getItem (index);
         }
@@ -230,7 +234,7 @@ public class TrackBankImpl extends AbstractTrackBankImpl
         if (this.hasFlatTrackList)
         {
             int size = super.getItemCount ();
-            if (this.master != null)
+            if (this.hasFullFlatTrackList && this.master != null)
                 size++;
             return size;
         }

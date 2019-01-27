@@ -82,15 +82,18 @@ public class ConfigurationDialog extends BasicDialog
         scrollPane.setHorizontalScrollBarPolicy (ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setVerticalScrollBarPolicy (ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 
-        mainColumn.addComponent (new TitledSeparator ("Midi Ports"), BoxPanel.NORMAL);
+        final SettingsUI settingsImpl = (SettingsUI) this.settings;
+        this.midiInputs = settingsImpl.createMidiInputWidgets ();
+        this.midiOutputs = settingsImpl.createMidiOutputWidgets ();
+
+        final boolean hasMidiPorts = !this.midiInputs.isEmpty () && !this.midiOutputs.isEmpty ();
+        if (hasMidiPorts)
+            mainColumn.addComponent (new TitledSeparator ("Midi Ports"), BoxPanel.NORMAL);
 
         contentPane.add (scrollPane, BorderLayout.CENTER);
 
-        final SettingsUI settingsImpl = (SettingsUI) this.settings;
-
         int index = 1;
         final List<MidiDevice> inputDevices = Midi.getInputDevices ();
-        this.midiInputs = settingsImpl.createMidiInputWidgets ();
         for (final JComboBoxX<MidiDevice> device: this.midiInputs)
         {
             mainColumn.addComponent (device, new JLabel ("Midi Input " + index), null, BoxPanel.NORMAL);
@@ -103,7 +106,6 @@ public class ConfigurationDialog extends BasicDialog
 
         index = 1;
         final List<MidiDevice> outputDevices = Midi.getOutputDevices ();
-        this.midiOutputs = settingsImpl.createMidiOutputWidgets ();
         for (final JComboBoxX<MidiDevice> device: this.midiOutputs)
         {
             mainColumn.addComponent (device, new JLabel ("Midi Output " + index), null, BoxPanel.NORMAL);
@@ -114,10 +116,12 @@ public class ConfigurationDialog extends BasicDialog
             index++;
         }
 
-        final JButton rescanButton = new JButton ("Rescan Midi Devices");
-        rescanButton.addActionListener (event -> this.updateMidiDevices ());
-
-        mainColumn.addComponent (rescanButton, BoxPanel.NORMAL);
+        if (hasMidiPorts)
+        {
+            final JButton rescanButton = new JButton ("Rescan Midi Devices");
+            rescanButton.addActionListener (event -> this.updateMidiDevices ());
+            mainColumn.addComponent (rescanButton, BoxPanel.NORMAL);
+        }
 
         String category = null;
         for (final IfxSetting<?> s: settingsImpl.getSettings ())
