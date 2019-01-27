@@ -5,7 +5,7 @@
 package de.mossgrabers.reaper.framework.daw;
 
 import de.mossgrabers.framework.daw.IHost;
-import de.mossgrabers.framework.daw.ObserverManagement;
+import de.mossgrabers.framework.observer.ObserverManagement;
 import de.mossgrabers.reaper.communication.MessageSender;
 
 

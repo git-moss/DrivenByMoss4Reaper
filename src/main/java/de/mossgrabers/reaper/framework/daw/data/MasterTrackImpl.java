@@ -6,9 +6,9 @@ package de.mossgrabers.reaper.framework.daw.data;
 
 import de.mossgrabers.framework.controller.IValueChanger;
 import de.mossgrabers.framework.daw.IHost;
-import de.mossgrabers.framework.daw.ItemSelectionObserver;
 import de.mossgrabers.framework.daw.data.IMasterTrack;
 import de.mossgrabers.framework.daw.resource.ChannelType;
+import de.mossgrabers.framework.observer.ItemSelectionObserver;
 import de.mossgrabers.reaper.communication.MessageSender;
 
 import java.util.ArrayList;

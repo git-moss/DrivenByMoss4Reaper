@@ -160,11 +160,8 @@ public class TrackBankImpl extends AbstractTrackBankImpl
                 return true;
             }
 
-            if (track.isGroup ())
-            {
-                if (findSelectedTrack (child))
-                    return true;
-            }
+            if (track.isGroup () && findSelectedTrack (child))
+                return true;
         }
         return false;
     }

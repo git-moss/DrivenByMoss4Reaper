@@ -488,9 +488,8 @@ public final class Functions
     public static void setBusy (final boolean busy)
     {
         final Frame frame = getFocusedFrame ();
-        if (frame == null || !(frame instanceof JFrame))
-            return;
-        ((JFrame) frame).getGlassPane ().setVisible (busy);
+        if (frame instanceof JFrame)
+            ((JFrame) frame).getGlassPane ().setVisible (busy);
     }
 
     /**
@@ -543,11 +542,8 @@ public final class Functions
             setOpenSaveDlgDim (this.getSize ());
 
             final File file = this.getSelectedFile ();
-            if (!this.open && file.exists ())
-            {
-                if (!yesOrNo (this.existanceMsg, file.getPath ()))
-                    return;
-            }
+            if (!this.open && file.exists () && !yesOrNo (this.existanceMsg, file.getPath ()))
+                return;
             super.approveSelection ();
         }
     }

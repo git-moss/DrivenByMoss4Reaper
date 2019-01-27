@@ -21,8 +21,17 @@ import java.util.List;
  */
 public class Midi
 {
-    private final static List<MidiDevice> INPUTS  = new ArrayList<> ();
-    private final static List<MidiDevice> OUTPUTS = new ArrayList<> ();
+    private static final List<MidiDevice> INPUTS  = new ArrayList<> ();
+    private static final List<MidiDevice> OUTPUTS = new ArrayList<> ();
+
+
+    /**
+     * Utility class.
+     */
+    private Midi ()
+    {
+        // Intentionally empty
+    }
 
 
     /**

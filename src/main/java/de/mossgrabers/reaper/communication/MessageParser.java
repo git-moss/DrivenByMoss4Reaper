@@ -20,7 +20,6 @@ import de.mossgrabers.framework.daw.data.IParameter;
 import de.mossgrabers.framework.daw.data.IScene;
 import de.mossgrabers.framework.daw.data.ISend;
 import de.mossgrabers.framework.daw.resource.ChannelType;
-import de.mossgrabers.reaper.framework.daw.AbstractTrackBankImpl;
 import de.mossgrabers.reaper.framework.daw.ApplicationImpl;
 import de.mossgrabers.reaper.framework.daw.BrowserImpl;
 import de.mossgrabers.reaper.framework.daw.CursorDeviceImpl;
@@ -244,7 +243,7 @@ public class MessageParser
             {
                 // The number of tracks
                 case "count":
-                    ((AbstractTrackBankImpl) tb).setTrackCount (Integer.parseInt (value));
+                    tb.setTrackCount (Integer.parseInt (value));
                     ((TrackBankImpl) this.model.getTrackBank ()).markDirty ();
                     break;
 
@@ -353,6 +352,9 @@ public class MessageParser
                         break;
                     case 4:
                         track.setAutomation (TrackImpl.AUTOMATION_LATCH);
+                        break;
+                    default:
+                        // Not used
                         break;
                 }
                 break;
@@ -494,7 +496,6 @@ public class MessageParser
                             this.host.error ("Unhandled Device Param parameter: " + cmd);
                             return;
                     }
-                    return;
                 }
                 break;
 
@@ -546,6 +547,9 @@ public class MessageParser
                     case "name":
                         ((BrowserImpl) this.browser).setPreset (resultNo, value == null || value.isEmpty () ? null : value);
                         break;
+                    default:
+                        this.host.error ("Unhandled Browser Result: " + command);
+                        break;
                 }
                 break;
 
@@ -557,6 +561,9 @@ public class MessageParser
                         break;
                     case "index":
                         ((BrowserImpl) this.browser).setPresetSelected (Integer.parseInt (value));
+                        break;
+                    default:
+                        this.host.error ("Unhandled Browser Parameter Selected: " + command);
                         break;
                 }
                 break;

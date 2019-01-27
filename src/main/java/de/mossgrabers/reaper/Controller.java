@@ -43,15 +43,7 @@ public class Controller
             SwingUtilities.invokeLater ( () -> {
                 try
                 {
-                    try
-                    {
-                        UIManager.setLookAndFeel (UIManager.getSystemLookAndFeelClassName ());
-                    }
-                    catch (final UnsupportedLookAndFeelException ex)
-                    {
-                        // Ignore
-                    }
-
+                    setSystemLF ();
                     app = new MainFrame (iniPath);
                 }
                 catch (final Throwable ex)
@@ -63,6 +55,19 @@ public class Controller
         catch (final Throwable ex)
         {
             ex.printStackTrace ();
+        }
+    }
+
+
+    private static void setSystemLF () throws ClassNotFoundException, InstantiationException, IllegalAccessException
+    {
+        try
+        {
+            UIManager.setLookAndFeel (UIManager.getSystemLookAndFeelClassName ());
+        }
+        catch (final UnsupportedLookAndFeelException ex)
+        {
+            // Ignore
         }
     }
 

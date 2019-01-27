@@ -32,30 +32,32 @@ import java.nio.ByteBuffer;
  */
 public class BitmapImpl extends BasicDialog implements IBitmap
 {
-    private static final long   serialVersionUID = -6034592629355700876L;
+    private static final long             serialVersionUID = -6034592629355700876L;
 
-    private final BufferedImage bufferedImage;
-    private final ByteBuffer    imageBuffer;
+    private final transient BufferedImage bufferedImage;
+    private final transient ByteBuffer    imageBuffer;
 
-    private final JPanel        canvas           = new JPanel ()
-                                                 {
-                                                     private static final long serialVersionUID = 971155807100338380L;
+    private final JPanel                  canvas           = new JPanel ()
+                                                           {
+                                                               private static final long serialVersionUID = 971155807100338380L;
 
 
-                                                     @Override
-                                                     public void paintComponent (final Graphics gc)
-                                                     {
-                                                         // Let UI Delegate paint first, which
-                                                         // includes background filling since
-                                                         // this component is opaque.
+                                                               @Override
+                                                               public void paintComponent (final Graphics gc)
+                                                               {
+                                                                   // Let UI Delegate paint first,
+                                                                   // which
+                                                                   // includes background filling
+                                                                   // since
+                                                                   // this component is opaque.
 
-                                                         super.paintComponent (gc);
-                                                         BitmapImpl.this.drawImage (gc);
-                                                     }
-                                                 };
-    private final Timer         animationTimer;
+                                                                   super.paintComponent (gc);
+                                                                   BitmapImpl.this.drawImage (gc);
+                                                               }
+                                                           };
+    private final Timer                   animationTimer;
 
-    private BoxPanel            buttons;
+    private BoxPanel                      buttons;
 
 
     /**

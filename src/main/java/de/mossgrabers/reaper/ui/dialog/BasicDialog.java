@@ -236,6 +236,10 @@ public abstract class BasicDialog extends JDialog
             case WindowEvent.WINDOW_OPENED:
                 this.setFocusOn ();
                 break;
+
+            default:
+                // Not used
+                break;
         }
 
         super.processWindowEvent (event);

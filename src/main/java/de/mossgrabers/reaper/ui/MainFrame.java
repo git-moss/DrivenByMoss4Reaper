@@ -52,24 +52,23 @@ import java.net.URL;
  */
 public class MainFrame extends JFrame implements MessageSender
 {
-    private static final long                serialVersionUID  = 4251131641194938848L;
-    private static final int                 GAP               = 14;
+    private static final long                   serialVersionUID  = 4251131641194938848L;
+    private static final int                    GAP               = 14;
 
-    private JTextArea                        loggingTextArea   = new JTextArea ();
-    private final LogModel                   logModel          = new LogModel (this.loggingTextArea);
+    private JTextArea                           loggingTextArea   = new JTextArea ();
+    private final transient LogModel            logModel          = new LogModel (this.loggingTextArea);
 
-    protected final MainConfiguration        mainConfiguration = new MainConfiguration ();
+    protected final MainConfiguration           mainConfiguration = new MainConfiguration ();
 
-    private final JList<IControllerInstance> controllerList    = new JList<> (new DefaultListModel<> ());
+    private final JList<IControllerInstance>    controllerList    = new JList<> (new DefaultListModel<> ());
 
-    private ControllerInstanceManager        instanceManager;
-    private final Timer                      animationTimer;
-    private String                           iniPath;
-    private IniFiles                         iniFiles          = new IniFiles ();
+    private transient ControllerInstanceManager instanceManager;
+    private final Timer                         animationTimer;
+    private String                              iniPath;
+    private final transient IniFiles            iniFiles          = new IniFiles ();
 
-    private JButton                          addButton;
-    private JButton                          removeButton;
-    private JButton                          configButton;
+    private JButton                             removeButton;
+    private JButton                             configButton;
 
 
     /**
@@ -156,8 +155,8 @@ public class MainFrame extends JFrame implements MessageSender
         // Center pane with device configuration and logging
         this.configButton = new JButton ("Configuration");
         this.configButton.addActionListener (event -> this.editController ());
-        this.addButton = new JButton ("Add");
-        this.configureAddButton (this.addButton);
+        final JButton addButton = new JButton ("Add");
+        this.configureAddButton (addButton);
 
         this.removeButton = new JButton ("Remove");
         this.removeButton.addActionListener (event -> this.removeController ());
@@ -166,7 +165,7 @@ public class MainFrame extends JFrame implements MessageSender
         deviceButtonContainer.setBorder (new EmptyBorder (0, GAP, 0, 0));
         deviceButtonContainer.setLayout (new GridLayout (4, 1, 0, GAP));
 
-        deviceButtonContainer.add (this.addButton);
+        deviceButtonContainer.add (addButton);
         deviceButtonContainer.add (this.removeButton);
         deviceButtonContainer.add (this.configButton);
         deviceButtonContainer.add (refreshButton);

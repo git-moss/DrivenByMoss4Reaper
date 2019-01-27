@@ -4,7 +4,7 @@
 
 package de.mossgrabers.reaper.framework.configuration;
 
-import de.mossgrabers.framework.configuration.IValueObserver;
+import de.mossgrabers.framework.observer.IValueObserver;
 import de.mossgrabers.framework.utils.StringUtils;
 import de.mossgrabers.reaper.ui.utils.LogModel;
 

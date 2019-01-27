@@ -6,9 +6,13 @@ package de.mossgrabers.reaper.framework.daw.data;
 
 import de.mossgrabers.framework.daw.IHost;
 import de.mossgrabers.framework.daw.data.IItem;
+import de.mossgrabers.framework.observer.IIndexedValueObserver;
 import de.mossgrabers.framework.utils.StringUtils;
 import de.mossgrabers.reaper.communication.MessageSender;
 import de.mossgrabers.reaper.framework.daw.BaseImpl;
+
+import java.util.HashSet;
+import java.util.Set;
 
 
 /**
@@ -18,11 +22,12 @@ import de.mossgrabers.reaper.framework.daw.BaseImpl;
  */
 public abstract class ItemImpl extends BaseImpl implements IItem
 {
-    private int     index;
-    private int     position;
-    private boolean exists = false;
-    private String  name   = "";
-    private boolean selected;
+    private int                                      index;
+    private int                                      position;
+    private boolean                                  exists        = false;
+    private String                                   name          = "";
+    private boolean                                  selected;
+    private final Set<IIndexedValueObserver<String>> nameObservers = new HashSet<> ();
 
 
     /**
@@ -115,13 +120,30 @@ public abstract class ItemImpl extends BaseImpl implements IItem
 
 
     /**
+     * Add an observer for the device chains name.
+     * 
+     * @param observer The observer to notify on a name change
+     */
+    public void addNameObserver (final IIndexedValueObserver<String> observer)
+    {
+        this.nameObservers.add (observer);
+    }
+
+
+    /**
      * Set the name of the parameter.
      *
      * @param name The name
      */
     public void setName (final String name)
     {
+        if (this.name.equals (name))
+            return;
+
         this.name = name == null ? "" : name;
+
+        for (final IIndexedValueObserver<String> observer: this.nameObservers)
+            observer.update (this.getIndex (), this.name);
     }
 
 

@@ -8,7 +8,7 @@ import de.mossgrabers.framework.controller.IValueChanger;
 import de.mossgrabers.framework.daw.IHost;
 import de.mossgrabers.framework.daw.IParameterBank;
 import de.mossgrabers.framework.daw.IParameterPageBank;
-import de.mossgrabers.framework.daw.ItemSelectionObserver;
+import de.mossgrabers.framework.observer.ItemSelectionObserver;
 
 import java.util.Collections;
 import java.util.List;

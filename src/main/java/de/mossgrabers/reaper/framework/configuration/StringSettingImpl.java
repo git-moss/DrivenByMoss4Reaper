@@ -69,7 +69,7 @@ public class StringSettingImpl extends BaseSetting<JTextField, String> implement
     @Override
     public void flush ()
     {
-        this.notifyObservers (this.value);
+        this.notifyObservers (this.value == null ? "" : this.value);
     }
 
 

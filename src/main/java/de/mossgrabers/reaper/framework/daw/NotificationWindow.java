@@ -61,9 +61,7 @@ public class NotificationWindow
             if (this.counter.decrementAndGet () == 0)
             {
                 // Needs to be run on the Swing tread
-                SafeRunLater.execute (logModel, () -> {
-                    this.popupStage.setVisible (false);
-                });
+                SafeRunLater.execute (logModel, () -> this.popupStage.setVisible (false));
             }
         }, 1, 1, TimeUnit.SECONDS);
     }

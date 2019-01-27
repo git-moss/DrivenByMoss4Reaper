@@ -35,6 +35,7 @@ import java.util.regex.Pattern;
  */
 public class DeviceManager
 {
+    private static final String SECTION_FOLDERS = "Folders";
     private static final Pattern         PATTERN_VST     = Pattern.compile (".+?,.+?,(.+?)(\\!\\!\\!VSTi)?");
     private static final Pattern         PATTERN_COMPANY = Pattern.compile ("(.*?)\\s*\\((.*?)\\)");
     private static final Pattern         PATTERN_JSFX    = Pattern.compile ("NAME\\s?((\")?.+?(\")?)\\s?\"(.+?)\"");
@@ -367,12 +368,12 @@ public class DeviceManager
      */
     private void parseCollectionFilters (final IniEditor iniFile)
     {
-        for (int i = 0; i < getInt (iniFile, "Folders", "NbFolders", 0); i++)
+        for (int i = 0; i < getInt (iniFile, SECTION_FOLDERS, "NbFolders", 0); i++)
         {
-            final int id = getInt (iniFile, "Folders", "Id" + i, -1);
+            final int id = getInt (iniFile, SECTION_FOLDERS, "Id" + i, -1);
             if (id < 0)
                 continue;
-            final String collectionName = iniFile.get ("Folders", "Name" + i);
+            final String collectionName = iniFile.get (SECTION_FOLDERS, "Name" + i);
             if (collectionName == null)
                 continue;
 
@@ -403,7 +404,7 @@ public class DeviceManager
      */
     private static int getInt (final IniEditor iniFile, final String category, final String name, final int def)
     {
-        final String value = iniFile.get ("Folders", "NbFolders");
+        final String value = iniFile.get (category, name);
         try
         {
             return value == null ? def : Integer.parseInt (value);

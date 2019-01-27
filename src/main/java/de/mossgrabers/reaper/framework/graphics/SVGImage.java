@@ -55,12 +55,7 @@ public class SVGImage implements IImage
         SVGImage svgImage;
         synchronized (CACHE_LOCK)
         {
-            Map<Color, SVGImage> images = CACHE.get (imageName);
-            if (images == null)
-            {
-                images = new HashMap<> ();
-                CACHE.put (imageName, images);
-            }
+            final Map<Color, SVGImage> images = CACHE.computeIfAbsent (imageName, in -> new HashMap<> ());
             svgImage = images.get (color);
             if (svgImage == null)
             {

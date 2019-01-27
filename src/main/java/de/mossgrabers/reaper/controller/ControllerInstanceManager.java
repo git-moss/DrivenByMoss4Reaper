@@ -16,6 +16,7 @@ import de.mossgrabers.controller.mcu.MCUControllerDefinition;
 import de.mossgrabers.controller.osc.OSCControllerDefinition;
 import de.mossgrabers.controller.push.PushControllerDefinition;
 import de.mossgrabers.controller.sl.SLControllerDefinition;
+import de.mossgrabers.controller.utilities.UtilitiesDefinition;
 import de.mossgrabers.framework.controller.IControllerDefinition;
 import de.mossgrabers.reaper.communication.MessageSender;
 import de.mossgrabers.reaper.controller.apc.APC40mkIControllerInstance;
@@ -41,6 +42,7 @@ import de.mossgrabers.reaper.controller.push.Push1ControllerInstance;
 import de.mossgrabers.reaper.controller.push.Push2ControllerInstance;
 import de.mossgrabers.reaper.controller.sl.SLMkIControllerInstance;
 import de.mossgrabers.reaper.controller.sl.SLMkIIControllerInstance;
+import de.mossgrabers.reaper.controller.utilities.UtilitiesInstance;
 import de.mossgrabers.reaper.framework.IniFiles;
 import de.mossgrabers.reaper.ui.utils.LogModel;
 import de.mossgrabers.reaper.ui.utils.PropertiesEx;
@@ -71,6 +73,7 @@ public class ControllerInstanceManager
         BeatstepControllerInstance.class,
         BeatstepProControllerInstance.class,
         GenericFlexiControllerInstance.class,
+        UtilitiesInstance.class,
         KontrolMkIS25ControllerInstance.class,
         KontrolMkIS49ControllerInstance.class,
         KontrolMkIS61ControllerInstance.class,
@@ -99,6 +102,7 @@ public class ControllerInstanceManager
         new BeatstepControllerDefinition (false),
         new BeatstepControllerDefinition (true),
         new GenericFlexiControllerDefinition (),
+        new UtilitiesDefinition (),
         new Kontrol1ControllerDefinition (0),
         new Kontrol1ControllerDefinition (1),
         new Kontrol1ControllerDefinition (2),

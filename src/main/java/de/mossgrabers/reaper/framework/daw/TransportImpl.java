@@ -8,6 +8,7 @@ import de.mossgrabers.framework.controller.IValueChanger;
 import de.mossgrabers.framework.daw.IHost;
 import de.mossgrabers.framework.daw.ITrackBank;
 import de.mossgrabers.framework.daw.ITransport;
+import de.mossgrabers.framework.daw.constants.TransportConstants;
 import de.mossgrabers.framework.daw.data.ITrack;
 import de.mossgrabers.reaper.communication.MessageSender;
 import de.mossgrabers.reaper.framework.Actions;
@@ -290,17 +291,17 @@ public class TransportImpl extends BaseImpl implements ITransport
         switch (this.preroll)
         {
             case 0:
-                return ITransport.PREROLL_NONE;
+                return TransportConstants.PREROLL_NONE;
             case 1:
-                return ITransport.PREROLL_1_BAR;
+                return TransportConstants.PREROLL_1_BAR;
             case 2:
-                return ITransport.PREROLL_2_BARS;
+                return TransportConstants.PREROLL_2_BARS;
             case 4:
-                return ITransport.PREROLL_4_BARS;
+                return TransportConstants.PREROLL_4_BARS;
             default:
                 // Other values are not supported, set to the default value
-                this.setPreroll (ITransport.PREROLL_2_BARS);
-                return ITransport.PREROLL_2_BARS;
+                this.setPreroll (TransportConstants.PREROLL_2_BARS);
+                return TransportConstants.PREROLL_2_BARS;
         }
     }
 
@@ -311,16 +312,16 @@ public class TransportImpl extends BaseImpl implements ITransport
     {
         switch (preroll)
         {
-            case ITransport.PREROLL_NONE:
+            case TransportConstants.PREROLL_NONE:
                 this.setPrerollAsBars (0);
                 break;
-            case ITransport.PREROLL_1_BAR:
+            case TransportConstants.PREROLL_1_BAR:
                 this.setPrerollAsBars (1);
                 break;
-            case ITransport.PREROLL_2_BARS:
+            case TransportConstants.PREROLL_2_BARS:
                 this.setPrerollAsBars (2);
                 break;
-            case ITransport.PREROLL_4_BARS:
+            case TransportConstants.PREROLL_4_BARS:
                 this.setPrerollAsBars (4);
                 break;
             default:

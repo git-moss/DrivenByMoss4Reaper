@@ -10,6 +10,7 @@ import de.mossgrabers.framework.daw.IHost;
 import de.mossgrabers.framework.daw.ISceneBank;
 import de.mossgrabers.framework.daw.ITrackBank;
 import de.mossgrabers.framework.daw.data.ITrack;
+import de.mossgrabers.framework.observer.IIndexedValueObserver;
 import de.mossgrabers.reaper.communication.MessageSender;
 import de.mossgrabers.reaper.framework.daw.data.TrackImpl;
 
@@ -224,6 +225,15 @@ public abstract class AbstractTrackBankImpl extends AbstractBankImpl<ITrack> imp
     public void setIndication (final boolean enable)
     {
         // Not supported
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void addNameObserver (final IIndexedValueObserver<String> observer)
+    {
+        for (int index = 0; index < this.getPageSize (); index++)
+            this.getTrack (index).addNameObserver (observer);
     }
 
 

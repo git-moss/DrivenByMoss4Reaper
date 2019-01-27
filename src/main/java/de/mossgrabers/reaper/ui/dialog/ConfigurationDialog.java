@@ -47,8 +47,8 @@ public class ConfigurationDialog extends BasicDialog
 
     private List<JComboBoxX<MidiDevice>> midiInputs;
     private List<JComboBoxX<MidiDevice>> midiOutputs;
-    private final LogModel               model;
-    private ISettingsUI                  settings;
+    private final transient LogModel     model;
+    private final transient ISettingsUI  settings;
 
 
     /**
