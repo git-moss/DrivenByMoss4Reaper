@@ -1,10 +1,20 @@
-5.03
+5.10
+- New: Integrated DrivenByMoss 5.10
+    * Native Instruments Komplete Kontrol 1 S25, S49, S61, S88 1.1
+        - New: Improved displayed scale colors. Only the root note is now displayed in the track color. All other notes are colored in white. Played note are in green or red if recording. Furthermore, sequenced notes are also displayed in green.
+        - New: If a track with a drum device is selected the keyboard LEDs display the according slot colors.
+        - New: Keyboard range is displayed on screen and display if changed.
+        - New: SHIFT+BACK - Toggles monitor on the selected track.
+        - New: SHIFT+ENTER - Toggles rec arm on the selected track.
+    * Generic Flexi 2.1
+        - New: Added command: "Device: Parameters"
+    * Generic Utilities 1.0 added (AutoColor)
 - New: Controllers can be deactivated so they do not use any resources when they are 
        not connected.
 - New: Speed up of Java/C++ communication; fixes lag of controller playing
 - New: Menu for adding controllers is now hierarchical
 - New: Improved folder navigation
-- New: Implemented sending of Escape and Enter key to Reaper (used by MCU protocol)
+- New: Implemented sending of Escape and Enter key to Reaper (used by MCU protocol, only Windows & macOS)
 - New: Implemented transport restart function (used by Generic Flexi and OSC)
 - Fixed: Toggling of plugin window did not work
 - Fixed: MIDI editor is no longer closing when executing quantize from a controller, 

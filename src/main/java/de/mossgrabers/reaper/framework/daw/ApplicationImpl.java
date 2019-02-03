@@ -22,30 +22,30 @@ import java.awt.event.KeyEvent;
  */
 public class ApplicationImpl extends BaseImpl implements IApplication
 {
-    private static Robot   robot;
+    private static Robot robot;
 
-    private String  panelLayout  = IApplication.PANEL_LAYOUT_ARRANGE;
-    private boolean engineActive = true;
-    
-    
+    private String       panelLayout  = IApplication.PANEL_LAYOUT_ARRANGE;
+    private boolean      engineActive = true;
+
+
     static Robot getRobot ()
     {
-    	if (robot == null)
-    	{
-	        try
-	        {
-	        	// Freezes Reaper UI on Linux
-	        	if (OperatingSystem.get() != OperatingSystem.LINUX)
-	        	{
-		            robot = new Robot ();
-		            robot.setAutoDelay (250);
-	        	}
-	        }
-	        catch (final AWTException ex)
-	        {
-	        	robot = null;
-	        }
-    	}
+        if (robot == null)
+        {
+            try
+            {
+                // Freezes Reaper UI on Linux
+                if (OperatingSystem.get () != OperatingSystem.LINUX)
+                {
+                    robot = new Robot ();
+                    robot.setAutoDelay (250);
+                }
+            }
+            catch (final AWTException ex)
+            {
+                robot = null;
+            }
+        }
         return robot;
     }
 
@@ -333,7 +333,7 @@ public class ApplicationImpl extends BaseImpl implements IApplication
     @Override
     public void enter ()
     {
-    	this.sendKey (KeyEvent.VK_ENTER);
+        this.sendKey (KeyEvent.VK_ENTER);
     }
 
 
@@ -341,7 +341,7 @@ public class ApplicationImpl extends BaseImpl implements IApplication
     @Override
     public void escape ()
     {
-    	this.sendKey (KeyEvent.VK_ESCAPE);
+        this.sendKey (KeyEvent.VK_ESCAPE);
     }
 
 
@@ -370,17 +370,17 @@ public class ApplicationImpl extends BaseImpl implements IApplication
     {
         this.engineActive = active;
     }
-    
-    
+
+
     private void sendKey (final int key)
     {
-    	final Robot rob = getRobot ();
-    	if (rob == null)
-    	{
-            host.println ("Sending key presses not supported on this platform.");
+        final Robot rob = getRobot ();
+        if (rob == null)
+        {
+            this.host.println ("Sending key presses not supported on this platform.");
             return;
-    	}
-    	
+        }
+
         rob.keyPress (key);
         rob.keyRelease (key);
     }

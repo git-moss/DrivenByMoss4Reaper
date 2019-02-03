@@ -5,13 +5,19 @@
 package de.mossgrabers.controller.kontrol.usb.mki.view;
 
 import de.mossgrabers.controller.kontrol.usb.mki.Kontrol1Configuration;
+import de.mossgrabers.controller.kontrol.usb.mki.controller.Kontrol1Colors;
 import de.mossgrabers.controller.kontrol.usb.mki.controller.Kontrol1ControlSurface;
+import de.mossgrabers.framework.controller.grid.PadGrid;
+import de.mossgrabers.framework.daw.DAWColors;
+import de.mossgrabers.framework.daw.ICursorDevice;
+import de.mossgrabers.framework.daw.IDrumPadBank;
 import de.mossgrabers.framework.daw.IModel;
-import de.mossgrabers.framework.daw.ITrackBank;
 import de.mossgrabers.framework.daw.ITransport;
-import de.mossgrabers.framework.daw.data.ITrack;
-import de.mossgrabers.framework.scale.Scale;
-import de.mossgrabers.framework.view.AbstractView;
+import de.mossgrabers.framework.daw.data.IChannel;
+import de.mossgrabers.framework.mode.Mode;
+import de.mossgrabers.framework.scale.Scales;
+import de.mossgrabers.framework.view.AbstractDrumView;
+import de.mossgrabers.framework.view.AbstractPlayView;
 
 
 /**
@@ -19,16 +25,8 @@ import de.mossgrabers.framework.view.AbstractView;
  *
  * @author J&uuml;rgen Mo&szlig;graber
  */
-public class ControlView extends AbstractView<Kontrol1ControlSurface, Kontrol1Configuration>
+public class ControlView extends AbstractPlayView<Kontrol1ControlSurface, Kontrol1Configuration>
 {
-    private static final double [] COLOR_OFF = new double []
-    {
-        0,
-        0,
-        0
-    };
-
-
     /**
      * Constructor.
      *
@@ -37,7 +35,7 @@ public class ControlView extends AbstractView<Kontrol1ControlSurface, Kontrol1Co
      */
     public ControlView (final Kontrol1ControlSurface surface, final IModel model)
     {
-        super ("Control", surface, model);
+        super (surface, model, true);
     }
 
 
@@ -47,44 +45,26 @@ public class ControlView extends AbstractView<Kontrol1ControlSurface, Kontrol1Co
     {
         final ITransport transport = this.model.getTransport ();
 
-        this.surface.updateButton (Kontrol1ControlSurface.BUTTON_SHIFT, this.surface.isShiftPressed () ? Kontrol1ControlSurface.BUTTON_STATE_HI : Kontrol1ControlSurface.BUTTON_STATE_ON);
-        this.surface.updateButton (Kontrol1ControlSurface.BUTTON_SCALE, this.surface.getConfiguration ().isScaleIsActive () ? Kontrol1ControlSurface.BUTTON_STATE_HI : Kontrol1ControlSurface.BUTTON_STATE_ON);
-        this.surface.updateButton (Kontrol1ControlSurface.BUTTON_ARP, this.surface.isShiftPressed () && transport.isMetronomeTicksOn () || !this.surface.isShiftPressed () && transport.isMetronomeOn () ? Kontrol1ControlSurface.BUTTON_STATE_HI : Kontrol1ControlSurface.BUTTON_STATE_ON);
+        this.surface.updateButton (Kontrol1ControlSurface.BUTTON_SHIFT, this.surface.isShiftPressed () ? Kontrol1Colors.BUTTON_STATE_HI : Kontrol1Colors.BUTTON_STATE_ON);
+        this.surface.updateButton (Kontrol1ControlSurface.BUTTON_SCALE, this.surface.getConfiguration ().isScaleIsActive () ? Kontrol1Colors.BUTTON_STATE_HI : Kontrol1Colors.BUTTON_STATE_ON);
+        this.surface.updateButton (Kontrol1ControlSurface.BUTTON_ARP, this.surface.isShiftPressed () && transport.isMetronomeTicksOn () || !this.surface.isShiftPressed () && transport.isMetronomeOn () ? Kontrol1Colors.BUTTON_STATE_HI : Kontrol1Colors.BUTTON_STATE_ON);
 
-        this.surface.updateButton (Kontrol1ControlSurface.BUTTON_LOOP, transport.isLoop () ? Kontrol1ControlSurface.BUTTON_STATE_HI : Kontrol1ControlSurface.BUTTON_STATE_ON);
-        this.surface.updateButton (Kontrol1ControlSurface.BUTTON_RWD, this.surface.isPressed (Kontrol1ControlSurface.BUTTON_RWD) ? Kontrol1ControlSurface.BUTTON_STATE_HI : Kontrol1ControlSurface.BUTTON_STATE_ON);
-        this.surface.updateButton (Kontrol1ControlSurface.BUTTON_FWD, this.surface.isPressed (Kontrol1ControlSurface.BUTTON_FWD) ? Kontrol1ControlSurface.BUTTON_STATE_HI : Kontrol1ControlSurface.BUTTON_STATE_ON);
-        this.surface.updateButton (Kontrol1ControlSurface.BUTTON_PLAY, transport.isPlaying () ? Kontrol1ControlSurface.BUTTON_STATE_HI : Kontrol1ControlSurface.BUTTON_STATE_ON);
-        this.surface.updateButton (Kontrol1ControlSurface.BUTTON_REC, transport.isRecording () ? Kontrol1ControlSurface.BUTTON_STATE_HI : Kontrol1ControlSurface.BUTTON_STATE_ON);
-        this.surface.updateButton (Kontrol1ControlSurface.BUTTON_STOP, this.surface.isPressed (Kontrol1ControlSurface.BUTTON_STOP) ? Kontrol1ControlSurface.BUTTON_STATE_HI : Kontrol1ControlSurface.BUTTON_STATE_ON);
+        this.surface.updateButton (Kontrol1ControlSurface.BUTTON_LOOP, transport.isLoop () ? Kontrol1Colors.BUTTON_STATE_HI : Kontrol1Colors.BUTTON_STATE_ON);
+        this.surface.updateButton (Kontrol1ControlSurface.BUTTON_RWD, this.surface.isPressed (Kontrol1ControlSurface.BUTTON_RWD) ? Kontrol1Colors.BUTTON_STATE_HI : Kontrol1Colors.BUTTON_STATE_ON);
+        this.surface.updateButton (Kontrol1ControlSurface.BUTTON_FWD, this.surface.isPressed (Kontrol1ControlSurface.BUTTON_FWD) ? Kontrol1Colors.BUTTON_STATE_HI : Kontrol1Colors.BUTTON_STATE_ON);
+        this.surface.updateButton (Kontrol1ControlSurface.BUTTON_PLAY, transport.isPlaying () ? Kontrol1Colors.BUTTON_STATE_HI : Kontrol1Colors.BUTTON_STATE_ON);
+        this.surface.updateButton (Kontrol1ControlSurface.BUTTON_REC, transport.isRecording () ? Kontrol1Colors.BUTTON_STATE_HI : Kontrol1Colors.BUTTON_STATE_ON);
+        this.surface.updateButton (Kontrol1ControlSurface.BUTTON_STOP, this.surface.isPressed (Kontrol1ControlSurface.BUTTON_STOP) ? Kontrol1Colors.BUTTON_STATE_HI : Kontrol1Colors.BUTTON_STATE_ON);
 
-        this.surface.updateButton (Kontrol1ControlSurface.BUTTON_PAGE_LEFT, this.surface.isPressed (Kontrol1ControlSurface.BUTTON_PAGE_LEFT) ? Kontrol1ControlSurface.BUTTON_STATE_HI : Kontrol1ControlSurface.BUTTON_STATE_ON);
-        this.surface.updateButton (Kontrol1ControlSurface.BUTTON_PAGE_RIGHT, this.surface.isPressed (Kontrol1ControlSurface.BUTTON_PAGE_RIGHT) ? Kontrol1ControlSurface.BUTTON_STATE_HI : Kontrol1ControlSurface.BUTTON_STATE_ON);
+        this.surface.updateButton (Kontrol1ControlSurface.BUTTON_PAGE_LEFT, this.surface.isPressed (Kontrol1ControlSurface.BUTTON_PAGE_LEFT) ? Kontrol1Colors.BUTTON_STATE_HI : Kontrol1Colors.BUTTON_STATE_ON);
+        this.surface.updateButton (Kontrol1ControlSurface.BUTTON_PAGE_RIGHT, this.surface.isPressed (Kontrol1ControlSurface.BUTTON_PAGE_RIGHT) ? Kontrol1Colors.BUTTON_STATE_HI : Kontrol1Colors.BUTTON_STATE_ON);
 
         // Update all mode relevant buttons
-        this.surface.getModeManager ().getActiveOrTempMode ().updateFirstRow ();
+        final Mode mode = this.surface.getModeManager ().getActiveOrTempMode ();
+        if (mode != null)
+            mode.updateFirstRow ();
 
         this.surface.updateButtonLEDs ();
-
-        final ITrackBank currentTrackBank = this.model.getCurrentTrackBank ();
-        final ITrack t = currentTrackBank.getSelectedItem ();
-        this.updateKeyLEDs (t == null ? COLOR_OFF : t.getColor ());
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void drawGrid ()
-    {
-        // Intentionally empty
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void onGridNote (final int note, final int velocity)
-    {
-        // Intentionally empty
     }
 
 
@@ -92,42 +72,59 @@ public class ControlView extends AbstractView<Kontrol1ControlSurface, Kontrol1Co
     @Override
     public void updateNoteMapping ()
     {
-        // Intentionally empty
+        final boolean isActive = this.surface.getConfiguration ().isScaleIsActive ();
+        final int [] matrix = isActive && this.model.canSelectedTrackHoldNotes () ? Scales.getIdentityMatrix () : EMPTY_TABLE;
+        // Only set the key manager not the translation matrix, since the keyboard always plays the
+        // same notes!
+        this.surface.scheduleTask ( () -> this.keyManager.setNoteMatrix (matrix), 6);
     }
 
 
-    private void updateKeyLEDs (final double [] color)
+    /** {@inheritDoc} */
+    @Override
+    public void drawGrid ()
     {
-        int red = 0;
-        int green = 0;
-        int blue = 0;
-
-        final boolean isActive = this.surface.getConfiguration ().isScaleIsActive ();
-        if (isActive)
+        if (this.model.canSelectedTrackHoldNotes ())
         {
-            red = (int) Math.round (color[0] * 127);
-            green = (int) Math.round (color[1] * 127);
-            blue = (int) Math.round (color[2] * 127);
-        }
-
-        if (this.scales.isChromatic () || !isActive)
-        {
-            for (int i = 0; i < 88; i++)
-                this.surface.setKeyLED (i, red, green, blue);
-        }
-        else
-        {
-            final Scale scale = this.scales.getScale ();
-            final int scaleOffset = this.scales.getScaleOffset ();
-            for (int i = 0; i < 88; i++)
+            final ICursorDevice primary = this.model.getInstrumentDevice ();
+            if (primary.hasDrumPads ())
             {
-                final int key = i % 12;
-                final boolean inScale = scale.isInScale (key);
-                final int brighter = scaleOffset == key ? 10 : 0;
-                this.surface.setKeyLED (i, inScale ? Math.min (red + brighter, 127) : 0, inScale ? Math.min (green + brighter, 127) : 0, inScale ? Math.min (blue + brighter, 127) : 0);
+                boolean isSoloed = false;
+                final IDrumPadBank drumPadBank = primary.getDrumPadBank ();
+                for (int i = 0; i < drumPadBank.getPageSize (); i++)
+                {
+                    if (drumPadBank.getItem (i).isSolo ())
+                    {
+                        isSoloed = true;
+                        break;
+                    }
+                }
+
+                final boolean isRecording = this.model.hasRecordingState ();
+                final PadGrid gridPad = this.surface.getPadGrid ();
+                for (int i = this.scales.getStartNote (); i < this.scales.getEndNote (); i++)
+                    gridPad.light (i, this.getDrumPadColor (i, primary, isSoloed, isRecording));
+
+                return;
             }
         }
 
-        this.surface.updateKeyLEDs ();
+        super.drawGrid ();
+    }
+
+
+    protected String getDrumPadColor (final int index, final ICursorDevice primary, final boolean isSoloed, final boolean isRecording)
+    {
+        // Playing note?
+        if (this.keyManager.isKeyPressed (index))
+            return isRecording ? AbstractDrumView.COLOR_PAD_RECORD : AbstractDrumView.COLOR_PAD_PLAY;
+        // Exists and active?
+        final IChannel drumPad = primary.getDrumPadBank ().getItem (index);
+        if (!drumPad.doesExist () || !drumPad.isActivated ())
+            return this.surface.getConfiguration ().isTurnOffEmptyDrumPads () ? AbstractDrumView.COLOR_PAD_OFF : AbstractDrumView.COLOR_PAD_NO_CONTENT;
+        // Muted or soloed?
+        if (drumPad.isMute () || isSoloed && !drumPad.isSolo ())
+            return AbstractDrumView.COLOR_PAD_MUTED;
+        return DAWColors.getColorIndex (drumPad.getColor ());
     }
 }

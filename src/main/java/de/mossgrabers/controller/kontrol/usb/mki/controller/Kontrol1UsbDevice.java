@@ -415,6 +415,7 @@ public class Kontrol1UsbDevice
 
     private static final Map<Integer, Integer> LED_MAPPING               = new HashMap<> (21);
 
+    private final int                          modelIndex;
     private final IHost                        host;
     private IUsbDevice                         usbDevice;
     private IHidDevice                         hidDevice;
@@ -423,6 +424,7 @@ public class Kontrol1UsbDevice
 
     private int                                mainEncoderValue;
     private int []                             encoderValues             = new int [8];
+    private int                                firstNote                 = 48;
 
     private byte []                            buttonStates              = new byte [21];
     private byte []                            oldButtonStates           = new byte [21];
@@ -473,6 +475,7 @@ public class Kontrol1UsbDevice
      */
     public Kontrol1UsbDevice (final int modelIndex, final IHost host)
     {
+        this.modelIndex = modelIndex;
         this.host = host;
 
         try
@@ -498,6 +501,17 @@ public class Kontrol1UsbDevice
 
         // To send black LEDs on startup
         this.oldKeyColors[0] = -1;
+    }
+
+
+    /**
+     * Get the number of keys of the specific model.
+     *
+     * @return The number of keys (25, 49, 61 or 88)
+     */
+    public int getNumKeys ()
+    {
+        return KEY_SIZES[this.modelIndex];
     }
 
 
@@ -757,18 +771,21 @@ public class Kontrol1UsbDevice
      * transposition.
      *
      * @param key The index of the key 0-87
-     * @param red The red value 0-255
-     * @param green The green value 0-255
-     * @param blue The blue value 0-255
+     * @param red The red value 0-127
+     * @param green The green value 0-127
+     * @param blue The blue value 0-127
      */
     public void setKeyLED (final int key, final int red, final int green, final int blue)
     {
         if (key < 0 || key >= 88)
             return;
         final int pos = 3 * key;
-        this.keyColors[pos] = (byte) red;
-        this.keyColors[pos + 1] = (byte) green;
-        this.keyColors[pos + 2] = (byte) blue;
+        synchronized (this.keyLedBlock)
+        {
+            this.keyColors[pos] = (byte) red;
+            this.keyColors[pos + 1] = (byte) green;
+            this.keyColors[pos + 2] = (byte) blue;
+        }
     }
 
 
@@ -834,7 +851,7 @@ public class Kontrol1UsbDevice
             final boolean valueIncreased = (this.mainEncoderValue < currentEncoderValue || this.mainEncoderValue == 0x0F && currentEncoderValue == 0) && !(this.mainEncoderValue == 0 && currentEncoderValue == 0x0F);
             this.mainEncoderValue = currentEncoderValue;
             if (!this.isFirstStateMsg)
-                this.callback.mainEncoderChanged (valueIncreased);
+                this.host.scheduleTask ( () -> this.callback.mainEncoderChanged (valueIncreased), 0);
             encoderChange = true;
         }
 
@@ -852,7 +869,10 @@ public class Kontrol1UsbDevice
                 final boolean valueIncreased = (this.encoderValues[encIndex] < value || prevHValue == 3 && hValue == 0) && !(prevHValue == 0 && hValue == 3);
                 this.encoderValues[encIndex] = value;
                 if (!this.isFirstStateMsg)
-                    this.callback.encoderChanged (encIndex, valueIncreased);
+                {
+                    final int ei = encIndex;
+                    this.host.scheduleTask ( () -> this.callback.encoderChanged (ei, valueIncreased), 0);
+                }
                 encoderChange = true;
             }
         }
@@ -868,6 +888,12 @@ public class Kontrol1UsbDevice
         {
             this.testByteForButtons (data[3], BYTE_3);
             this.testByteForButtons (data[4], BYTE_4);
+        }
+
+        if (this.firstNote != data[36])
+        {
+            this.firstNote = data[36];
+            this.host.scheduleTask ( () -> this.callback.keyboardChanged (this.firstNote), 0);
         }
     }
 
@@ -919,7 +945,11 @@ public class Kontrol1UsbDevice
 
         final int t = Byte.toUnsignedInt (b);
         for (int i = 0; i < buttons.length; i++)
-            this.callback.buttonChange (buttons[i], (t & TEST_BITS[i]) > 0);
+        {
+            final int button = buttons[i];
+            final boolean isPressed = (t & TEST_BITS[i]) > 0;
+            this.host.scheduleTask ( () -> this.callback.buttonChange (button, isPressed), 0);
+        }
     }
 
 
@@ -931,6 +961,17 @@ public class Kontrol1UsbDevice
         for (final Integer buttonLED: LED_MAPPING.values ())
             this.buttonStates[buttonLED.intValue ()] = 0;
         this.updateButtonLEDs ();
+    }
+
+
+    /**
+     * Get the first note on the keyboard.
+     *
+     * @return The first note
+     */
+    public int getFirstNote ()
+    {
+        return this.firstNote;
     }
 
 

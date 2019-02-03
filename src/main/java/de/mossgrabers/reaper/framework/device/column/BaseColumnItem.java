@@ -4,9 +4,9 @@
 
 package de.mossgrabers.reaper.framework.device.column;
 
-import de.mossgrabers.framework.daw.data.AbstractItemImpl;
 import de.mossgrabers.framework.daw.data.IBrowserColumnItem;
 import de.mossgrabers.framework.utils.StringUtils;
+import de.mossgrabers.reaper.framework.daw.data.ItemImpl;
 
 
 /**
@@ -14,7 +14,7 @@ import de.mossgrabers.framework.utils.StringUtils;
  *
  * @author J&uuml;rgen Mo&szlig;graber
  */
-public abstract class BaseColumnItem extends AbstractItemImpl implements IBrowserColumnItem
+public abstract class BaseColumnItem extends ItemImpl implements IBrowserColumnItem
 {
     /**
      * Constructor.
@@ -23,7 +23,7 @@ public abstract class BaseColumnItem extends AbstractItemImpl implements IBrowse
      */
     protected BaseColumnItem (final int index)
     {
-        super (index);
+        super (null, null, index);
     }
 
 

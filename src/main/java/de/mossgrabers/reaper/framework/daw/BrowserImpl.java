@@ -6,11 +6,11 @@ package de.mossgrabers.reaper.framework.daw;
 
 import de.mossgrabers.framework.daw.AbstractBrowser;
 import de.mossgrabers.framework.daw.ICursorDevice;
-import de.mossgrabers.framework.daw.data.AbstractItemImpl;
 import de.mossgrabers.framework.daw.data.IBrowserColumn;
 import de.mossgrabers.framework.daw.data.IBrowserColumnItem;
 import de.mossgrabers.framework.utils.StringUtils;
 import de.mossgrabers.reaper.communication.MessageSender;
+import de.mossgrabers.reaper.framework.daw.data.ItemImpl;
 import de.mossgrabers.reaper.framework.device.Device;
 import de.mossgrabers.reaper.framework.device.DeviceCollection;
 import de.mossgrabers.reaper.framework.device.DeviceFileType;
@@ -422,7 +422,7 @@ public class BrowserImpl extends AbstractBrowser
     }
 
     /** An item in the result column. */
-    private class ResultItem extends AbstractItemImpl implements IBrowserColumnItem
+    private class ResultItem extends ItemImpl implements IBrowserColumnItem
     {
         /**
          * Constructor.
@@ -431,7 +431,7 @@ public class BrowserImpl extends AbstractBrowser
          */
         public ResultItem (final int index)
         {
-            super (index);
+            super (null, null, index);
         }
 
 

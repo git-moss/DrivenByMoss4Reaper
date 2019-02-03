@@ -4,10 +4,10 @@
 
 package de.mossgrabers.reaper.framework.device.column;
 
-import de.mossgrabers.framework.daw.data.AbstractItemImpl;
 import de.mossgrabers.framework.daw.data.IBrowserColumn;
 import de.mossgrabers.framework.daw.data.IBrowserColumnItem;
 import de.mossgrabers.framework.utils.StringUtils;
+import de.mossgrabers.reaper.framework.daw.data.ItemImpl;
 
 
 /**
@@ -15,7 +15,7 @@ import de.mossgrabers.framework.utils.StringUtils;
  *
  * @author J&uuml;rgen Mo&szlig;graber
  */
-public abstract class BaseColumn extends AbstractItemImpl implements IBrowserColumn
+public abstract class BaseColumn extends ItemImpl implements IBrowserColumn
 {
     protected static final String         WILDCARD    = "All";
 
@@ -36,7 +36,7 @@ public abstract class BaseColumn extends AbstractItemImpl implements IBrowserCol
      */
     protected BaseColumn (final int columnIndex, final String name, final int numItemsPerPage)
     {
-        super (columnIndex);
+        super (null, null, columnIndex);
 
         this.name = name;
         this.numItemsPerPage = numItemsPerPage;

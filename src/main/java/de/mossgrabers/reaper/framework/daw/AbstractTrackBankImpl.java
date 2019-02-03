@@ -231,7 +231,10 @@ public abstract class AbstractTrackBankImpl extends AbstractBankImpl<ITrack> imp
     public void addNameObserver (final IIndexedValueObserver<String> observer)
     {
         for (int index = 0; index < this.getPageSize (); index++)
-            this.getTrack (index).addNameObserver (observer);
+        {
+            final TrackImpl track = this.getTrack (index);
+            track.addNameObserver (value -> observer.update (track.getIndex (), value));
+        }
     }
 
 

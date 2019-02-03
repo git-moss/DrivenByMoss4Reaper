@@ -6,7 +6,7 @@ package de.mossgrabers.reaper.framework.daw.data;
 
 import de.mossgrabers.framework.daw.IHost;
 import de.mossgrabers.framework.daw.data.IItem;
-import de.mossgrabers.framework.observer.IIndexedValueObserver;
+import de.mossgrabers.framework.observer.IValueObserver;
 import de.mossgrabers.framework.utils.StringUtils;
 import de.mossgrabers.reaper.communication.MessageSender;
 import de.mossgrabers.reaper.framework.daw.BaseImpl;
@@ -22,12 +22,12 @@ import java.util.Set;
  */
 public abstract class ItemImpl extends BaseImpl implements IItem
 {
-    private int                                      index;
-    private int                                      position;
-    private boolean                                  exists        = false;
-    private String                                   name          = "";
-    private boolean                                  selected;
-    private final Set<IIndexedValueObserver<String>> nameObservers = new HashSet<> ();
+    protected int                             index;
+    private int                               position;
+    private boolean                           exists        = false;
+    private String                            name          = "";
+    private boolean                           selected;
+    private final Set<IValueObserver<String>> nameObservers = new HashSet<> ();
 
 
     /**
@@ -119,12 +119,9 @@ public abstract class ItemImpl extends BaseImpl implements IItem
     }
 
 
-    /**
-     * Add an observer for the device chains name.
-     * 
-     * @param observer The observer to notify on a name change
-     */
-    public void addNameObserver (final IIndexedValueObserver<String> observer)
+    /** {@inheritDoc} */
+    @Override
+    public void addNameObserver (final IValueObserver<String> observer)
     {
         this.nameObservers.add (observer);
     }
@@ -142,8 +139,8 @@ public abstract class ItemImpl extends BaseImpl implements IItem
 
         this.name = name == null ? "" : name;
 
-        for (final IIndexedValueObserver<String> observer: this.nameObservers)
-            observer.update (this.getIndex (), this.name);
+        for (final IValueObserver<String> observer: this.nameObservers)
+            observer.update (this.name);
     }
 
 
