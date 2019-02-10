@@ -81,7 +81,7 @@ public class SlotBankImpl extends AbstractBankImpl<ISlot> implements ISlotBank
 
     /** {@inheritDoc} */
     @Override
-    public boolean canScrollBackwards ()
+    public boolean canScrollPageBackwards ()
     {
         return this.bankOffset - this.pageSize >= 0;
     }
@@ -89,7 +89,7 @@ public class SlotBankImpl extends AbstractBankImpl<ISlot> implements ISlotBank
 
     /** {@inheritDoc} */
     @Override
-    public boolean canScrollForwards ()
+    public boolean canScrollPageForwards ()
     {
         return this.bankOffset + this.pageSize < this.getItemCount ();
     }
@@ -97,7 +97,7 @@ public class SlotBankImpl extends AbstractBankImpl<ISlot> implements ISlotBank
 
     /** {@inheritDoc} */
     @Override
-    public void scrollPageBackwards ()
+    public void selectPreviousPage ()
     {
         throw new RuntimeException ("Clips must be scrolled via SceneBank!");
     }
@@ -105,7 +105,7 @@ public class SlotBankImpl extends AbstractBankImpl<ISlot> implements ISlotBank
 
     /** {@inheritDoc} */
     @Override
-    public void scrollPageForwards ()
+    public void selectNextPage ()
     {
         throw new RuntimeException ("Clips must be scrolled via SceneBank!");
     }

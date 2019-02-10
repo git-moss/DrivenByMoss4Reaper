@@ -78,23 +78,7 @@ public abstract class AbstractBankImpl<T extends IItem> extends AbstractBank<T>
 
     /** {@inheritDoc} */
     @Override
-    public void scrollPageBackwards ()
-    {
-        // Overwrite to support
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void scrollPageForwards ()
-    {
-        // Overwrite to support
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public boolean canScrollBackwards ()
+    public boolean canScrollPageBackwards ()
     {
         synchronized (this.items)
         {
@@ -105,7 +89,7 @@ public abstract class AbstractBankImpl<T extends IItem> extends AbstractBank<T>
 
     /** {@inheritDoc} */
     @Override
-    public boolean canScrollForwards ()
+    public boolean canScrollPageForwards ()
     {
         final T sel = this.getSelectedItem ();
         return sel != null && sel.getPosition () < this.getItemCount () - 1;

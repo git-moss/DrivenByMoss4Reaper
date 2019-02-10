@@ -45,7 +45,7 @@ public class DeviceBankImpl extends AbstractBankImpl<IDevice> implements IDevice
 
     /** {@inheritDoc} */
     @Override
-    public void scrollPageBackwards ()
+    public void selectPreviousPage ()
     {
         this.sender.processNoArg ("device", "page/-");
     }
@@ -53,7 +53,7 @@ public class DeviceBankImpl extends AbstractBankImpl<IDevice> implements IDevice
 
     /** {@inheritDoc} */
     @Override
-    public void scrollPageForwards ()
+    public void selectNextPage ()
     {
         this.sender.processNoArg ("device", "page/+");
     }

@@ -51,7 +51,7 @@ public class ParameterBankImpl extends AbstractBankImpl<IParameter> implements I
 
     /** {@inheritDoc} */
     @Override
-    public boolean canScrollBackwards ()
+    public boolean canScrollPageBackwards ()
     {
         return this.bankOffset - this.pageSize >= 0;
     }
@@ -59,7 +59,7 @@ public class ParameterBankImpl extends AbstractBankImpl<IParameter> implements I
 
     /** {@inheritDoc} */
     @Override
-    public boolean canScrollForwards ()
+    public boolean canScrollPageForwards ()
     {
         return this.bankOffset + this.pageSize < this.getItemCount ();
     }
@@ -84,7 +84,7 @@ public class ParameterBankImpl extends AbstractBankImpl<IParameter> implements I
 
     /** {@inheritDoc} */
     @Override
-    public void scrollPageBackwards ()
+    public void selectPreviousPage ()
     {
         final int offset = this.pageSize * this.pageSize;
         this.bankOffset = Math.max (0, this.bankOffset - offset);
@@ -93,7 +93,7 @@ public class ParameterBankImpl extends AbstractBankImpl<IParameter> implements I
 
     /** {@inheritDoc} */
     @Override
-    public void scrollPageForwards ()
+    public void selectNextPage ()
     {
         final int offset = this.pageSize * this.pageSize;
         if (this.bankOffset + offset < this.getItemCount ())

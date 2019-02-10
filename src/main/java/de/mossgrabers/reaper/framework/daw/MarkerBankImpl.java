@@ -58,7 +58,7 @@ public class MarkerBankImpl extends AbstractBankImpl<IMarker> implements IMarker
 
     /** {@inheritDoc} */
     @Override
-    public boolean canScrollBackwards ()
+    public boolean canScrollPageBackwards ()
     {
         return this.bankOffset - this.pageSize >= 0;
     }
@@ -66,7 +66,7 @@ public class MarkerBankImpl extends AbstractBankImpl<IMarker> implements IMarker
 
     /** {@inheritDoc} */
     @Override
-    public boolean canScrollForwards ()
+    public boolean canScrollPageForwards ()
     {
         return this.bankOffset + this.pageSize < this.getItemCount ();
     }
@@ -74,7 +74,7 @@ public class MarkerBankImpl extends AbstractBankImpl<IMarker> implements IMarker
 
     /** {@inheritDoc} */
     @Override
-    public void scrollPageBackwards ()
+    public void selectPreviousPage ()
     {
         this.bankOffset = Math.max (0, this.bankOffset - this.pageSize);
     }
@@ -82,7 +82,7 @@ public class MarkerBankImpl extends AbstractBankImpl<IMarker> implements IMarker
 
     /** {@inheritDoc} */
     @Override
-    public void scrollPageForwards ()
+    public void selectNextPage ()
     {
         if (this.bankOffset + this.pageSize < this.getItemCount ())
             this.bankOffset += this.pageSize;

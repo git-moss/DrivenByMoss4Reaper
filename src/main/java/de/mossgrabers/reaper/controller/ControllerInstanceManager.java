@@ -8,6 +8,7 @@ import de.mossgrabers.controller.apc.APCControllerDefinition;
 import de.mossgrabers.controller.apcmini.APCminiControllerDefinition;
 import de.mossgrabers.controller.beatstep.BeatstepControllerDefinition;
 import de.mossgrabers.controller.generic.GenericFlexiControllerDefinition;
+import de.mossgrabers.controller.kontrol.midi.mkii.KontrolMkIIControllerDefinition;
 import de.mossgrabers.controller.kontrol.osc.mkii.KontrolOSCControllerDefinition;
 import de.mossgrabers.controller.kontrol.usb.mki.Kontrol1ControllerDefinition;
 import de.mossgrabers.controller.launchpad.LaunchpadControllerDefinition;
@@ -25,6 +26,7 @@ import de.mossgrabers.reaper.controller.apcmini.APCminiControllerInstance;
 import de.mossgrabers.reaper.controller.beatstep.BeatstepControllerInstance;
 import de.mossgrabers.reaper.controller.beatstep.BeatstepProControllerInstance;
 import de.mossgrabers.reaper.controller.generic.GenericFlexiControllerInstance;
+import de.mossgrabers.reaper.controller.kontrol.midi.mkii.KontrolMkIIControllerInstance;
 import de.mossgrabers.reaper.controller.kontrol.osc.mkii.KontrolMkIIOSCControllerInstance;
 import de.mossgrabers.reaper.controller.kontrol.usb.mki.KontrolMkIS25ControllerInstance;
 import de.mossgrabers.reaper.controller.kontrol.usb.mki.KontrolMkIS49ControllerInstance;
@@ -78,7 +80,7 @@ public class ControllerInstanceManager
         KontrolMkIS49ControllerInstance.class,
         KontrolMkIS61ControllerInstance.class,
         KontrolMkIS88ControllerInstance.class,
-        // KontrolMkIIControllerInstance.class,
+        KontrolMkIIControllerInstance.class,
         KontrolMkIIOSCControllerInstance.class,
         LaunchpadMkIIControllerInstance.class,
         LaunchpadProControllerInstance.class,
@@ -107,7 +109,7 @@ public class ControllerInstanceManager
         new Kontrol1ControllerDefinition (1),
         new Kontrol1ControllerDefinition (2),
         new Kontrol1ControllerDefinition (3),
-        // new KontrolMkIIControllerDefinition (),
+        new KontrolMkIIControllerDefinition (),
         new KontrolOSCControllerDefinition (),
         new LaunchpadControllerDefinition (true),
         new LaunchpadControllerDefinition (false),

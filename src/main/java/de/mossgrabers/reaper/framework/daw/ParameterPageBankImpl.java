@@ -63,13 +63,29 @@ public class ParameterPageBankImpl implements IParameterPageBank
     @Override
     public boolean canScrollBackwards ()
     {
-        return this.parameterBank.getScrollPosition () > 0;
+        return this.canScrollPageBackwards ();
     }
 
 
     /** {@inheritDoc} */
     @Override
     public boolean canScrollForwards ()
+    {
+        return this.getSelectedItemPosition () < this.parameterBank.getItemCount ();
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean canScrollPageBackwards ()
+    {
+        return this.parameterBank.getScrollPosition () > 0;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean canScrollPageForwards ()
     {
         return this.parameterBank.getScrollPosition () + this.parameterBank.getPageSize () < this.parameterBank.getItemCount ();
     }
@@ -88,22 +104,6 @@ public class ParameterPageBankImpl implements IParameterPageBank
     public void scrollForwards ()
     {
         this.parameterBank.scrollForwards ();
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void scrollPageBackwards ()
-    {
-        this.parameterBank.scrollPageBackwards ();
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void scrollPageForwards ()
-    {
-        this.parameterBank.scrollPageForwards ();
     }
 
 
@@ -219,7 +219,7 @@ public class ParameterPageBankImpl implements IParameterPageBank
     @Override
     public void selectPreviousPage ()
     {
-        // Intentionally empty
+        this.parameterBank.selectPreviousPage ();
     }
 
 
@@ -227,7 +227,7 @@ public class ParameterPageBankImpl implements IParameterPageBank
     @Override
     public void selectNextPage ()
     {
-        // Intentionally empty
+        this.parameterBank.selectNextPage ();
     }
 
 

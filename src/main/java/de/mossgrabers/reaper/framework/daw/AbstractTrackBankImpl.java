@@ -54,7 +54,7 @@ public abstract class AbstractTrackBankImpl extends AbstractBankImpl<ITrack> imp
 
     /** {@inheritDoc} */
     @Override
-    public boolean canScrollBackwards ()
+    public boolean canScrollPageBackwards ()
     {
         return this.bankOffset - this.pageSize >= 0;
     }
@@ -62,45 +62,9 @@ public abstract class AbstractTrackBankImpl extends AbstractBankImpl<ITrack> imp
 
     /** {@inheritDoc} */
     @Override
-    public boolean canScrollForwards ()
+    public boolean canScrollPageForwards ()
     {
         return this.bankOffset + this.pageSize < this.getItemCount ();
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void scrollPageBackwards ()
-    {
-        this.bankOffset = Math.max (0, this.bankOffset - this.pageSize);
-
-        // Deselect previous selected track (if any)
-        final ITrack selectedTrack = this.getSelectedItem ();
-        if (selectedTrack != null)
-            this.sendTrackOSC (selectedTrack.getPosition () + "/select", 0);
-
-        // Select item on new page
-        final int selIndex = this.pageSize - 1;
-        final int selPos = this.getItem (selIndex).getPosition ();
-        this.sendTrackOSC (selPos + "/select", 1);
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void scrollPageForwards ()
-    {
-        if (this.bankOffset + this.pageSize < this.getItemCount ())
-            this.bankOffset += this.pageSize;
-
-        // Deselect previous selected track (if any)
-        final ITrack selectedTrack = this.getSelectedItem ();
-        if (selectedTrack != null)
-            this.sendTrackOSC (selectedTrack.getPosition () + "/select", 0);
-
-        // Select item on new page
-        final int selPos = this.getItem (0).getPosition ();
-        this.sendTrackOSC (selPos + "/select", 1);
     }
 
 
@@ -288,7 +252,7 @@ public abstract class AbstractTrackBankImpl extends AbstractBankImpl<ITrack> imp
     @Override
     public void selectPreviousPage ()
     {
-        if (!this.canScrollBackwards ())
+        if (!this.canScrollPageBackwards ())
             return;
         this.scrollPageBackwards ();
         this.host.scheduleTask ( () -> this.getItem (this.pageSize - 1).select (), 75);
@@ -299,10 +263,42 @@ public abstract class AbstractTrackBankImpl extends AbstractBankImpl<ITrack> imp
     @Override
     public void selectNextPage ()
     {
-        if (!this.canScrollForwards ())
+        if (!this.canScrollPageForwards ())
             return;
         this.scrollPageForwards ();
         this.host.scheduleTask ( () -> this.getItem (0).select (), 75);
+    }
+
+
+    protected void scrollPageBackwards ()
+    {
+        this.bankOffset = Math.max (0, this.bankOffset - this.pageSize);
+
+        // Deselect previous selected track (if any)
+        final ITrack selectedTrack = this.getSelectedItem ();
+        if (selectedTrack != null)
+            this.sendTrackOSC (selectedTrack.getPosition () + "/select", 0);
+
+        // Select item on new page
+        final int selIndex = this.pageSize - 1;
+        final int selPos = this.getItem (selIndex).getPosition ();
+        this.sendTrackOSC (selPos + "/select", 1);
+    }
+
+
+    protected void scrollPageForwards ()
+    {
+        if (this.bankOffset + this.pageSize < this.getItemCount ())
+            this.bankOffset += this.pageSize;
+
+        // Deselect previous selected track (if any)
+        final ITrack selectedTrack = this.getSelectedItem ();
+        if (selectedTrack != null)
+            this.sendTrackOSC (selectedTrack.getPosition () + "/select", 0);
+
+        // Select item on new page
+        final int selPos = this.getItem (0).getPosition ();
+        this.sendTrackOSC (selPos + "/select", 1);
     }
 
 

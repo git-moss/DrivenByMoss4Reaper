@@ -210,7 +210,7 @@ public abstract class AbstractControllerInstance implements IControllerInstance
 
     private File getFileName ()
     {
-        return new File (this.iniFiles.getIniPath (), "DrivenByMoss4Reaper-" + this.controllerDefinition.getHardwareModel ().replace (' ', '-') + ".config");
+        return new File (this.iniFiles.getIniPath (), "DrivenByMoss4Reaper-" + this.controllerDefinition.getHardwareModel ().replace (' ', '-').replace ('/', '-') + ".config");
     }
 
 

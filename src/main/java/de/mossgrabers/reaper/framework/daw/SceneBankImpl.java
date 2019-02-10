@@ -61,7 +61,7 @@ public class SceneBankImpl extends AbstractBankImpl<IScene> implements ISceneBan
 
     /** {@inheritDoc} */
     @Override
-    public boolean canScrollBackwards ()
+    public boolean canScrollPageBackwards ()
     {
         return this.bankOffset - 1 >= 0;
     }
@@ -69,7 +69,7 @@ public class SceneBankImpl extends AbstractBankImpl<IScene> implements ISceneBan
 
     /** {@inheritDoc} */
     @Override
-    public boolean canScrollForwards ()
+    public boolean canScrollPageForwards ()
     {
         final int calculatedCount = this.getItemCount ();
         return this.bankOffset + 1 < calculatedCount;
@@ -99,7 +99,7 @@ public class SceneBankImpl extends AbstractBankImpl<IScene> implements ISceneBan
 
     /** {@inheritDoc} */
     @Override
-    public void scrollPageBackwards ()
+    public void selectPreviousPage ()
     {
         this.bankOffset = Math.max (0, this.bankOffset - this.pageSize);
         this.trackBank.updateSlotBanks (this.bankOffset);
@@ -108,7 +108,7 @@ public class SceneBankImpl extends AbstractBankImpl<IScene> implements ISceneBan
 
     /** {@inheritDoc} */
     @Override
-    public void scrollPageForwards ()
+    public void selectNextPage ()
     {
         if (this.bankOffset + this.pageSize < this.getItemCount ())
         {
