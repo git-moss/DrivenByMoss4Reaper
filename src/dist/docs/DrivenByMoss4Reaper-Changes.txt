@@ -1,3 +1,27 @@
+5.20
+- New: Integrated DrivenByMoss 5.20
+    * Ableton Push / Push 2 11.04
+        - New: Use Shift+Octave Up/Down in Drum Sequencer modes to move the pads by 4.
+        - Fixed: Marker mode was broken.
+    * Akai APC40 / APC40mkII 5.20
+        - New: Changed Nudge- to Undo and Nudge+ to Redo.
+        - New: Flipped functionality of "Detail View" (is now "Toggle plugin window") and Shift+"Details View" (is now "Step through the layout perspectives").
+        - New: Drum sequencer: The highlighted grid in the drum machine now only show the 12 pads. The scene buttons 1/2 move the pad view by 4. The scene buttons 4/5 move the pad view by 12 (previously 16).
+        - Fixed: "Step through the layout perspectives" did not work on some display profiles.
+    * Generic Flexi 2.2
+        - New: Added commands to control Browser filter columns 7 and 8.
+        - New: Added Browser mode.
+        - New: Added absolute mode for toggle buttons.
+        - New: Added support for MMC.
+        - New: Added "Transport: Rewind" and "Transport: Fast Forward"
+        - New: Select buttons in Parametermode select parameter pages instead of devices.
+        - Fixed: Removed duplicated function "Transport: Set Crossfader", use "Master: Crossfader" instead.
+        - Fixed: Mode knobs did always use relative mode 1, even if 2 or 3 was selected.
+        - Fixed: Values of Track-, Volume- and Parametermode were not reflected correctly back to the device.
+        - Fixed: Prevent console warnings when values go out of bounds in relative modes.
+- New: Added an action to open the DrivenByMoss extension window (search for "DrivenByMoss" in the action list).
+- New: The DrivenByMoss extension and configuration windows can now be closed with the Escape key.
+
 5.10
 - New: Integrated DrivenByMoss 5.10
     * Native Instruments Komplete Kontrol 1 S25, S49, S61, S88 1.1

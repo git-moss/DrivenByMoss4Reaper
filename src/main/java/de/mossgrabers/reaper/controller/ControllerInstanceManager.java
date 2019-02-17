@@ -8,7 +8,6 @@ import de.mossgrabers.controller.apc.APCControllerDefinition;
 import de.mossgrabers.controller.apcmini.APCminiControllerDefinition;
 import de.mossgrabers.controller.beatstep.BeatstepControllerDefinition;
 import de.mossgrabers.controller.generic.GenericFlexiControllerDefinition;
-import de.mossgrabers.controller.kontrol.midi.mkii.KontrolMkIIControllerDefinition;
 import de.mossgrabers.controller.kontrol.osc.mkii.KontrolOSCControllerDefinition;
 import de.mossgrabers.controller.kontrol.usb.mki.Kontrol1ControllerDefinition;
 import de.mossgrabers.controller.launchpad.LaunchpadControllerDefinition;
@@ -18,7 +17,6 @@ import de.mossgrabers.controller.osc.OSCControllerDefinition;
 import de.mossgrabers.controller.push.PushControllerDefinition;
 import de.mossgrabers.controller.sl.SLControllerDefinition;
 import de.mossgrabers.controller.utilities.UtilitiesDefinition;
-import de.mossgrabers.controller.xbox.XboxControllerDefinition;
 import de.mossgrabers.framework.controller.IControllerDefinition;
 import de.mossgrabers.reaper.communication.MessageSender;
 import de.mossgrabers.reaper.controller.apc.APC40mkIControllerInstance;
@@ -27,7 +25,6 @@ import de.mossgrabers.reaper.controller.apcmini.APCminiControllerInstance;
 import de.mossgrabers.reaper.controller.beatstep.BeatstepControllerInstance;
 import de.mossgrabers.reaper.controller.beatstep.BeatstepProControllerInstance;
 import de.mossgrabers.reaper.controller.generic.GenericFlexiControllerInstance;
-import de.mossgrabers.reaper.controller.kontrol.midi.mkii.KontrolMkIIControllerInstance;
 import de.mossgrabers.reaper.controller.kontrol.osc.mkii.KontrolMkIIOSCControllerInstance;
 import de.mossgrabers.reaper.controller.kontrol.usb.mki.KontrolMkIS25ControllerInstance;
 import de.mossgrabers.reaper.controller.kontrol.usb.mki.KontrolMkIS49ControllerInstance;
@@ -46,7 +43,6 @@ import de.mossgrabers.reaper.controller.push.Push2ControllerInstance;
 import de.mossgrabers.reaper.controller.sl.SLMkIControllerInstance;
 import de.mossgrabers.reaper.controller.sl.SLMkIIControllerInstance;
 import de.mossgrabers.reaper.controller.utilities.UtilitiesInstance;
-import de.mossgrabers.reaper.controller.xbox.XboxControllerInstance;
 import de.mossgrabers.reaper.framework.IniFiles;
 import de.mossgrabers.reaper.ui.utils.LogModel;
 import de.mossgrabers.reaper.ui.utils.PropertiesEx;
@@ -82,7 +78,7 @@ public class ControllerInstanceManager
         KontrolMkIS49ControllerInstance.class,
         KontrolMkIS61ControllerInstance.class,
         KontrolMkIS88ControllerInstance.class,
-        KontrolMkIIControllerInstance.class,
+        // KontrolMkIIControllerInstance.class,
         KontrolMkIIOSCControllerInstance.class,
         LaunchpadMkIIControllerInstance.class,
         LaunchpadProControllerInstance.class,
@@ -93,8 +89,8 @@ public class ControllerInstanceManager
         MCU4ControllerInstance.class,
         OSCControllerInstance.class,
         SLMkIControllerInstance.class,
-        SLMkIIControllerInstance.class,
-        XboxControllerInstance.class
+        SLMkIIControllerInstance.class
+            // XboxControllerInstance.class
     };
 
     private static final IControllerDefinition [] DEFINITIONS             =
@@ -112,7 +108,7 @@ public class ControllerInstanceManager
         new Kontrol1ControllerDefinition (1),
         new Kontrol1ControllerDefinition (2),
         new Kontrol1ControllerDefinition (3),
-        new KontrolMkIIControllerDefinition (),
+        // new KontrolMkIIControllerDefinition (),
         new KontrolOSCControllerDefinition (),
         new LaunchpadControllerDefinition (true),
         new LaunchpadControllerDefinition (false),
@@ -123,8 +119,8 @@ public class ControllerInstanceManager
         new MCUControllerDefinition (3),
         new OSCControllerDefinition (),
         new SLControllerDefinition (false),
-        new SLControllerDefinition (true),
-        new XboxControllerDefinition ()
+        new SLControllerDefinition (true)
+            // new XboxControllerDefinition ()
     };
 
     private static final Class<?> []              CONSTRUCTOR_TYPES       =

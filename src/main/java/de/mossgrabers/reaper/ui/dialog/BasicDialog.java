@@ -55,6 +55,7 @@ public abstract class BasicDialog extends JDialog
         super (frame, title, isModal);
         this.frame = frame;
         this.setDefaultCloseOperation (disposeOnClose ? WindowConstants.DISPOSE_ON_CLOSE : WindowConstants.HIDE_ON_CLOSE);
+        this.getRootPane ().registerKeyboardAction (e -> cancel (), KeyStroke.getKeyStroke (KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_IN_FOCUSED_WINDOW);
     }
 
 

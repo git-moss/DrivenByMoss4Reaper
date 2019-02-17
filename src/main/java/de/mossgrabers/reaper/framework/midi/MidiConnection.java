@@ -142,8 +142,6 @@ public class MidiConnection
      */
     public void sendSysex (final byte [] data)
     {
-        if (!this.isOutputOpen ())
-            return;
         try
         {
             this.send (new SysexMessage (data, data.length));
@@ -163,16 +161,7 @@ public class MidiConnection
      */
     public void sendCC (final int cc, final int value)
     {
-        if (!this.isOutputOpen ())
-            return;
-        try
-        {
-            this.send (new ShortMessage (0xB0, cc, value));
-        }
-        catch (final InvalidMidiDataException ex)
-        {
-            this.model.error ("Invalid Midi data.", ex);
-        }
+        this.send (this.createShortMessage (0xB0, cc, value));
     }
 
 
@@ -185,16 +174,7 @@ public class MidiConnection
      */
     public void sendNote (final int channel, final int note, final int velocity)
     {
-        if (!this.isOutputOpen ())
-            return;
-        try
-        {
-            this.send (new ShortMessage (0x90 + channel, note, velocity));
-        }
-        catch (final InvalidMidiDataException ex)
-        {
-            this.model.error ("Invalid Note?!", ex);
-        }
+        this.send (this.createShortMessage (0x90 + channel, note, velocity));
     }
 
 
@@ -205,16 +185,7 @@ public class MidiConnection
      */
     public void sendPitchbend (final int value)
     {
-        if (!this.isOutputOpen ())
-            return;
-        try
-        {
-            this.send (new ShortMessage (0xE0, 0, value));
-        }
-        catch (final InvalidMidiDataException ex)
-        {
-            this.model.error ("Invalid Midi pitchbend data?!", ex);
-        }
+        this.send (this.createShortMessage (0xE0, 0, value));
     }
 
 
@@ -227,30 +198,7 @@ public class MidiConnection
      */
     public void sendRaw (final int status, final int data1, final int data2)
     {
-        if (!this.isOutputOpen ())
-            return;
-        try
-        {
-            this.send (new ShortMessage (status, data1, data2));
-        }
-        catch (final InvalidMidiDataException ex)
-        {
-            this.model.error ("Invalid Midi data.", ex);
-        }
-    }
-
-
-    /**
-     * Checks if the midi output is open and data can be sent to it.
-     *
-     * @return True if open
-     */
-    public boolean isOutputOpen ()
-    {
-        synchronized (this.sendLock)
-        {
-            return this.receiver != null && this.midiOutputDevice.isOpen ();
-        }
+        this.send (this.createShortMessage (status, data1, data2));
     }
 
 
@@ -308,9 +256,26 @@ public class MidiConnection
 
     private void send (final MidiMessage message)
     {
+        if (message == null)
+            return;
         synchronized (this.sendLock)
         {
-            this.receiver.send (message, -1);
+            if (this.receiver != null && this.midiOutputDevice.isOpen ())
+                this.receiver.send (message, -1);
+        }
+    }
+
+
+    private ShortMessage createShortMessage (final int status, final int data1, final int data2)
+    {
+        try
+        {
+            return new ShortMessage (status, data1, data2);
+        }
+        catch (final InvalidMidiDataException ex)
+        {
+            this.model.error ("Invalid MIDI data.", ex);
+            return null;
         }
     }
 
