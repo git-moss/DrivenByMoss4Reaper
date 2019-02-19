@@ -134,7 +134,7 @@ class MidiInputImpl implements IMidiInput
         if (msg.length != 3)
             return;
 
-        final int status = msg[0];
+        final int status = msg[0] & 0xFF;
         final byte data1 = msg[1];
         final byte data2 = msg[2];
 

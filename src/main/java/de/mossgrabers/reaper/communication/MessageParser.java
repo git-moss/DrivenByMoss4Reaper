@@ -74,15 +74,30 @@ public class MessageParser
     {
         this.controllerSetup = controllerSetup;
         this.model = controllerSetup.getModel ();
-        this.host = this.model.getHost ();
-        this.project = this.model.getProject ();
-        this.application = (ApplicationImpl) this.model.getApplication ();
-        this.transport = (TransportImpl) this.model.getTransport ();
-        this.masterTrack = (MasterTrackImpl) this.model.getMasterTrack ();
-        this.valueChanger = this.model.getValueChanger ();
-        this.cursorDevice = (CursorDeviceImpl) this.model.getCursorDevice ();
-        this.instrumentDevice = (CursorDeviceImpl) this.model.getInstrumentDevice ();
-        this.browser = this.model.getBrowser ();
+        if (this.model == null)
+        {
+            this.host = null;
+            this.project = null;
+            this.application = null;
+            this.transport = null;
+            this.masterTrack = null;
+            this.valueChanger = null;
+            this.cursorDevice = null;
+            this.instrumentDevice = null;
+            this.browser = null;
+        }
+        else
+        {
+            this.host = this.model.getHost ();
+            this.project = this.model.getProject ();
+            this.application = (ApplicationImpl) this.model.getApplication ();
+            this.transport = (TransportImpl) this.model.getTransport ();
+            this.masterTrack = (MasterTrackImpl) this.model.getMasterTrack ();
+            this.valueChanger = this.model.getValueChanger ();
+            this.cursorDevice = (CursorDeviceImpl) this.model.getCursorDevice ();
+            this.instrumentDevice = (CursorDeviceImpl) this.model.getInstrumentDevice ();
+            this.browser = this.model.getBrowser ();
+        }
     }
 
 
@@ -94,6 +109,9 @@ public class MessageParser
      */
     public void parseOSC (final String osc, final String value)
     {
+        if (this.model == null)
+            return;
+
         final Queue<String> parts = parsePath (osc);
         if (parts == null)
             return;

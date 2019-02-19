@@ -2,10 +2,10 @@
 // (c) 2017-2019
 // Licensed under LGPLv3 - http://www.gnu.org/licenses/lgpl-3.0.txt
 
-package de.mossgrabers.reaper.controller.xbox;
+package de.mossgrabers.reaper.controller.midimonitor;
 
-import de.mossgrabers.controller.xbox.XboxControllerDefinition;
-import de.mossgrabers.controller.xbox.XboxControllerSetup;
+import de.mossgrabers.controller.midimonitor.MidiMonitorDefinition;
+import de.mossgrabers.controller.midimonitor.MidiMonitorSetup;
 import de.mossgrabers.framework.controller.IControllerSetup;
 import de.mossgrabers.reaper.communication.MessageSender;
 import de.mossgrabers.reaper.controller.AbstractControllerInstance;
@@ -17,11 +17,11 @@ import java.awt.Window;
 
 
 /**
- * Microsoft Xbox game controller instance.
+ * The Midi Monitor instance.
  *
  * @author J&uuml;rgen Mo&szlig;graber
  */
-public class XboxControllerInstance extends AbstractControllerInstance
+public class MidiMonitorInstance extends AbstractControllerInstance
 {
     /**
      * Constructor.
@@ -31,9 +31,9 @@ public class XboxControllerInstance extends AbstractControllerInstance
      * @param sender The sender
      * @param iniFiles The INI configuration files
      */
-    public XboxControllerInstance (final LogModel logModel, final Window window, final MessageSender sender, final IniFiles iniFiles)
+    public MidiMonitorInstance (final LogModel logModel, final Window window, final MessageSender sender, final IniFiles iniFiles)
     {
-        super (new XboxControllerDefinition (), logModel, window, sender, iniFiles);
+        super (new MidiMonitorDefinition (), logModel, window, sender, iniFiles);
     }
 
 
@@ -46,6 +46,6 @@ public class XboxControllerInstance extends AbstractControllerInstance
     @Override
     protected IControllerSetup createControllerSetup (final ReaperSetupFactory setupFactory)
     {
-        return new XboxControllerSetup (this.host, setupFactory, this.settingsUI);
+        return new MidiMonitorSetup (this.host, setupFactory, this.settingsUI);
     }
 }

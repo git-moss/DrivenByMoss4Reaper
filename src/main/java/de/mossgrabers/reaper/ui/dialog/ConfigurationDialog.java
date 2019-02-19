@@ -78,7 +78,10 @@ public class ConfigurationDialog extends BasicDialog
         final JPanel contentPane = new JPanel (new BorderLayout ());
 
         final TwoColsPanel mainColumn = new TwoColsPanel (true);
-        final JScrollPane scrollPane = new JScrollPane (mainColumn);
+        final JPanel wrapper = new JPanel (new BorderLayout ());
+        wrapper.add (mainColumn, BorderLayout.NORTH);
+
+        final JScrollPane scrollPane = new JScrollPane (wrapper);
         scrollPane.setHorizontalScrollBarPolicy (ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setVerticalScrollBarPolicy (ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 

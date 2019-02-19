@@ -2,10 +2,10 @@
 // (c) 2017-2019
 // Licensed under LGPLv3 - http://www.gnu.org/licenses/lgpl-3.0.txt
 
-package de.mossgrabers.reaper.controller.utilities;
+package de.mossgrabers.reaper.controller.autocolor;
 
-import de.mossgrabers.controller.utilities.UtilitiesDefinition;
-import de.mossgrabers.controller.utilities.UtilitiesSetup;
+import de.mossgrabers.controller.autocolor.AutoColorDefinition;
+import de.mossgrabers.controller.autocolor.AutoColorSetup;
 import de.mossgrabers.framework.controller.IControllerSetup;
 import de.mossgrabers.reaper.communication.MessageSender;
 import de.mossgrabers.reaper.controller.AbstractControllerInstance;
@@ -17,11 +17,11 @@ import java.awt.Window;
 
 
 /**
- * Utilities instance.
+ * The Auto Color instance.
  *
  * @author J&uuml;rgen Mo&szlig;graber
  */
-public class UtilitiesInstance extends AbstractControllerInstance
+public class AutoColorInstance extends AbstractControllerInstance
 {
     /**
      * Constructor.
@@ -31,9 +31,9 @@ public class UtilitiesInstance extends AbstractControllerInstance
      * @param sender The sender
      * @param iniFiles The INI configuration files
      */
-    public UtilitiesInstance (final LogModel logModel, final Window window, final MessageSender sender, final IniFiles iniFiles)
+    public AutoColorInstance (final LogModel logModel, final Window window, final MessageSender sender, final IniFiles iniFiles)
     {
-        super (new UtilitiesDefinition (), logModel, window, sender, iniFiles);
+        super (new AutoColorDefinition (), logModel, window, sender, iniFiles);
     }
 
 
@@ -46,6 +46,6 @@ public class UtilitiesInstance extends AbstractControllerInstance
     @Override
     protected IControllerSetup createControllerSetup (final ReaperSetupFactory setupFactory)
     {
-        return new UtilitiesSetup (this.host, setupFactory, this.settingsUI);
+        return new AutoColorSetup (this.host, setupFactory, this.settingsUI);
     }
 }
