@@ -1,3 +1,11 @@
+5.50
+- New: Integrated DrivenByMoss 5.5
+    * New: There is now only one version number, the number of DrivenByMoss, and one changes file in the Wiki.
+    * New: Extension Midi Monitor added
+    * Fixed: Scene navigation with cursors was broken on most devices
+    * Ableton Push / Push 2 11.04
+        - Fixed: Clip indication was broken
+
 5.30
 - New: Integrated DrivenByMoss 5.30
     * Added new Midi Monitor extension.

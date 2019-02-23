@@ -553,7 +553,7 @@ public class MainFrame extends JFrame implements MessageSender
             final String vendor = definitions[i].getHardwareVendor ();
             final JMenu menu = menus.computeIfAbsent (vendor, JMenu::new);
 
-            final JMenuItem item = new JMenuItem (new StringBuilder (definitions[i].getHardwareModel ()).append (" (").append (definitions[i].getVersion ()).append (')').toString ());
+            final JMenuItem item = new JMenuItem (definitions[i].getHardwareModel ());
             final int index = i;
             item.addActionListener (event -> {
                 if (this.instanceManager.isInstantiated (index))
