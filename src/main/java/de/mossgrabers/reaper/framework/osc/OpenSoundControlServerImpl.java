@@ -10,12 +10,11 @@ import de.mossgrabers.framework.osc.IOpenSoundControlServer;
 
 import com.illposed.osc.OSCBundle;
 import com.illposed.osc.OSCMessage;
-import com.illposed.osc.OSCPortOut;
+import com.illposed.osc.OSCSerializeException;
+import com.illposed.osc.transport.udp.OSCPortOut;
 
 import java.io.IOException;
 import java.net.InetAddress;
-import java.net.SocketException;
-import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -27,8 +26,9 @@ import java.util.List;
  */
 public class OpenSoundControlServerImpl implements IOpenSoundControlServer
 {
-    private OSCPortOut connection;
-    private boolean    isClosed = true;
+    private final IHost host;
+    private OSCPortOut  connection;
+    private boolean     isClosed = true;
 
 
     /**
@@ -40,12 +40,14 @@ public class OpenSoundControlServerImpl implements IOpenSoundControlServer
      */
     public OpenSoundControlServerImpl (final IHost host, final String serverAddress, final int serverPort)
     {
+        this.host = host;
+
         try
         {
             this.connection = new OSCPortOut (InetAddress.getByName (serverAddress), serverPort);
             this.isClosed = false;
         }
-        catch (final SocketException | UnknownHostException ex)
+        catch (final IOException ex)
         {
             this.connection = null;
             host.error ("Could not connect to OSC server.", ex);
@@ -60,9 +62,16 @@ public class OpenSoundControlServerImpl implements IOpenSoundControlServer
         if (this.isClosed)
             return;
 
-        final String address = message.getAddress ();
-        final Object [] values = message.getValues ();
-        this.connection.send (new OSCMessage (address, Arrays.asList (values)));
+        try
+        {
+            final String address = message.getAddress ();
+            final Object [] values = message.getValues ();
+            this.connection.send (new OSCMessage (address, Arrays.asList (values)));
+        }
+        catch (final OSCSerializeException ex)
+        {
+            throw new IOException (ex);
+        }
     }
 
 
@@ -73,24 +82,31 @@ public class OpenSoundControlServerImpl implements IOpenSoundControlServer
         if (this.isClosed)
             return;
 
-        int pos = 0;
-        OSCBundle oscBundle = new OSCBundle ();
-        for (final IOpenSoundControlMessage message: messages)
+        try
         {
-            final String address = message.getAddress ();
-            final Object [] values = message.getValues ();
-            oscBundle.addPacket (new OSCMessage (address, Arrays.asList (values)));
-
-            pos++;
-            if (pos > 1000)
+            int pos = 0;
+            OSCBundle oscBundle = new OSCBundle ();
+            for (final IOpenSoundControlMessage message: messages)
             {
-                pos = 0;
-                this.connection.send (oscBundle);
-                oscBundle = new OSCBundle ();
+                final String address = message.getAddress ();
+                final Object [] values = message.getValues ();
+                oscBundle.addPacket (new OSCMessage (address, Arrays.asList (values)));
+
+                pos++;
+                if (pos > 1000)
+                {
+                    pos = 0;
+                    this.connection.send (oscBundle);
+                    oscBundle = new OSCBundle ();
+                }
             }
+            if (!oscBundle.getPackets ().isEmpty ())
+                this.connection.send (oscBundle);
         }
-        if (!oscBundle.getPackets ().isEmpty ())
-            this.connection.send (oscBundle);
+        catch (final OSCSerializeException ex)
+        {
+            throw new IOException (ex);
+        }
     }
 
 
@@ -101,7 +117,15 @@ public class OpenSoundControlServerImpl implements IOpenSoundControlServer
     {
         this.isClosed = true;
 
-        if (this.connection != null)
+        if (this.connection == null)
+            return;
+        try
+        {
             this.connection.close ();
+        }
+        catch (final IOException ex)
+        {
+            this.host.error ("Could not close connection to OSC server.", ex);
+        }
     }
 }

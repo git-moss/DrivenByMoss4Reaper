@@ -22,13 +22,17 @@ import de.mossgrabers.reaper.framework.usb.UsbDeviceImpl;
 import de.mossgrabers.reaper.ui.utils.LogModel;
 import de.mossgrabers.reaper.ui.utils.SafeRunLater;
 
-import com.illposed.osc.OSCListener;
-import com.illposed.osc.OSCPortIn;
+import com.illposed.osc.OSCBadDataEvent;
+import com.illposed.osc.OSCBundle;
+import com.illposed.osc.OSCMessage;
+import com.illposed.osc.OSCPacket;
+import com.illposed.osc.OSCPacketEvent;
+import com.illposed.osc.OSCPacketListener;
+import com.illposed.osc.transport.udp.OSCPortIn;
 
 import java.awt.Color;
 import java.awt.Window;
 import java.io.IOException;
-import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -267,13 +271,13 @@ public class HostImpl implements IHost
             }
             this.oscReceiver = new OSCPortIn (port);
         }
-        catch (final SocketException ex)
+        catch (final IOException ex)
         {
             this.error ("Could not create OSC server.", ex);
             return;
         }
 
-        this.oscReceiver.addListener (messageAddress -> true, (OSCListener) (time, message) -> SafeRunLater.execute (this.logModel, () -> callback.handle (new OpenSoundControlMessageImpl (message))));
+        this.oscReceiver.addPacketListener (new PacketListener (callback));
         this.oscReceiver.startListening ();
     }
 
@@ -293,9 +297,62 @@ public class HostImpl implements IHost
         if (this.oscReceiver != null)
         {
             this.oscReceiver.stopListening ();
-            this.oscReceiver.close ();
+            try
+            {
+                this.oscReceiver.close ();
+            }
+            catch (final IOException ex)
+            {
+                this.error ("Could not close OSC receiver.", ex);
+                return;
+            }
         }
         for (final OpenSoundControlServerImpl sender: this.oscSenders)
             sender.close ();
+    }
+
+    private class PacketListener implements OSCPacketListener
+    {
+        private final IOpenSoundControlCallback callback;
+
+
+        public PacketListener (final IOpenSoundControlCallback callback)
+        {
+            this.callback = callback;
+        }
+
+
+        /** {@inheritDoc} */
+        @Override
+        public void handlePacket (final OSCPacketEvent event)
+        {
+            final List<OSCMessage> messages = new ArrayList<> ();
+            this.collectMessages (messages, event.getPacket ());
+
+            SafeRunLater.execute (HostImpl.this.logModel, () -> {
+                for (final OSCMessage message: messages)
+                    this.callback.handle (new OpenSoundControlMessageImpl (message));
+            });
+        }
+
+
+        /** {@inheritDoc} */
+        @Override
+        public void handleBadData (final OSCBadDataEvent event)
+        {
+            HostImpl.this.logModel.error ("Could not parse message.", event.getException ());
+        }
+
+
+        private void collectMessages (final List<OSCMessage> messages, final OSCPacket packet)
+        {
+            if (packet instanceof OSCMessage)
+                messages.add ((OSCMessage) packet);
+            else if (packet instanceof OSCBundle)
+            {
+                for (final OSCPacket op: ((OSCBundle) packet).getPackets ())
+                    collectMessages (messages, op);
+            }
+        }
     }
 }
