@@ -1,5 +1,8 @@
-5.70
+5.80
+- Launchpad
+    * Fixed: Switching of Note and Sequencer did not work (only if also Push 1/2 was running)
 
+5.70
 - Launchpad
     * New: The Bootloader and Firmware version is now logged to the console
     * New: Pro: The user button acts now like the Shift button
