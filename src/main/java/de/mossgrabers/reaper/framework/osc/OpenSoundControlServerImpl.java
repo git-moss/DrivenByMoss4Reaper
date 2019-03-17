@@ -93,7 +93,9 @@ public class OpenSoundControlServerImpl implements IOpenSoundControlServer
                 oscBundle.addPacket (new OSCMessage (address, Arrays.asList (values)));
 
                 pos++;
-                if (pos > 1000)
+                // We cannot get the exact size of the message due to the API, so let's try to stay
+                // below 64K, which is the maximum of an UDP message
+                if (pos > 100)
                 {
                     pos = 0;
                     this.connection.send (oscBundle);
