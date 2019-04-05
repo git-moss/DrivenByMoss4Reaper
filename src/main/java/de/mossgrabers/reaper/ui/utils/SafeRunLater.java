@@ -25,7 +25,7 @@ public class SafeRunLater
 
     /**
      * Execute the runnable later.
-     * 
+     *
      * @param logModel For logging errors
      * @param runnable The runnable to execute
      */

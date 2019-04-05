@@ -86,7 +86,7 @@ public class GradientTitledBorder extends TitledBorder
         if (!(g instanceof Graphics2D))
             throw new ClassCastException ("Parameter g must be an instance of Graphics2D but is " + g.getClass () + ".");
         final Graphics2D g2 = (Graphics2D) g;
-        g2.setPaint (new GradientPaint (x, y, this.gradientColor1, x + width, y, this.gradientColor2));
+        g2.setPaint (new GradientPaint (x, y, this.gradientColor1, (float) x + width, y, this.gradientColor2));
         final int h = this.getBorderInsets (c).top;
         g2.fillRect (x, y, width, y + h);
         final Font f = this.getTitleFont ();

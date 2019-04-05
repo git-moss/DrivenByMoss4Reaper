@@ -42,18 +42,18 @@ public class SendImpl extends ParameterImpl implements ISend
     @Override
     public void inc (final double increment)
     {
-        this.setValue (this.getValue () + increment);
+        this.setValue ((int) (this.getValue () + increment));
     }
 
 
     /** {@inheritDoc} */
     @Override
-    public void setValue (final double value)
+    public void setValue (final int value)
     {
         if (!this.doesExist ())
             return;
-        this.value = (int) value;
+        this.value = this.valueChanger.toNormalizedValue (value);
         final StringBuilder command = new StringBuilder ().append (this.channel.getPosition ()).append ("/send/").append (this.getIndex () + 1).append ("/volume");
-        this.sender.processDoubleArg ("track", command.toString (), this.valueChanger.toNormalizedValue (this.getValue ()));
+        this.sender.processDoubleArg ("track", command.toString (), this.value);
     }
 }

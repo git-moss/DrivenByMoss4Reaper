@@ -53,7 +53,7 @@ public class SettingsUI implements ISettingsUI
 
     /**
      * Constructor.
-     * 
+     *
      * @param logModel The log model
      * @param numMidiInPorts The number of required midi input ports
      * @param numMidiOutPorts The number of required midi output ports
@@ -200,7 +200,7 @@ public class SettingsUI implements ISettingsUI
             }
             catch (final RuntimeException ex)
             {
-                ex.printStackTrace ();
+                this.logModel.error ("Could not flush setting.", ex);
             }
         });
     }

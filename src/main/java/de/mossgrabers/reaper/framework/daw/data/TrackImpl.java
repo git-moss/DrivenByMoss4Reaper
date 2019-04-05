@@ -189,7 +189,7 @@ public class TrackImpl extends ChannelImpl implements ITrack
 
     /** {@inheritDoc} */
     @Override
-    public void setNoteRepeatLength (double length)
+    public void setNoteRepeatLength (final double length)
     {
         this.sendTrackOSC ("noterepeatlength", length);
     }

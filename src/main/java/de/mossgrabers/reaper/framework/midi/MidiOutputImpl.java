@@ -46,7 +46,7 @@ class MidiOutputImpl extends AbstractMidiOutputImpl
 
     /** {@inheritDoc} */
     @Override
-    protected void sendMidiShort (int status, int data1, int data2)
+    protected void sendMidiShort (final int status, final int data1, final int data2)
     {
         this.midiConnection.sendRaw (status, data1, data2);
     }

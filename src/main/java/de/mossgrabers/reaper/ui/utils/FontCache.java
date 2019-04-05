@@ -72,18 +72,11 @@ public class FontCache
      */
     public Font getFont (final int size)
     {
-        Font font = null;
         final double scale = (double) size / (double) this.baseFont.getSize ();
         final Double s = Double.valueOf (scale);
         synchronized (this.scaledFonts)
         {
-            font = this.scaledFonts.get (s);
-            if (font == null)
-            {
-                font = this.baseFont.deriveFont (AffineTransform.getScaleInstance (scale, scale));
-                this.scaledFonts.put (s, font);
-            }
+            return this.scaledFonts.computeIfAbsent (s, key -> this.baseFont.deriveFont (AffineTransform.getScaleInstance (scale, scale)));
         }
-        return font;
     }
 }

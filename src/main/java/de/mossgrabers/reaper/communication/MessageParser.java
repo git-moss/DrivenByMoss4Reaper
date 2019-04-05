@@ -5,7 +5,6 @@
 package de.mossgrabers.reaper.communication;
 
 import de.mossgrabers.framework.controller.IControllerSetup;
-import de.mossgrabers.framework.controller.IValueChanger;
 import de.mossgrabers.framework.daw.IBrowser;
 import de.mossgrabers.framework.daw.IDeviceBank;
 import de.mossgrabers.framework.daw.IHost;
@@ -58,7 +57,6 @@ public class MessageParser
     private final ApplicationImpl  application;
     private final MasterTrackImpl  masterTrack;
     private final TransportImpl    transport;
-    private final IValueChanger    valueChanger;
     private final CursorDeviceImpl cursorDevice;
     private final CursorDeviceImpl instrumentDevice;
     private final IBrowser         browser;
@@ -81,7 +79,6 @@ public class MessageParser
             this.application = null;
             this.transport = null;
             this.masterTrack = null;
-            this.valueChanger = null;
             this.cursorDevice = null;
             this.instrumentDevice = null;
             this.browser = null;
@@ -93,7 +90,6 @@ public class MessageParser
             this.application = (ApplicationImpl) this.model.getApplication ();
             this.transport = (TransportImpl) this.model.getTransport ();
             this.masterTrack = (MasterTrackImpl) this.model.getMasterTrack ();
-            this.valueChanger = this.model.getValueChanger ();
             this.cursorDevice = (CursorDeviceImpl) this.model.getCursorDevice ();
             this.instrumentDevice = (CursorDeviceImpl) this.model.getInstrumentDevice ();
             this.browser = this.model.getBrowser ();
@@ -312,24 +308,24 @@ public class MessageParser
 
             case "volume":
                 if (parts.isEmpty ())
-                    track.setInternalVolume (this.valueChanger.fromNormalizedValue (Double.parseDouble (value)));
+                    track.setInternalVolume (Double.parseDouble (value));
                 else if ("str".equals (parts.poll ()))
                     track.setVolumeStr (value);
                 break;
 
             case "pan":
                 if (parts.isEmpty ())
-                    track.setInternalPan (this.valueChanger.fromNormalizedValue (Double.parseDouble (value)));
+                    track.setInternalPan (Double.parseDouble (value));
                 else if ("str".equals (parts.poll ()))
                     track.setPanStr (value);
                 break;
 
             case "vuleft":
-                track.setVuLeft (this.valueChanger.fromNormalizedValue (Double.parseDouble (value)));
+                track.setVuLeft (Double.parseDouble (value));
                 break;
 
             case "vuright":
-                track.setVuRight (this.valueChanger.fromNormalizedValue (Double.parseDouble (value)));
+                track.setVuRight (Double.parseDouble (value));
                 break;
 
             case "mute":
@@ -421,7 +417,7 @@ public class MessageParser
 
             case "volume":
                 if (parts.isEmpty ())
-                    sendImpl.setInternalValue (this.valueChanger.fromNormalizedValue (Double.parseDouble (value)));
+                    sendImpl.setInternalValue (Double.parseDouble (value));
                 else if ("str".equals (parts.poll ()))
                     sendImpl.setValueStr (value);
                 break;
@@ -467,9 +463,10 @@ public class MessageParser
                 break;
 
             case "sibling":
+                final String siblingCmd = parts.poll ();
                 try
                 {
-                    final int siblingNo = Integer.parseInt (parts.poll ()) - 1;
+                    final int siblingNo = Integer.parseInt (siblingCmd) - 1;
                     final IDeviceBank deviceBank = device.getDeviceBank ();
                     if (siblingNo < deviceBank.getPageSize ())
                     {
@@ -489,7 +486,7 @@ public class MessageParser
                 }
                 catch (final NumberFormatException ex)
                 {
-                    return;
+                    this.host.error ("Unhandled Device Sibling parameter: " + siblingCmd);
                 }
                 break;
 
@@ -519,7 +516,7 @@ public class MessageParser
 
             default:
                 this.host.error ("Unhandled device parameter: " + command);
-                return;
+                break;
         }
     }
 
@@ -538,7 +535,7 @@ public class MessageParser
 
             case "value":
                 if (parts.isEmpty ())
-                    p.setInternalValue (this.valueChanger.fromNormalizedValue (Double.parseDouble (value)));
+                    p.setInternalValue (Double.parseDouble (value));
                 else if ("str".equals (parts.poll ()))
                     p.setValueStr (value);
                 break;

@@ -33,7 +33,7 @@ public class OpenSoundControlServerImpl implements IOpenSoundControlServer
 
     /**
      * Constructor.
-     * 
+     *
      * @param host The host
      * @param serverAddress The address of the server to connect to
      * @param serverPort The port of the server to connect to

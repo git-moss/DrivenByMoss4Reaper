@@ -24,7 +24,7 @@ public class BooleanSettingImpl extends BaseSetting<JCheckBox, Boolean> implemen
 
     /**
      * Constructor.
-     * 
+     *
      * @param logModel The log model
      * @param label The name of the setting, must not be null
      * @param category The name of the category, may not be null

@@ -39,12 +39,10 @@ public class TransportImpl extends BaseImpl implements ITransport
     private IValueChanger       valueChanger;
     private IniFiles            iniFiles;
 
-    private int                 crossfade;
     private double              position               = 0;        // Time
     private String              positionStr            = "";
     private double              tempo                  = 120.0;
     private String              beatsStr               = "";
-    private int                 metroVolume;
 
     private boolean             isMetronomeOn          = false;
     private boolean             isPlaying              = false;
@@ -75,10 +73,6 @@ public class TransportImpl extends BaseImpl implements ITransport
         this.iniFiles = iniFiles;
         this.trackBank = trackBank;
         this.valueChanger = valueChanger;
-
-        final int middle = valueChanger.getUpperBound () / 2;
-        this.crossfade = middle;
-        this.metroVolume = middle;
     }
 
 
@@ -239,7 +233,8 @@ public class TransportImpl extends BaseImpl implements ITransport
     @Override
     public String getMetronomeVolumeStr ()
     {
-        return Double.toString (this.metroVolume);
+        // Not supported
+        return Double.toString (this.valueChanger.getUpperBound () / 2.0);
     }
 
 
@@ -253,7 +248,7 @@ public class TransportImpl extends BaseImpl implements ITransport
 
     /** {@inheritDoc} */
     @Override
-    public void setMetronomeVolume (final double value)
+    public void setMetronomeVolume (final int value)
     {
         // Not supported
     }
@@ -263,7 +258,8 @@ public class TransportImpl extends BaseImpl implements ITransport
     @Override
     public int getMetronomeVolume ()
     {
-        return this.metroVolume;
+        // Not supported
+        return this.valueChanger.getUpperBound () / 2;
     }
 
 
@@ -664,7 +660,7 @@ public class TransportImpl extends BaseImpl implements ITransport
 
     /** {@inheritDoc} */
     @Override
-    public void setCrossfade (final double value)
+    public void setCrossfade (final int value)
     {
         // Not supported
     }
@@ -675,7 +671,7 @@ public class TransportImpl extends BaseImpl implements ITransport
     public int getCrossfade ()
     {
         // Not supported
-        return this.crossfade;
+        return this.valueChanger.getUpperBound () / 2;
     }
 
 

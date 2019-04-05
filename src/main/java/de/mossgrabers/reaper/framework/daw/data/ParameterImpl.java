@@ -22,8 +22,8 @@ public class ParameterImpl extends ItemImpl implements IParameter
     private String          valueStr          = "";
     private boolean         isBeingTouched;
 
-    protected int           value;
-    protected int           lastReceivedValue = -1;
+    protected double        value;
+    protected double        lastReceivedValue = -1;
 
 
     /**
@@ -45,7 +45,7 @@ public class ParameterImpl extends ItemImpl implements IParameter
     @Override
     public void inc (final double increment)
     {
-        this.setValue (Math.max (0, Math.min (this.getValue () + increment, this.valueChanger.getUpperBound () - 1)));
+        this.setValue ((int) Math.max (0, Math.min (this.getValue () + increment, this.valueChanger.getUpperBound () - 1.0)));
     }
 
 
@@ -71,7 +71,7 @@ public class ParameterImpl extends ItemImpl implements IParameter
     @Override
     public int getValue ()
     {
-        return Math.max (this.value, 0);
+        return this.valueChanger.fromNormalizedValue (Math.max (this.value, 0));
     }
 
 
@@ -85,12 +85,12 @@ public class ParameterImpl extends ItemImpl implements IParameter
 
     /** {@inheritDoc} */
     @Override
-    public void setValue (final double value)
+    public void setValue (final int value)
     {
         if (!this.doesExist ())
             return;
-        this.value = (int) value;
-        this.sender.processDoubleArg ("device", "param/" + this.getPosition () + "/value", this.valueChanger.toNormalizedValue (this.getValue ()));
+        this.value = this.valueChanger.toNormalizedValue (value);
+        this.sender.processDoubleArg ("device", "param/" + this.getPosition () + "/value", this.value);
     }
 
 
@@ -115,7 +115,7 @@ public class ParameterImpl extends ItemImpl implements IParameter
     @Override
     public void resetValue ()
     {
-        this.setValue (0.0);
+        this.setValue (0);
     }
 
 
@@ -128,7 +128,7 @@ public class ParameterImpl extends ItemImpl implements IParameter
 
         this.isBeingTouched = isBeingTouched;
 
-        if (this.isBeingTouched || this.lastReceivedValue == -1)
+        if (this.isBeingTouched || this.lastReceivedValue < 0)
             return;
 
         this.value = this.lastReceivedValue;
@@ -139,9 +139,9 @@ public class ParameterImpl extends ItemImpl implements IParameter
     /**
      * Set the value.
      *
-     * @param value The value
+     * @param value The value normalized to 0..1
      */
-    public void setInternalValue (final int value)
+    public void setInternalValue (final double value)
     {
         if (this.isBeingTouched)
             this.lastReceivedValue = value;

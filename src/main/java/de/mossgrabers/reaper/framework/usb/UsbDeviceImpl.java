@@ -104,7 +104,7 @@ public class UsbDeviceImpl implements IUsbDevice
     private static DeviceHandle openDeviceWithVidPid (final short vendorId, final short productId) throws UsbException
     {
         final DeviceList list = new DeviceList ();
-        int result = LibUsb.getDeviceList (null, list);
+        final int result = LibUsb.getDeviceList (null, list);
         if (result < LibUsb.SUCCESS)
             throw new UsbException ("Unable to get device list.", new LibUsbException (result));
 

@@ -88,6 +88,6 @@ public class DeviceImpl extends ItemImpl implements IDevice
 
     protected void sendDeviceOSC (final String command)
     {
-        this.sender.processNoArg ("device", (this.getIndex () + 1) + "/" + command);
+        this.sender.processNoArg ("device", this.getIndex () + 1 + "/" + command);
     }
 }

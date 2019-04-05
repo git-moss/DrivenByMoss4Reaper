@@ -351,7 +351,7 @@ public class HostImpl implements IHost
             else if (packet instanceof OSCBundle)
             {
                 for (final OSCPacket op: ((OSCBundle) packet).getPackets ())
-                    collectMessages (messages, op);
+                    this.collectMessages (messages, op);
             }
         }
     }

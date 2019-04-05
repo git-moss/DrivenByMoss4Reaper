@@ -11,7 +11,7 @@ import com.nikhaldimann.inieditor.IniEditor;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -35,7 +35,7 @@ import java.util.regex.Pattern;
  */
 public class DeviceManager
 {
-    private static final String SECTION_FOLDERS = "Folders";
+    private static final String          SECTION_FOLDERS = "Folders";
     private static final Pattern         PATTERN_VST     = Pattern.compile (".+?,.+?,(.+?)(\\!\\!\\!VSTi)?");
     private static final Pattern         PATTERN_COMPANY = Pattern.compile ("(.*?)\\s*\\((.*?)\\)");
     private static final Pattern         PATTERN_JSFX    = Pattern.compile ("NAME\\s?((\")?.+?(\")?)\\s?\"(.+?)\"");
@@ -476,7 +476,7 @@ public class DeviceManager
         try
         {
             if (path.toFile ().exists ())
-                Files.readAllLines (path, Charset.forName ("UTF-8")).forEach (line -> this.parseJSDevice (line, categoriesSet, vendorsSet));
+                Files.readAllLines (path, StandardCharsets.UTF_8).forEach (line -> this.parseJSDevice (line, categoriesSet, vendorsSet));
             else
                 logModel.info (filename + " not present, skipped loading.");
         }

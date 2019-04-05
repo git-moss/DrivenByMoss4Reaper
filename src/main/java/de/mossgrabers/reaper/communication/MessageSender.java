@@ -65,7 +65,7 @@ public interface MessageSender
 
     /**
      * Call Reaper command in DLL.
-     * 
+     *
      * @param processor The processor ID
      * @param value A double value
      */
@@ -77,7 +77,7 @@ public interface MessageSender
 
     /**
      * Call Reaper command in DLL.
-     * 
+     *
      * @param processor The processor ID
      * @param command The command ID
      * @param value A double value
@@ -87,7 +87,7 @@ public interface MessageSender
 
     /**
      * Call Reaper command in DLL.
-     * 
+     *
      * @param processor The processor ID
      * @param command The command ID
      * @param value A boolean value
@@ -100,7 +100,7 @@ public interface MessageSender
 
     /**
      * Call Reaper MIDI command in DLL.
-     * 
+     *
      * @param status MIDI status byte
      * @param data1 MIDI data byte 1
      * @param data2 MIDI data byte 2
@@ -113,7 +113,7 @@ public interface MessageSender
      *
      * @param id The action identifier, must not be null
      */
-    default void invokeAction (int id)
+    default void invokeAction (final int id)
     {
         this.processIntArg ("action", "", id);
     }

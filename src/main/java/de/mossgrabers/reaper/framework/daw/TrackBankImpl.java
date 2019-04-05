@@ -76,7 +76,7 @@ public class TrackBankImpl extends AbstractTrackBankImpl
             {
                 // Make the found track the new current folder
                 this.currentFolder = node;
-                List<TreeNode<TrackImpl>> children = node.getChildren ();
+                final List<TreeNode<TrackImpl>> children = node.getChildren ();
                 if (children.isEmpty ())
                     break;
                 children.get (0).getData ().select ();
@@ -94,9 +94,10 @@ public class TrackBankImpl extends AbstractTrackBankImpl
             return;
 
         final TreeNode<TrackImpl> parent = this.currentFolder.getParent ();
-        final TrackImpl data = this.currentFolder.getData ();
         this.currentFolder = parent == null ? this.rootTrack : parent;
-        data.select ();
+        final TrackImpl data = this.currentFolder.getData ();
+        if (data != null)
+            data.select ();
     }
 
 
@@ -148,7 +149,7 @@ public class TrackBankImpl extends AbstractTrackBankImpl
 
             // Find the selected track in the tree, focus the page and select its parent as the new
             // folder
-            findSelectedTrack (this.rootTrack);
+            this.findSelectedTrack (this.rootTrack);
         }
 
         this.notifySelectionObservers (track.getIndex (), isSelected);
@@ -170,7 +171,7 @@ public class TrackBankImpl extends AbstractTrackBankImpl
                 return true;
             }
 
-            if (track.isGroup () && findSelectedTrack (child))
+            if (track.isGroup () && this.findSelectedTrack (child))
                 return true;
         }
         return false;

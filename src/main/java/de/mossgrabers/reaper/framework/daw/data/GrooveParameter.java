@@ -105,7 +105,7 @@ public class GrooveParameter extends ParameterImpl
 
     /** {@inheritDoc} */
     @Override
-    public void setValue (final double val)
+    public void setValue (final int val)
     {
         if (!this.doesExist ())
             return;
@@ -115,7 +115,7 @@ public class GrooveParameter extends ParameterImpl
         {
             case 0:
             case 1:
-                this.value = (int) Math.round (val);
+                this.value = val;
                 break;
 
             case 2:
@@ -153,7 +153,7 @@ public class GrooveParameter extends ParameterImpl
     public void resetValue ()
     {
         if (this.getIndex () < 2)
-            this.setValue (this.valueChanger.getUpperBound () - 1.0);
+            this.setValue (this.valueChanger.getUpperBound () - 1);
         else
             super.resetValue ();
     }

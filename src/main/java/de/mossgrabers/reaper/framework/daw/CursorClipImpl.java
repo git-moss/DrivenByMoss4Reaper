@@ -21,26 +21,23 @@ import java.util.List;
  */
 public class CursorClipImpl extends BaseImpl implements INoteClip
 {
-    private IValueChanger   valueChanger;
-    private double          clipStart    = -1;
-    private double          clipEnd      = -1;
-    private boolean         isLooped     = false;
+    private static final String PATH_NOTE    = "note/";
 
-    private final double [] color        = new double []
-    {
-        0,
-        0,
-        0
-    };
-
-    private double          playPosition = -1;
-    private int             numSteps;
-    private int             numRows;
-    private double          stepLength;
-    private List<NoteImpl>  notes        = new ArrayList<> ();
-    private final int [] [] data;
-    private int             editPage     = 0;
-    private int             maxPage      = 1;
+    private IValueChanger       valueChanger;
+    private double              clipStart    = -1;
+    private double              clipEnd      = -1;
+    private boolean             isLooped     = false;
+    private double              red          = 0;
+    private double              green        = 0;
+    private double              blue         = 0;
+    private double              playPosition = -1;
+    private int                 numSteps;
+    private int                 numRows;
+    private double              stepLength;
+    private List<NoteImpl>      notes        = new ArrayList<> ();
+    private final int [] []     data;
+    private int                 editPage     = 0;
+    private int                 maxPage      = 1;
 
 
     /**
@@ -85,9 +82,9 @@ public class CursorClipImpl extends BaseImpl implements INoteClip
      */
     public void setColorValue (final double [] color)
     {
-        this.color[0] = color[0];
-        this.color[1] = color[1];
-        this.color[2] = color[2];
+        this.red = color[0];
+        this.green = color[1];
+        this.blue = color[2];
     }
 
 
@@ -95,7 +92,12 @@ public class CursorClipImpl extends BaseImpl implements INoteClip
     @Override
     public double [] getColor ()
     {
-        return this.color;
+        return new double []
+        {
+            this.red,
+            this.green,
+            this.blue
+        };
     }
 
 
@@ -351,7 +353,7 @@ public class CursorClipImpl extends BaseImpl implements INoteClip
     public void toggleStep (final int step, final int row, final int velocity)
     {
         final double pos = (step + this.editPage * this.numSteps) * this.stepLength;
-        this.sendClipOSC ("note/" + row + "/toggle", pos + " " + this.stepLength + " " + velocity);
+        this.sendClipOSC (PATH_NOTE + row + "/toggle", pos + " " + this.stepLength + " " + velocity);
     }
 
 
@@ -360,7 +362,7 @@ public class CursorClipImpl extends BaseImpl implements INoteClip
     public void setStep (final int step, final int row, final int velocity, final double duration)
     {
         final double pos = (step + this.editPage * this.numSteps) * this.stepLength;
-        this.sendClipOSC ("note/" + row + "/set", pos + " " + this.stepLength + " " + velocity);
+        this.sendClipOSC (PATH_NOTE + row + "/set", pos + " " + this.stepLength + " " + velocity);
     }
 
 
@@ -368,7 +370,7 @@ public class CursorClipImpl extends BaseImpl implements INoteClip
     @Override
     public void clearStep (final int step, final int row)
     {
-        this.sendClipOSC ("note/" + row + "/clear", (step + this.editPage * this.numSteps) * this.stepLength);
+        this.sendClipOSC (PATH_NOTE + row + "/clear", (step + this.editPage * this.numSteps) * this.stepLength);
     }
 
 
@@ -376,7 +378,7 @@ public class CursorClipImpl extends BaseImpl implements INoteClip
     @Override
     public void clearRow (final int row)
     {
-        this.sendClipOSC ("note/" + row + "/clear");
+        this.sendClipOSC (PATH_NOTE + row + "/clear");
     }
 
 
@@ -527,9 +529,9 @@ public class CursorClipImpl extends BaseImpl implements INoteClip
 
 
     /**
-     * 
+     * Set the play start (only stores the value).
      *
-     * @param start
+     * @param start The play start
      */
     public void setPlayStartIntern (final double start)
     {
@@ -539,9 +541,9 @@ public class CursorClipImpl extends BaseImpl implements INoteClip
 
 
     /**
-     * 
+     * Set the play end (only stores the value).
      *
-     * @param end
+     * @param end The play end
      */
     public void setPlayEndIntern (final double end)
     {

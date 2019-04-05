@@ -66,7 +66,7 @@ public class MainFrame extends JFrame implements MessageSender
     private JTextArea                           loggingTextArea   = new JTextArea ();
     private final transient LogModel            logModel          = new LogModel (this.loggingTextArea);
 
-    protected final MainConfiguration           mainConfiguration = new MainConfiguration ();
+    private final MainConfiguration             mainConfiguration = new MainConfiguration ();
 
     private final JList<CheckboxListItem>       controllerList    = new JList<> (new DefaultListModel<> ());
 
@@ -77,7 +77,6 @@ public class MainFrame extends JFrame implements MessageSender
 
     private JButton                             removeButton;
     private JButton                             configButton;
-    private JButton                             enableButton;
 
 
     /**
@@ -170,8 +169,8 @@ public class MainFrame extends JFrame implements MessageSender
         this.removeButton = new JButton ("Remove");
         this.removeButton.addActionListener (event -> this.removeController ());
 
-        this.enableButton = new JButton ("Dis-/enable");
-        this.enableButton.addActionListener (event -> this.toggleEnableController ());
+        final JButton enableButton = new JButton ("Dis-/enable");
+        enableButton.addActionListener (event -> this.toggleEnableController ());
 
         final JPanel deviceButtonContainer = new JPanel ();
         deviceButtonContainer.setBorder (new EmptyBorder (0, GAP, 0, 0));
@@ -180,7 +179,7 @@ public class MainFrame extends JFrame implements MessageSender
         deviceButtonContainer.add (addButton);
         deviceButtonContainer.add (this.removeButton);
         deviceButtonContainer.add (this.configButton);
-        deviceButtonContainer.add (this.enableButton);
+        deviceButtonContainer.add (enableButton);
         deviceButtonContainer.add (refreshButton);
 
         this.controllerList.setMinimumSize (new Dimension (300, 200));

@@ -129,7 +129,8 @@ public class ConfigurationDialog extends BasicDialog
         String category = null;
         for (final IfxSetting<?> s: settingsImpl.getSettings ())
         {
-            if (category != s.getCategory ())
+            final String cat = s.getCategory ();
+            if (category == null || !category.equals (cat))
             {
                 category = s.getCategory ();
                 mainColumn.addComponent (new TitledSeparator (category), BoxPanel.NORMAL);

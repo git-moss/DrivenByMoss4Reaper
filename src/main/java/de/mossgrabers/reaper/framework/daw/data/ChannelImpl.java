@@ -21,26 +21,28 @@ import de.mossgrabers.reaper.framework.daw.SendBankImpl;
  */
 public class ChannelImpl extends ItemImpl implements IChannel
 {
-    protected IValueChanger valueChanger;
+    private static final String PATH_TRACK         = "track";
 
-    private ChannelType     type;
-    protected int           volume;
-    private String          volumeStr          = "";
-    private int             vuLeft;
-    private int             vuRight;
-    private String          panStr             = "";
-    protected int           pan;
-    private boolean         isMute;
-    private boolean         isSolo;
-    private boolean         isActivated        = true;
-    private double []       color;
+    protected IValueChanger     valueChanger;
 
-    private final ISendBank sendBank;
+    private ChannelType         type;
+    protected double            volume;
+    private String              volumeStr          = "";
+    private double              vuLeft;
+    private double              vuRight;
+    private String              panStr             = "";
+    protected double            pan;
+    private boolean             isMute;
+    private boolean             isSolo;
+    private boolean             isActivated        = true;
+    private double []           color;
 
-    private boolean         isVolumeBeingTouched;
-    private int             lastReceivedVolume = -1;
-    private boolean         isPanBeingTouched;
-    private int             lastReceivedPan    = -1;
+    private final ISendBank     sendBank;
+
+    private boolean             isVolumeBeingTouched;
+    private double              lastReceivedVolume = -1;
+    private boolean             isPanBeingTouched;
+    private double              lastReceivedPan    = -1;
 
 
     /**
@@ -108,7 +110,7 @@ public class ChannelImpl extends ItemImpl implements IChannel
     @Override
     public int getVolume ()
     {
-        return this.volume;
+        return this.valueChanger.fromNormalizedValue (this.volume);
     }
 
 
@@ -122,10 +124,10 @@ public class ChannelImpl extends ItemImpl implements IChannel
 
     /** {@inheritDoc} */
     @Override
-    public void setVolume (final double value)
+    public void setVolume (final int value)
     {
-        this.volume = (int) value;
-        this.sendTrackOSC ("volume", this.valueChanger.toNormalizedValue (this.getVolume ()));
+        this.volume = this.valueChanger.toNormalizedValue (value);
+        this.sendTrackOSC ("volume", this.volume);
     }
 
 
@@ -133,7 +135,7 @@ public class ChannelImpl extends ItemImpl implements IChannel
     @Override
     public void resetVolume ()
     {
-        this.setVolume (0.6 * this.valueChanger.getUpperBound ());
+        this.setVolume ((int) (0.6 * this.valueChanger.getUpperBound ()));
     }
 
 
@@ -156,7 +158,7 @@ public class ChannelImpl extends ItemImpl implements IChannel
     {
         this.isVolumeBeingTouched = isBeingTouched;
 
-        if (this.isVolumeBeingTouched || this.lastReceivedVolume == -1)
+        if (this.isVolumeBeingTouched || this.lastReceivedVolume < 0)
             return;
 
         this.volume = this.lastReceivedVolume;
@@ -201,7 +203,7 @@ public class ChannelImpl extends ItemImpl implements IChannel
     @Override
     public int getPan ()
     {
-        return this.pan;
+        return this.valueChanger.fromNormalizedValue (this.pan);
     }
 
 
@@ -215,10 +217,10 @@ public class ChannelImpl extends ItemImpl implements IChannel
 
     /** {@inheritDoc} */
     @Override
-    public void setPan (final double value)
+    public void setPan (final int value)
     {
-        this.pan = (int) value;
-        this.sendTrackOSC ("pan", this.valueChanger.toNormalizedValue (this.getPan ()));
+        this.pan = this.valueChanger.toNormalizedValue (value);
+        this.sendTrackOSC ("pan", this.pan);
     }
 
 
@@ -226,7 +228,7 @@ public class ChannelImpl extends ItemImpl implements IChannel
     @Override
     public void resetPan ()
     {
-        this.setPan (0.5 * this.valueChanger.getUpperBound ());
+        this.setPan (this.valueChanger.getUpperBound () / 2);
     }
 
 
@@ -314,7 +316,7 @@ public class ChannelImpl extends ItemImpl implements IChannel
     @Override
     public int getVu ()
     {
-        return (this.vuLeft + this.vuRight) / 2;
+        return this.valueChanger.fromNormalizedValue ((this.vuLeft + this.vuRight) / 2.0);
     }
 
 
@@ -322,7 +324,7 @@ public class ChannelImpl extends ItemImpl implements IChannel
     @Override
     public int getVuLeft ()
     {
-        return this.vuLeft;
+        return this.valueChanger.fromNormalizedValue (this.vuLeft);
     }
 
 
@@ -330,7 +332,7 @@ public class ChannelImpl extends ItemImpl implements IChannel
     @Override
     public int getVuRight ()
     {
-        return this.vuRight;
+        return this.valueChanger.fromNormalizedValue (this.vuRight);
     }
 
 
@@ -407,9 +409,9 @@ public class ChannelImpl extends ItemImpl implements IChannel
     /**
      * Set the volume of the channel
      *
-     * @param volume The volume
+     * @param volume The volume normalized to 0..1
      */
-    public void setInternalVolume (final int volume)
+    public void setInternalVolume (final double volume)
     {
         if (this.isVolumeBeingTouched)
             this.lastReceivedVolume = volume;
@@ -432,9 +434,9 @@ public class ChannelImpl extends ItemImpl implements IChannel
     /**
      * Set the panorama.
      *
-     * @param pan The panorama
+     * @param pan The panorama normalized to 0..1
      */
-    public void setInternalPan (final int pan)
+    public void setInternalPan (final double pan)
     {
         if (this.isPanBeingTouched)
             this.lastReceivedPan = pan;
@@ -457,9 +459,9 @@ public class ChannelImpl extends ItemImpl implements IChannel
     /**
      * Set the left VU.
      *
-     * @param vuLeft The left VU
+     * @param vuLeft The left VU normalized to 0..1
      */
-    public void setVuLeft (final int vuLeft)
+    public void setVuLeft (final double vuLeft)
     {
         this.vuLeft = vuLeft;
     }
@@ -468,9 +470,9 @@ public class ChannelImpl extends ItemImpl implements IChannel
     /**
      * Set the left VU.
      *
-     * @param vuRight The left VU
+     * @param vuRight The left VU normalized to 0..1
      */
-    public void setVuRight (final int vuRight)
+    public void setVuRight (final double vuRight)
     {
         this.vuRight = vuRight;
     }
@@ -547,30 +549,30 @@ public class ChannelImpl extends ItemImpl implements IChannel
 
     protected void sendTrackOSC (final String command)
     {
-        this.sender.processNoArg ("track", this.getPosition () + "/" + command);
+        this.sender.processNoArg (PATH_TRACK, this.getPosition () + "/" + command);
     }
 
 
     protected void sendTrackOSC (final String command, final int value)
     {
-        this.sender.processIntArg ("track", this.getPosition () + "/" + command, value);
+        this.sender.processIntArg (PATH_TRACK, this.getPosition () + "/" + command, value);
     }
 
 
     protected void sendTrackOSC (final String command, final boolean value)
     {
-        this.sender.processIntArg ("track", this.getPosition () + "/" + command, value ? 1 : 0);
+        this.sender.processIntArg (PATH_TRACK, this.getPosition () + "/" + command, value ? 1 : 0);
     }
 
 
     protected void sendTrackOSC (final String command, final double value)
     {
-        this.sender.processDoubleArg ("track", this.getPosition () + "/" + command, value);
+        this.sender.processDoubleArg (PATH_TRACK, this.getPosition () + "/" + command, value);
     }
 
 
     protected void sendTrackOSC (final String command, final String value)
     {
-        this.sender.processStringArg ("track", this.getPosition () + "/" + command, value);
+        this.sender.processStringArg (PATH_TRACK, this.getPosition () + "/" + command, value);
     }
 }

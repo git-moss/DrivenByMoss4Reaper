@@ -16,12 +16,9 @@ import de.mossgrabers.reaper.communication.MessageSender;
  */
 public class SceneImpl extends ItemImpl implements IScene
 {
-    private final double [] color = new double []
-    {
-        0,
-        0,
-        0
-    };
+    private double red   = 0;
+    private double green = 0;
+    private double blue  = 0;
 
 
     /**
@@ -42,7 +39,12 @@ public class SceneImpl extends ItemImpl implements IScene
     @Override
     public double [] getColor ()
     {
-        return this.color;
+        return new double []
+        {
+            this.red,
+            this.green,
+            this.blue
+        };
     }
 
 
@@ -50,9 +52,9 @@ public class SceneImpl extends ItemImpl implements IScene
     @Override
     public void setColor (final double red, final double green, final double blue)
     {
-        this.color[0] = red;
-        this.color[1] = green;
-        this.color[2] = blue;
+        this.red = red;
+        this.green = green;
+        this.blue = blue;
     }
 
 

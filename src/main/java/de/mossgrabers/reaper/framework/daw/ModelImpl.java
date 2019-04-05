@@ -340,7 +340,7 @@ public class ModelImpl extends AbstractModel
             this.host.error (str.toString ());
             return null;
         }
-        double d1 = Double.parseDouble (values[0]);
+        final double d1 = Double.parseDouble (values[0]);
         if (d1 < 0)
             return null;
         return new double []
@@ -360,6 +360,14 @@ public class ModelImpl extends AbstractModel
     public List<ITrackBank> getTrackBanks ()
     {
         return this.trackBanks;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean hasSolo ()
+    {
+        return ((TrackBankImpl) this.trackBank).hasSolo ();
     }
 
 

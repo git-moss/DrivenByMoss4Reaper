@@ -76,10 +76,10 @@ public class MasterTrackImpl extends TrackImpl implements IMasterTrack
 
     /** {@inheritDoc} */
     @Override
-    public void setVolume (final double value)
+    public void setVolume (final int value)
     {
-        this.volume = (int) value;
-        this.sender.processDoubleArg ("master", "volume", this.valueChanger.toNormalizedValue (this.volume));
+        this.volume = this.valueChanger.toNormalizedValue (value);
+        this.sender.processDoubleArg ("master", "volume", this.volume);
     }
 
 
@@ -104,10 +104,10 @@ public class MasterTrackImpl extends TrackImpl implements IMasterTrack
 
     /** {@inheritDoc} */
     @Override
-    public void setPan (final double value)
+    public void setPan (final int value)
     {
-        this.pan = (int) value;
-        this.sender.processDoubleArg ("master", "pan", this.valueChanger.toNormalizedValue (this.getPan ()));
+        this.pan = this.valueChanger.toNormalizedValue (value);
+        this.sender.processDoubleArg ("master", "pan", this.pan);
     }
 
 

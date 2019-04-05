@@ -35,7 +35,7 @@ public class NotificationWindow
 
     /**
      * Constructor. Starts the count down timer.
-     * 
+     *
      * @param logModel Where to log to
      */
     public NotificationWindow (final LogModel logModel)

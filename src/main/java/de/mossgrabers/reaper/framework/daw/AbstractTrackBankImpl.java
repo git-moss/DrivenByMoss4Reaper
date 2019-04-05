@@ -311,6 +311,22 @@ public abstract class AbstractTrackBankImpl extends AbstractBankImpl<ITrack> imp
 
 
     /**
+     * Check if any of the tracks is soloed.
+     *
+     * @return True if there is at least one soloed track
+     */
+    public boolean hasSolo ()
+    {
+        for (int i = 0; i < this.items.size (); i++)
+        {
+            if (this.items.get (i).isSolo ())
+                return true;
+        }
+        return false;
+    }
+
+
+    /**
      * Deactivate all solo states of all tracks.
      */
     public void deactivateSolo ()
