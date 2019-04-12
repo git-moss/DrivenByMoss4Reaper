@@ -8,7 +8,7 @@ plugins {
 sourceCompatibility = 11
 targetCompatibility = 11
 
-version = '6.10'
+version = '6.11'
 
 jar {
     manifest {
@@ -93,10 +93,6 @@ tasks.withType(JavaCompile) {
 repositories {
     jcenter()
 }
-
-// configurations {
-//     all*.exclude module: 'xml-apis'
-// }
 
 dependencies {
     implementation 'xml-apis:xml-apis:1.4.01'
