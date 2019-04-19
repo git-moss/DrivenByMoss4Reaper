@@ -1,6 +1,11 @@
-6.11 (unreleased)
+6.2 (unreleased)
 - Launchpad Pro
   * Improved 2 colors.
+- Komplete Kontrol
+  * Fixed: Record option "Record clip" did not start recording when transport was stopped.
+- Midi Monitor
+  * New: Log system realtime events
+  * New: Setting to filter system realtime events
 - Fixed: Did crash Reaper on startup if UserPlugins folder was located in a path with non-ASCII characters.
 
 6.1

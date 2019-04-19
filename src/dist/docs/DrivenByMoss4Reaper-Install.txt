@@ -1,8 +1,13 @@
 Requires Reaper 64 bit, 5.95+ version!
 
 1) Unzip the downloaded file "DrivenByMoss4Reaper-X.XX-PLATFORM.zip" to the 
-   Reaper UserPlugins folder (make sure you keep the folder structure of the ZIP 
-   file intact!).
+   Reaper UserPlugins folder.
+   
+   Important:
+   1) Make sure you keep the folder structure of the ZIP file intact
+      (UserPlugins/java-runtime, UserPlugins/drivenbymoss-libs, ...)!
+   2) Do not put the files in an additional sub-folder 
+      (e.g. DO NOT: UserPlugins/DrivenByMoss-6.11/reaper-drivenbymoss.lib)!
 
    Note: For the Portable Reaper installation drop the files into the "Plugins" 
    folder of your portable installation.
