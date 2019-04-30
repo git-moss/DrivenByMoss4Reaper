@@ -1,3 +1,15 @@
+6.3
+- Generic Flexi
+  * New: Added setting to store the last selected mode
+  * New: MIDI CC is now available as a function destination
+- Komplete Kontrol
+  * New: Added setting to flip the track/clip navigation of the encoder knob
+  * New: Added setting to flip the clip and scene navigation of the encoder knob
+  * New: Added setting to set the length of new clips
+  * New: Added setting to set the behaviour on transport stop
+  * New: Added M32 to the extension name
+
+
 6.2
 - APC40
   * New: Shift mode stays active until you release the Shift key.
