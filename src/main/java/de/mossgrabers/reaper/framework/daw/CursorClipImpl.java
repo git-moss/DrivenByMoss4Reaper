@@ -504,7 +504,7 @@ public class CursorClipImpl extends BaseImpl implements INoteClip
     @Override
     public void quantize (final double amount)
     {
-        this.sender.processNoArg ("quantize");
+        this.sender.processDoubleArg ("quantize", amount);
     }
 
 

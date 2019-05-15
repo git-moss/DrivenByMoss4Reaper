@@ -35,7 +35,6 @@ public class IniFiles
     private boolean             isVstPresent;
     private boolean             isFxTagsPresent;
     private boolean             isFxFoldersPresent;
-    private LogModel            logModel;
 
 
     /**
@@ -70,7 +69,6 @@ public class IniFiles
     public void init (final String iniPath, final LogModel logModel)
     {
         this.iniPath = iniPath;
-        this.logModel = logModel;
 
         synchronized (this.iniReaperMain)
         {
@@ -178,26 +176,6 @@ public class IniFiles
 
 
     /**
-     * Save the main INI configuration file.
-     */
-    public void saveMainFile ()
-    {
-        final String filename = this.iniPath + File.separator + REAPER_MAIN;
-        try
-        {
-            synchronized (this.iniReaperMain)
-            {
-                this.iniReaperMain.save (filename);
-            }
-        }
-        catch (final IOException ex)
-        {
-            this.logModel.error ("Could not store main configuration: " + filename, ex);
-        }
-    }
-
-
-    /**
      * Get an option value from the main INI file as an integer.
      *
      * @param section The section in the INI file
@@ -233,14 +211,16 @@ public class IniFiles
 
 
     /**
-     * Set an integer option value in the main INI file.
+     * Set an integer option value in the main INI file. Does not write to the file, only updates
+     * the cached value!
      *
      * @param section The section in the INI file
      * @param option The option name
      * @param value The value to set
      */
-    public void setMainIniInteger (final String section, final String option, final int value)
+    public void updateMainIniInteger (final String section, final String option, final int value)
     {
+        // Updated the cached values as well
         synchronized (this.iniReaperMain)
         {
             if (!this.iniReaperMain.hasSection (section))
@@ -281,24 +261,6 @@ public class IniFiles
         catch (final NumberFormatException ex)
         {
             return defaultValue;
-        }
-    }
-
-
-    /**
-     * Set a double option value in the main INI file.
-     *
-     * @param section The section in the INI file
-     * @param option The option name
-     * @param value The value to set
-     */
-    public void setMainIniDouble (final String section, final String option, final double value)
-    {
-        synchronized (this.iniReaperMain)
-        {
-            if (!this.iniReaperMain.hasSection (section))
-                this.iniReaperMain.addSection (section);
-            this.iniReaperMain.set (section, option, Double.toString (value));
         }
     }
 }

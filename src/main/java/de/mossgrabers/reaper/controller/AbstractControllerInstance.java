@@ -4,8 +4,6 @@
 
 package de.mossgrabers.reaper.controller;
 
-import de.mossgrabers.framework.configuration.AbstractConfiguration;
-import de.mossgrabers.framework.configuration.Configuration;
 import de.mossgrabers.framework.controller.IControllerDefinition;
 import de.mossgrabers.framework.controller.IControllerSetup;
 import de.mossgrabers.framework.usb.UsbMatcher;
@@ -221,8 +219,6 @@ public abstract class AbstractControllerInstance implements IControllerInstance
         // 2nd load to also load the settings
         this.settingsUI.load (this.controllerConfiguration);
 
-        this.controllerSetup.getConfiguration ().addSettingObserver (AbstractConfiguration.QUANTIZE_AMOUNT, this::storeQuantizeAmount);
-
         this.oscParser = new MessageParser (this.controllerSetup);
 
         this.settingsUI.flush ();
@@ -241,14 +237,6 @@ public abstract class AbstractControllerInstance implements IControllerInstance
         this.isRunning = true;
 
         this.logModel.info (this.controllerDefinition.toString () + ": Running.");
-    }
-
-
-    private void storeQuantizeAmount ()
-    {
-        final Configuration configuration = this.controllerSetup.getConfiguration ();
-        this.iniFiles.setMainIniInteger ("midiedit", "quantstrength", configuration.getQuantizeAmount ());
-        this.iniFiles.saveMainFile ();
     }
 
 

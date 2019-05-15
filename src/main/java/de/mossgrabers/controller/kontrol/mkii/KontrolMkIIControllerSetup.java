@@ -377,7 +377,7 @@ public class KontrolMkIIControllerSetup extends AbstractControllerSetup<KontrolM
     {
         final ICursorDevice instrumentDevice = this.model.getInstrumentDevice ();
         if (instrumentDevice.doesExist () && instrumentDevice.getName ().startsWith ("Komplete Kontrol"))
-            return instrumentDevice.getParameterBank ().getItem (0).getName ();
+            return instrumentDevice.getID ();
         return "";
     }
 

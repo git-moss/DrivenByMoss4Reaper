@@ -341,9 +341,8 @@ public class TransportImpl extends BaseImpl implements ITransport
     @Override
     public void setPrerollAsBars (final int preroll)
     {
-        this.iniFiles.setMainIniDouble ("reaper", "prerollmeas", preroll);
-        this.iniFiles.saveMainFile ();
-
+        this.sender.processIntArg ("inifile", "reaper/prerollmeas", preroll);
+        this.iniFiles.updateMainIniInteger ("reaper", "prerollmeas", preroll);
     }
 
 

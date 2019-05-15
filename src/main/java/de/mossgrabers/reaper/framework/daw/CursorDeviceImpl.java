@@ -80,6 +80,17 @@ public class CursorDeviceImpl extends DeviceImpl implements ICursorDevice
 
     /** {@inheritDoc} */
     @Override
+    public String getID ()
+    {
+        if (this.parameterBank == null || this.parameterBank.getItemCount () == 0)
+            return "";
+        final String name = this.parameterBank.getParameter (0).getName ();
+        return name == null ? "" : name;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
     public int getIndex ()
     {
         return this.getPosition () % this.deviceBank.getPageSize ();

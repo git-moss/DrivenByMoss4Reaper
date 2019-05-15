@@ -142,9 +142,8 @@ public class GrooveParameter extends ParameterImpl
         }
 
         final int scaledValue = this.toIniValue (this.value);
-
-        this.iniFiles.setMainIniInteger ("fingers", PARAMETER_COMMANDS[this.getIndex ()], scaledValue);
-        this.iniFiles.saveMainFile ();
+        this.sender.processIntArg ("inifile", "fingers/" + PARAMETER_COMMANDS[this.getIndex ()], scaledValue);
+        this.iniFiles.updateMainIniInteger ("fingers", PARAMETER_COMMANDS[this.getIndex ()], scaledValue);
     }
 
 
