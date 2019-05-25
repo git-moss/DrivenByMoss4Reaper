@@ -4,18 +4,21 @@
 
 package de.mossgrabers.reaper.framework.osc;
 
-import de.mossgrabers.framework.daw.IHost;
-import de.mossgrabers.framework.osc.IOpenSoundControlMessage;
+import de.mossgrabers.framework.osc.IOpenSoundControlCallback;
 import de.mossgrabers.framework.osc.IOpenSoundControlServer;
+import de.mossgrabers.reaper.ui.utils.LogModel;
+import de.mossgrabers.reaper.ui.utils.SafeRunLater;
 
+import com.illposed.osc.OSCBadDataEvent;
 import com.illposed.osc.OSCBundle;
 import com.illposed.osc.OSCMessage;
-import com.illposed.osc.OSCSerializeException;
-import com.illposed.osc.transport.udp.OSCPortOut;
+import com.illposed.osc.OSCPacket;
+import com.illposed.osc.OSCPacketEvent;
+import com.illposed.osc.OSCPacketListener;
+import com.illposed.osc.transport.udp.OSCPortIn;
 
 import java.io.IOException;
-import java.net.InetAddress;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -26,108 +29,94 @@ import java.util.List;
  */
 public class OpenSoundControlServerImpl implements IOpenSoundControlServer
 {
-    private final IHost host;
-    private OSCPortOut  connection;
-    private boolean     isClosed = true;
+    private final IOpenSoundControlCallback callback;
+    private final Object                    receiverLock = new Object ();
+    private final LogModel                  logModel;
+    private OSCPortIn                       oscReceiver;
 
 
     /**
      * Constructor.
      *
-     * @param host The host
-     * @param serverAddress The address of the server to connect to
-     * @param serverPort The port of the server to connect to
+     * @param callback The OSC callback
+     * @param logModel For logging
      */
-    public OpenSoundControlServerImpl (final IHost host, final String serverAddress, final int serverPort)
+    public OpenSoundControlServerImpl (final IOpenSoundControlCallback callback, final LogModel logModel)
     {
-        this.host = host;
-
-        try
-        {
-            this.connection = new OSCPortOut (InetAddress.getByName (serverAddress), serverPort);
-            this.isClosed = false;
-        }
-        catch (final IOException ex)
-        {
-            this.connection = null;
-            host.error ("Could not connect to OSC server.", ex);
-        }
+        this.callback = callback;
+        this.logModel = logModel;
     }
 
 
     /** {@inheritDoc} */
     @Override
-    public void sendMessage (final IOpenSoundControlMessage message) throws IOException
+    public void start (final int port) throws IOException
     {
-        if (this.isClosed)
-            return;
-
-        try
+        synchronized (this.receiverLock)
         {
-            final String address = message.getAddress ();
-            final Object [] values = message.getValues ();
-            this.connection.send (new OSCMessage (address, Arrays.asList (values)));
-        }
-        catch (final OSCSerializeException ex)
-        {
-            throw new IOException (ex);
-        }
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void sendBundle (final List<IOpenSoundControlMessage> messages) throws IOException
-    {
-        if (this.isClosed)
-            return;
-
-        try
-        {
-            int pos = 0;
-            OSCBundle oscBundle = new OSCBundle ();
-            for (final IOpenSoundControlMessage message: messages)
-            {
-                final String address = message.getAddress ();
-                final Object [] values = message.getValues ();
-                oscBundle.addPacket (new OSCMessage (address, Arrays.asList (values)));
-
-                pos++;
-                // We cannot get the exact size of the message due to the API, so let's try to stay
-                // below 64K, which is the maximum of an UDP message
-                if (pos > 100)
-                {
-                    pos = 0;
-                    this.connection.send (oscBundle);
-                    oscBundle = new OSCBundle ();
-                }
-            }
-            if (!oscBundle.getPackets ().isEmpty ())
-                this.connection.send (oscBundle);
-        }
-        catch (final OSCSerializeException ex)
-        {
-            throw new IOException (ex);
+            this.close ();
+            this.oscReceiver = new OSCPortIn (port);
+            this.oscReceiver.addPacketListener (new PacketListener ());
+            this.oscReceiver.startListening ();
         }
     }
 
 
     /**
-     * Close the wrapped osc client and free resources.
+     * Close the server.
      */
     public void close ()
     {
-        this.isClosed = true;
+        synchronized (this.receiverLock)
+        {
+            if (this.oscReceiver == null)
+                return;
 
-        if (this.connection == null)
-            return;
-        try
-        {
-            this.connection.close ();
+            this.oscReceiver.stopListening ();
+            try
+            {
+                this.oscReceiver.close ();
+            }
+            catch (final IOException ex)
+            {
+                this.logModel.error ("Could not close OSC receiver.", ex);
+            }
         }
-        catch (final IOException ex)
+    }
+
+    private class PacketListener implements OSCPacketListener
+    {
+        /** {@inheritDoc} */
+        @Override
+        public void handlePacket (final OSCPacketEvent event)
         {
-            this.host.error ("Could not close connection to OSC server.", ex);
+            final List<OSCMessage> messages = new ArrayList<> ();
+            this.collectMessages (messages, event.getPacket ());
+
+            SafeRunLater.execute (OpenSoundControlServerImpl.this.logModel, () -> {
+                for (final OSCMessage message: messages)
+                    OpenSoundControlServerImpl.this.callback.handle (new OpenSoundControlMessageImpl (message));
+            });
+        }
+
+
+        /** {@inheritDoc} */
+        @Override
+        public void handleBadData (final OSCBadDataEvent event)
+        {
+            OpenSoundControlServerImpl.this.logModel.error ("Could not parse message.", event.getException ());
+        }
+
+
+        private void collectMessages (final List<OSCMessage> messages, final OSCPacket packet)
+        {
+            if (packet instanceof OSCMessage)
+                messages.add ((OSCMessage) packet);
+            else if (packet instanceof OSCBundle)
+            {
+                for (final OSCPacket op: ((OSCBundle) packet).getPackets ())
+                    this.collectMessages (messages, op);
+            }
         }
     }
 }
