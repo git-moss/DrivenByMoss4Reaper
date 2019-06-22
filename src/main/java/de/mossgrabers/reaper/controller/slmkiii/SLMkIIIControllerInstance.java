@@ -1,0 +1,51 @@
+// Written by Jürgen Moßgraber - mossgrabers.de
+// (c) 2017-2019
+// Licensed under LGPLv3 - http://www.gnu.org/licenses/lgpl-3.0.txt
+
+package de.mossgrabers.reaper.controller.slmkiii;
+
+import de.mossgrabers.controller.slmkiii.SLMkIIIControllerDefinition;
+import de.mossgrabers.controller.slmkiii.SLMkIIIControllerSetup;
+import de.mossgrabers.framework.controller.IControllerSetup;
+import de.mossgrabers.reaper.communication.MessageSender;
+import de.mossgrabers.reaper.controller.AbstractControllerInstance;
+import de.mossgrabers.reaper.framework.IniFiles;
+import de.mossgrabers.reaper.framework.ReaperSetupFactory;
+import de.mossgrabers.reaper.ui.utils.LogModel;
+
+import java.awt.Window;
+
+
+/**
+ * Novation Remote SL mkI controller instance.
+ *
+ * @author J&uuml;rgen Mo&szlig;graber
+ */
+public class SLMkIIIControllerInstance extends AbstractControllerInstance
+{
+    /**
+     * Constructor.
+     *
+     * @param logModel The logging model
+     * @param window The owner window for the configuration dialog
+     * @param sender The sender
+     * @param iniFiles The INI configuration files
+     */
+    public SLMkIIIControllerInstance (final LogModel logModel, final Window window, final MessageSender sender, final IniFiles iniFiles)
+    {
+        super (new SLMkIIIControllerDefinition (), logModel, window, sender, iniFiles);
+    }
+
+
+    /**
+     * Create a controller setup instance.
+     *
+     * @param setupFactory The setup factory
+     * @return The controller setup
+     */
+    @Override
+    protected IControllerSetup createControllerSetup (final ReaperSetupFactory setupFactory)
+    {
+        return new SLMkIIIControllerSetup (this.host, setupFactory, this.settingsUI);
+    }
+}

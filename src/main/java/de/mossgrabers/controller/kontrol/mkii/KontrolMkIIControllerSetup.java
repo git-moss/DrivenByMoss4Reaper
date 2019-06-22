@@ -294,7 +294,7 @@ public class KontrolMkIIControllerSetup extends AbstractControllerSetup<KontrolM
         final ITransport t = this.model.getTransport ();
         final IControlSurface<KontrolMkIIConfiguration> surface = this.getSurface ();
         surface.updateButton (KontrolMkIIControlSurface.KONTROL_PLAY, t.isPlaying () ? ColorManager.BUTTON_STATE_HI : ColorManager.BUTTON_STATE_ON);
-        surface.updateButton (KontrolMkIIControlSurface.KONTROL_RECORD, t.isRecording () ? ColorManager.BUTTON_STATE_HI : ColorManager.BUTTON_STATE_ON);
+        surface.updateButton (KontrolMkIIControlSurface.KONTROL_RECORD, this.model.hasRecordingState () ? ColorManager.BUTTON_STATE_HI : ColorManager.BUTTON_STATE_ON);
         surface.updateButton (KontrolMkIIControlSurface.KONTROL_COUNT_IN, t.isRecording () ? ColorManager.BUTTON_STATE_HI : ColorManager.BUTTON_STATE_ON);
         surface.updateButton (KontrolMkIIControlSurface.KONTROL_STOP, !t.isPlaying () ? ColorManager.BUTTON_STATE_HI : ColorManager.BUTTON_STATE_ON);
         surface.updateButton (KontrolMkIIControlSurface.KONTROL_CLEAR, ColorManager.BUTTON_STATE_HI);
@@ -325,8 +325,8 @@ public class KontrolMkIIControllerSetup extends AbstractControllerSetup<KontrolM
             surface.sendKontrolTrackSysEx (KontrolMkIIControlSurface.KONTROL_TRACK_MUTE, track.isMute () ? 1 : 0, i);
             surface.sendKontrolTrackSysEx (KontrolMkIIControlSurface.KONTROL_TRACK_SOLO, track.isSolo () ? 1 : 0, i);
             surface.sendKontrolTrackSysEx (KontrolMkIIControlSurface.KONTROL_TRACK_RECARM, track.isRecArm () ? 1 : 0, i);
-            surface.sendKontrolTrackSysEx (KontrolMkIIControlSurface.KONTROL_TRACK_VOLUME_TEXT, 0, i, track.getVolumeStr ());
-            surface.sendKontrolTrackSysEx (KontrolMkIIControlSurface.KONTROL_TRACK_PAN_TEXT, 0, i, track.getPanStr ());
+            surface.sendKontrolTrackSysEx (KontrolMkIIControlSurface.KONTROL_TRACK_VOLUME_TEXT, 0, i, track.getVolumeStr (8));
+            surface.sendKontrolTrackSysEx (KontrolMkIIControlSurface.KONTROL_TRACK_PAN_TEXT, 0, i, track.getPanStr (8));
             surface.sendKontrolTrackSysEx (KontrolMkIIControlSurface.KONTROL_TRACK_NAME, 0, i, track.getName ());
             surface.sendKontrolTrackSysEx (KontrolMkIIControlSurface.KONTROL_TRACK_MUTED_BY_SOLO, !track.isSolo () && hasSolo ? 1 : 0, i);
 
@@ -353,9 +353,9 @@ public class KontrolMkIIControllerSetup extends AbstractControllerSetup<KontrolM
         final int scrollScenesState = (sceneBank.canScrollBackwards () ? 1 : 0) + (sceneBank.canScrollForwards () ? 2 : 0);
 
         surface.updateButton (KontrolMkIIControlSurface.KONTROL_NAVIGATE_BANKS, (trackBank.canScrollPageBackwards () ? 1 : 0) + (trackBank.canScrollPageForwards () ? 2 : 0));
-        surface.updateButton (KontrolMkIIControlSurface.KONTROL_NAVIGATE_TRACKS, this.configuration.isFlipTrackClipNavigation () ? (this.configuration.isFlipClipSceneNavigation () ? scrollScenesState : scrollClipsState) : scrollTracksState);
-        surface.updateButton (KontrolMkIIControlSurface.KONTROL_NAVIGATE_CLIPS, this.configuration.isFlipTrackClipNavigation () ? scrollTracksState : (this.configuration.isFlipClipSceneNavigation () ? scrollScenesState : scrollClipsState));
-        surface.updateButton (KontrolMkIIControlSurface.KONTROL_NAVIGATE_SCENES, this.configuration.isFlipTrackClipNavigation () ? scrollTracksState : (this.configuration.isFlipClipSceneNavigation () ? scrollClipsState : scrollScenesState));
+        surface.updateButton (KontrolMkIIControlSurface.KONTROL_NAVIGATE_TRACKS, this.configuration.isFlipTrackClipNavigation () ? this.configuration.isFlipClipSceneNavigation () ? scrollScenesState : scrollClipsState : scrollTracksState);
+        surface.updateButton (KontrolMkIIControlSurface.KONTROL_NAVIGATE_CLIPS, this.configuration.isFlipTrackClipNavigation () ? scrollTracksState : this.configuration.isFlipClipSceneNavigation () ? scrollScenesState : scrollClipsState);
+        surface.updateButton (KontrolMkIIControlSurface.KONTROL_NAVIGATE_SCENES, this.configuration.isFlipTrackClipNavigation () ? scrollTracksState : this.configuration.isFlipClipSceneNavigation () ? scrollClipsState : scrollScenesState);
 
         surface.updateButton (KontrolMkIIControlSurface.KONTROL_SELECTED_TRACK_MUTE, selectedTrack != null && selectedTrack.isMute () ? 1 : 0);
         surface.updateButton (KontrolMkIIControlSurface.KONTROL_SELECTED_TRACK_SOLO, selectedTrack != null && selectedTrack.isSolo () ? 1 : 0);

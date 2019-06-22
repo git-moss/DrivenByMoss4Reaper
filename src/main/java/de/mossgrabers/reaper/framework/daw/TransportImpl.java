@@ -770,4 +770,13 @@ public class TransportImpl extends BaseImpl implements ITransport
     {
         this.prerollClick = enable;
     }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public double rescaleTempo (final double tempo, final int maxValue)
+    {
+        final double v = tempo - TransportConstants.MIN_TEMPO;
+        return v * (maxValue - 1) / (TransportConstants.MAX_TEMPO - TransportConstants.MIN_TEMPO);
+    }
 }

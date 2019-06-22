@@ -45,16 +45,16 @@ public abstract class AbstractDrumView<S extends IControlSurface<C>, C extends C
     /** The color ID for the off state. */
     public static final String COLOR_PAD_OFF         = "COLOR_PAD_OFF";
 
-    static final int           DRUM_START_KEY        = 36;
-    static final int           GRID_COLUMNS          = 8;
+    protected static final int DRUM_START_KEY        = 36;
+    protected static final int GRID_COLUMNS          = 8;
 
     protected int              selectedPad;
-    private int                loopPadPressed        = -1;
-    private int                sequencerLines;
-    private int                playLines;
-    private int                allLines;
-    private int                sequencerSteps;
-    private int                halfColumns;
+    protected int              loopPadPressed        = -1;
+    protected int              sequencerLines;
+    protected int              playLines;
+    protected int              allLines;
+    protected int              sequencerSteps;
+    protected int              halfColumns;
 
 
     /**
@@ -92,9 +92,7 @@ public abstract class AbstractDrumView<S extends IControlSurface<C>, C extends C
     public void onActivate ()
     {
         super.onActivate ();
-
-        final ICursorDevice primary = this.model.getInstrumentDevice ();
-        primary.getDrumPadBank ().setIndication (true);
+        this.model.getInstrumentDevice ().getDrumPadBank ().setIndication (true);
     }
 
 
@@ -103,9 +101,7 @@ public abstract class AbstractDrumView<S extends IControlSurface<C>, C extends C
     public void onDeactivate ()
     {
         super.onDeactivate ();
-
-        final ICursorDevice primary = this.model.getInstrumentDevice ();
-        primary.getDrumPadBank ().setIndication (false);
+        this.model.getInstrumentDevice ().getDrumPadBank ().setIndication (false);
     }
 
 

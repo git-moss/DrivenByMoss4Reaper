@@ -19,6 +19,7 @@ import de.mossgrabers.controller.midimonitor.MidiMonitorDefinition;
 import de.mossgrabers.controller.osc.OSCControllerDefinition;
 import de.mossgrabers.controller.push.PushControllerDefinition;
 import de.mossgrabers.controller.sl.SLControllerDefinition;
+import de.mossgrabers.controller.slmkiii.SLMkIIIControllerDefinition;
 import de.mossgrabers.framework.controller.IControllerDefinition;
 import de.mossgrabers.reaper.communication.MessageSender;
 import de.mossgrabers.reaper.controller.apc.APC40mkIControllerInstance;
@@ -47,6 +48,7 @@ import de.mossgrabers.reaper.controller.push.Push1ControllerInstance;
 import de.mossgrabers.reaper.controller.push.Push2ControllerInstance;
 import de.mossgrabers.reaper.controller.sl.SLMkIControllerInstance;
 import de.mossgrabers.reaper.controller.sl.SLMkIIControllerInstance;
+import de.mossgrabers.reaper.controller.slmkiii.SLMkIIIControllerInstance;
 import de.mossgrabers.reaper.framework.IniFiles;
 import de.mossgrabers.reaper.ui.utils.LogModel;
 import de.mossgrabers.reaper.ui.utils.PropertiesEx;
@@ -94,7 +96,8 @@ public class ControllerInstanceManager
         Push1ControllerInstance.class,
         Push2ControllerInstance.class,
         SLMkIControllerInstance.class,
-        SLMkIIControllerInstance.class
+        SLMkIIControllerInstance.class,
+        SLMkIIIControllerInstance.class
     };
 
     private static final IControllerDefinition [] DEFINITIONS             =
@@ -124,7 +127,8 @@ public class ControllerInstanceManager
         new PushControllerDefinition (false),
         new PushControllerDefinition (true),
         new SLControllerDefinition (false),
-        new SLControllerDefinition (true)
+        new SLControllerDefinition (true),
+        new SLMkIIIControllerDefinition ()
     };
 
     private static final Class<?> []              CONSTRUCTOR_TYPES       =
