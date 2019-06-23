@@ -21,6 +21,7 @@ public class IniFiles
 {
     private static final String OPTION_FORMAT_NO_SPACES = "%s%s%s";
     private static final String REAPER_MAIN             = "REAPER.ini";
+    private static final String REAPER_MAIN2            = "reaper.ini";
     private static final String VST_PLUGINS_64          = "reaper-vstplugins64.ini";
     private static final String FX_TAGS                 = "reaper-fxtags.ini";
     private static final String FX_FOLDERS              = "reaper-fxfolders.ini";
@@ -72,7 +73,11 @@ public class IniFiles
 
         synchronized (this.iniReaperMain)
         {
-            loadINIFile (iniPath + File.separator + REAPER_MAIN, this.iniReaperMain, logModel);
+            loadINIFile (new String []
+            {
+                iniPath + File.separator + REAPER_MAIN,
+                iniPath + File.separator + REAPER_MAIN2
+            }, this.iniReaperMain, logModel);
         }
 
         this.isVstPresent = loadINIFile (iniPath + File.separator + VST_PLUGINS_64, this.iniVstPlugins64, logModel);
@@ -150,27 +155,49 @@ public class IniFiles
     /**
      * Load an INI file.
      *
-     * @param filename The absolute filename
+     * @param filename The absolute filename to try
      * @param iniFile The ini file
      * @param logModel For logging
      * @return True if successfully loaded
      */
     private static boolean loadINIFile (final String filename, final IniEditor iniFile, final LogModel logModel)
     {
-        try
+        return loadINIFile (new String []
         {
-            final File file = new File (filename);
-            if (file.exists ())
+            filename
+        }, iniFile, logModel);
+    }
+
+
+    /**
+     * Load an INI file.
+     *
+     * @param filenames The absolute filenames to try
+     * @param iniFile The ini file
+     * @param logModel For logging
+     * @return True if successfully loaded
+     */
+    private static boolean loadINIFile (final String [] filenames, final IniEditor iniFile, final LogModel logModel)
+    {
+        for (final String filename: filenames)
+        {
+            try
             {
-                iniFile.load (file.getAbsolutePath ());
-                return true;
+                final File file = new File (filename);
+                if (file.exists ())
+                {
+                    iniFile.load (file.getAbsolutePath ());
+                    return true;
+                }
             }
-            logModel.info (filename + " not present, skipped loading.");
+            catch (final IOException ex)
+            {
+                logModel.error ("Could not load file: " + filename, ex);
+                return false;
+            }
         }
-        catch (final IOException ex)
-        {
-            logModel.error ("Could not load file: " + filename, ex);
-        }
+
+        logModel.info (filenames[0] + " not present, skipped loading.");
         return false;
     }
 
