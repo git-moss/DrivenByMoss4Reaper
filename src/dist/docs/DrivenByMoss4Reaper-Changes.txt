@@ -1,10 +1,12 @@
-7.0
+7.01
+- Fixed: Reaper INI was not read on Linux.
 
-* New: Added support for Novation SL Mk III
-* Fixed: scrolling of parameter pages by page bank did not work (e.g. Shift + cursor left/right on Push)
-* Ableton Push 2
+7.0
+- New: Added support for Novation SL Mk III
+- Fixed: scrolling of parameter pages by page bank did not work (e.g. Shift + cursor left/right on Push)
+- Ableton Push 2
   * New: Deactivated channels and layers are drawn in dark colors
-* Komplete Kontrol Mk II / A-series / M32
+- Komplete Kontrol Mk II / A-series / M32
   * New: Light record button as well on clip recording and clip overdub
 
 6.4
