@@ -155,7 +155,7 @@ public abstract class AbstractControllerInstance implements IControllerInstance
     {
         synchronized (this.startSync)
         {
-            if (!this.isRunning)
+            if (!this.isEnabled () || !this.isRunning)
                 return;
 
             if (this.controllerSetup != null)

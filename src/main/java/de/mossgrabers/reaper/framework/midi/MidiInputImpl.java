@@ -13,6 +13,7 @@ import de.mossgrabers.reaper.communication.MessageSender;
 
 import javax.sound.midi.MidiDevice;
 import javax.sound.midi.MidiMessage;
+import javax.sound.midi.ShortMessage;
 import javax.sound.midi.SysexMessage;
 
 import java.util.ArrayList;
@@ -26,6 +27,7 @@ import java.util.List;
  */
 class MidiInputImpl implements IMidiInput
 {
+    private final IHost               host;
     private final MessageSender       sender;
     private final MidiConnection      midiConnection;
     private final MidiDevice          device;
@@ -50,21 +52,12 @@ class MidiInputImpl implements IMidiInput
      */
     public MidiInputImpl (final IHost host, final MessageSender sender, final MidiConnection midiConnection, final MidiDevice device, final String [] filters)
     {
+        this.host = host;
         this.sender = sender;
         this.midiConnection = midiConnection;
         this.device = device;
 
-        this.midiConnection.setInput (this.device, (message, timeStamp) -> {
-            try
-            {
-                this.handleMidiMessage (message);
-            }
-            catch (final RuntimeException ex)
-            {
-                host.error ("Could not handle midi message.", ex);
-            }
-        });
-
+        this.midiConnection.setInput (this.device, (message, timeStamp) -> this.handleMidiMessage (message));
         this.defaultNoteInput = new NoteInputImpl (filters);
         this.noteInputs.add (this.defaultNoteInput);
     }
@@ -124,19 +117,27 @@ class MidiInputImpl implements IMidiInput
 
     private void handleMidiMessage (final MidiMessage message)
     {
-        if (message instanceof SysexMessage)
+        try
         {
-            this.handleSysexMessage ((SysexMessage) message);
-            return;
+            if (message instanceof SysexMessage)
+                this.handleSysexMessage ((SysexMessage) message);
+            else if (message instanceof ShortMessage)
+                this.handleShortMessage ((ShortMessage) message);
+            else
+                this.host.error ("Unknown MIDI class.");
         }
+        catch (final RuntimeException ex)
+        {
+            this.host.error ("Could not handle midi message.", ex);
+        }
+    }
 
-        final byte [] msg = message.getMessage ();
-        if (msg.length != 3)
-            return;
 
-        final int status = msg[0] & 0xFF;
-        final byte data1 = msg[1];
-        final byte data2 = msg[2];
+    private void handleShortMessage (final ShortMessage message)
+    {
+        final int status = message.getStatus ();
+        final int data1 = message.getData1 ();
+        final int data2 = message.getData2 ();
 
         for (final NoteInputImpl noteInput: this.noteInputs)
         {

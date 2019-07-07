@@ -70,9 +70,9 @@ public class NoteInputImpl implements INoteInput
      * @param data1 The first data byte of the midi message
      * @return True if accepted
      */
-    public boolean acceptFilter (final int status, final byte data1)
+    public boolean acceptFilter (final int status, final int data1)
     {
-        final String statusHex = StringUtils.toHexStr (Byte.toUnsignedInt ((byte) status));
+        final String statusHex = StringUtils.toHexStr (status);
         return this.filters.contains (statusHex) || this.filters.contains (statusHex + StringUtils.toHexStr (data1));
     }
 
