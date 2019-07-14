@@ -1,5 +1,5 @@
 "%JAVA_HOME%/bin/jdeps" --print-module-deps *
 "%JAVA_HOME%/bin/jlink" --no-header-files --no-man-pages --compress=2 --strip-debug --add-modules java.desktop,java.xml,java.naming,jdk.accessibility --output java-runtime
 
-Fix for large Linux file:
+Fix for large Linux file (already fixed in 11.0.3+7):
 strip -p --strip-unneeded lib/server/libjvm.so
