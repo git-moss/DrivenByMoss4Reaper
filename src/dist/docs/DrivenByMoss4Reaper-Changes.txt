@@ -1,8 +1,11 @@
 7.02 (unreleased)
-- Fixed: flush was still called when a device was set to be deactivated
 - Novation Remote SL Mk II
   * Fixed: Drum pads did not work
   * Fixed: Crash displaying send and master track
+- Novation Remote SL Mk III
+  * Fixed: Keyboard did not work
+- Fixed: flush was still called when a device was set to be deactivated
+- New: Updated to OpenJdk 11.0.3+7
 
 7.01
 - Fixed: Reaper INI was not read on Linux.

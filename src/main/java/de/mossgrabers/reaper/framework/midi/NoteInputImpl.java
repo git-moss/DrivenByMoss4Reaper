@@ -5,7 +5,6 @@
 package de.mossgrabers.reaper.framework.midi;
 
 import de.mossgrabers.framework.daw.midi.INoteInput;
-import de.mossgrabers.framework.utils.StringUtils;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -72,8 +71,13 @@ public class NoteInputImpl implements INoteInput
      */
     public boolean acceptFilter (final int status, final int data1)
     {
-        final String statusHex = StringUtils.toHexStr (status);
-        return this.filters.contains (statusHex) || this.filters.contains (statusHex + StringUtils.toHexStr (data1));
+        final String code = String.format ("%02X%02X", Integer.valueOf (status), Integer.valueOf (data1));
+        for (final String filter: this.filters)
+        {
+            if (code.startsWith (filter))
+                return true;
+        }
+        return false;
     }
 
 
