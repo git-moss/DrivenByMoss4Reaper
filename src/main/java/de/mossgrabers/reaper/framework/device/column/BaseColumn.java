@@ -9,6 +9,9 @@ import de.mossgrabers.framework.daw.data.IBrowserColumnItem;
 import de.mossgrabers.framework.utils.StringUtils;
 import de.mossgrabers.reaper.framework.daw.data.ItemImpl;
 
+import java.util.HashSet;
+import java.util.Set;
+
 
 /**
  * Base class for a filter column in the browser.
@@ -20,6 +23,8 @@ public abstract class BaseColumn extends ItemImpl implements IBrowserColumn
     protected static final String         WILDCARD    = "All";
 
     protected final IBrowserColumnItem [] items;
+
+    private final Set<FilterListener>     listeners   = new HashSet<> (1);
 
     private final String                  name;
     private final int                     numItemsPerPage;
@@ -162,8 +167,35 @@ public abstract class BaseColumn extends ItemImpl implements IBrowserColumn
     public void setCursorIndex (final int index)
     {
         this.selectedRow = Math.max (0, Math.min (index, this.getMaxNumItems ()));
+        this.notifyListeners ();
     }
 
 
+    /**
+     * Get the maximum number of items available in this filter.
+     *
+     * @return The number
+     */
     protected abstract int getMaxNumItems ();
+
+
+    /**
+     * Register a selection listener.
+     *
+     * @param listener THe listener
+     */
+    public void addSelectionListener (final FilterListener listener)
+    {
+        this.listeners.add (listener);
+    }
+
+
+    /**
+     * Notify all listeners.
+     */
+    private void notifyListeners ()
+    {
+        for (final FilterListener listener: this.listeners)
+            listener.hasChanged ();
+    }
 }

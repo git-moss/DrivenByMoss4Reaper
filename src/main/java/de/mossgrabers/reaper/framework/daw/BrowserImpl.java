@@ -17,6 +17,7 @@ import de.mossgrabers.reaper.framework.device.DeviceFileType;
 import de.mossgrabers.reaper.framework.device.DeviceLocation;
 import de.mossgrabers.reaper.framework.device.DeviceManager;
 import de.mossgrabers.reaper.framework.device.DeviceType;
+import de.mossgrabers.reaper.framework.device.column.BaseColumn;
 import de.mossgrabers.reaper.framework.device.column.DeviceCategoryFilterColumn;
 import de.mossgrabers.reaper.framework.device.column.DeviceCollectionFilterColumn;
 import de.mossgrabers.reaper.framework.device.column.DeviceCreatorFilterColumn;
@@ -40,8 +41,8 @@ public class BrowserImpl extends AbstractBrowser
 {
     private enum ContentType
     {
-        CONTENTTYPE_DEVICE,
-        CONTENTTYPE_PRESET
+        DEVICE,
+        PRESET
     }
 
     private static final String []     CONTENT_TYPE_NAMES = new String []
@@ -50,7 +51,7 @@ public class BrowserImpl extends AbstractBrowser
         "Presets"
     };
 
-    private ContentType                contentType        = ContentType.CONTENTTYPE_PRESET;
+    private ContentType                contentType        = ContentType.PRESET;
 
     final DeviceCollectionFilterColumn deviceCollectionFilterColumn;
     final DeviceLocationFilterColumn   deviceLocationFilterColumn;
@@ -95,7 +96,7 @@ public class BrowserImpl extends AbstractBrowser
         this.deviceTypeFilterColumn = new DeviceTypeFilterColumn (6, numFilterColumnEntries);
 
         this.columnDataContentTypes = new IBrowserColumn [2] [];
-        this.columnDataContentTypes[ContentType.CONTENTTYPE_DEVICE.ordinal ()] = new IBrowserColumn []
+        this.columnDataContentTypes[ContentType.DEVICE.ordinal ()] = new IBrowserColumn []
         {
             this.deviceCollectionFilterColumn,
             this.deviceLocationFilterColumn,
@@ -105,7 +106,7 @@ public class BrowserImpl extends AbstractBrowser
             this.deviceCreatorFilterColumn,
             this.deviceTypeFilterColumn
         };
-        this.columnDataContentTypes[ContentType.CONTENTTYPE_PRESET.ordinal ()] = new IBrowserColumn []
+        this.columnDataContentTypes[ContentType.PRESET.ordinal ()] = new IBrowserColumn []
         {
             new EmptyFilterColumn (0, numFilterColumnEntries),
             new EmptyFilterColumn (1, numFilterColumnEntries),
@@ -116,9 +117,12 @@ public class BrowserImpl extends AbstractBrowser
             new EmptyFilterColumn (6, numFilterColumnEntries),
             new EmptyFilterColumn (7, numFilterColumnEntries)
         };
-        this.columnData = this.columnDataContentTypes[ContentType.CONTENTTYPE_PRESET.ordinal ()];
+        this.columnData = this.columnDataContentTypes[ContentType.PRESET.ordinal ()];
 
         this.resultData = this.createResultData (this.numResults);
+
+        for (final IBrowserColumn column: this.columnDataContentTypes[ContentType.DEVICE.ordinal ()])
+            ((BaseColumn) column).addSelectionListener (this::updateFilteredDevices);
     }
 
 
@@ -134,7 +138,7 @@ public class BrowserImpl extends AbstractBrowser
     @Override
     public boolean isPresetContentType ()
     {
-        return this.contentType == ContentType.CONTENTTYPE_PRESET;
+        return this.contentType == ContentType.PRESET;
     }
 
 
@@ -199,12 +203,16 @@ public class BrowserImpl extends AbstractBrowser
     }
 
 
-    private void setContentType (final int ordinal)
+    private void setContentType (final ContentType contentType)
     {
         final ContentType [] values = ContentType.values ();
-        this.contentType = values[Math.min (Math.max (0, ordinal), values.length - 1)];
-        this.columnData = this.columnDataContentTypes[ordinal];
+        final int id = contentType.ordinal ();
+        this.contentType = values[Math.min (Math.max (0, id), values.length - 1)];
+        this.columnData = this.columnDataContentTypes[id];
         this.selectedIndex = 0;
+
+        if (contentType == ContentType.DEVICE)
+            this.updateFilteredDevices ();
     }
 
 
@@ -214,7 +222,7 @@ public class BrowserImpl extends AbstractBrowser
     {
         this.stopBrowsing (false);
         this.insertPosition = this.cursorDevice.getPosition ();
-        this.setContentType (ContentType.CONTENTTYPE_PRESET.ordinal ());
+        this.setContentType (ContentType.PRESET);
         this.isBrowserActive = true;
     }
 
@@ -239,7 +247,7 @@ public class BrowserImpl extends AbstractBrowser
     {
         this.stopBrowsing (false);
         this.insertPosition = insertPos;
-        this.setContentType (ContentType.CONTENTTYPE_DEVICE.ordinal ());
+        this.setContentType (ContentType.DEVICE);
         this.isBrowserActive = true;
     }
 
@@ -252,7 +260,7 @@ public class BrowserImpl extends AbstractBrowser
         {
             switch (this.contentType)
             {
-                case CONTENTTYPE_DEVICE:
+                case DEVICE:
                     final ResultItem result = this.getSelectedResultDevice ();
                     if (result != null)
                     {
@@ -262,7 +270,7 @@ public class BrowserImpl extends AbstractBrowser
                     }
                     break;
 
-                case CONTENTTYPE_PRESET:
+                case PRESET:
                     final int index = this.getSelectedResultIndex ();
                     if (index != -1)
                         this.sender.processIntArg ("device", "preset", index);
@@ -353,34 +361,6 @@ public class BrowserImpl extends AbstractBrowser
     }
 
 
-    private void updateFilteredDevices ()
-    {
-        final DeviceManager deviceManager = DeviceManager.get ();
-        final DeviceCollection folder = this.deviceCollectionFilterColumn.getCursorIndex () == 0 ? null : deviceManager.getCollection (this.deviceCollectionFilterColumn.getCursorName ());
-        final String category = this.deviceCategoryFilterColumn.getCursorIndex () == 0 ? null : this.deviceCategoryFilterColumn.getCursorName ();
-        final DeviceFileType fileType = this.deviceFileTypeFilterColumn.getCursorIndex () == 0 ? null : DeviceFileType.valueOf (this.deviceFileTypeFilterColumn.getCursorName ().toUpperCase ());
-        final DeviceLocation location = this.deviceLocationFilterColumn.getCursorIndex () == 0 ? null : DeviceLocation.valueOf (this.deviceLocationFilterColumn.getCursorName ().toUpperCase ());
-        // Note: this.deviceTagsFilterColumn currently does nothing
-        final String vendor = this.deviceCreatorFilterColumn.getCursorIndex () == 0 ? null : this.deviceCreatorFilterColumn.getCursorName ();
-        final DeviceType type = this.deviceTypeFilterColumn.getCursorIndex () == 0 ? null : DeviceType.valueOf (this.deviceTypeFilterColumn.getCursorName ().toUpperCase ().replace (' ', '_'));
-
-        this.filteredDevices = deviceManager.filterBy (fileType, category, vendor, folder, location, type);
-
-        if (this.selectedIndex >= this.filteredDevices.size ())
-            this.selectedIndex = 0;
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public IBrowserColumnItem [] getResultColumnItems ()
-    {
-        if (!this.isPresetContentType ())
-            this.updateFilteredDevices ();
-        return super.getResultColumnItems ();
-    }
-
-
     /**
      * Set a preset.
      *
@@ -419,6 +399,28 @@ public class BrowserImpl extends AbstractBrowser
     int translateBankIndexToPageOfSelectedIndex (final int index)
     {
         return this.selectedIndex / this.numResults * this.numResults + index;
+    }
+
+
+    private void updateFilteredDevices ()
+    {
+        // There are 2 modes: presets and devices
+        if (this.isPresetContentType ())
+            return;
+
+        final DeviceManager deviceManager = DeviceManager.get ();
+        final DeviceCollection folder = this.deviceCollectionFilterColumn.getCursorIndex () == 0 ? null : deviceManager.getCollection (this.deviceCollectionFilterColumn.getCursorName ());
+        final String category = this.deviceCategoryFilterColumn.getCursorIndex () == 0 ? null : this.deviceCategoryFilterColumn.getCursorName ();
+        final DeviceFileType fileType = this.deviceFileTypeFilterColumn.getCursorIndex () == 0 ? null : DeviceFileType.valueOf (this.deviceFileTypeFilterColumn.getCursorName ().toUpperCase ());
+        final DeviceLocation location = this.deviceLocationFilterColumn.getCursorIndex () == 0 ? null : DeviceLocation.valueOf (this.deviceLocationFilterColumn.getCursorName ().toUpperCase ());
+        // Note: this.deviceTagsFilterColumn currently does nothing
+        final String vendor = this.deviceCreatorFilterColumn.getCursorIndex () == 0 ? null : this.deviceCreatorFilterColumn.getCursorName ();
+        final DeviceType type = this.deviceTypeFilterColumn.getCursorIndex () == 0 ? null : DeviceType.valueOf (this.deviceTypeFilterColumn.getCursorName ().toUpperCase ().replace (' ', '_'));
+
+        this.filteredDevices = deviceManager.filterBy (fileType, category, vendor, folder, location, type);
+
+        if (this.selectedIndex >= this.filteredDevices.size ())
+            this.selectedIndex = 0;
     }
 
     /** An item in the result column. */

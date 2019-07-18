@@ -69,7 +69,7 @@ public class ParameterBankImpl extends AbstractBankImpl<IParameter> implements I
     @Override
     public void scrollBackwards ()
     {
-        this.bankOffset = Math.max (0, this.bankOffset - this.pageSize);
+        this.selectPreviousItem ();
     }
 
 
@@ -77,8 +77,23 @@ public class ParameterBankImpl extends AbstractBankImpl<IParameter> implements I
     @Override
     public void scrollForwards ()
     {
-        if (this.bankOffset + this.pageSize < this.getItemCount ())
-            this.bankOffset += this.pageSize;
+        this.selectNextItem ();
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void selectPreviousItem ()
+    {
+        this.scrollTo (this.bankOffset - this.pageSize);
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void selectNextItem ()
+    {
+        this.scrollTo (this.bankOffset + this.pageSize);
     }
 
 
@@ -86,8 +101,7 @@ public class ParameterBankImpl extends AbstractBankImpl<IParameter> implements I
     @Override
     public void selectPreviousPage ()
     {
-        final int offset = this.pageSize * this.pageSize;
-        this.bankOffset = Math.max (0, this.bankOffset - offset);
+        this.scrollTo (this.bankOffset - this.pageSize * this.pageSize);
     }
 
 
@@ -95,9 +109,7 @@ public class ParameterBankImpl extends AbstractBankImpl<IParameter> implements I
     @Override
     public void selectNextPage ()
     {
-        final int offset = this.pageSize * this.pageSize;
-        if (this.bankOffset + offset < this.getItemCount ())
-            this.bankOffset += offset;
+        this.scrollTo (this.bankOffset + this.pageSize * this.pageSize);
     }
 
 
@@ -105,7 +117,18 @@ public class ParameterBankImpl extends AbstractBankImpl<IParameter> implements I
     @Override
     public void scrollTo (final int position)
     {
-        this.bankOffset = position;
+        this.scrollTo (position, true);
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void scrollTo (final int position, final boolean adjustPage)
+    {
+        if (position < 0 || position >= this.getItemCount ())
+            return;
+        final int pageSize = this.getPageSize ();
+        this.bankOffset = Math.min (Math.max (0, adjustPage ? position / pageSize * pageSize : position), this.getItemCount () - 1);
     }
 
 

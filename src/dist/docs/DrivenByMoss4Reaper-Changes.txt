@@ -1,11 +1,24 @@
-7.02 (unreleased)
+7.02
 - Novation Remote SL Mk II
   * Fixed: Drum pads did not work
   * Fixed: Crash displaying send and master track
 - Novation Remote SL Mk III
+  * New: The browser result name is now shown in two columns
+  * Fixed: Drawing of track modes were wrong when no track was selected
+  * Fixed: Track could not be added when no track was selected
+  * Fixed: Browser mode could crash if a non-existing filter column was selected
+  * Fixed: Button long press events caused unnecessary warnings in the log
   * Fixed: Keyboard did not work
-- Fixed: flush was still called when a device was set to be deactivated
+  * Fixed: Implemented a workaround for button LEDs being lit when knob or fader values were changed on Windows (bug with MIDI Sysex in JDK).
+* OSC
+  * New: Added layer tab to Open Stage Control template.
+  * New: Added sending of /device/layer/selected/{attributes}
+  * Fixed: Some types used "selected" and some "select". Both can be used now.
+  * Fixed: Fixed location of master track in Open Stage Control template for 0.47.1.
 - New: Updated to OpenJdk 11.0.3+7
+- New: Faster calculation of browser results
+- Fixed: Navigating parameter pages with cursor keys did not work
+- Fixed: flush was still called when a device was set to be deactivated
 
 7.01
 - Fixed: Reaper INI was not read on Linux.

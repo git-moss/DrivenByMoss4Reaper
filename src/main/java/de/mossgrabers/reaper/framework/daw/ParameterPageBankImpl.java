@@ -15,8 +15,7 @@ import java.util.List;
 
 
 /**
- * Encapsulates the data of parameter pages. Bitwig pages have no banking, we need to do it
- * ourselves.
+ * Encapsulates the data of parameter pages.
  *
  * @author J&uuml;rgen Mo&szlig;graber
  */
