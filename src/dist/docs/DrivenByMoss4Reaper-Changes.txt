@@ -1,4 +1,6 @@
 7.03 (unreleased)
+- Ableton Push 2
+  * New: Set a new color palette for the pad LEDs and improved the algorithm to calculate the closest available color.
 - APC40
   * Fixed: All views except Play View were drawn wrong.
 - Novation Remote SL Mk III
