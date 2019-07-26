@@ -13,6 +13,7 @@ import de.mossgrabers.framework.daw.IHost;
 import de.mossgrabers.framework.daw.ILayerBank;
 import de.mossgrabers.framework.daw.IParameterBank;
 import de.mossgrabers.framework.daw.IParameterPageBank;
+import de.mossgrabers.framework.daw.data.IDevice;
 import de.mossgrabers.reaper.communication.MessageSender;
 import de.mossgrabers.reaper.framework.daw.data.DeviceImpl;
 
@@ -247,6 +248,9 @@ public class CursorDeviceImpl extends DeviceImpl implements ICursorDevice
     @Override
     public void selectPrevious ()
     {
+        if (!this.canSelectPreviousFX ())
+            return;
+
         // To support displaying the newly selected device quickly
         final int index = this.getIndex ();
         if (index > 0)
@@ -259,10 +263,16 @@ public class CursorDeviceImpl extends DeviceImpl implements ICursorDevice
     @Override
     public void selectNext ()
     {
+        if (!this.canSelectNextFX ())
+            return;
+
         // To support displaying the newly selected device quickly
         final int index = this.getIndex ();
         if (index < this.deviceBank.getPageSize () - 1)
-            this.setName (this.deviceBank.getItem (index + 1).getName ());
+        {
+            final IDevice item = this.deviceBank.getItem (index + 1);
+            this.setName (item.getName ());
+        }
         this.sender.processNoArg ("device", "+");
     }
 

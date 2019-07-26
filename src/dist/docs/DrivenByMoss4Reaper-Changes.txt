@@ -1,4 +1,4 @@
-7.03 (unreleased)
+7.03
 - All devices
   * New: Reflect automation changes on device (Volume, Pan, Mute, Send Volume)
   * New: Support for displaying and setting the color of the master track.
@@ -9,6 +9,8 @@
   * Fixed: The default note view is set to Play again, was Drum View.
 - APC40
   * Fixed: All views except Play View were drawn wrong.
+- Komplete Kontrol MkII
+  * New: Added a parameter/device mode (CLEAR button to toggle)!
 - MCU
   * Fixed: Jogwheel jumped back one step after movement ended
 - Novation Remote SL Mk III
