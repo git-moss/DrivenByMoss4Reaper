@@ -55,4 +55,82 @@ public class NoteRepeatImpl implements INoteRepeat
     {
         return ((TrackImpl) track).getNoteRepeatPeriod ();
     }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void setNoteLength (final ITrack track, final double length)
+    {
+        // TODO Auto-generated method stub
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public double getNoteLength (final ITrack track)
+    {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean isShuffle (final ITrack track)
+    {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void toggleShuffle (final ITrack track)
+    {
+        // TODO Auto-generated method stub
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean usePressure (final ITrack track)
+    {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void toggleUsePressure (final ITrack track)
+    {
+        // TODO Auto-generated method stub
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public double getVelocityRamp (final ITrack track)
+    {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public String getVelocityRampStr (final ITrack track)
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void setVelocityRamp (final ITrack track, final double value)
+    {
+        // TODO Auto-generated method stub
+
+    }
 }

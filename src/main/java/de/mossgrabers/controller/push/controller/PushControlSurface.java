@@ -272,7 +272,6 @@ public class PushControlSurface extends AbstractControlSurface<PushConfiguration
         PUSH_BUTTON_SHIFT,
         PUSH_BUTTON_ADD_EFFECT,
         PUSH_BUTTON_ADD_TRACK,
-        PUSH_BUTTON_USER_MODE,
         PUSH_BUTTON_NEW,
         PUSH_BUTTON_DUPLICATE,
         PUSH_BUTTON_QUANTIZE,
@@ -1107,7 +1106,7 @@ public class PushControlSurface extends AbstractControlSurface<PushConfiguration
         0x01
     };
 
-    private PaletteEntry []          colorPalette                  = new PaletteEntry [128];
+    private final PaletteEntry []    colorPalette                  = new PaletteEntry [128];
 
     private int                      ribbonMode                    = -1;
     private int                      ribbonValue                   = -1;
@@ -1143,14 +1142,6 @@ public class PushControlSurface extends AbstractControlSurface<PushConfiguration
         this.downButtonId = PUSH_BUTTON_DOWN;
 
         this.input.setSysexCallback (this::handleSysEx);
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public PushDisplay getDisplay ()
-    {
-        return (PushDisplay) super.getDisplay ();
     }
 
 

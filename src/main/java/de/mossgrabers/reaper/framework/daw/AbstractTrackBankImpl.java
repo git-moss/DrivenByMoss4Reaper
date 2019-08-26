@@ -206,7 +206,7 @@ public abstract class AbstractTrackBankImpl extends AbstractPagedBankImpl<TrackI
     /**
      * Deactivate all solo states of all tracks.
      */
-    public void deactivateSolo ()
+    public void clearSolo ()
     {
         for (int i = 0; i < this.items.size (); i++)
             this.items.get (i).setSolo (false);
@@ -216,7 +216,7 @@ public abstract class AbstractTrackBankImpl extends AbstractPagedBankImpl<TrackI
     /**
      * Deactivate all mute states of all tracks.
      */
-    public void deactivateMute ()
+    public void clearMute ()
     {
         for (int i = 0; i < this.items.size (); i++)
             this.items.get (i).setMute (false);

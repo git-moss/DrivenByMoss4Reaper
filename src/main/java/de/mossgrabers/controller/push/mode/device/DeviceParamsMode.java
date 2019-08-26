@@ -4,13 +4,14 @@
 
 package de.mossgrabers.controller.push.mode.device;
 
+import de.mossgrabers.controller.push.controller.Push1Display;
 import de.mossgrabers.controller.push.controller.PushColors;
 import de.mossgrabers.controller.push.controller.PushControlSurface;
-import de.mossgrabers.controller.push.controller.PushDisplay;
 import de.mossgrabers.controller.push.mode.BaseMode;
 import de.mossgrabers.framework.command.TriggerCommandID;
 import de.mossgrabers.framework.controller.IValueChanger;
-import de.mossgrabers.framework.controller.display.Display;
+import de.mossgrabers.framework.controller.display.IGraphicDisplay;
+import de.mossgrabers.framework.controller.display.ITextDisplay;
 import de.mossgrabers.framework.daw.DAWColors;
 import de.mossgrabers.framework.daw.IBank;
 import de.mossgrabers.framework.daw.ICursorDevice;
@@ -22,7 +23,6 @@ import de.mossgrabers.framework.daw.data.IChannel;
 import de.mossgrabers.framework.daw.data.IDevice;
 import de.mossgrabers.framework.daw.data.IItem;
 import de.mossgrabers.framework.daw.data.IParameter;
-import de.mossgrabers.framework.graphics.display.DisplayModel;
 import de.mossgrabers.framework.mode.ModeManager;
 import de.mossgrabers.framework.mode.Modes;
 import de.mossgrabers.framework.utils.ButtonEvent;
@@ -325,14 +325,12 @@ public class DeviceParamsMode extends BaseMode
 
     /** {@inheritDoc} */
     @Override
-    public void updateDisplay1 ()
+    public void updateDisplay1 (final ITextDisplay display)
     {
-        final Display d = this.surface.getDisplay ().clear ();
-
         final ICursorDevice cd = this.model.getCursorDevice ();
         if (!cd.doesExist ())
         {
-            d.setBlock (1, 0, "           Select").setBlock (1, 1, "a device or press").setBlock (1, 2, "'Add Effect'...  ").allDone ();
+            display.setBlock (1, 0, "           Select").setBlock (1, 1, "a device or press").setBlock (1, 2, "'Add Effect'...  ").allDone ();
             return;
         }
 
@@ -341,11 +339,11 @@ public class DeviceParamsMode extends BaseMode
         for (int i = 0; i < 8; i++)
         {
             final IParameter param = parameterBank.getItem (i);
-            d.setCell (0, i, param.doesExist () ? StringUtils.fixASCII (param.getName ()) : "").setCell (1, i, param.getDisplayedValue (8));
+            display.setCell (0, i, param.doesExist () ? StringUtils.fixASCII (param.getName ()) : "").setCell (1, i, param.getDisplayedValue (8));
         }
 
         // Row 3
-        d.setBlock (2, 0, "Selected Device:").setBlock (2, 1, cd.getName ());
+        display.setBlock (2, 0, "Selected Device:").setBlock (2, 1, cd.getName ());
 
         // Row 4
         if (this.showDevices)
@@ -358,38 +356,32 @@ public class DeviceParamsMode extends BaseMode
                 if (device.doesExist ())
                 {
                     if (i == cd.getIndex ())
-                        sb.append (PushDisplay.SELECT_ARROW);
+                        sb.append (Push1Display.SELECT_ARROW);
                     sb.append (device.getName ());
                 }
-                d.setCell (3, i, sb.toString ());
+                display.setCell (3, i, sb.toString ());
             }
+            return;
         }
-        else
+        final IParameterPageBank bank = cd.getParameterPageBank ();
+        final int selectedItemIndex = bank.getSelectedItemIndex ();
+        for (int i = 0; i < bank.getPageSize (); i++)
         {
-            final IParameterPageBank bank = cd.getParameterPageBank ();
-            final int selectedItemIndex = bank.getSelectedItemIndex ();
-            for (int i = 0; i < bank.getPageSize (); i++)
-            {
-                final String item = bank.getItem (i);
-                d.setCell (3, i, !item.isEmpty () ? (i == selectedItemIndex ? PushDisplay.SELECT_ARROW : "") + item : "");
-            }
+            final String item = bank.getItem (i);
+            display.setCell (3, i, !item.isEmpty () ? (i == selectedItemIndex ? Push1Display.SELECT_ARROW : "") + item : "");
         }
-
-        d.allDone ();
     }
 
 
     /** {@inheritDoc} */
     @Override
-    public void updateDisplay2 ()
+    public void updateDisplay2 (final IGraphicDisplay display)
     {
-        final DisplayModel message = this.surface.getDisplay ().getModel ();
         final ICursorDevice cd = this.model.getCursorDevice ();
         if (!cd.doesExist ())
         {
             for (int i = 0; i < 8; i++)
-                message.addOptionElement (i == 2 ? "Please select a device or press 'Add Device'..." : "", i == 7 ? "Up" : "", true, "", "", false, true);
-            message.send ();
+                display.addOptionElement (i == 2 ? "Please select a device or press 'Add Device'..." : "", i == 7 ? "Up" : "", true, "", "", false, true);
             return;
         }
 
@@ -463,10 +455,8 @@ public class DeviceParamsMode extends BaseMode
             final boolean parameterIsActive = this.isKnobTouched[i];
             final int parameterModulatedValue = valueChanger.toDisplayValue (exists ? param.getModulatedValue () : -1);
 
-            message.addParameterElement (i != 5 || hasPinning ? MENU[i] : "", isTopMenuOn, bottomMenu, bottomMenuIcon, bottomMenuColor, isBottomMenuOn, parameterName, parameterValue, parameterValueStr, parameterIsActive, parameterModulatedValue);
+            display.addParameterElement (i != 5 || hasPinning ? MENU[i] : "", isTopMenuOn, bottomMenu, bottomMenuIcon, bottomMenuColor, isBottomMenuOn, parameterName, parameterValue, parameterValueStr, parameterIsActive, parameterModulatedValue);
         }
-
-        message.send ();
     }
 
 

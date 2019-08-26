@@ -109,14 +109,6 @@ public class EmptySlot extends EmptyItem implements ISlot
 
     /** {@inheritDoc} */
     @Override
-    public void create (final int length)
-    {
-        // Intentionally empty
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
     public void remove ()
     {
         // Intentionally empty

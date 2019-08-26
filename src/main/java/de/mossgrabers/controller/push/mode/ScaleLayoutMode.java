@@ -4,11 +4,11 @@
 
 package de.mossgrabers.controller.push.mode;
 
+import de.mossgrabers.controller.push.controller.Push1Display;
 import de.mossgrabers.controller.push.controller.PushControlSurface;
-import de.mossgrabers.controller.push.controller.PushDisplay;
-import de.mossgrabers.framework.controller.display.Display;
+import de.mossgrabers.framework.controller.display.IGraphicDisplay;
+import de.mossgrabers.framework.controller.display.ITextDisplay;
 import de.mossgrabers.framework.daw.IModel;
-import de.mossgrabers.framework.graphics.display.DisplayModel;
 import de.mossgrabers.framework.mode.AbstractMode;
 import de.mossgrabers.framework.scale.ScaleLayout;
 import de.mossgrabers.framework.scale.Scales;
@@ -74,35 +74,31 @@ public class ScaleLayoutMode extends BaseMode
 
     /** {@inheritDoc} */
     @Override
-    public void updateDisplay1 ()
+    public void updateDisplay1 (final ITextDisplay display)
     {
-        final Display d = this.surface.getDisplay ();
         final int sl = this.scales.getScaleLayout ().ordinal ();
         final int pos = sl / 2;
         final String [] names = ScaleLayout.getNames ();
-        d.clear ().setBlock (1, 0, "Scale layout:");
+        display.setBlock (1, 0, "Scale layout:");
         for (int i = 0; i < names.length; i += 2)
-            d.setCell (3, i / 2, (pos == i / 2 ? PushDisplay.SELECT_ARROW : " ") + names[i].replace (" ^", ""));
-        d.setCell (3, 7, sl % 2 == 0 ? "Horizontal" : "Vertical");
-        d.allDone ();
+            display.setCell (3, i / 2, (pos == i / 2 ? Push1Display.SELECT_ARROW : " ") + names[i].replace (" ^", ""));
+        display.setCell (3, 7, sl % 2 == 0 ? "Horizontal" : "Vertical");
     }
 
 
     /** {@inheritDoc} */
     @Override
-    public void updateDisplay2 ()
+    public void updateDisplay2 (final IGraphicDisplay display)
     {
         final int sl = this.scales.getScaleLayout ().ordinal ();
         final int pos = sl / 2;
         final String [] names = ScaleLayout.getNames ();
 
-        final DisplayModel message = this.surface.getDisplay ().getModel ();
         for (int i = 0; i < names.length; i += 2)
-            message.addOptionElement ("", "", false, i == 0 ? "Scale layout" : "", names[i].replace (" ^", ""), pos == i / 2, false);
+            display.addOptionElement ("", "", false, i == 0 ? "Scale layout" : "", names[i].replace (" ^", ""), pos == i / 2, false);
 
-        message.addOptionElement ("", "", false, "", "", false, false);
-        message.addOptionElement ("", "", false, "", "", false, false);
-        message.addOptionElement ("", "", false, "", sl % 2 == 0 ? "Horizontal" : "Vertical", false, false);
-        message.send ();
+        display.addOptionElement ("", "", false, "", "", false, false);
+        display.addOptionElement ("", "", false, "", "", false, false);
+        display.addOptionElement ("", "", false, "", sl % 2 == 0 ? "Horizontal" : "Vertical", false, false);
     }
 }

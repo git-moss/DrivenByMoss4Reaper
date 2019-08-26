@@ -5,6 +5,7 @@
 package de.mossgrabers.reaper.framework.daw.data;
 
 import de.mossgrabers.framework.daw.ISlotBank;
+import de.mossgrabers.framework.daw.constants.RecordQuantization;
 import de.mossgrabers.framework.daw.data.ITrack;
 import de.mossgrabers.framework.daw.resource.ChannelType;
 import de.mossgrabers.reaper.framework.daw.AbstractTrackBankImpl;
@@ -409,9 +410,54 @@ public class TrackImpl extends ChannelImpl implements ITrack
 
     /** {@inheritDoc} */
     @Override
+    public boolean isRecordQuantizationNoteLength ()
+    {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void toggleRecordQuantizationNoteLength ()
+    {
+        // TODO Auto-generated method stub
+
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public RecordQuantization getRecordQuantizationGrid ()
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void setRecordQuantizationGrid (final RecordQuantization recordQuantization)
+    {
+        // TODO
+        // this.setRecordQuantizationGridState (value);
+        // this.sendTrackOSC ("inQuantEnabled", this.autoMonitor);
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
     public ISlotBank getSlotBank ()
     {
         return this.slotBank;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void createClip (final int slotIndex, final int lengthInBeats)
+    {
+        this.sender.processIntArg ("track", this.index + "/createClip", lengthInBeats);
     }
 
 

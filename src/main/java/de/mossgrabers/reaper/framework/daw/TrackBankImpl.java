@@ -107,11 +107,11 @@ public class TrackBankImpl extends AbstractTrackBankImpl
         if (this.hasFlatTrackList)
             return;
 
+        final TrackImpl previousFolder = this.currentFolder.getData ();
         final TreeNode<TrackImpl> parent = this.currentFolder.getParent ();
         this.currentFolder = parent == null ? this.rootTrack : parent;
-        final TrackImpl data = this.currentFolder.getData ();
-        if (data != null)
-            data.select ();
+        if (previousFolder != null)
+            previousFolder.select ();
     }
 
 
@@ -152,7 +152,7 @@ public class TrackBankImpl extends AbstractTrackBankImpl
             {
                 final int position = track.getPosition ();
                 // Is track on current page? If not adjust the page
-                if (this.isOnSelectedPage (position))
+                if (!this.isOnSelectedPage (position))
                     this.bankOffset = position / this.pageSize * this.pageSize;
             }
         }

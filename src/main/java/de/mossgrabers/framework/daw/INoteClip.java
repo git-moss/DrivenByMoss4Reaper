@@ -11,14 +11,6 @@ package de.mossgrabers.framework.daw;
  */
 public interface INoteClip extends IClip
 {
-    /** Constant for getStep result for note off. */
-    int NOTE_OFF      = 0;
-    /** Constant for getStep result for note continue. */
-    int NOTE_CONTINUE = 1;
-    /** Constant for getStep result for note start. */
-    int NOTE_START    = 2;
-
-
     /**
      * Get the row of notes.
      *
@@ -36,13 +28,29 @@ public interface INoteClip extends IClip
 
 
     /**
+     * Set the length of a step.
+     *
+     * @param length The length
+     */
+    void setStepLength (double length);
+
+
+    /**
+     * Get the length of a step.
+     *
+     * @return The length
+     */
+    double getStepLength ();
+
+
+    /**
      * Get the state of a note.
      *
      * @param step The step
      * @param row The row
-     * @return 0: not set, 1: note continues playing, 2: start of note, see the defined constants
+     * @return The step info
      */
-    int getStep (int step, int row);
+    IStepInfo getStep (int step, int row);
 
 
     /**
@@ -86,6 +94,16 @@ public interface INoteClip extends IClip
 
 
     /**
+     * If there is a note started at this position, it will change the duration of the note.
+     *
+     * @param step The step
+     * @param row The note row
+     * @param control The change value
+     */
+    void changeStepDuration (int step, int row, int control);
+
+
+    /**
      * If there is a note started at this position, it will update the velocity of the note.
      *
      * @param step The step
@@ -93,6 +111,127 @@ public interface INoteClip extends IClip
      * @param velocity The velocity of the note
      */
     void updateStepVelocity (int step, int row, double velocity);
+
+
+    /**
+     * If there is a note started at this position, it will change the velocity of the note.
+     *
+     * @param step The step
+     * @param row The note row
+     * @param control The change value
+     */
+    void changeStepVelocity (int step, int row, int control);
+
+
+    /**
+     * If there is a note started at this position, it will update the release velocity of the note.
+     *
+     * @param step The step
+     * @param row The note row
+     * @param releaseVelocity The release velocity of the note
+     */
+    void updateStepReleaseVelocity (int step, int row, double releaseVelocity);
+
+
+    /**
+     * If there is a note started at this position, it will change the release velocity of the note.
+     *
+     * @param step The step
+     * @param row The note row
+     * @param control The change value
+     */
+    void changeStepReleaseVelocity (int step, int row, int control);
+
+
+    /**
+     * If there is a note started at this position, it will update the pressure of the note.
+     *
+     * @param step The step
+     * @param row The note row
+     * @param pressure The pressure of the note from 0 to +1
+     */
+    void updateStepPressure (int step, int row, double pressure);
+
+
+    /**
+     * If there is a note started at this position, it will change the pressure of the note.
+     *
+     * @param step The step
+     * @param row The note row
+     * @param control The change value
+     */
+    void changeStepPressure (int step, int row, int control);
+
+
+    /**
+     * If there is a note started at this position, it will update the timbre of the note.
+     *
+     * @param step The step
+     * @param row The note row
+     * @param timbre The timbre of the note from -1 to +1
+     */
+    void updateStepTimbre (int step, int row, double timbre);
+
+
+    /**
+     * If there is a note started at this position, it will change the timbre of the note.
+     *
+     * @param step The step
+     * @param row The note row
+     * @param control The change value
+     */
+    void changeStepTimbre (int step, int row, int control);
+
+
+    /**
+     * If there is a note started at this position, it will update the panorama of the note.
+     *
+     * @param step The step
+     * @param row The note row
+     * @param panorama The panorama of the note, -1 for left, +1 for right
+     */
+    void updateStepPan (int step, int row, double panorama);
+
+
+    /**
+     * If there is a note started at this position, it will change the panorama of the note.
+     *
+     * @param step The step
+     * @param row The note row
+     * @param control The change value
+     */
+    void changeStepPan (int step, int row, int control);
+
+
+    /**
+     * If there is a note started at this position, it will update the transposition of the note.
+     *
+     * @param step The step
+     * @param row The note row
+     * @param semitones The transposition of the note in semitones, from -24 to +24
+     */
+    void updateStepTranspose (int step, int row, double semitones);
+
+
+    /**
+     * If there is a note started at this position, it will change the transposition of the note.
+     *
+     * @param step The step
+     * @param row The note row
+     * @param control The change value
+     */
+    void changeStepTranspose (int step, int row, int control);
+
+
+    /**
+     * Start / stop editing the note. Signals to prevent round-trip error by quickly changing values
+     * to the DAW, which are not set at the same time.
+     *
+     * @param step The step
+     * @param row The note row
+     * @param enable Enable editing
+     */
+    void edit (int step, int row, boolean enable);
 
 
     /**
@@ -126,22 +265,6 @@ public interface INoteClip extends IClip
      * @return The highest row or -1 if all rows are empty
      */
     int getUpperRowWithData ();
-
-
-    /**
-     * Set the length of a step.
-     *
-     * @param length The length
-     */
-    void setStepLength (double length);
-
-
-    /**
-     * Get the length of a step.
-     *
-     * @return The length
-     */
-    double getStepLength ();
 
 
     /**

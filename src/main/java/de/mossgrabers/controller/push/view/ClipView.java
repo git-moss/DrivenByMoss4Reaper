@@ -7,11 +7,11 @@ package de.mossgrabers.controller.push.view;
 import de.mossgrabers.controller.push.PushConfiguration;
 import de.mossgrabers.controller.push.controller.PushColors;
 import de.mossgrabers.controller.push.controller.PushControlSurface;
-import de.mossgrabers.framework.Resolution;
 import de.mossgrabers.framework.controller.color.ColorManager;
 import de.mossgrabers.framework.daw.IClip;
 import de.mossgrabers.framework.daw.IModel;
 import de.mossgrabers.framework.daw.INoteClip;
+import de.mossgrabers.framework.daw.constants.Resolution;
 import de.mossgrabers.framework.utils.ButtonEvent;
 import de.mossgrabers.framework.view.AbstractSequencerView;
 
@@ -64,7 +64,7 @@ public class ClipView extends AbstractSequencerView<PushControlSurface, PushConf
                 return false;
 
             default:
-                return !this.surface.getConfiguration ().isPush2 () || buttonID != PushControlSurface.PUSH_BUTTON_USER_MODE;
+                return true;
         }
     }
 

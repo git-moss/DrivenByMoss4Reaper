@@ -4,12 +4,13 @@
 
 package de.mossgrabers.controller.hui.controller;
 
-import de.mossgrabers.framework.controller.display.AbstractDisplay;
-import de.mossgrabers.framework.controller.display.Display;
+import de.mossgrabers.framework.controller.display.AbstractTextDisplay;
 import de.mossgrabers.framework.controller.display.Format;
+import de.mossgrabers.framework.controller.display.ITextDisplay;
 import de.mossgrabers.framework.daw.IHost;
 import de.mossgrabers.framework.daw.midi.IMidiOutput;
 import de.mossgrabers.framework.utils.LatestTaskExecutor;
+import de.mossgrabers.framework.utils.StringUtils;
 
 
 /**
@@ -17,7 +18,7 @@ import de.mossgrabers.framework.utils.LatestTaskExecutor;
  *
  * @author J&uuml;rgen Mo&szlig;graber
  */
-public class HUIMainDisplay extends AbstractDisplay
+public class HUIMainDisplay extends AbstractTextDisplay
 {
     private static final byte []        SYSEX_DISPLAY_HEADER = new byte []
     {
@@ -28,20 +29,6 @@ public class HUIMainDisplay extends AbstractDisplay
         (byte) 0x05,
         (byte) 0x00,
         (byte) 0x12
-    };
-
-    private static final String []      SPACES               =
-    {
-        "",
-        " ",
-        "  ",
-        "   ",
-        "    ",
-        "     ",
-        "      ",
-        "       ",
-        "        ",
-        "         "
     };
 
     private int                         charactersOfCell;
@@ -67,7 +54,7 @@ public class HUIMainDisplay extends AbstractDisplay
 
     /** {@inheritDoc} */
     @Override
-    public AbstractDisplay clearRow (final int row)
+    public ITextDisplay clearRow (final int row)
     {
         for (int i = 0; i < this.noOfCells; i++)
             this.clearCell (row, i);
@@ -77,7 +64,7 @@ public class HUIMainDisplay extends AbstractDisplay
 
     /** {@inheritDoc} */
     @Override
-    public HUIMainDisplay clearCell (final int row, final int cell)
+    public ITextDisplay clearCell (final int row, final int cell)
     {
         this.cells[row * this.noOfCells + cell] = "         ".substring (0, this.charactersOfCell);
         return this;
@@ -86,13 +73,13 @@ public class HUIMainDisplay extends AbstractDisplay
 
     /** {@inheritDoc} */
     @Override
-    public Display setBlock (final int row, final int block, final String value)
+    public ITextDisplay setBlock (final int row, final int block, final String value)
     {
         final int cell = 2 * block;
         if (value.length () >= this.charactersOfCell)
         {
-            this.cells[row * this.noOfCells + cell] = pad (value.substring (0, this.charactersOfCell), this.charactersOfCell);
-            this.cells[row * this.noOfCells + cell + 1] = pad (value.substring (this.charactersOfCell), this.charactersOfCell);
+            this.cells[row * this.noOfCells + cell] = StringUtils.pad (value.substring (0, this.charactersOfCell), this.charactersOfCell);
+            this.cells[row * this.noOfCells + cell + 1] = StringUtils.pad (value.substring (this.charactersOfCell), this.charactersOfCell);
         }
         else
         {
@@ -105,20 +92,20 @@ public class HUIMainDisplay extends AbstractDisplay
 
     /** {@inheritDoc} */
     @Override
-    public Display setCell (final int row, final int column, final int value, final Format format)
+    public ITextDisplay setCell (final int row, final int column, final int value, final Format format)
     {
-        this.cells[row * this.noOfCells + column] = pad (Integer.toString (value), this.charactersOfCell);
+        this.cells[row * this.noOfCells + column] = StringUtils.pad (Integer.toString (value), this.charactersOfCell);
         return this;
     }
 
 
     /** {@inheritDoc} */
     @Override
-    public Display setCell (final int row, final int column, final String value)
+    public ITextDisplay setCell (final int row, final int column, final String value)
     {
         try
         {
-            this.cells[row * this.noOfCells + column] = pad (value, this.charactersOfCell);
+            this.cells[row * this.noOfCells + column] = StringUtils.pad (value, this.charactersOfCell);
         }
         catch (final ArrayIndexOutOfBoundsException ex)
         {
@@ -185,17 +172,5 @@ public class HUIMainDisplay extends AbstractDisplay
         // Prevent further sends
         for (int i = 0; i < 4; i++)
             this.executors[i].shutdown ();
-    }
-
-
-    private static String pad (final String str, final int length)
-    {
-        final String text = str == null ? "" : str;
-        final int diff = length - text.length ();
-        if (diff < 0)
-            return text.substring (0, length);
-        if (diff > 0)
-            return text + SPACES[diff];
-        return text;
     }
 }

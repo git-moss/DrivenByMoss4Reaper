@@ -69,16 +69,23 @@ public class NewCommand<S extends IControlSurface<C>, C extends Configuration> e
         final ISlot slot = slotBank.getEmptySlot (slotIndex);
         if (slot == null)
         {
-            this.surface.getDisplay ().notify ("In the current selected grid view there is no empty slot. Please scroll down.");
+            this.surface.getDisplay ().notify ("No empty slot in the current page. Please scroll down.");
             return;
         }
 
-        this.model.createClip (slot, this.getClipLength ());
+        track.createClip (slot.getIndex (), this.getNewClipLenghthInBeats (this.model.getTransport ().getQuartersPerMeasure ()));
         if (slotIndex != slot.getIndex ())
             slot.select ();
         slot.launch ();
         if (enableOverdub)
             this.model.getTransport ().setLauncherOverdub (true);
+    }
+
+
+    private int getNewClipLenghthInBeats (final int quartersPerMeasure)
+    {
+        final int length = this.getClipLength ();
+        return (int) (length < 2 ? Math.pow (2, length) : Math.pow (2, length - 2.0) * quartersPerMeasure);
     }
 
 

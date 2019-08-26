@@ -5,12 +5,12 @@
 package de.mossgrabers.controller.push.mode;
 
 import de.mossgrabers.controller.push.controller.PushControlSurface;
-import de.mossgrabers.framework.controller.display.Display;
+import de.mossgrabers.framework.controller.display.IGraphicDisplay;
+import de.mossgrabers.framework.controller.display.ITextDisplay;
 import de.mossgrabers.framework.daw.IApplication;
 import de.mossgrabers.framework.daw.IArranger;
 import de.mossgrabers.framework.daw.IMixer;
 import de.mossgrabers.framework.daw.IModel;
-import de.mossgrabers.framework.graphics.display.DisplayModel;
 import de.mossgrabers.framework.mode.AbstractMode;
 import de.mossgrabers.framework.utils.ButtonEvent;
 
@@ -243,23 +243,20 @@ public class FrameMode extends BaseMode
 
     /** {@inheritDoc} */
     @Override
-    public void updateDisplay1 ()
+    public void updateDisplay1 (final ITextDisplay display)
     {
         final IApplication app = this.model.getApplication ();
-        final Display d = this.surface.getDisplay ();
-        d.setRow (0, FrameMode.ROW0).setRow (1, FrameMode.ROW1).setRow (2, app.isArrangeLayout () ? FrameMode.ARRANGER_ROW2 : app.isMixerLayout () ? FrameMode.MIXER_ROW2 : FrameMode.EMPTY).setRow (3, app.isArrangeLayout () ? FrameMode.ARRANGER_ROW3 : app.isMixerLayout () ? FrameMode.MIXER_ROW3 : FrameMode.EMPTY);
+        display.setRow (0, FrameMode.ROW0).setRow (1, FrameMode.ROW1).setRow (2, app.isArrangeLayout () ? FrameMode.ARRANGER_ROW2 : app.isMixerLayout () ? FrameMode.MIXER_ROW2 : FrameMode.EMPTY).setRow (3, app.isArrangeLayout () ? FrameMode.ARRANGER_ROW3 : app.isMixerLayout () ? FrameMode.MIXER_ROW3 : FrameMode.EMPTY);
     }
 
 
     /** {@inheritDoc} */
     @Override
-    public void updateDisplay2 ()
+    public void updateDisplay2 (final IGraphicDisplay display)
     {
         final IApplication app = this.model.getApplication ();
-        final DisplayModel message = this.surface.getDisplay ().getModel ();
         for (int i = 0; i < FrameMode.ARRANGER1.length; i++)
-            message.addOptionElement (app.isArrangeLayout () ? FrameMode.ARRANGER1[i] : app.isMixerLayout () ? FrameMode.MIXER1[i] : "", app.isArrangeLayout () ? FrameMode.ARRANGER2[i] : app.isMixerLayout () ? FrameMode.MIXER2[i] : "", this.getSecondRowButtonState (i) > 0, FrameMode.LAYOUTS1[i], FrameMode.LAYOUTS2[i], this.getFirstRowButtonState (i), false);
-        message.send ();
+            display.addOptionElement (app.isArrangeLayout () ? FrameMode.ARRANGER1[i] : app.isMixerLayout () ? FrameMode.MIXER1[i] : "", app.isArrangeLayout () ? FrameMode.ARRANGER2[i] : app.isMixerLayout () ? FrameMode.MIXER2[i] : "", this.getSecondRowButtonState (i) > 0, FrameMode.LAYOUTS1[i], FrameMode.LAYOUTS2[i], this.getFirstRowButtonState (i), false);
     }
 
 

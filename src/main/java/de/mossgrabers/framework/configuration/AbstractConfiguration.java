@@ -573,6 +573,14 @@ public abstract class AbstractConfiguration implements Configuration
 
     /** {@inheritDoc} */
     @Override
+    public int getNewClipLenghthInBeats (final int quartersPerMeasure)
+    {
+        return (int) (this.newClipLength < 2 ? Math.pow (2, this.newClipLength) : Math.pow (2, this.newClipLength - 2.0) * quartersPerMeasure);
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
     public void setNewClipLength (final int value)
     {
         this.newClipLengthSetting.set (NEW_CLIP_LENGTH_VALUES[value]);

@@ -9,13 +9,13 @@ import de.mossgrabers.controller.sl.command.trigger.ButtonRowSelectCommand;
 import de.mossgrabers.controller.sl.command.trigger.P2ButtonCommand;
 import de.mossgrabers.controller.sl.controller.SLControlSurface;
 import de.mossgrabers.controller.sl.mode.device.DeviceParamsMode;
-import de.mossgrabers.framework.Resolution;
 import de.mossgrabers.framework.daw.ICursorDevice;
 import de.mossgrabers.framework.daw.IDrumPadBank;
 import de.mossgrabers.framework.daw.IModel;
 import de.mossgrabers.framework.daw.INoteClip;
 import de.mossgrabers.framework.daw.ITrackBank;
 import de.mossgrabers.framework.daw.ITransport;
+import de.mossgrabers.framework.daw.constants.Resolution;
 import de.mossgrabers.framework.daw.data.IChannel;
 import de.mossgrabers.framework.daw.data.ITrack;
 import de.mossgrabers.framework.mode.ModeManager;
@@ -354,7 +354,7 @@ public class PlayView extends AbstractSequencerView<SLControlSurface, SLConfigur
         final int offsetY = this.scales.getDrumOffset ();
         for (int col = 0; col < PlayView.NUM_DISPLAY_COLS; col++)
         {
-            final int isSet = clip.getStep (col, offsetY + this.selectedPad);
+            final int isSet = clip.getStep (col, offsetY + this.selectedPad).getState ();
             final boolean hilite = col == hiStep;
             final int x = col % 8;
             final double y = col / 8.0;

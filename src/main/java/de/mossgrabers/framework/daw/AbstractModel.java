@@ -44,6 +44,7 @@ public abstract class AbstractModel implements IModel
     protected ICursorDevice       instrumentDevice;
     protected ICursorDevice       cursorDevice;
     protected ICursorDevice       drumDevice64;
+    protected IParameterBank      userParameterBank;
     protected Map<String, IClip>  cursorClips = new HashMap<> ();
 
     private int                   lastSelection;
@@ -180,6 +181,14 @@ public abstract class AbstractModel implements IModel
 
     /** {@inheritDoc} */
     @Override
+    public IParameterBank getUserParameterBank ()
+    {
+        return this.userParameterBank;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
     public void toggleCurrentTrackBank ()
     {
         if (this.effectTrackBank == null)
@@ -254,14 +263,6 @@ public abstract class AbstractModel implements IModel
     public ISceneBank getSceneBank ()
     {
         return this.trackBank.getSceneBank ();
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void createClip (final ISlot slot, final int clipLength)
-    {
-        slot.create ((int) (clipLength < 2 ? Math.pow (2, clipLength) : Math.pow (2, clipLength - 2.0) * this.transport.getQuartersPerMeasure ()));
     }
 
 

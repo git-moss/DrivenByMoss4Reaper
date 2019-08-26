@@ -6,11 +6,11 @@ package de.mossgrabers.controller.beatstep.view;
 
 import de.mossgrabers.controller.beatstep.controller.BeatstepColors;
 import de.mossgrabers.controller.beatstep.controller.BeatstepControlSurface;
-import de.mossgrabers.framework.Resolution;
 import de.mossgrabers.framework.controller.grid.PadGrid;
 import de.mossgrabers.framework.daw.IModel;
 import de.mossgrabers.framework.daw.INoteClip;
 import de.mossgrabers.framework.daw.ITrackBank;
+import de.mossgrabers.framework.daw.constants.Resolution;
 import de.mossgrabers.framework.daw.data.ITrack;
 import de.mossgrabers.framework.scale.Scales;
 
@@ -157,7 +157,7 @@ public class SequencerView extends BaseSequencerView
             final int hiStep = this.isInXRange (step) ? step % SequencerView.NUM_DISPLAY_COLS : -1;
             for (int col = 0; col < SequencerView.NUM_DISPLAY_COLS; col++)
             {
-                final int isSet = clip.getStep (col, this.offsetY + this.selectedPad);
+                final int isSet = clip.getStep (col, this.offsetY + this.selectedPad).getState ();
                 padGrid.lightEx (col % 8, 1 - col / 8, getSequencerColor (isSet, col == hiStep));
             }
         }

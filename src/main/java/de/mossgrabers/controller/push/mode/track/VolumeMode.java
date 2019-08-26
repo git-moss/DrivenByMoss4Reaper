@@ -5,13 +5,14 @@
 package de.mossgrabers.controller.push.mode.track;
 
 import de.mossgrabers.controller.push.PushConfiguration;
+import de.mossgrabers.controller.push.controller.Push1Display;
 import de.mossgrabers.controller.push.controller.PushControlSurface;
-import de.mossgrabers.framework.controller.display.Display;
-import de.mossgrabers.framework.controller.display.Format;
+import de.mossgrabers.framework.controller.display.AbstractGraphicDisplay;
+import de.mossgrabers.framework.controller.display.IGraphicDisplay;
+import de.mossgrabers.framework.controller.display.ITextDisplay;
 import de.mossgrabers.framework.daw.IModel;
 import de.mossgrabers.framework.daw.ITrackBank;
 import de.mossgrabers.framework.daw.data.ITrack;
-import de.mossgrabers.framework.graphics.display.DisplayModel;
 
 
 /**
@@ -65,30 +66,26 @@ public class VolumeMode extends AbstractTrackMode
 
     /** {@inheritDoc} */
     @Override
-    public void updateDisplay1 ()
+    public void updateDisplay1 (final ITextDisplay display)
     {
-        final Display d = this.surface.getDisplay ();
         final ITrackBank tb = this.model.getCurrentTrackBank ();
         final PushConfiguration config = this.surface.getConfiguration ();
+        final int upperBound = this.model.getValueChanger ().getUpperBound ();
         for (int i = 0; i < 8; i++)
         {
             final ITrack t = tb.getItem (i);
-            d.setCell (0, i, t.doesExist () ? "Volume" : "").setCell (1, i, t.getVolumeStr (8));
+            display.setCell (0, i, t.doesExist () ? "Volume" : "").setCell (1, i, t.getVolumeStr (8));
             if (t.doesExist ())
-                d.setCell (2, i, config.isEnableVUMeters () ? t.getVu () : t.getVolume (), Format.FORMAT_VALUE);
-            else
-                d.clearCell (2, i);
+                display.setCell (2, i, config.isEnableVUMeters () ? Push1Display.formatValue (t.getVolume (), t.getVu (), upperBound) : Push1Display.formatValue (t.getVolume (), upperBound));
         }
-        d.done (0).done (1).done (2);
-
-        this.drawRow4 ();
+        this.drawRow4 (display);
     }
 
 
     /** {@inheritDoc} */
     @Override
-    public void updateDisplay2 ()
+    public void updateDisplay2 (final IGraphicDisplay display)
     {
-        this.updateChannelDisplay (DisplayModel.GRID_ELEMENT_CHANNEL_VOLUME, true, false);
+        this.updateChannelDisplay (display, AbstractGraphicDisplay.GRID_ELEMENT_CHANNEL_VOLUME, true, false);
     }
 }

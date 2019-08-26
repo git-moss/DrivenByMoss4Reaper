@@ -12,6 +12,7 @@ import de.mossgrabers.framework.daw.ICursorDevice;
 import de.mossgrabers.framework.daw.IDrumPadBank;
 import de.mossgrabers.framework.daw.IModel;
 import de.mossgrabers.framework.daw.INoteClip;
+import de.mossgrabers.framework.daw.IStepInfo;
 import de.mossgrabers.framework.daw.ITrackBank;
 import de.mossgrabers.framework.daw.data.IChannel;
 import de.mossgrabers.framework.daw.data.ITrack;
@@ -254,10 +255,10 @@ public abstract class AbstractDrumView<S extends IControlSurface<C>, C extends C
         switch (isSet)
         {
             // Note continues
-            case INoteClip.NOTE_CONTINUE:
+            case IStepInfo.NOTE_CONTINUE:
                 return hilite ? AbstractSequencerView.COLOR_STEP_HILITE_CONTENT : AbstractSequencerView.COLOR_CONTENT_CONT;
             // Note starts
-            case INoteClip.NOTE_START:
+            case IStepInfo.NOTE_START:
                 return hilite ? AbstractSequencerView.COLOR_STEP_HILITE_CONTENT : AbstractSequencerView.COLOR_CONTENT;
             // Empty
             default:
@@ -437,7 +438,7 @@ public abstract class AbstractDrumView<S extends IControlSurface<C>, C extends C
         final int hiStep = this.isInXRange (step) ? step % this.sequencerSteps : -1;
         for (int col = 0; col < this.sequencerSteps; col++)
         {
-            final int isSet = clip.getStep (col, this.scales.getDrumOffset () + this.selectedPad);
+            final int isSet = clip.getStep (col, this.scales.getDrumOffset () + this.selectedPad).getState ();
             final boolean hilite = col == hiStep;
             final int x = col % GRID_COLUMNS;
             final int y = col / GRID_COLUMNS;

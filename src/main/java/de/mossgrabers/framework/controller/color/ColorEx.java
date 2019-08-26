@@ -114,24 +114,46 @@ public class ColorEx
     /**
      * Calculates a darker version of the given color.
      *
-     * @param c A color
+     * @param color A color
      * @return The darker version
      */
-    public static ColorEx darker (final ColorEx c)
+    public static ColorEx darker (final ColorEx color)
     {
-        return new ColorEx (Math.max (c.getRed () * FACTOR, 0), Math.max (c.getGreen () * FACTOR, 0), Math.max (c.getBlue () * FACTOR, 0));
+        return new ColorEx (Math.max (color.getRed () * FACTOR, 0), Math.max (color.getGreen () * FACTOR, 0), Math.max (color.getBlue () * FACTOR, 0));
     }
 
 
     /**
      * Calculates a even more darker version of the given color.
      *
-     * @param c A color
+     * @param color A color
      * @return The even more darker version
      */
-    public static ColorEx evenDarker (final ColorEx c)
+    public static ColorEx evenDarker (final ColorEx color)
     {
-        return new ColorEx (Math.max (c.getRed () * FACTOR2, 0), Math.max (c.getGreen () * FACTOR2, 0), Math.max (c.getBlue () * FACTOR2, 0));
+        return new ColorEx (Math.max (color.getRed () * FACTOR2, 0), Math.max (color.getGreen () * FACTOR2, 0), Math.max (color.getBlue () * FACTOR2, 0));
+    }
+
+
+    /**
+     * Dim the color (evenDarker) and convert it to a gray scale color.
+     *
+     * @param color The color to dim
+     * @return The dimmed color
+     */
+    public static ColorEx dimToGray (final ColorEx color)
+    {
+        final double red = color.getRed ();
+        final double green = color.getGreen ();
+        final double blue = color.getBlue ();
+
+        if (red != green || green != blue)
+        {
+            final double v = (red + green + blue) / 3.0;
+            return ColorEx.evenDarker (new ColorEx (v, v, v));
+        }
+
+        return ColorEx.evenDarker (color);
     }
 
 
@@ -196,5 +218,41 @@ public class ColorEx
     public double getBlue ()
     {
         return this.blueValue;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public int hashCode ()
+    {
+        final int prime = 31;
+        int result = 1;
+        long temp;
+        temp = Double.doubleToLongBits (this.blueValue);
+        result = prime * result + (int) (temp ^ temp >>> 32);
+        temp = Double.doubleToLongBits (this.greenValue);
+        result = prime * result + (int) (temp ^ temp >>> 32);
+        temp = Double.doubleToLongBits (this.redValue);
+        result = prime * result + (int) (temp ^ temp >>> 32);
+        return result;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean equals (final Object obj)
+    {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (this.getClass () != obj.getClass ())
+            return false;
+        final ColorEx other = (ColorEx) obj;
+        if (Double.doubleToLongBits (this.blueValue) != Double.doubleToLongBits (other.blueValue))
+            return false;
+        if (Double.doubleToLongBits (this.greenValue) != Double.doubleToLongBits (other.greenValue))
+            return false;
+        return Double.doubleToLongBits (this.redValue) == Double.doubleToLongBits (other.redValue);
     }
 }

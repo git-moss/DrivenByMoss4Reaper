@@ -22,36 +22,31 @@ import java.util.Locale;
  */
 public class TransportImpl extends BaseImpl implements ITransport
 {
-    private static final int    PUNCH_OFF              = 0;
-    private static final int    PUNCH_ITEMS            = 1;
-    private static final int    PUNCH_LOOP             = 2;
+    private static final int    PUNCH_OFF     = 0;
+    private static final int    PUNCH_ITEMS   = 1;
+    private static final int    PUNCH_LOOP    = 2;
 
-    private static final Object UPDATE_LOCK            = new Object ();
-
-    /** 1 beat. */
-    private static final double INC_FRACTION_TIME      = 1.0;
-    /** 1/20th of a beat. */
-    private static final double INC_FRACTION_TIME_SLOW = 1.0 / 20;
+    private static final Object UPDATE_LOCK   = new Object ();
 
     private final IModel        model;
     private IniFiles            iniFiles;
 
-    private double              position               = 0;            // Time
-    private String              positionStr            = "";
-    private double              tempo                  = 120.0;
-    private String              beatsStr               = "";
+    private double              position      = 0;            // Time
+    private String              positionStr   = "";
+    private double              tempo         = 120.0;
+    private String              beatsStr      = "";
 
-    private boolean             isMetronomeOn          = false;
-    private boolean             isPlaying              = false;
-    private boolean             isRecording            = false;
-    private boolean             isLooping              = false;
+    private boolean             isMetronomeOn = false;
+    private boolean             isPlaying     = false;
+    private boolean             isRecording   = false;
+    private boolean             isLooping     = false;
 
-    private int                 numerator              = 4;
-    private int                 denominator            = 4;
-    private boolean             prerollClick           = false;
-    private int                 preroll                = 2;
+    private int                 numerator     = 4;
+    private int                 denominator   = 4;
+    private boolean             prerollClick  = false;
+    private int                 preroll       = 2;
 
-    private int                 punchMode              = PUNCH_OFF;
+    private int                 punchMode     = PUNCH_OFF;
 
 
     /**
@@ -517,7 +512,7 @@ public class TransportImpl extends BaseImpl implements ITransport
     @Override
     public void changePosition (final boolean increase, final boolean slow)
     {
-        final double frac = slow ? INC_FRACTION_TIME_SLOW : INC_FRACTION_TIME;
+        final double frac = slow ? TransportConstants.INC_FRACTION_TIME_SLOW : TransportConstants.INC_FRACTION_TIME;
         this.setPosition (increase ? this.position + frac : Math.max (this.position - frac, 0.0));
     }
 

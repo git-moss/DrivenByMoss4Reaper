@@ -23,6 +23,7 @@ import de.mossgrabers.controller.push.command.trigger.PageRightCommand;
 import de.mossgrabers.controller.push.command.trigger.PanSendCommand;
 import de.mossgrabers.controller.push.command.trigger.PushBrowserCommand;
 import de.mossgrabers.controller.push.command.trigger.PushQuantizeCommand;
+import de.mossgrabers.controller.push.command.trigger.PushRecordCommand;
 import de.mossgrabers.controller.push.command.trigger.RasteredKnobCommand;
 import de.mossgrabers.controller.push.command.trigger.ScalesCommand;
 import de.mossgrabers.controller.push.command.trigger.SelectCommand;
@@ -33,9 +34,10 @@ import de.mossgrabers.controller.push.command.trigger.ShiftCommand;
 import de.mossgrabers.controller.push.command.trigger.SoloCommand;
 import de.mossgrabers.controller.push.command.trigger.TrackCommand;
 import de.mossgrabers.controller.push.command.trigger.VolumeCommand;
+import de.mossgrabers.controller.push.controller.Push1Display;
+import de.mossgrabers.controller.push.controller.Push2Display;
 import de.mossgrabers.controller.push.controller.PushColors;
 import de.mossgrabers.controller.push.controller.PushControlSurface;
-import de.mossgrabers.controller.push.controller.PushDisplay;
 import de.mossgrabers.controller.push.mode.AccentMode;
 import de.mossgrabers.controller.push.mode.AutomationMode;
 import de.mossgrabers.controller.push.mode.ConfigurationMode;
@@ -47,6 +49,7 @@ import de.mossgrabers.controller.push.mode.MarkersMode;
 import de.mossgrabers.controller.push.mode.NoteMode;
 import de.mossgrabers.controller.push.mode.NoteRepeatMode;
 import de.mossgrabers.controller.push.mode.NoteViewSelectMode;
+import de.mossgrabers.controller.push.mode.RecordMode;
 import de.mossgrabers.controller.push.mode.RibbonMode;
 import de.mossgrabers.controller.push.mode.ScaleLayoutMode;
 import de.mossgrabers.controller.push.mode.ScalesMode;
@@ -60,6 +63,7 @@ import de.mossgrabers.controller.push.mode.device.DeviceLayerModePan;
 import de.mossgrabers.controller.push.mode.device.DeviceLayerModeSend;
 import de.mossgrabers.controller.push.mode.device.DeviceLayerModeVolume;
 import de.mossgrabers.controller.push.mode.device.DeviceParamsMode;
+import de.mossgrabers.controller.push.mode.device.UserParamsMode;
 import de.mossgrabers.controller.push.mode.track.ClipMode;
 import de.mossgrabers.controller.push.mode.track.CrossfaderMode;
 import de.mossgrabers.controller.push.mode.track.LayerDetailsMode;
@@ -91,6 +95,7 @@ import de.mossgrabers.framework.command.continuous.FootswitchCommand;
 import de.mossgrabers.framework.command.continuous.KnobRowModeCommand;
 import de.mossgrabers.framework.command.continuous.MasterVolumeCommand;
 import de.mossgrabers.framework.command.continuous.PlayPositionCommand;
+import de.mossgrabers.framework.command.core.NopCommand;
 import de.mossgrabers.framework.command.trigger.application.DeleteCommand;
 import de.mossgrabers.framework.command.trigger.application.DuplicateCommand;
 import de.mossgrabers.framework.command.trigger.application.UndoCommand;
@@ -104,10 +109,10 @@ import de.mossgrabers.framework.command.trigger.mode.ButtonRowModeCommand;
 import de.mossgrabers.framework.command.trigger.mode.CursorCommand;
 import de.mossgrabers.framework.command.trigger.mode.KnobRowTouchModeCommand;
 import de.mossgrabers.framework.command.trigger.mode.ModeCursorCommand.Direction;
+import de.mossgrabers.framework.command.trigger.mode.ModeSelectCommand;
 import de.mossgrabers.framework.command.trigger.track.AddTrackCommand;
 import de.mossgrabers.framework.command.trigger.transport.MetronomeCommand;
 import de.mossgrabers.framework.command.trigger.transport.PlayCommand;
-import de.mossgrabers.framework.command.trigger.transport.RecordCommand;
 import de.mossgrabers.framework.command.trigger.transport.TapTempoCommand;
 import de.mossgrabers.framework.configuration.AbstractConfiguration;
 import de.mossgrabers.framework.configuration.ISettingsUI;
@@ -225,16 +230,15 @@ public class PushControllerSetup extends AbstractControllerSetup<PushControlSurf
         final IMidiOutput output = midiAccess.createOutput ();
         final IMidiInput input = midiAccess.createInput ("Pads", "80????" /* Note off */,
                 "90????" /* Note on */, "B040??" /* Sustainpedal */);
-        final PushControlSurface surface = new PushControlSurface (this.model.getHost (), this.colorManager, this.configuration, output, input);
+        final PushControlSurface surface = new PushControlSurface (this.host, this.colorManager, this.configuration, output, input);
         this.surfaces.add (surface);
-        surface.setDisplay (this.createDisplay (output));
+
+        if (this.isPush2)
+            surface.addGraphicsDisplay (new Push2Display (this.host, this.valueChanger.getUpperBound (), this.configuration));
+        else
+            surface.addTextDisplay (new Push1Display (this.host, this.valueChanger.getUpperBound (), output, this.configuration));
+
         surface.getModeManager ().setDefaultMode (Modes.TRACK);
-    }
-
-
-    protected PushDisplay createDisplay (final IMidiOutput output)
-    {
-        return new PushDisplay (this.model.getHost (), this.isPush2, this.valueChanger.getUpperBound (), output, this.configuration);
     }
 
 
@@ -279,6 +283,7 @@ public class PushControllerSetup extends AbstractControllerSetup<PushControlSurf
 
         modeManager.registerMode (Modes.AUTOMATION, new AutomationMode (surface, this.model));
         modeManager.registerMode (Modes.TRANSPORT, new TransportMode (surface, this.model));
+        modeManager.registerMode (Modes.REC_ARM, new RecordMode (surface, this.model));
 
         modeManager.registerMode (Modes.DEVICE_PARAMS, new DeviceParamsMode (surface, this.model));
         modeManager.registerMode (Modes.DEVICE_LAYER, new DeviceLayerMode ("Layer", surface, this.model));
@@ -296,6 +301,9 @@ public class PushControllerSetup extends AbstractControllerSetup<PushControlSurf
         modeManager.registerMode (Modes.DEVICE_LAYER_SEND6, modeLayerSend);
         modeManager.registerMode (Modes.DEVICE_LAYER_SEND7, modeLayerSend);
         modeManager.registerMode (Modes.DEVICE_LAYER_SEND8, modeLayerSend);
+
+        if (this.host.hasUserParameters ())
+            modeManager.registerMode (Modes.USER, new UserParamsMode (surface, this.model));
 
         if (this.isPush2)
         {
@@ -352,7 +360,9 @@ public class PushControllerSetup extends AbstractControllerSetup<PushControlSurf
             else
                 this.host.error ("Mode " + debugMode + " not registered.");
         });
-        this.configuration.addSettingObserver (PushConfiguration.DEBUG_WINDOW, this.getSurface ().getDisplay ()::showDebugWindow);
+
+        if (this.isPush2)
+            this.configuration.addSettingObserver (PushConfiguration.DEBUG_WINDOW, this.getSurface ().getGraphicsDisplay ()::showDebugWindow);
 
         this.configuration.addSettingObserver (PushConfiguration.DISPLAY_SCENES_CLIPS, () -> {
             if (Views.isSessionView (this.getSurface ().getViewManager ().getActiveViewId ()))
@@ -414,7 +424,7 @@ public class PushControllerSetup extends AbstractControllerSetup<PushControlSurf
         final PushControlSurface surface = this.getSurface ();
         final ViewManager viewManager = surface.getViewManager ();
         this.addTriggerCommand (TriggerCommandID.PLAY, PushControlSurface.PUSH_BUTTON_PLAY, new PlayCommand<> (this.model, surface));
-        this.addTriggerCommand (TriggerCommandID.RECORD, PushControlSurface.PUSH_BUTTON_RECORD, new RecordCommand<> (this.model, surface));
+        this.addTriggerCommand (TriggerCommandID.RECORD, PushControlSurface.PUSH_BUTTON_RECORD, new PushRecordCommand (this.model, surface));
         this.addTriggerCommand (TriggerCommandID.NEW, PushControlSurface.PUSH_BUTTON_NEW, new NewCommand<> (this.model, surface));
         this.addTriggerCommand (TriggerCommandID.DUPLICATE, PushControlSurface.PUSH_BUTTON_DUPLICATE, new DuplicateCommand<> (this.model, surface));
         this.addTriggerCommand (TriggerCommandID.AUTOMATION, PushControlSurface.PUSH_BUTTON_AUTOMATION, new AutomationCommand (this.model, surface));
@@ -464,6 +474,7 @@ public class PushControllerSetup extends AbstractControllerSetup<PushControlSurf
         {
             surface.assignTriggerCommand (PushControlSurface.PUSH_BUTTON_SETUP, TriggerCommandID.SETUP);
             this.addTriggerCommand (TriggerCommandID.CONVERT, PushControlSurface.PUSH_BUTTON_CONVERT, new ConvertCommand<> (this.model, surface));
+            this.addTriggerCommand (TriggerCommandID.USER, PushControlSurface.PUSH_BUTTON_USER_MODE, this.host.hasUserParameters () ? new ModeSelectCommand<> (this.model, surface, Modes.USER) : NopCommand.INSTANCE);
         }
         else
             surface.assignTriggerCommand (PushControlSurface.PUSH_BUTTON_USER_MODE, TriggerCommandID.SETUP);
@@ -562,7 +573,8 @@ public class PushControllerSetup extends AbstractControllerSetup<PushControlSurf
         surface.updateTrigger (PushControlSurface.PUSH_BUTTON_RECORD, isRecordShifted ? t.isLauncherOverdub () ? PushColors.PUSH_BUTTON_STATE_OVR_HI : PushColors.PUSH_BUTTON_STATE_OVR_ON : t.isRecording () ? PushColors.PUSH_BUTTON_STATE_REC_HI : PushColors.PUSH_BUTTON_STATE_REC_ON);
 
         String repeatState = ColorManager.BUTTON_STATE_OFF;
-        final ITrack selectedTrack = this.model.getCurrentTrackBank ().getSelectedItem ();
+        ITrackBank currentTrackBank = this.model.getCurrentTrackBank ();
+        final ITrack selectedTrack = currentTrackBank.getSelectedItem ();
         if (selectedTrack != null)
             repeatState = this.getSurface ().getInput ().getDefaultNoteInput ().getNoteRepeat ().isActive (selectedTrack) ? ColorManager.BUTTON_STATE_HI : ColorManager.BUTTON_STATE_ON;
         surface.updateTrigger (PushControlSurface.PUSH_BUTTON_REPEAT, repeatState);
@@ -609,9 +621,23 @@ public class PushControllerSetup extends AbstractControllerSetup<PushControlSurf
             ((SceneView) activeView).updateSceneButtons ();
         }
 
-        final INoteClip clip = activeView instanceof AbstractSequencerView && !(activeView instanceof ClipView) ? ((AbstractSequencerView<?, ?>) activeView).getClip () : null;
-        surface.updateTrigger (PushControlSurface.PUSH_BUTTON_DEVICE_LEFT, clip != null && clip.canScrollStepsBackwards () ? ColorManager.BUTTON_STATE_ON : ColorManager.BUTTON_STATE_OFF);
-        surface.updateTrigger (PushControlSurface.PUSH_BUTTON_DEVICE_RIGHT, clip != null && clip.canScrollStepsForwards () ? ColorManager.BUTTON_STATE_ON : ColorManager.BUTTON_STATE_OFF);
+        boolean isDeviceLeftOn = false;
+        boolean isDeviceRightOn = false;
+
+        if (viewManager.isActiveView (Views.SESSION))
+        {
+            isDeviceLeftOn = currentTrackBank.canScrollPageBackwards ();
+            isDeviceRightOn = currentTrackBank.canScrollPageForwards ();
+        }
+        else
+        {
+            final INoteClip clip = activeView instanceof AbstractSequencerView && !(activeView instanceof ClipView) ? ((AbstractSequencerView<?, ?>) activeView).getClip () : null;
+            isDeviceLeftOn = clip != null && clip.canScrollStepsBackwards ();
+            isDeviceRightOn = clip != null && clip.canScrollStepsForwards ();
+        }
+
+        surface.updateTrigger (PushControlSurface.PUSH_BUTTON_DEVICE_LEFT, isDeviceLeftOn ? ColorManager.BUTTON_STATE_ON : ColorManager.BUTTON_STATE_OFF);
+        surface.updateTrigger (PushControlSurface.PUSH_BUTTON_DEVICE_RIGHT, isDeviceRightOn ? ColorManager.BUTTON_STATE_ON : ColorManager.BUTTON_STATE_OFF);
     }
 
 
@@ -640,6 +666,11 @@ public class PushControllerSetup extends AbstractControllerSetup<PushControlSurf
         surface.updateTrigger (PushControlSurface.PUSH_BUTTON_FIXED_LENGTH, Modes.FIXED == mode ? ColorManager.BUTTON_STATE_HI : ColorManager.BUTTON_STATE_ON);
         surface.updateTrigger (PushControlSurface.PUSH_BUTTON_BROWSE, Modes.BROWSER == mode ? ColorManager.BUTTON_STATE_HI : ColorManager.BUTTON_STATE_ON);
         surface.updateTrigger (PushControlSurface.PUSH_BUTTON_CLIP, Modes.CLIP == mode ? ColorManager.BUTTON_STATE_HI : ColorManager.BUTTON_STATE_ON);
+
+        if (this.host.hasUserParameters ())
+            surface.updateTrigger (PushControlSurface.PUSH_BUTTON_USER_MODE, Modes.USER == mode ? ColorManager.BUTTON_STATE_HI : ColorManager.BUTTON_STATE_ON);
+        else
+            surface.updateTrigger (PushControlSurface.PUSH_BUTTON_USER_MODE, this.isPush2 ? ColorManager.BUTTON_STATE_OFF : ColorManager.BUTTON_STATE_ON);
 
         if (this.isPush2)
             surface.updateTrigger (PushControlSurface.PUSH_BUTTON_SETUP, Modes.SETUP == mode ? ColorManager.BUTTON_STATE_HI : ColorManager.BUTTON_STATE_ON);

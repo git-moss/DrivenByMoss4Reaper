@@ -5,17 +5,17 @@
 package de.mossgrabers.controller.push.mode.track;
 
 import de.mossgrabers.controller.push.PushConfiguration;
+import de.mossgrabers.controller.push.controller.Push1Display;
 import de.mossgrabers.controller.push.controller.PushColors;
 import de.mossgrabers.controller.push.controller.PushControlSurface;
-import de.mossgrabers.controller.push.controller.PushDisplay;
 import de.mossgrabers.controller.push.mode.BaseMode;
 import de.mossgrabers.framework.command.TriggerCommandID;
 import de.mossgrabers.framework.controller.IValueChanger;
-import de.mossgrabers.framework.controller.display.Display;
+import de.mossgrabers.framework.controller.display.IGraphicDisplay;
+import de.mossgrabers.framework.controller.display.ITextDisplay;
 import de.mossgrabers.framework.daw.IModel;
 import de.mossgrabers.framework.daw.ITrackBank;
 import de.mossgrabers.framework.daw.data.ITrack;
-import de.mossgrabers.framework.graphics.display.DisplayModel;
 import de.mossgrabers.framework.mode.ModeManager;
 import de.mossgrabers.framework.mode.Modes;
 import de.mossgrabers.framework.utils.ButtonEvent;
@@ -305,22 +305,20 @@ public abstract class AbstractTrackMode extends BaseMode
     }
 
 
-    protected void drawRow4 ()
+    protected void drawRow4 (final ITextDisplay d)
     {
         final ITrackBank tb = this.model.getCurrentTrackBank ();
         final ITrack selTrack = tb.getSelectedItem ();
 
         // Format track names
         final int selIndex = selTrack == null ? -1 : selTrack.getIndex ();
-        final Display d = this.surface.getDisplay ();
         for (int i = 0; i < 8; i++)
         {
             final boolean isSel = i == selIndex;
             final ITrack t = tb.getItem (i);
             final String n = StringUtils.shortenAndFixASCII (t.getName (), isSel ? 7 : 8);
-            d.setCell (3, i, isSel ? PushDisplay.SELECT_ARROW + n : n);
+            d.setCell (3, i, isSel ? Push1Display.SELECT_ARROW + n : n);
         }
-        d.done (3);
     }
 
 
@@ -343,11 +341,10 @@ public abstract class AbstractTrackMode extends BaseMode
 
 
     // Called from sub-classes
-    protected void updateChannelDisplay (final int selectedMenu, final boolean isVolume, final boolean isPan)
+    protected void updateChannelDisplay (final IGraphicDisplay display, final int selectedMenu, final boolean isVolume, final boolean isPan)
     {
         this.updateMenuItems (selectedMenu);
 
-        final DisplayModel message = this.surface.getDisplay ().getModel ();
         final IValueChanger valueChanger = this.model.getValueChanger ();
         final ITrackBank tb = this.model.getCurrentTrackBank ();
         final PushConfiguration config = this.surface.getConfiguration ();
@@ -362,10 +359,8 @@ public abstract class AbstractTrackMode extends BaseMode
             final boolean enableVUMeters = config.isEnableVUMeters ();
             final int vuR = valueChanger.toDisplayValue (enableVUMeters ? t.getVuRight () : 0);
             final int vuL = valueChanger.toDisplayValue (enableVUMeters ? t.getVuLeft () : 0);
-            message.addChannelElement (selectedMenu, topMenu, isTopMenuOn, t.doesExist () ? t.getName (12) : "", t.getType (), t.getColor (), t.isSelected (), valueChanger.toDisplayValue (t.getVolume ()), valueChanger.toDisplayValue (t.getModulatedVolume ()), isVolume && this.isKnobTouched[i] ? t.getVolumeStr (8) : "", valueChanger.toDisplayValue (t.getPan ()), valueChanger.toDisplayValue (t.getModulatedPan ()), isPan && this.isKnobTouched[i] ? t.getPanStr (8) : "", vuL, vuR, t.isMute (), t.isSolo (), t.isRecArm (), t.isActivated (), crossfadeMode);
+            display.addChannelElement (selectedMenu, topMenu, isTopMenuOn, t.doesExist () ? t.getName (12) : "", t.getType (), t.getColor (), t.isSelected (), valueChanger.toDisplayValue (t.getVolume ()), valueChanger.toDisplayValue (t.getModulatedVolume ()), isVolume && this.isKnobTouched[i] ? t.getVolumeStr (8) : "", valueChanger.toDisplayValue (t.getPan ()), valueChanger.toDisplayValue (t.getModulatedPan ()), isPan && this.isKnobTouched[i] ? t.getPanStr (8) : "", vuL, vuR, t.isMute (), t.isSolo (), t.isRecArm (), t.isActivated (), crossfadeMode);
         }
-
-        message.send ();
     }
 
 

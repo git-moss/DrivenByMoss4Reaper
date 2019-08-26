@@ -8,11 +8,13 @@ import de.mossgrabers.controller.push.controller.PushColors;
 import de.mossgrabers.controller.push.controller.PushControlSurface;
 import de.mossgrabers.controller.push.mode.BaseMode;
 import de.mossgrabers.controller.push.view.ColorView;
-import de.mossgrabers.framework.controller.display.Display;
+import de.mossgrabers.framework.controller.display.IGraphicDisplay;
+import de.mossgrabers.framework.controller.display.ITextDisplay;
 import de.mossgrabers.framework.daw.IChannelBank;
+import de.mossgrabers.framework.daw.IDrumPadBank;
 import de.mossgrabers.framework.daw.IModel;
 import de.mossgrabers.framework.daw.data.IChannel;
-import de.mossgrabers.framework.graphics.display.DisplayModel;
+import de.mossgrabers.framework.mode.AbstractMode;
 import de.mossgrabers.framework.utils.ButtonEvent;
 import de.mossgrabers.framework.view.ViewManager;
 import de.mossgrabers.framework.view.Views;
@@ -72,6 +74,33 @@ public class LayerDetailsMode extends BaseMode
 
     /** {@inheritDoc} */
     @Override
+    public void onSecondRow (final int index, final ButtonEvent event)
+    {
+        if (event != ButtonEvent.UP)
+            return;
+        final IChannelBank<?> bank = this.model.getCursorDevice ().getLayerOrDrumPadBank ();
+        if (bank == null)
+            return;
+
+        switch (index)
+        {
+            case 6:
+                if (bank instanceof IDrumPadBank)
+                    ((IDrumPadBank) bank).clearMute ();
+                break;
+            case 7:
+                if (bank instanceof IDrumPadBank)
+                    ((IDrumPadBank) bank).clearSolo ();
+                break;
+            default:
+                // Not used
+                break;
+        }
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
     public void updateFirstRow ()
     {
         final IChannel deviceChain = this.model.getCursorDevice ().getLayerOrDrumPadBank ().getSelectedItem ();
@@ -95,50 +124,79 @@ public class LayerDetailsMode extends BaseMode
 
     /** {@inheritDoc} */
     @Override
-    public void updateDisplay1 ()
+    public void updateSecondRow ()
     {
-        final Display d = this.surface.getDisplay ();
         final IChannel deviceChain = this.model.getCursorDevice ().getLayerOrDrumPadBank ().getSelectedItem ();
         if (deviceChain == null)
-            d.setRow (1, "                     Please selecta layer...                        ").clearRow (0).clearRow (2).done (0).done (2);
-        else
         {
-            d.clearRow (0).clearRow (1).setBlock (0, 0, "Layer: " + deviceChain.getName ());
-            d.setCell (2, 0, "Active").setCell (3, 0, deviceChain.isActivated () ? "On" : "Off");
-            d.setCell (2, 1, "");
-            d.setCell (3, 1, "");
-            d.setCell (2, 2, "Mute").setCell (3, 2, deviceChain.isMute () ? "On" : "Off");
-            d.setCell (2, 3, "Solo").setCell (3, 3, deviceChain.isSolo () ? "On" : "Off");
-            d.setCell (2, 4, "");
-            d.setCell (3, 4, "");
-            d.setCell (2, 5, "");
-            d.setCell (3, 5, "");
-            d.clearCell (2, 6).clearCell (3, 6);
-            d.setCell (2, 7, "Select").setCell (3, 7, "Color").done (0).done (1).done (2).done (3);
+            this.disableSecondRow ();
+            return;
         }
+
+        final boolean isOn = this.model.getCursorDevice ().getLayerOrDrumPadBank () instanceof IDrumPadBank;
+
+        final int off = this.isPush2 ? PushColors.PUSH2_COLOR_BLACK : PushColors.PUSH1_COLOR_BLACK;
+        this.surface.updateTrigger (102, off);
+        this.surface.updateTrigger (103, off);
+        this.surface.updateTrigger (104, off);
+        this.surface.updateTrigger (105, off);
+        this.surface.updateTrigger (106, off);
+        this.surface.updateTrigger (107, off);
+        this.surface.updateTrigger (108, isOn ? AbstractMode.BUTTON_COLOR2_ON : AbstractMode.BUTTON_COLOR_OFF);
+        this.surface.updateTrigger (109, isOn ? AbstractMode.BUTTON_COLOR2_ON : AbstractMode.BUTTON_COLOR_OFF);
     }
 
 
     /** {@inheritDoc} */
     @Override
-    public void updateDisplay2 ()
+    public void updateDisplay1 (final ITextDisplay display)
     {
-        final DisplayModel message = this.surface.getDisplay ().getModel ();
         final IChannel deviceChain = this.model.getCursorDevice ().getLayerOrDrumPadBank ().getSelectedItem ();
         if (deviceChain == null)
-            message.setMessage (3, "Please select a layer...");
-        else
         {
-            message.addOptionElement ("Layer: " + deviceChain.getName (), "", false, "", "Active", deviceChain.isActivated (), false);
-            message.addEmptyElement ();
-            message.addOptionElement ("", "", false, "", "Mute", deviceChain.isMute (), false);
-            message.addOptionElement ("", "", false, "", "Solo", deviceChain.isSolo (), false);
-            message.addEmptyElement ();
-            message.addEmptyElement ();
-            message.addEmptyElement ();
-            message.addOptionElement ("", "", false, "", "Select Color", false, false);
+            display.setRow (1, "                     Please selecta layer...                        ");
+            return;
         }
-        message.send ();
+
+        final String layerName = deviceChain.getName ();
+        display.setBlock (0, 0, "Layer: " + layerName);
+        if (layerName.length () > 10)
+            display.setBlock (0, 1, layerName.substring (10));
+        display.setCell (2, 0, "Active").setCell (3, 0, deviceChain.isActivated () ? "On" : "Off");
+        display.setCell (2, 1, "");
+        display.setCell (3, 1, "");
+        display.setCell (2, 2, "Mute").setCell (3, 2, deviceChain.isMute () ? "On" : "Off");
+        display.setCell (2, 3, "Solo").setCell (3, 3, deviceChain.isSolo () ? "On" : "Off");
+        display.setCell (2, 4, "");
+        display.setCell (3, 4, "");
+        display.setCell (2, 5, "");
+        display.setCell (3, 5, "");
+        display.setCell (0, 6, "Clr Mute");
+        display.setCell (0, 7, "Clr Solo");
+        display.setCell (2, 7, "Select");
+        display.setCell (3, 7, "Color");
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void updateDisplay2 (final IGraphicDisplay display)
+    {
+        final IChannel deviceChain = this.model.getCursorDevice ().getLayerOrDrumPadBank ().getSelectedItem ();
+        if (deviceChain == null)
+        {
+            display.setMessage (3, "Please select a layer...");
+            return;
+        }
+
+        display.addOptionElement ("Layer: " + deviceChain.getName (), "", false, "", "Active", deviceChain.isActivated (), false);
+        display.addEmptyElement ();
+        display.addOptionElement ("", "", false, "", "Mute", deviceChain.isMute (), false);
+        display.addOptionElement ("", "", false, "", "Solo", deviceChain.isSolo (), false);
+        display.addEmptyElement ();
+        display.addEmptyElement ();
+        display.addOptionElement ("", "Clear Mute", false, "", "", false, false);
+        display.addOptionElement ("", "Clear Solo", false, "", "Select Color", false, false);
     }
 
 

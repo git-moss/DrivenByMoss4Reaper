@@ -90,14 +90,6 @@ public interface ISlot extends IItem
 
 
     /**
-     * Create a clip.
-     *
-     * @param length The length of the clip
-     */
-    void create (final int length);
-
-
-    /**
      * Delete a clip.
      */
     void remove ();

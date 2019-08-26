@@ -10,6 +10,7 @@ import de.mossgrabers.framework.controller.color.ColorManager;
 import de.mossgrabers.framework.controller.grid.PadGrid;
 import de.mossgrabers.framework.daw.IModel;
 import de.mossgrabers.framework.daw.INoteClip;
+import de.mossgrabers.framework.daw.IStepInfo;
 import de.mossgrabers.framework.daw.data.ITrack;
 import de.mossgrabers.framework.utils.ButtonEvent;
 import de.mossgrabers.framework.view.AbstractPlayView;
@@ -57,7 +58,7 @@ public class PolySequencerView extends AbstractSequencerView<PushControlSurface,
     @Override
     public boolean usesButton (final int buttonID)
     {
-        return !this.surface.getConfiguration ().isPush2 () || buttonID != PushControlSurface.PUSH_BUTTON_USER_MODE;
+        return true;
     }
 
 
@@ -152,7 +153,7 @@ public class PolySequencerView extends AbstractSequencerView<PushControlSurface,
         {
             for (int row = 0; row < 128; row++)
             {
-                if (clip.getStep (col, row) > 0)
+                if (clip.getStep (col, row).getState () > 0)
                     clip.clearStep (col, row);
             }
         }
@@ -241,14 +242,14 @@ public class PolySequencerView extends AbstractSequencerView<PushControlSurface,
      */
     private static int getStep (final INoteClip clip, final int col)
     {
-        int result = INoteClip.NOTE_OFF;
+        int result = IStepInfo.NOTE_OFF;
         for (int row = 0; row < 128; row++)
         {
-            result = clip.getStep (col, row);
-            if (result == INoteClip.NOTE_START)
+            result = clip.getStep (col, row).getState ();
+            if (result == IStepInfo.NOTE_START)
                 return result;
-            if (result == INoteClip.NOTE_CONTINUE)
-                result = INoteClip.NOTE_CONTINUE;
+            if (result == IStepInfo.NOTE_CONTINUE)
+                result = IStepInfo.NOTE_CONTINUE;
         }
         return result;
     }
@@ -266,10 +267,10 @@ public class PolySequencerView extends AbstractSequencerView<PushControlSurface,
         switch (isSet)
         {
             // Note continues
-            case INoteClip.NOTE_CONTINUE:
+            case IStepInfo.NOTE_CONTINUE:
                 return hilite ? AbstractSequencerView.COLOR_STEP_HILITE_CONTENT : AbstractSequencerView.COLOR_CONTENT_CONT;
             // Note starts
-            case INoteClip.NOTE_START:
+            case IStepInfo.NOTE_START:
                 return hilite ? AbstractSequencerView.COLOR_STEP_HILITE_CONTENT : AbstractSequencerView.COLOR_CONTENT;
             // Empty
             default:

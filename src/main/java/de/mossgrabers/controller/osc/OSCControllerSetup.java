@@ -4,6 +4,18 @@
 
 package de.mossgrabers.controller.osc;
 
+import de.mossgrabers.controller.osc.module.BrowserModule;
+import de.mossgrabers.controller.osc.module.DeviceModule;
+import de.mossgrabers.controller.osc.module.GlobalModule;
+import de.mossgrabers.controller.osc.module.IModule;
+import de.mossgrabers.controller.osc.module.LayoutModule;
+import de.mossgrabers.controller.osc.module.MarkerModule;
+import de.mossgrabers.controller.osc.module.MidiModule;
+import de.mossgrabers.controller.osc.module.ProjectModule;
+import de.mossgrabers.controller.osc.module.SceneModule;
+import de.mossgrabers.controller.osc.module.TrackModule;
+import de.mossgrabers.controller.osc.module.TransportModule;
+import de.mossgrabers.controller.osc.module.UserModule;
 import de.mossgrabers.controller.osc.protocol.OSCParser;
 import de.mossgrabers.controller.osc.protocol.OSCWriter;
 import de.mossgrabers.framework.configuration.ISettingsUI;
@@ -12,6 +24,7 @@ import de.mossgrabers.framework.controller.DefaultValueChanger;
 import de.mossgrabers.framework.controller.IControlSurface;
 import de.mossgrabers.framework.controller.ISetupFactory;
 import de.mossgrabers.framework.controller.color.ColorManager;
+import de.mossgrabers.framework.controller.display.DummyDisplay;
 import de.mossgrabers.framework.daw.IHost;
 import de.mossgrabers.framework.daw.ITrackBank;
 import de.mossgrabers.framework.daw.ModelSetup;
@@ -24,6 +37,8 @@ import de.mossgrabers.framework.scale.Scales;
 import de.mossgrabers.framework.utils.KeyManager;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -136,15 +151,38 @@ public class OSCControllerSetup extends AbstractControllerSetup<IControlSurface<
         final IMidiInput input = midiAccess.createInput ("OSC");
 
         final OSCControlSurface surface = new OSCControlSurface (this.host, this.configuration, this.colorManager, input);
+        surface.addTextDisplay (new DummyDisplay (this.host));
+
         this.surfaces.add (surface);
         this.keyManager = new KeyManager (this.model, surface.getPadGrid ());
 
         // Send OSC messages
         final IOpenSoundControlClient oscClient = this.host.connectToOSCServer (this.configuration.getSendHost (), this.configuration.getSendPort ());
-        this.writer = new OSCWriter (this.host, this.model, oscClient, this.keyManager, this.configuration);
+        this.writer = new OSCWriter (this.host, this.model, oscClient, this.configuration);
 
         // Receive OSC messages
         final OSCParser parser = new OSCParser (this.host, surface, this.model, this.configuration, this.writer, input, this.keyManager);
+
+        final List<IModule> modules = new ArrayList<> ();
+        modules.add (new TransportModule (this.host, this.model, this.writer));
+        modules.add (new GlobalModule (this.host, this.model, this.writer));
+        modules.add (new LayoutModule (this.host, this.model, this.writer));
+        modules.add (new MarkerModule (this.host, this.model, this.writer));
+        modules.add (new ProjectModule (this.host, this.model, this.writer));
+        modules.add (new TrackModule (this.host, this.model, this.writer, this.configuration));
+        modules.add (new SceneModule (this.host, this.model, this.writer));
+        modules.add (new DeviceModule (this.host, this.model, this.writer, this.configuration));
+        modules.add (new BrowserModule (this.host, this.model, this.writer));
+        modules.add (new MidiModule (this.host, this.model, this.writer, this.getSurface (), this.keyManager));
+
+        if (this.host.hasUserParameters ())
+            modules.add (new UserModule (this.host, this.model, this.writer));
+
+        modules.forEach (module -> {
+            this.writer.registerModule (module);
+            parser.registerModule (module);
+        });
+
         this.oscServer = this.host.createOSCServer (parser);
     }
 

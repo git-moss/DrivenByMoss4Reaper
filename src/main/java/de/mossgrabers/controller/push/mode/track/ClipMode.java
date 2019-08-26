@@ -8,13 +8,13 @@ import de.mossgrabers.controller.push.controller.PushColors;
 import de.mossgrabers.controller.push.controller.PushControlSurface;
 import de.mossgrabers.controller.push.view.ColorView;
 import de.mossgrabers.controller.push.view.ColorView.SelectMode;
-import de.mossgrabers.framework.controller.display.Display;
+import de.mossgrabers.framework.controller.display.IGraphicDisplay;
+import de.mossgrabers.framework.controller.display.ITextDisplay;
 import de.mossgrabers.framework.daw.IClip;
 import de.mossgrabers.framework.daw.IModel;
 import de.mossgrabers.framework.daw.INoteClip;
 import de.mossgrabers.framework.daw.ITrackBank;
 import de.mossgrabers.framework.daw.data.ITrack;
-import de.mossgrabers.framework.graphics.display.DisplayModel;
 import de.mossgrabers.framework.utils.ButtonEvent;
 import de.mossgrabers.framework.utils.StringUtils;
 import de.mossgrabers.framework.view.AbstractSequencerView;
@@ -99,27 +99,24 @@ public class ClipMode extends AbstractTrackMode
 
     /** {@inheritDoc} */
     @Override
-    public void updateDisplay1 ()
+    public void updateDisplay1 (final ITextDisplay display)
     {
-        final Display d = this.surface.getDisplay ();
         final IClip clip = this.model.getClip ();
-        d.setCell (0, 0, "PlayStrt").setCell (1, 0, this.formatMeasures (clip.getPlayStart (), 1));
-        d.setCell (0, 1, "Play End").setCell (1, 1, this.formatMeasures (clip.getPlayEnd (), 1));
-        d.setCell (0, 2, "LoopStrt").setCell (1, 2, this.formatMeasures (clip.getLoopStart (), 1));
-        d.setCell (0, 3, "LopLngth").setCell (1, 3, this.formatMeasures (clip.getLoopLength (), 0));
-        d.setCell (0, 4, "Loop").setCell (1, 4, clip.isLoopEnabled () ? "On" : "Off").clearCell (0, 5).clearCell (1, 5);
-        d.setCell (0, 6, "Shuffle").setCell (1, 6, clip.isShuffleEnabled () ? "On" : "Off");
-        d.setCell (0, 7, "Accent").setCell (1, 7, clip.getFormattedAccent ()).done (0).done (1).clearRow (2).done (2);
-        this.drawRow4 ();
+        display.setCell (0, 0, "PlayStrt").setCell (1, 0, this.formatMeasures (clip.getPlayStart (), 1));
+        display.setCell (0, 1, "Play End").setCell (1, 1, this.formatMeasures (clip.getPlayEnd (), 1));
+        display.setCell (0, 2, "LoopStrt").setCell (1, 2, this.formatMeasures (clip.getLoopStart (), 1));
+        display.setCell (0, 3, "LopLngth").setCell (1, 3, this.formatMeasures (clip.getLoopLength (), 0));
+        display.setCell (0, 4, "Loop").setCell (1, 4, clip.isLoopEnabled () ? "On" : "Off");
+        display.setCell (0, 6, "Shuffle").setCell (1, 6, clip.isShuffleEnabled () ? "On" : "Off");
+        display.setCell (0, 7, "Accent").setCell (1, 7, clip.getFormattedAccent ());
+        this.drawRow4 (display);
     }
 
 
     /** {@inheritDoc} */
     @Override
-    public void updateDisplay2 ()
+    public void updateDisplay2 (final IGraphicDisplay display)
     {
-        final DisplayModel message = this.surface.getDisplay ().getModel ();
-
         if (this.displayMidiNotes)
         {
             final View activeView = this.surface.getViewManager ().getActiveView ();
@@ -128,8 +125,7 @@ public class ClipMode extends AbstractTrackMode
                 clip = ((AbstractSequencerView<?, ?>) activeView).getClip ();
             else
                 clip = this.model.getNoteClip (8, 128);
-            message.setMidiClipElement (clip, this.model.getTransport ().getQuartersPerMeasure ());
-            message.send ();
+            display.setMidiClipElement (clip, this.model.getTransport ().getQuartersPerMeasure ());
             return;
         }
 
@@ -144,15 +140,14 @@ public class ClipMode extends AbstractTrackMode
         final ITrack t7 = tb.getItem (7);
 
         final IClip clip = this.model.getClip ();
-        message.addParameterElement ("", false, t0.getName (), t0.getType (), t0.getColor (), t0.isSelected (), "Play Start", -1, this.formatMeasures (clip.getPlayStart (), 1), this.isKnobTouched[0], -1);
-        message.addParameterElement ("", false, t1.getName (), t1.getType (), t1.getColor (), t1.isSelected (), "Play End", -1, this.formatMeasures (clip.getPlayEnd (), 1), this.isKnobTouched[1], -1);
-        message.addParameterElement ("", false, t2.getName (), t2.getType (), t2.getColor (), t2.isSelected (), "Loop Start", -1, this.formatMeasures (clip.getLoopStart (), 1), this.isKnobTouched[2], -1);
-        message.addParameterElement ("", false, t3.getName (), t3.getType (), t3.getColor (), t3.isSelected (), "Loop Lngth", -1, this.formatMeasures (clip.getLoopLength (), 0), this.isKnobTouched[3], -1);
-        message.addParameterElement ("", false, t4.getName (), t4.getType (), t4.getColor (), t4.isSelected (), "Loop", -1, clip.isLoopEnabled () ? "On" : "Off", this.isKnobTouched[4], -1);
-        message.addParameterElement ("", false, t5.getName (), t5.getType (), t5.getColor (), t5.isSelected (), "", -1, "", false, -1);
-        message.addParameterElement ("", false, t6.getName (), t6.getType (), t6.getColor (), t6.isSelected (), "Shuffle", -1, clip.isShuffleEnabled () ? "On" : "Off", this.isKnobTouched[6], -1);
-        message.addParameterElement ("Select color", false, t7.getName (), t7.getType (), t7.getColor (), t7.isSelected (), "Accent", -1, clip.getFormattedAccent (), this.isKnobTouched[7], -1);
-        message.send ();
+        display.addParameterElement ("", false, t0.getName (), t0.getType (), t0.getColor (), t0.isSelected (), "Play Start", -1, this.formatMeasures (clip.getPlayStart (), 1), this.isKnobTouched[0], -1);
+        display.addParameterElement ("", false, t1.getName (), t1.getType (), t1.getColor (), t1.isSelected (), "Play End", -1, this.formatMeasures (clip.getPlayEnd (), 1), this.isKnobTouched[1], -1);
+        display.addParameterElement ("", false, t2.getName (), t2.getType (), t2.getColor (), t2.isSelected (), "Loop Start", -1, this.formatMeasures (clip.getLoopStart (), 1), this.isKnobTouched[2], -1);
+        display.addParameterElement ("", false, t3.getName (), t3.getType (), t3.getColor (), t3.isSelected (), "Loop Lngth", -1, this.formatMeasures (clip.getLoopLength (), 0), this.isKnobTouched[3], -1);
+        display.addParameterElement ("", false, t4.getName (), t4.getType (), t4.getColor (), t4.isSelected (), "Loop", -1, clip.isLoopEnabled () ? "On" : "Off", this.isKnobTouched[4], -1);
+        display.addParameterElement ("", false, t5.getName (), t5.getType (), t5.getColor (), t5.isSelected (), "", -1, "", false, -1);
+        display.addParameterElement ("", false, t6.getName (), t6.getType (), t6.getColor (), t6.isSelected (), "Shuffle", -1, clip.isShuffleEnabled () ? "On" : "Off", this.isKnobTouched[6], -1);
+        display.addParameterElement ("Select color", false, t7.getName (), t7.getType (), t7.getColor (), t7.isSelected (), "Accent", -1, clip.getFormattedAccent (), this.isKnobTouched[7], -1);
     }
 
 

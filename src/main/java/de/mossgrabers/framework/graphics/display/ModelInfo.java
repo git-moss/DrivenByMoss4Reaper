@@ -4,7 +4,7 @@
 
 package de.mossgrabers.framework.graphics.display;
 
-import de.mossgrabers.framework.graphics.grid.IGridElement;
+import de.mossgrabers.framework.graphics.canvas.component.IComponent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,8 +17,8 @@ import java.util.List;
  */
 public class ModelInfo
 {
-    private String                   notification;
-    private final List<IGridElement> elements;
+    private String                 notification;
+    private final List<IComponent> components;
 
 
     /**
@@ -27,10 +27,10 @@ public class ModelInfo
      * @param notification The notification message, if any
      * @param elements The elements
      */
-    public ModelInfo (final String notification, final List<IGridElement> elements)
+    public ModelInfo (final String notification, final List<IComponent> elements)
     {
         this.notification = notification;
-        this.elements = new ArrayList<> (elements);
+        this.components = new ArrayList<> (elements);
     }
 
 
@@ -46,12 +46,53 @@ public class ModelInfo
 
 
     /**
-     * Get the grid elements.
+     * Get the canvas components.
      *
-     * @return The elements
+     * @return The components
      */
-    public List<IGridElement> getElements ()
+    public List<IComponent> getComponents ()
     {
-        return this.elements;
+        return this.components;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public int hashCode ()
+    {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + (this.components == null ? 0 : this.components.hashCode ());
+        result = prime * result + (this.notification == null ? 0 : this.notification.hashCode ());
+        return result;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean equals (final Object obj)
+    {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (this.getClass () != obj.getClass ())
+            return false;
+        final ModelInfo other = (ModelInfo) obj;
+        if (this.components == null)
+        {
+            if (other.components != null)
+                return false;
+        }
+        else if (!this.components.equals (other.components))
+            return false;
+        if (this.notification == null)
+        {
+            if (other.notification != null)
+                return false;
+        }
+        else if (!this.notification.equals (other.notification))
+            return false;
+        return true;
     }
 }

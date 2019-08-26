@@ -82,4 +82,20 @@ public class DrumPadBankImpl extends AbstractBankImpl<IDrumPad> implements IDrum
         // Not supported
         return null;
     }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void clearMute ()
+    {
+        // Not supported
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void clearSolo ()
+    {
+        // Not supported
+    }
 }

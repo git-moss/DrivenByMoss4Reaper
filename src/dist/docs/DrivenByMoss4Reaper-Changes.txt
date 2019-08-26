@@ -1,3 +1,8 @@
+8.00 (unreleased)
+- TODO add DBM changes
+- Fixed: Stepping out of track folders did skip a level
+- Fixed: Changing track selection did not correctly adjust the track bank page on the device (except Push)
+
 7.05
 - Generic Flexi:
   * New: Commands to set Solo, Mute, Rec Arm, Monitor and Auto Monitor (in addition to toggle).

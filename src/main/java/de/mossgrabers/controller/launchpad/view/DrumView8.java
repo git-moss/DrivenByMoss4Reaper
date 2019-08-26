@@ -73,7 +73,7 @@ public class DrumView8 extends DrumViewBase
         {
             for (int col = 0; col < DrumView8.NUM_DISPLAY_COLS; col++)
             {
-                final int isSet = clip.getStep (col, offsetY + this.selectedPad + sound + this.soundOffset);
+                final int isSet = clip.getStep (col, offsetY + this.selectedPad + sound + this.soundOffset).getState ();
                 final boolean hilite = col == hiStep;
                 final int x = col % 8;
                 int y = col / 8;

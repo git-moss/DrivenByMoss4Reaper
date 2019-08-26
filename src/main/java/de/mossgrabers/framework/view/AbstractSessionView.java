@@ -152,8 +152,8 @@ public abstract class AbstractSessionView<S extends IControlSurface<C>, C extend
                 break;
 
             case 1:
-                // Execute new clip
-                this.model.createClip (slot, this.surface.getConfiguration ().getNewClipLength ());
+                // Create new clip
+                track.createClip (slot.getIndex (), this.surface.getConfiguration ().getNewClipLenghthInBeats (this.model.getTransport ().getQuartersPerMeasure ()));
                 slot.select ();
                 slot.launch ();
                 this.model.getTransport ().setLauncherOverdub (true);

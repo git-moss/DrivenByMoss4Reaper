@@ -122,7 +122,7 @@ public class DrumView extends AbstractDrumView<SLMkIIIControlSurface, SLMkIIICon
         final int offsetY = this.scales.getDrumOffset ();
         for (int col = 0; col < DrumView.NUM_DISPLAY_COLS; col++)
         {
-            final int isSet = clip.getStep (col, offsetY + this.selectedPad);
+            final int isSet = clip.getStep (col, offsetY + this.selectedPad).getState ();
             final boolean hilite = col == hiStep;
             final int x = col % GRID_COLUMNS;
             final int y = col / GRID_COLUMNS;

@@ -124,7 +124,7 @@ public class ControlView extends ControlOnlyView<SLControlSurface, SLConfigurati
                     final ISlot s = slotBank.getItem (sIndex);
                     if (!s.hasContent ())
                     {
-                        this.model.createClip (s, this.surface.getConfiguration ().getNewClipLength ());
+                        t.createClip (s.getIndex (), this.surface.getConfiguration ().getNewClipLenghthInBeats (this.model.getTransport ().getQuartersPerMeasure ()));
                         if (slotIndex != sIndex)
                             s.select ();
                         s.launch ();

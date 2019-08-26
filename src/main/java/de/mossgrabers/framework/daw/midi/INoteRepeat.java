@@ -82,4 +82,48 @@ public interface INoteRepeat
      * @param track The track for which to toggle the note repeat shuffle
      */
     void toggleShuffle (ITrack track);
+
+
+    /**
+     * Check if use pressure as the velocity for new notes is active.
+     *
+     * @param track The track
+     * @return True if active
+     */
+    boolean usePressure (ITrack track);
+
+
+    /**
+     * Use the pressure as the velocity for new notes.
+     *
+     * @param track The track for which to toggle use pressure
+     */
+    void toggleUsePressure (ITrack track);
+
+
+    /**
+     * Will accumulate for each new notes.
+     *
+     * @param track The track
+     * @return The value is between -1 and 1
+     */
+    double getVelocityRamp (ITrack track);
+
+
+    /**
+     * Get the velocity ramp value as a formatted string.
+     *
+     * @param track The track
+     * @return The formatted value
+     */
+    String getVelocityRampStr (ITrack track);
+
+
+    /**
+     * Will accumulate for each new notes.
+     *
+     * @param track The track
+     * @param value The value is between -1 and 1
+     */
+    void setVelocityRamp (ITrack track, double value);
 }

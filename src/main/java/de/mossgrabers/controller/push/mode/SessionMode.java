@@ -4,19 +4,19 @@
 
 package de.mossgrabers.controller.push.mode;
 
+import de.mossgrabers.controller.push.controller.Push1Display;
 import de.mossgrabers.controller.push.controller.PushColors;
 import de.mossgrabers.controller.push.controller.PushControlSurface;
-import de.mossgrabers.controller.push.controller.PushDisplay;
 import de.mossgrabers.controller.push.mode.track.AbstractTrackMode;
 import de.mossgrabers.framework.controller.color.ColorManager;
-import de.mossgrabers.framework.controller.display.Display;
+import de.mossgrabers.framework.controller.display.IGraphicDisplay;
+import de.mossgrabers.framework.controller.display.ITextDisplay;
 import de.mossgrabers.framework.daw.IModel;
 import de.mossgrabers.framework.daw.ISceneBank;
 import de.mossgrabers.framework.daw.ITrackBank;
 import de.mossgrabers.framework.daw.data.IScene;
 import de.mossgrabers.framework.daw.data.ISlot;
 import de.mossgrabers.framework.daw.data.ITrack;
-import de.mossgrabers.framework.graphics.display.DisplayModel;
 import de.mossgrabers.framework.mode.AbstractMode;
 import de.mossgrabers.framework.utils.ButtonEvent;
 import de.mossgrabers.framework.utils.Pair;
@@ -129,32 +129,31 @@ public class SessionMode extends AbstractTrackMode
 
     /** {@inheritDoc} */
     @Override
-    public void updateDisplay1 ()
+    public void updateDisplay1 (final ITextDisplay display)
     {
         if (this.surface.getViewManager ().isActiveView (Views.SESSION))
-            this.updateDisplay1Clips ();
+            this.updateDisplay1Clips (display);
         else
-            this.updateDisplay1Scenes ();
+            this.updateDisplay1Scenes (display);
     }
 
 
     /** {@inheritDoc} */
     @Override
-    public void updateDisplay2 ()
+    public void updateDisplay2 (final IGraphicDisplay display)
     {
         if (this.surface.getViewManager ().isActiveView (Views.SESSION))
-            this.updateDisplay2Clips ();
+            this.updateDisplay2Clips (display);
         else
-            this.updateDisplay2Scenes ();
+            this.updateDisplay2Scenes (display);
     }
 
 
-    private void updateDisplay1Scenes ()
+    private void updateDisplay1Scenes (final ITextDisplay display)
     {
         final int maxCols = 8;
         final int maxRows = this.rowDisplayMode == RowDisplayMode.ALL ? 8 : 4;
 
-        final Display d = this.surface.getDisplay ().clear ();
         for (int col = 0; col < maxCols; col++)
         {
             for (int row = 0; row < maxRows; row++)
@@ -168,27 +167,24 @@ public class SessionMode extends AbstractTrackMode
                     continue;
                 final boolean isSel = scene.isSelected ();
                 final String n = StringUtils.shortenAndFixASCII (scene.getName (8), isSel ? 7 : 8);
-                d.setCell (row, col, isSel ? PushDisplay.SELECT_ARROW + n : n);
+                display.setCell (row, col, isSel ? Push1Display.SELECT_ARROW + n : n);
             }
         }
-        d.allDone ();
     }
 
 
-    private void updateDisplay1Clips ()
+    private void updateDisplay1Clips (final ITextDisplay display)
     {
         final ITrackBank tb = this.model.getCurrentTrackBank ();
-        final boolean flipSession = this.surface.getConfiguration ().isFlipSession ();
-
         final int numTracks = tb.getPageSize ();
         final int numScenes = tb.getSceneBank ().getPageSize ();
 
+        final boolean flipSession = this.surface.getConfiguration ().isFlipSession ();
         final int maxCols = flipSession ? numScenes : numTracks;
         int maxRows = flipSession ? numTracks : numScenes;
         if (this.rowDisplayMode != RowDisplayMode.ALL)
             maxRows = maxRows / 2;
 
-        final Display d = this.surface.getDisplay ().clear ();
         for (int col = 0; col < maxCols; col++)
         {
             for (int row = 0; row < maxRows; row++)
@@ -229,7 +225,7 @@ public class SessionMode extends AbstractTrackMode
                 }
 
                 if (slot.isSelected ())
-                    name = PushDisplay.SELECT_ARROW + name;
+                    name = Push1Display.SELECT_ARROW + name;
                 else if (slot.isPlaying ())
                     name = ">" + name;
                 else if (slot.isPlayingQueued () || slot.isRecordingQueued ())
@@ -237,23 +233,21 @@ public class SessionMode extends AbstractTrackMode
                 else if (track.isRecArm () || slot.isRecording ())
                     name = "*" + name;
                 else if (slot.hasContent ())
-                    name = PushDisplay.RIGHT_ARROW + name;
+                    name = Push1Display.RIGHT_ARROW + name;
                 else
-                    name = PushDisplay.DEGREE + name;
+                    name = Push1Display.DEGREE + name;
 
-                d.setCell (row, col, StringUtils.shortenAndFixASCII (name, 8));
+                display.setCell (row, col, StringUtils.shortenAndFixASCII (name, 8));
             }
         }
-        d.allDone ();
     }
 
 
-    private void updateDisplay2Scenes ()
+    private void updateDisplay2Scenes (final IGraphicDisplay display)
     {
         final int maxCols = 8;
         final int maxRows = this.rowDisplayMode == RowDisplayMode.ALL ? 8 : 4;
 
-        final DisplayModel message = this.surface.getDisplay ().getModel ();
         for (int col = 0; col < maxCols; col++)
         {
             final List<IScene> scenes = new ArrayList<> (maxRows);
@@ -264,22 +258,18 @@ public class SessionMode extends AbstractTrackMode
                     sceneIndex += 32;
                 scenes.add (this.sceneBank.getItem (sceneIndex));
             }
-            message.addSceneListElement (scenes);
+            display.addSceneListElement (scenes);
         }
-        message.send ();
     }
 
 
-    private void updateDisplay2Clips ()
+    private void updateDisplay2Clips (final IGraphicDisplay display)
     {
         final ITrackBank tb = this.model.getCurrentTrackBank ();
-        final DisplayModel message = this.surface.getDisplay ().getModel ();
-
-        final boolean flipSession = this.surface.getConfiguration ().isFlipSession ();
-
         final int numTracks = tb.getPageSize ();
         final int numScenes = tb.getSceneBank ().getPageSize ();
 
+        final boolean flipSession = this.surface.getConfiguration ().isFlipSession ();
         final int maxCols = flipSession ? numScenes : numTracks;
         int maxRows = flipSession ? numTracks : numScenes;
         if (this.rowDisplayMode != RowDisplayMode.ALL)
@@ -304,8 +294,7 @@ public class SessionMode extends AbstractTrackMode
                 final ITrack track = tb.getItem (x);
                 slots.add (new Pair<> (track, track.getSlotBank ().getItem (y)));
             }
-            message.addSlotListElement (slots);
+            display.addSlotListElement (slots);
         }
-        message.send ();
     }
 }

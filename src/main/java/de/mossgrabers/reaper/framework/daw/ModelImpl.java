@@ -354,16 +354,16 @@ public class ModelImpl extends AbstractModel
 
     /** {@inheritDoc} */
     @Override
-    public void deactivateSolo ()
+    public void clearSolo ()
     {
-        ((TrackBankImpl) this.trackBank).deactivateSolo ();
+        ((TrackBankImpl) this.trackBank).clearSolo ();
     }
 
 
     /** {@inheritDoc} */
     @Override
-    public void deactivateMute ()
+    public void clearMute ()
     {
-        ((TrackBankImpl) this.trackBank).deactivateMute ();
+        ((TrackBankImpl) this.trackBank).clearMute ();
     }
 }

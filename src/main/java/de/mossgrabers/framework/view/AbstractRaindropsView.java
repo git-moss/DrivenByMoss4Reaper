@@ -4,12 +4,12 @@
 
 package de.mossgrabers.framework.view;
 
-import de.mossgrabers.framework.Resolution;
 import de.mossgrabers.framework.configuration.Configuration;
 import de.mossgrabers.framework.controller.IControlSurface;
 import de.mossgrabers.framework.controller.grid.PadGrid;
 import de.mossgrabers.framework.daw.IModel;
 import de.mossgrabers.framework.daw.INoteClip;
+import de.mossgrabers.framework.daw.constants.Resolution;
 import de.mossgrabers.framework.daw.data.ITrack;
 import de.mossgrabers.framework.scale.Scales;
 import de.mossgrabers.framework.utils.ButtonEvent;
@@ -190,14 +190,14 @@ public abstract class AbstractRaindropsView<S extends IControlSurface<C>, C exte
         final INoteClip clip = this.getClip ();
         for (step = 0; step < length; step++)
         {
-            if (clip.getStep (step, row) > 0)
+            if (clip.getStep (step, row).getState () > 0)
                 break;
         }
         if (step >= length)
             return -1;
         for (int step2 = step + 1; step2 < length; step2++)
         {
-            if (clip.getStep (step2, row) > 0)
+            if (clip.getStep (step2, row).getState () > 0)
                 return step2 - step;
         }
         return -1;
@@ -213,7 +213,7 @@ public abstract class AbstractRaindropsView<S extends IControlSurface<C>, C exte
         final INoteClip clip = this.getClip ();
         do
         {
-            if (clip.getStep (step, row) > 0)
+            if (clip.getStep (step, row).getState () > 0)
                 return counter;
             step++;
             counter++;
@@ -234,7 +234,7 @@ public abstract class AbstractRaindropsView<S extends IControlSurface<C>, C exte
         final INoteClip clip = this.getClip ();
         do
         {
-            if (clip.getStep (step, row) > 0)
+            if (clip.getStep (step, row).getState () > 0)
                 return counter;
             step--;
             counter++;

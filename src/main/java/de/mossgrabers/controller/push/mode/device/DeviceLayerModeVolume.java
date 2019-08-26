@@ -6,12 +6,13 @@ package de.mossgrabers.controller.push.mode.device;
 
 import de.mossgrabers.controller.push.PushConfiguration;
 import de.mossgrabers.controller.push.controller.PushControlSurface;
-import de.mossgrabers.framework.controller.display.Display;
+import de.mossgrabers.framework.controller.display.AbstractGraphicDisplay;
 import de.mossgrabers.framework.controller.display.Format;
+import de.mossgrabers.framework.controller.display.IGraphicDisplay;
+import de.mossgrabers.framework.controller.display.ITextDisplay;
 import de.mossgrabers.framework.daw.ICursorDevice;
 import de.mossgrabers.framework.daw.IModel;
 import de.mossgrabers.framework.daw.data.IChannel;
-import de.mossgrabers.framework.graphics.display.DisplayModel;
 
 
 /**
@@ -74,9 +75,8 @@ public class DeviceLayerModeVolume extends DeviceLayerMode
 
     /** {@inheritDoc} */
     @Override
-    public void updateDisplay1 ()
+    public void updateDisplay1 (final ITextDisplay display)
     {
-        final Display d = this.surface.getDisplay ();
         final ICursorDevice cd = this.model.getCursorDevice ();
         // Drum Pad Bank has size of 16, layers only 8
         final int offset = getDrumPadIndex (cd);
@@ -85,22 +85,18 @@ public class DeviceLayerModeVolume extends DeviceLayerMode
         for (int i = 0; i < 8; i++)
         {
             final IChannel layer = cd.getLayerOrDrumPadBank ().getItem (offset + i);
-            d.setCell (0, i, layer.doesExist () ? "Volume" : "").setCell (1, i, layer.getVolumeStr (8));
+            display.setCell (0, i, layer.doesExist () ? "Volume" : "").setCell (1, i, layer.getVolumeStr (8));
             if (layer.doesExist ())
-                d.setCell (2, i, config.isEnableVUMeters () ? layer.getVu () : layer.getVolume (), Format.FORMAT_VALUE);
-            else
-                d.clearCell (2, i);
+                display.setCell (2, i, config.isEnableVUMeters () ? layer.getVu () : layer.getVolume (), Format.FORMAT_VALUE);
         }
-        d.done (0).done (1).done (2);
-
-        this.drawRow4 (d, cd);
+        this.drawRow4 (display, cd);
     }
 
 
     /** {@inheritDoc} */
     @Override
-    public void updateDisplayElements (final DisplayModel message, final ICursorDevice cd, final IChannel l)
+    public void updateDisplayElements (final IGraphicDisplay message, final ICursorDevice cd, final IChannel l)
     {
-        this.updateChannelDisplay (message, cd, DisplayModel.GRID_ELEMENT_CHANNEL_VOLUME, true, false);
+        this.updateChannelDisplay (message, cd, AbstractGraphicDisplay.GRID_ELEMENT_CHANNEL_VOLUME, true, false);
     }
 }

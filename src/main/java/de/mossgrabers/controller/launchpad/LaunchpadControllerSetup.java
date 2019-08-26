@@ -43,6 +43,7 @@ import de.mossgrabers.controller.launchpad.view.SendsView;
 import de.mossgrabers.controller.launchpad.view.SequencerView;
 import de.mossgrabers.controller.launchpad.view.SessionView;
 import de.mossgrabers.controller.launchpad.view.ShiftView;
+import de.mossgrabers.controller.launchpad.view.UserView;
 import de.mossgrabers.controller.launchpad.view.VolumeView;
 import de.mossgrabers.framework.command.ContinuousCommandID;
 import de.mossgrabers.framework.command.TriggerCommandID;
@@ -54,12 +55,12 @@ import de.mossgrabers.framework.command.trigger.clip.QuantizeCommand;
 import de.mossgrabers.framework.command.trigger.mode.ModeCursorCommand.Direction;
 import de.mossgrabers.framework.command.trigger.transport.PlayCommand;
 import de.mossgrabers.framework.command.trigger.transport.RecordCommand;
+import de.mossgrabers.framework.command.trigger.view.ViewMultiSelectCommand;
 import de.mossgrabers.framework.configuration.ISettingsUI;
 import de.mossgrabers.framework.controller.AbstractControllerSetup;
 import de.mossgrabers.framework.controller.DefaultValueChanger;
 import de.mossgrabers.framework.controller.ISetupFactory;
 import de.mossgrabers.framework.controller.color.ColorManager;
-import de.mossgrabers.framework.controller.display.DummyDisplay;
 import de.mossgrabers.framework.daw.DAWColors;
 import de.mossgrabers.framework.daw.ICursorDevice;
 import de.mossgrabers.framework.daw.IHost;
@@ -145,7 +146,6 @@ public class LaunchpadControllerSetup extends AbstractControllerSetup<LaunchpadC
                 "90????" /* Note on */);
         final LaunchpadControlSurface surface = new LaunchpadControlSurface (this.host, this.colorManager, this.configuration, output, input, this.isPro);
         this.surfaces.add (surface);
-        surface.setDisplay (new DummyDisplay (this.host));
         surface.setLaunchpadToStandalone ();
     }
 
@@ -197,6 +197,8 @@ public class LaunchpadControllerSetup extends AbstractControllerSetup<LaunchpadC
         viewManager.registerView (Views.SESSION, new SessionView (surface, this.model));
         viewManager.registerView (Views.TRACK_VOLUME, new VolumeView (surface, this.model));
         viewManager.registerView (Views.SHIFT, new ShiftView (surface, this.model));
+        if (this.isPro && this.host.hasUserParameters ())
+            viewManager.registerView (Views.CONTROL, new UserView (surface, this.model));
     }
 
 
@@ -205,10 +207,11 @@ public class LaunchpadControllerSetup extends AbstractControllerSetup<LaunchpadC
     protected void registerTriggerCommands ()
     {
         final LaunchpadControlSurface surface = this.getSurface ();
-        final ShiftCommand command = new ShiftCommand (this.model, surface);
-        this.addTriggerCommand (TriggerCommandID.SHIFT, surface.getShiftTriggerId (), command);
-        if (this.isPro)
-            this.addTriggerCommand (TriggerCommandID.USER, surface.getUserButtonId (), command);
+
+        this.addTriggerCommand (TriggerCommandID.SHIFT, surface.getShiftTriggerId (), new ShiftCommand (this.model, surface));
+
+        if (this.isPro && this.host.hasUserParameters ())
+            this.addTriggerCommand (TriggerCommandID.USER, surface.getUserButtonId (), new ViewMultiSelectCommand<> (this.model, surface, true, Views.CONTROL));
 
         this.addTriggerCommand (TriggerCommandID.METRONOME, LaunchpadControlSurface.LAUNCHPAD_BUTTON_CLICK, new ClickCommand (this.model, surface));
         this.addTriggerCommand (TriggerCommandID.UNDO, LaunchpadControlSurface.LAUNCHPAD_BUTTON_UNDO, new UndoCommand<> (this.model, surface));
@@ -302,8 +305,6 @@ public class LaunchpadControllerSetup extends AbstractControllerSetup<LaunchpadC
 
         if (!this.isPro)
             return;
-
-        surface.setTrigger (LaunchpadControlSurface.LAUNCHPAD_PRO_BUTTON_USER, LaunchpadColors.LAUNCHPAD_COLOR_BLACK);
 
         final boolean isShift = surface.isShiftPressed ();
         final ITrack selTrack = this.model.getSelectedTrack ();

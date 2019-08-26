@@ -7,6 +7,9 @@ package de.mossgrabers.controller.maschine.mikro.mk3.view;
 import de.mossgrabers.controller.maschine.mikro.mk3.MaschineMikroMk3Configuration;
 import de.mossgrabers.controller.maschine.mikro.mk3.controller.MaschineMikroMk3ControlSurface;
 import de.mossgrabers.framework.daw.IModel;
+import de.mossgrabers.framework.daw.constants.Resolution;
+import de.mossgrabers.framework.daw.data.ITrack;
+import de.mossgrabers.framework.daw.midi.INoteRepeat;
 import de.mossgrabers.framework.utils.ButtonEvent;
 import de.mossgrabers.framework.view.AbstractView;
 
@@ -43,8 +46,30 @@ public abstract class BaseView extends AbstractView<MaschineMikroMk3ControlSurfa
     @Override
     public void onGridNote (final int note, final int velocity)
     {
+        int padIndex = note - 36;
+
+        // TODO not working since there is no pressed state
+        if (this.surface.isPressed (MaschineMikroMk3ControlSurface.MIKRO_3_NOTE_REPEAT))
+        {
+            this.surface.setTriggerConsumed (MaschineMikroMk3ControlSurface.MIKRO_3_NOTE_REPEAT);
+
+            final ITrack selectedTrack = this.model.getCurrentTrackBank ().getSelectedItem ();
+            final INoteRepeat noteRepeat = this.surface.getInput ().getDefaultNoteInput ().getNoteRepeat ();
+            if (padIndex < 8)
+            {
+                noteRepeat.setPeriod (selectedTrack, Resolution.getValueAt (padIndex));
+                this.model.getHost ().showNotification ("Repeat Period: " + Resolution.getNameAt (padIndex));
+            }
+            else
+            {
+                noteRepeat.setNoteLength (selectedTrack, Resolution.getValueAt (padIndex % 8));
+                this.model.getHost ().showNotification ("Note Length: " + Resolution.getNameAt (padIndex % 8));
+            }
+            return;
+        }
+
         if (velocity > 0)
-            this.executeFunction (note - 36);
+            this.executeFunction (padIndex);
     }
 
 

@@ -160,7 +160,8 @@ public abstract class AbstractNoteSequencerView<S extends IControlSurface<C>, C 
             for (int y = 0; y < this.numSequencerRows; y++)
             {
                 // 0: not set, 1: note continues playing, 2: start of note
-                final int isSet = clip.getStep (x, this.keyManager.map (y));
+                final int map = this.keyManager.map (y);
+                final int isSet = map < 0 ? 0 : clip.getStep (x, map).getState ();
                 gridPad.lightEx (x, this.numDisplayRows - 1 - y, this.getStepColor (isSet, x == hiStep, y, selectedTrack));
             }
         }

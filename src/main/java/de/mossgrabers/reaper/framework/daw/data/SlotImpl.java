@@ -136,14 +136,6 @@ public class SlotImpl extends ItemImpl implements ISlot
 
     /** {@inheritDoc} */
     @Override
-    public void create (final int length)
-    {
-        this.sender.processIntArg ("track", this.trackIndex + "/createClip", length);
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
     public void remove ()
     {
         if (this.getIndex () >= 0)

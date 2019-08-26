@@ -140,6 +140,14 @@ public interface IModel
 
 
     /**
+     * Get the user parameter bank if any.
+     *
+     * @return The user parameter bank or null if none exists
+     */
+    IParameterBank getUserParameterBank ();
+
+
+    /**
      * Toggles the audio/instrument track bank with the effect track bank.
      */
     void toggleCurrentTrackBank ();
@@ -221,13 +229,13 @@ public interface IModel
     /**
      * Deactivate all solo states of all tracks.
      */
-    void deactivateSolo ();
+    void clearSolo ();
 
 
     /**
      * Deactivate all mute states of all tracks.
      */
-    void deactivateMute ();
+    void clearMute ();
 
 
     /**
@@ -253,15 +261,6 @@ public interface IModel
      * e.g. for quantization and clip modifications.
      */
     void ensureClip ();
-
-
-    /**
-     * Creates a new clip at the given track and slot index.
-     *
-     * @param slot The slot in which to create a clip
-     * @param clipLength The length of the new clip as read from the configuration
-     */
-    void createClip (ISlot slot, int clipLength);
 
 
     /**

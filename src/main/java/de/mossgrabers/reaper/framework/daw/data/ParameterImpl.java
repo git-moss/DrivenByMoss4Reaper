@@ -89,6 +89,15 @@ public class ParameterImpl extends ItemImpl implements IParameter
 
     /** {@inheritDoc} */
     @Override
+    public void setValueImmediatly (int value)
+    {
+        // Always immediatly with Reaper
+        this.setValue (value);
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
     public int getModulatedValue ()
     {
         // Not supported

@@ -5,10 +5,11 @@
 package de.mossgrabers.controller.kontrol.mki.controller;
 
 import de.mossgrabers.controller.kontrol.mki.Kontrol1Configuration;
-import de.mossgrabers.framework.controller.display.AbstractDisplay;
-import de.mossgrabers.framework.controller.display.Display;
+import de.mossgrabers.framework.controller.display.AbstractTextDisplay;
 import de.mossgrabers.framework.controller.display.Format;
+import de.mossgrabers.framework.controller.display.ITextDisplay;
 import de.mossgrabers.framework.daw.IHost;
+import de.mossgrabers.framework.utils.StringUtils;
 
 
 /**
@@ -16,28 +17,10 @@ import de.mossgrabers.framework.daw.IHost;
  *
  * @author J&uuml;rgen Mo&szlig;graber
  */
-public class Kontrol1Display extends AbstractDisplay
+public class Kontrol1Display extends AbstractTextDisplay
 {
-    private static final String [] SPACES =
-    {
-        "",
-        " ",
-        "  ",
-        "   ",
-        "    ",
-        "     ",
-        "      ",
-        "       ",
-        "        ",
-        "         ",
-        "          ",
-        "           ",
-        "            ",
-        "             "
-    };
-
-    private int                    maxParameterValue;
-    private Kontrol1UsbDevice      usbDevice;
+    private int               maxParameterValue;
+    private Kontrol1UsbDevice usbDevice;
 
 
     /**
@@ -75,7 +58,7 @@ public class Kontrol1Display extends AbstractDisplay
 
     /** {@inheritDoc} */
     @Override
-    public AbstractDisplay clear ()
+    public ITextDisplay clear ()
     {
         for (int i = 0; i < 9; i++)
         {
@@ -92,7 +75,7 @@ public class Kontrol1Display extends AbstractDisplay
 
     /** {@inheritDoc} */
     @Override
-    public Kontrol1Display clearRow (final int row)
+    public ITextDisplay clearRow (final int row)
     {
         for (int i = 0; i < this.noOfCells; i++)
             this.clearCell (row, i);
@@ -102,7 +85,7 @@ public class Kontrol1Display extends AbstractDisplay
 
     /** {@inheritDoc} */
     @Override
-    public Kontrol1Display clearCell (final int row, final int cell)
+    public ITextDisplay clearCell (final int row, final int cell)
     {
         this.cells[row * this.noOfCells + cell] = "        ";
         return this;
@@ -111,17 +94,17 @@ public class Kontrol1Display extends AbstractDisplay
 
     /** {@inheritDoc} */
     @Override
-    public Kontrol1Display setBlock (final int row, final int block, final String value)
+    public ITextDisplay setBlock (final int row, final int block, final String value)
     {
         final int cell = 2 * block;
         if (value.length () > 9)
         {
             this.cells[row * this.noOfCells + cell] = value.substring (0, 9);
-            this.cells[row * this.noOfCells + cell + 1] = pad (value.substring (9), 8);
+            this.cells[row * this.noOfCells + cell + 1] = StringUtils.pad (value.substring (9), 8);
         }
         else
         {
-            this.cells[row * this.noOfCells + cell] = pad (value, 9);
+            this.cells[row * this.noOfCells + cell] = StringUtils.pad (value, 9);
             this.clearCell (row, cell + 1);
         }
         return this;
@@ -130,7 +113,7 @@ public class Kontrol1Display extends AbstractDisplay
 
     /** {@inheritDoc} */
     @Override
-    public Display setCell (final int row, final int column, final int value, final Format format)
+    public ITextDisplay setCell (final int row, final int column, final int value, final Format format)
     {
         this.setCell (row, column, Integer.toString (value));
         return this;
@@ -141,7 +124,7 @@ public class Kontrol1Display extends AbstractDisplay
     @Override
     public Kontrol1Display setCell (final int row, final int cell, final String value)
     {
-        this.cells[row * this.noOfCells + cell] = pad (value, 8);
+        this.cells[row * this.noOfCells + cell] = StringUtils.pad (value, 8);
         return this;
     }
 
@@ -202,25 +185,6 @@ public class Kontrol1Display extends AbstractDisplay
     }
 
 
-    /**
-     * Pad the given text with the given character until it reaches the given length.
-     *
-     * @param str The text to pad
-     * @param length The maximum length
-     * @return The padded text
-     */
-    public static String pad (final String str, final int length)
-    {
-        final String text = str == null ? "" : str;
-        final int diff = length - text.length ();
-        if (diff < 0)
-            return text.substring (0, length);
-        if (diff > 0)
-            return text + Kontrol1Display.SPACES[diff];
-        return text;
-    }
-
-
     /** {@inheritDoc} */
     @Override
     protected void notifyOnDisplay (final String message)
@@ -234,6 +198,6 @@ public class Kontrol1Display extends AbstractDisplay
         this.host.scheduleTask ( () -> {
             this.isNotificationActive = false;
             this.forceFlush ();
-        }, AbstractDisplay.NOTIFICATION_TIME);
+        }, AbstractTextDisplay.NOTIFICATION_TIME);
     }
 }

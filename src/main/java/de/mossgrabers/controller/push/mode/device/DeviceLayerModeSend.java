@@ -6,16 +6,16 @@ package de.mossgrabers.controller.push.mode.device;
 
 import de.mossgrabers.controller.push.PushConfiguration;
 import de.mossgrabers.controller.push.controller.PushControlSurface;
-import de.mossgrabers.framework.controller.display.Display;
 import de.mossgrabers.framework.controller.display.Format;
+import de.mossgrabers.framework.controller.display.IGraphicDisplay;
+import de.mossgrabers.framework.controller.display.ITextDisplay;
 import de.mossgrabers.framework.daw.IChannelBank;
 import de.mossgrabers.framework.daw.ICursorDevice;
 import de.mossgrabers.framework.daw.IModel;
 import de.mossgrabers.framework.daw.data.IChannel;
 import de.mossgrabers.framework.daw.data.ISend;
 import de.mossgrabers.framework.daw.resource.ChannelType;
-import de.mossgrabers.framework.graphics.display.DisplayModel;
-import de.mossgrabers.framework.graphics.grid.SendData;
+import de.mossgrabers.framework.graphics.canvas.utils.SendData;
 import de.mossgrabers.framework.mode.Modes;
 import de.mossgrabers.framework.utils.Pair;
 
@@ -82,9 +82,8 @@ public class DeviceLayerModeSend extends DeviceLayerMode
 
     /** {@inheritDoc} */
     @Override
-    public void updateDisplay1 ()
+    public void updateDisplay1 (final ITextDisplay display)
     {
-        final Display d = this.surface.getDisplay ();
         final ICursorDevice cd = this.model.getCursorDevice ();
         // Drum Pad Bank has size of 16, layers only 8
         final int offset = getDrumPadIndex (cd);
@@ -96,21 +95,17 @@ public class DeviceLayerModeSend extends DeviceLayerMode
             final IChannel layer = bank.getItem (offset + i);
             final boolean exists = layer.doesExist ();
             final ISend send = layer.getSendBank ().getItem (sendIndex);
-            d.setCell (0, i, exists ? send.getName () : "").setCell (1, i, send.getDisplayedValue (8));
+            display.setCell (0, i, exists ? send.getName () : "").setCell (1, i, send.getDisplayedValue (8));
             if (exists)
-                d.setCell (2, i, send.getValue (), Format.FORMAT_VALUE);
-            else
-                d.clearCell (2, i);
+                display.setCell (2, i, send.getValue (), Format.FORMAT_VALUE);
         }
-        d.done (0).done (1).done (2);
-
-        this.drawRow4 (d, cd);
+        this.drawRow4 (display, cd);
     }
 
 
     /** {@inheritDoc} */
     @Override
-    public void updateDisplayElements (final DisplayModel message, final ICursorDevice cd, final IChannel l)
+    public void updateDisplayElements (final IGraphicDisplay display, final ICursorDevice cd, final IChannel l)
     {
         final int sendIndex = this.getCurrentSendIndex ();
 
@@ -140,7 +135,7 @@ public class DeviceLayerModeSend extends DeviceLayerMode
                 sendData[j] = new SendData (send.getName (), exists && sendIndex == sendPos && this.isKnobTouched[i] ? send.getDisplayedValue () : "", exists ? send.getValue () : 0, exists ? send.getModulatedValue () : 0, sendIndex == sendPos);
             }
 
-            message.addSendsElement (topMenu, isTopMenuOn, layer.doesExist () ? layer.getName () : "", ChannelType.LAYER, bank.getItem (offset + i).getColor (), layer.isSelected (), sendData, false, layer.isActivated (), layer.isActivated ());
+            display.addSendsElement (topMenu, isTopMenuOn, layer.doesExist () ? layer.getName () : "", ChannelType.LAYER, bank.getItem (offset + i).getColor (), layer.isSelected (), sendData, false, layer.isActivated (), layer.isActivated ());
         }
     }
 

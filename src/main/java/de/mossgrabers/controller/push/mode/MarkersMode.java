@@ -4,13 +4,13 @@
 
 package de.mossgrabers.controller.push.mode;
 
+import de.mossgrabers.controller.push.controller.Push1Display;
 import de.mossgrabers.controller.push.controller.PushControlSurface;
-import de.mossgrabers.controller.push.controller.PushDisplay;
-import de.mossgrabers.framework.controller.display.Display;
+import de.mossgrabers.framework.controller.display.IGraphicDisplay;
+import de.mossgrabers.framework.controller.display.ITextDisplay;
 import de.mossgrabers.framework.daw.IMarkerBank;
 import de.mossgrabers.framework.daw.IModel;
 import de.mossgrabers.framework.daw.data.IMarker;
-import de.mossgrabers.framework.graphics.display.DisplayModel;
 import de.mossgrabers.framework.mode.AbstractMode;
 import de.mossgrabers.framework.utils.ButtonEvent;
 import de.mossgrabers.framework.utils.StringUtils;
@@ -99,40 +99,35 @@ public class MarkersMode extends BaseMode
 
     /** {@inheritDoc} */
     @Override
-    public void updateDisplay1 ()
+    public void updateDisplay1 (final ITextDisplay display)
     {
-        final Display d = this.surface.getDisplay ().clear ();
-
         final boolean canEditMarkers = this.model.getHost ().canEditMarkers ();
         final IMarkerBank markerBank = this.model.getMarkerBank ();
 
-        d.setCell (2, 0, "Markers:");
+        display.setCell (2, 0, "Markers:");
 
         for (int i = 0; i < 8; i++)
         {
             if (canEditMarkers)
             {
                 final boolean isMenuTopSelected = i == 6 && !this.actionModeLaunch || i == 7 && this.actionModeLaunch;
-                d.setCell (0, i, (isMenuTopSelected ? PushDisplay.SELECT_ARROW : "") + EDIT_MENU[i]);
+                display.setCell (0, i, (isMenuTopSelected ? Push1Display.SELECT_ARROW : "") + EDIT_MENU[i]);
             }
 
             final IMarker marker = markerBank.getItem (i);
             if (marker.doesExist ())
-                d.setCell (3, i, StringUtils.shortenAndFixASCII (marker.getName (), 8));
+                display.setCell (3, i, StringUtils.shortenAndFixASCII (marker.getName (), 8));
         }
 
         if (canEditMarkers)
-            d.setCell (0, 5, "Action:");
-
-        d.allDone ();
+            display.setCell (0, 5, "Action:");
     }
 
 
     /** {@inheritDoc} */
     @Override
-    public void updateDisplay2 ()
+    public void updateDisplay2 (final IGraphicDisplay display)
     {
-        final DisplayModel message = this.surface.getDisplay ().getModel ();
         final boolean canEditMarkers = this.model.getHost ().canEditMarkers ();
         final IMarkerBank markerBank = this.model.getMarkerBank ();
         for (int i = 0; i < 8; i++)
@@ -142,9 +137,8 @@ public class MarkersMode extends BaseMode
             final String headerBottomName = i == 0 ? "Markers" : "";
             final String headerTopName = canEditMarkers && i == 6 ? "Action" : "";
             final boolean isMenuTopSelected = i == 6 && !this.actionModeLaunch || i == 7 && this.actionModeLaunch;
-            message.addOptionElement (headerTopName, menuTopName, isMenuTopSelected, null, headerBottomName, marker.doesExist () ? marker.getName (12) : "", false, marker.getColor (), false);
+            display.addOptionElement (headerTopName, menuTopName, isMenuTopSelected, null, headerBottomName, marker.doesExist () ? marker.getName (12) : "", false, marker.getColor (), false);
         }
-        message.send ();
     }
 
 

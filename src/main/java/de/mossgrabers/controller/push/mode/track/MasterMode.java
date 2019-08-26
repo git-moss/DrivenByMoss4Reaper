@@ -9,14 +9,14 @@ import de.mossgrabers.controller.push.controller.PushControlSurface;
 import de.mossgrabers.controller.push.mode.BaseMode;
 import de.mossgrabers.framework.command.TriggerCommandID;
 import de.mossgrabers.framework.controller.IValueChanger;
-import de.mossgrabers.framework.controller.display.Display;
 import de.mossgrabers.framework.controller.display.Format;
+import de.mossgrabers.framework.controller.display.IGraphicDisplay;
+import de.mossgrabers.framework.controller.display.ITextDisplay;
 import de.mossgrabers.framework.daw.IBank;
 import de.mossgrabers.framework.daw.IModel;
 import de.mossgrabers.framework.daw.data.IItem;
 import de.mossgrabers.framework.daw.data.IMasterTrack;
 import de.mossgrabers.framework.daw.resource.ChannelType;
-import de.mossgrabers.framework.graphics.display.DisplayModel;
 import de.mossgrabers.framework.mode.AbstractMode;
 import de.mossgrabers.framework.utils.ButtonEvent;
 
@@ -99,34 +99,32 @@ public class MasterMode extends BaseMode
 
     /** {@inheritDoc} */
     @Override
-    public void updateDisplay1 ()
+    public void updateDisplay1 (final ITextDisplay display)
     {
-        final Display d = this.surface.getDisplay ();
         final IMasterTrack master = this.model.getMasterTrack ();
-        d.setRow (0, MasterMode.PARAM_NAMES).setCell (1, 0, master.getVolumeStr (8)).setCell (1, 1, master.getPanStr (8));
-        d.clearCell (1, 2).clearCell (1, 3).setBlock (1, 2, "Audio Engine").setBlock (1, 3, this.model.getProject ().getName ()).done (1);
-        d.setCell (2, 0, this.surface.getConfiguration ().isEnableVUMeters () ? master.getVu () : master.getVolume (), Format.FORMAT_VALUE);
-        d.setCell (2, 1, master.getPan (), Format.FORMAT_PAN).clearCell (2, 2).clearCell (2, 3).clearCell (2, 4).clearCell (2, 5).clearCell (2, 6).clearCell (2, 7).done (2);
-        d.setCell (3, 0, master.getName ()).clearCell (3, 1).clearCell (3, 2).clearCell (3, 3).setCell (3, 4, this.model.getApplication ().isEngineActive () ? "Active" : "Off");
-        d.clearCell (3, 5).setCell (3, 6, "Previous").setCell (3, 7, "Next").done (3);
+        display.setRow (0, MasterMode.PARAM_NAMES).setCell (1, 0, master.getVolumeStr (8)).setCell (1, 1, master.getPanStr (8));
+        display.setBlock (1, 2, "Audio Engine").setBlock (1, 3, this.model.getProject ().getName ());
+        display.setCell (2, 0, this.surface.getConfiguration ().isEnableVUMeters () ? master.getVu () : master.getVolume (), Format.FORMAT_VALUE);
+        display.setCell (2, 1, master.getPan (), Format.FORMAT_PAN);
+        display.setCell (3, 0, master.getName ()).setCell (3, 4, this.model.getApplication ().isEngineActive () ? "Active" : "Off");
+        display.setCell (3, 6, "Previous").setCell (3, 7, "Next");
     }
 
 
     /** {@inheritDoc} */
     @Override
-    public void updateDisplay2 ()
+    public void updateDisplay2 (final IGraphicDisplay display)
     {
         final IMasterTrack master = this.model.getMasterTrack ();
         final IValueChanger valueChanger = this.model.getValueChanger ();
-        final DisplayModel message = this.surface.getDisplay ().getModel ();
         final boolean enableVUMeters = this.surface.getConfiguration ().isEnableVUMeters ();
         final int vuR = valueChanger.toDisplayValue (enableVUMeters ? master.getVuRight () : 0);
         final int vuL = valueChanger.toDisplayValue (enableVUMeters ? master.getVuLeft () : 0);
-        message.addChannelElement ("Volume", false, master.getName (), ChannelType.MASTER, master.getColor (), master.isSelected (), valueChanger.toDisplayValue (master.getVolume ()), valueChanger.toDisplayValue (master.getModulatedVolume ()), this.isKnobTouched[0] ? master.getVolumeStr (8) : "", valueChanger.toDisplayValue (master.getPan ()), valueChanger.toDisplayValue (master.getModulatedPan ()), this.isKnobTouched[1] ? master.getPanStr (8) : "", vuL, vuR, master.isMute (), master.isSolo (), master.isRecArm (), master.isActivated (), 0);
+        display.addChannelElement ("Volume", false, master.getName (), ChannelType.MASTER, master.getColor (), master.isSelected (), valueChanger.toDisplayValue (master.getVolume ()), valueChanger.toDisplayValue (master.getModulatedVolume ()), this.isKnobTouched[0] ? master.getVolumeStr (8) : "", valueChanger.toDisplayValue (master.getPan ()), valueChanger.toDisplayValue (master.getModulatedPan ()), this.isKnobTouched[1] ? master.getPanStr (8) : "", vuL, vuR, master.isMute (), master.isSolo (), master.isRecArm (), master.isActivated (), 0);
 
         for (int i = 1; i < 4; i++)
         {
-            message.addChannelSelectorElement (i == 1 ? "Pan" : "", false, "", null, new double []
+            display.addChannelSelectorElement (i == 1 ? "Pan" : "", false, "", null, new double []
             {
                 0.0,
                 0.0,
@@ -134,11 +132,10 @@ public class MasterMode extends BaseMode
             }, false, master.isActivated ());
         }
 
-        message.addOptionElement ("", "", false, "Audio Engine", this.model.getApplication ().isEngineActive () ? "Active" : "Off", false, false);
-        message.addOptionElement ("", "", false, "", "", false, false);
-        message.addOptionElement ("Project:", "", false, this.model.getProject ().getName (), "Previous", false, false);
-        message.addOptionElement ("", "", false, "", "Next", false, false);
-        message.send ();
+        display.addOptionElement ("", "", false, "Audio Engine", this.model.getApplication ().isEngineActive () ? "Active" : "Off", false, false);
+        display.addOptionElement ("", "", false, "", "", false, false);
+        display.addOptionElement ("Project:", "", false, this.model.getProject ().getName (), "Previous", false, false);
+        display.addOptionElement ("", "", false, "", "Next", false, false);
     }
 
 
