@@ -13,6 +13,9 @@ import de.mossgrabers.reaper.framework.daw.DataSetupEx;
 import de.mossgrabers.reaper.framework.daw.SlotBankImpl;
 import de.mossgrabers.reaper.framework.daw.TrackBankImpl;
 
+import java.util.EnumMap;
+import java.util.Map;
+
 
 /**
  * The data of a track.
@@ -22,33 +25,45 @@ import de.mossgrabers.reaper.framework.daw.TrackBankImpl;
 public class TrackImpl extends ChannelImpl implements ITrack
 {
     /** Record monitoring is off. */
-    public static final int               MONITOR_OFF      = 0;
+    public static final int                              MONITOR_OFF      = 0;
     /** Record monitoring is on. */
-    public static final int               MONITOR_ON       = 1;
+    public static final int                              MONITOR_ON       = 1;
     /** Record monitoring is automatic. */
-    public static final int               MONITOR_AUTO     = 2;
+    public static final int                              MONITOR_AUTO     = 2;
 
     /** Automation write is trim. */
-    public static final String            AUTOMATION_TRIM  = "trim";
+    public static final String                           AUTOMATION_TRIM  = "trim";
     /** Automation write is read. */
-    public static final String            AUTOMATION_READ  = "read";
+    public static final String                           AUTOMATION_READ  = "read";
     /** Automation write is touch. */
-    public static final String            AUTOMATION_TOUCH = "touch";
+    public static final String                           AUTOMATION_TOUCH = "touch";
     /** Automation write is latch. */
-    public static final String            AUTOMATION_LATCH = "latch";
+    public static final String                           AUTOMATION_LATCH = "latch";
     /** Automation write is write. */
-    public static final String            AUTOMATION_WRITE = "write";
+    public static final String                           AUTOMATION_WRITE = "write";
+
+    private final static Map<RecordQuantization, Double> QUANT_MAP        = new EnumMap<> (RecordQuantization.class);
+    static
+    {
+        QUANT_MAP.put (RecordQuantization.RES_OFF, Double.valueOf (0));
+        QUANT_MAP.put (RecordQuantization.RES_1_32, Double.valueOf (0.125));
+        QUANT_MAP.put (RecordQuantization.RES_1_16, Double.valueOf (0.25));
+        QUANT_MAP.put (RecordQuantization.RES_1_8, Double.valueOf (0.5));
+        QUANT_MAP.put (RecordQuantization.RES_1_4, Double.valueOf (1));
+    }
 
     protected final AbstractTrackBankImpl trackBank;
 
     private boolean                       isRecArm;
     private boolean                       monitor;
     private boolean                       autoMonitor;
-    private String                        automation       = AUTOMATION_TRIM;
+    private String                        automation = AUTOMATION_TRIM;
     private final ISlotBank               slotBank;
     private boolean                       isNoteRepeat;
     private double                        noteRepeatPeriod;
     private int                           depth;
+    private boolean                       recordQuantizationNoteLength;
+    private RecordQuantization            recordQuantization;
 
 
     /**
@@ -66,7 +81,6 @@ public class TrackImpl extends ChannelImpl implements ITrack
         super (dataSetup, index, numSends);
 
         this.trackBank = trackBank;
-
         this.slotBank = new SlotBankImpl (dataSetup, index, numScenes);
     }
 
@@ -412,8 +426,7 @@ public class TrackImpl extends ChannelImpl implements ITrack
     @Override
     public boolean isRecordQuantizationNoteLength ()
     {
-        // TODO Auto-generated method stub
-        return false;
+        return this.recordQuantizationNoteLength;
     }
 
 
@@ -421,8 +434,20 @@ public class TrackImpl extends ChannelImpl implements ITrack
     @Override
     public void toggleRecordQuantizationNoteLength ()
     {
-        // TODO Auto-generated method stub
+        final boolean isEnabled = !this.recordQuantizationNoteLength;
+        this.setRecordQuantizationNoteLengthState (isEnabled);
+        this.sendTrackOSC ("inQuantLengthEnabled", isEnabled ? 1 : 0);
+    }
 
+
+    /**
+     * Dis-/enable the record quantization length.
+     *
+     * @param isEnabled True to enable
+     */
+    public void setRecordQuantizationNoteLengthState (final boolean isEnabled)
+    {
+        this.recordQuantizationNoteLength = isEnabled;
     }
 
 
@@ -430,8 +455,7 @@ public class TrackImpl extends ChannelImpl implements ITrack
     @Override
     public RecordQuantization getRecordQuantizationGrid ()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return this.recordQuantization;
     }
 
 
@@ -439,9 +463,42 @@ public class TrackImpl extends ChannelImpl implements ITrack
     @Override
     public void setRecordQuantizationGrid (final RecordQuantization recordQuantization)
     {
-        // TODO
-        // this.setRecordQuantizationGridState (value);
-        // this.sendTrackOSC ("inQuantEnabled", this.autoMonitor);
+        this.setRecordQuantizationGridState (recordQuantization);
+        this.sendTrackOSC ("inQuantResolution", QUANT_MAP.get (recordQuantization).doubleValue ());
+    }
+
+
+    /**
+     * Set the record quantization grid resolution. If the resolution is not supported the closest
+     * resolution is selected.
+     *
+     * @param resolutionValue The value to set
+     */
+    public void setRecordQuantizationGrid (final double resolutionValue)
+    {
+        double diff = 1;
+        RecordQuantization result = RecordQuantization.RES_OFF;
+        for (final RecordQuantization rq: RecordQuantization.values ())
+        {
+            final double newDiff = Math.abs (QUANT_MAP.get (rq).doubleValue () - resolutionValue);
+            if (newDiff < diff)
+            {
+                result = rq;
+                diff = newDiff;
+            }
+        }
+        this.setRecordQuantizationGridState (result);
+    }
+
+
+    /**
+     * Set the record quantization grid.
+     *
+     * @param recordQuantization The value to set
+     */
+    public void setRecordQuantizationGridState (final RecordQuantization recordQuantization)
+    {
+        this.recordQuantization = recordQuantization;
     }
 
 

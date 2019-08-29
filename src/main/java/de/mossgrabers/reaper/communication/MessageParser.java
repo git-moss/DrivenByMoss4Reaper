@@ -398,6 +398,14 @@ public class MessageParser
                     tb.handleNotes (track.getPosition (), Note.parseNotes (value));
                 break;
 
+            case "inQuantLengthEnabled":
+                track.setRecordQuantizationNoteLengthState (Double.parseDouble (value) > 0);
+                break;
+
+            case "inQuantResolution":
+                track.setRecordQuantizationGrid (Double.parseDouble (value));
+                break;
+
             default:
                 this.host.error ("Unhandled Track Parameter: " + command);
                 break;
