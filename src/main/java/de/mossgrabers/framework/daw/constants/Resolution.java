@@ -122,12 +122,18 @@ public enum Resolution
     public static int getMatch (final double value)
     {
         final Resolution [] resolutions = values ();
+        double min = 1.0;
+        int result = 0;
         for (int i = 0; i < resolutions.length; i++)
         {
-            if (Math.abs (value - getValueAt (i)) < 0.001)
-                return i;
+            final double diff = Math.abs (value - getValueAt (i));
+            if (diff < min)
+            {
+                min = diff;
+                result = i;
+            }
         }
-        return 0;
+        return result;
     }
 
 

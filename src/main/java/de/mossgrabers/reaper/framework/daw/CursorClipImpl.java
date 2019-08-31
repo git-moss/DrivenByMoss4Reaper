@@ -6,6 +6,7 @@ package de.mossgrabers.reaper.framework.daw;
 
 import de.mossgrabers.framework.daw.INoteClip;
 import de.mossgrabers.framework.daw.IStepInfo;
+import de.mossgrabers.framework.daw.constants.TransportConstants;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -332,7 +333,7 @@ public class CursorClipImpl extends BaseImpl implements INoteClip
 
     /** {@inheritDoc} */
     @Override
-    public IStepInfo getStep (final int step, final int row)
+    public StepInfoImpl getStep (final int step, final int row)
     {
         synchronized (this.notes)
         {
@@ -355,23 +356,7 @@ public class CursorClipImpl extends BaseImpl implements INoteClip
     public void setStep (final int step, final int row, final int velocity, final double duration)
     {
         final double pos = (step + this.editPage * this.numSteps) * this.stepLength;
-        this.sendClipOSC (PATH_NOTE + row + "/set", pos + " " + this.stepLength + " " + velocity);
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void updateStepDuration (final int step, final int row, final double duration)
-    {
-        // TODO Implement
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void updateStepVelocity (final int step, final int row, final double velocity)
-    {
-        // TODO Implement
+        this.sendClipOSC (PATH_NOTE + row + "/set", pos + " " + duration + " " + velocity);
     }
 
 
@@ -379,8 +364,31 @@ public class CursorClipImpl extends BaseImpl implements INoteClip
     @Override
     public void changeStepDuration (final int step, final int row, final int control)
     {
-        // TODO Auto-generated method stub
+        final IStepInfo info = this.getStep (step, row);
+        final double frac = this.valueChanger.isSlow () ? TransportConstants.INC_FRACTION_TIME_SLOW / 16.0 : TransportConstants.INC_FRACTION_TIME_SLOW;
+        this.updateStepDuration (step, row, Math.max (0, info.getDuration () + this.valueChanger.calcKnobSpeed (control, frac)));
+    }
 
+
+    /** {@inheritDoc} */
+    @Override
+    public void updateStepDuration (final int step, final int row, final double duration)
+    {
+        // Duration of 0 fully deletes the note
+        if (duration == 0)
+            return;
+
+        final StepInfoImpl stepInfo = this.getStep (step, row);
+        if (stepInfo.getState () == IStepInfo.NOTE_OFF)
+            return;
+
+        stepInfo.setDuration (duration);
+        if (stepInfo.isEditing ())
+            return;
+
+        final double velocity = stepInfo.getVelocity ();
+        this.clearStep (step, row);
+        this.setStep (step, row, (int) (velocity * 127), duration);
     }
 
 
@@ -388,17 +396,31 @@ public class CursorClipImpl extends BaseImpl implements INoteClip
     @Override
     public void changeStepVelocity (final int step, final int row, final int control)
     {
-        // TODO Auto-generated method stub
-
+        final IStepInfo info = this.getStep (step, row);
+        final double velocity = info.getVelocity () + this.valueChanger.toNormalizedValue ((int) this.valueChanger.calcKnobSpeed (control));
+        this.updateStepVelocity (step, row, Math.min (1.0, Math.max (0, velocity)));
     }
 
 
     /** {@inheritDoc} */
     @Override
-    public void updateStepReleaseVelocity (final int step, final int row, final double releaseVelocity)
+    public void updateStepVelocity (final int step, final int row, final double velocity)
     {
-        // TODO Auto-generated method stub
+        // Velocity of 0 fully deletes the note
+        if (velocity == 0)
+            return;
 
+        final StepInfoImpl stepInfo = this.getStep (step, row);
+        if (stepInfo.getState () == IStepInfo.NOTE_OFF)
+            return;
+
+        stepInfo.setVelocity (velocity);
+        if (stepInfo.isEditing ())
+            return;
+
+        final double duration = stepInfo.getDuration ();
+        this.clearStep (step, row);
+        this.setStep (step, row, (int) (velocity * 127), duration);
     }
 
 
@@ -406,17 +428,15 @@ public class CursorClipImpl extends BaseImpl implements INoteClip
     @Override
     public void changeStepReleaseVelocity (final int step, final int row, final int control)
     {
-        // TODO Auto-generated method stub
-
+        // Not supported
     }
 
 
     /** {@inheritDoc} */
     @Override
-    public void updateStepPressure (final int step, final int row, final double pressure)
+    public void updateStepReleaseVelocity (final int step, final int row, final double releaseVelocity)
     {
-        // TODO Auto-generated method stub
-
+        // Not supported
     }
 
 
@@ -424,17 +444,15 @@ public class CursorClipImpl extends BaseImpl implements INoteClip
     @Override
     public void changeStepPressure (final int step, final int row, final int control)
     {
-        // TODO Auto-generated method stub
-
+        // Not supported
     }
 
 
     /** {@inheritDoc} */
     @Override
-    public void updateStepTimbre (final int step, final int row, final double timbre)
+    public void updateStepPressure (final int step, final int row, final double pressure)
     {
-        // TODO Auto-generated method stub
-
+        // Not supported
     }
 
 
@@ -442,17 +460,15 @@ public class CursorClipImpl extends BaseImpl implements INoteClip
     @Override
     public void changeStepTimbre (final int step, final int row, final int control)
     {
-        // TODO Auto-generated method stub
-
+        // Not supported
     }
 
 
     /** {@inheritDoc} */
     @Override
-    public void updateStepPan (final int step, final int row, final double panorama)
+    public void updateStepTimbre (final int step, final int row, final double timbre)
     {
-        // TODO Auto-generated method stub
-
+        // Not supported
     }
 
 
@@ -460,17 +476,15 @@ public class CursorClipImpl extends BaseImpl implements INoteClip
     @Override
     public void changeStepPan (final int step, final int row, final int control)
     {
-        // TODO Auto-generated method stub
-
+        // Not supported
     }
 
 
     /** {@inheritDoc} */
     @Override
-    public void updateStepTranspose (final int step, final int row, final double semitones)
+    public void updateStepPan (final int step, final int row, final double panorama)
     {
-        // TODO Auto-generated method stub
-
+        // Not supported
     }
 
 
@@ -478,8 +492,15 @@ public class CursorClipImpl extends BaseImpl implements INoteClip
     @Override
     public void changeStepTranspose (final int step, final int row, final int control)
     {
-        // TODO Auto-generated method stub
+        // Not supported
+    }
 
+
+    /** {@inheritDoc} */
+    @Override
+    public void updateStepTranspose (final int step, final int row, final double semitones)
+    {
+        // Not supported
     }
 
 
@@ -487,8 +508,44 @@ public class CursorClipImpl extends BaseImpl implements INoteClip
     @Override
     public void edit (final int step, final int row, final boolean enable)
     {
-        // TODO Auto-generated method stub
+        final StepInfoImpl stepInfo = this.getStep (step, row);
+        if (enable)
+        {
+            stepInfo.setEditing (true);
+            this.delayedUpdate (step, row);
+            return;
+        }
 
+        this.sendClipData (step, row);
+        stepInfo.setEditing (false);
+
+        this.updateNoteData ();
+    }
+
+
+    private void delayedUpdate (final int step, final int row)
+    {
+        final StepInfoImpl stepInfo = this.getStep (step, row);
+        if (!stepInfo.isEditing ())
+            return;
+        this.sendClipData (step, row);
+        this.host.scheduleTask ( () -> delayedUpdate (step, row), 100);
+    }
+
+
+    /**
+     * Update the locally changed step data in Reaper.
+     *
+     * @param step The step of the clip
+     * @param row The row of the clip
+     */
+    private void sendClipData (final int step, final int row)
+    {
+        final IStepInfo stepInfo = this.data[step][row];
+        final double duration = stepInfo.getDuration ();
+        final double velocity = stepInfo.getVelocity ();
+        this.clearStep (step, row);
+        this.setStep (step, row, (int) (velocity * 127), duration);
     }
 
 
@@ -704,7 +761,11 @@ public class CursorClipImpl extends BaseImpl implements INoteClip
             for (int row = 0; row < this.numRows; row++)
             {
                 for (int step = 0; step < this.numSteps; step++)
-                    this.data[step][row].setState (0);
+                {
+                    final StepInfoImpl stepInfo = this.data[step][row];
+                    if (!stepInfo.isEditing ())
+                        stepInfo.setState (IStepInfo.NOTE_OFF);
+                }
             }
 
             for (final Note note: this.notes)
@@ -719,11 +780,18 @@ public class CursorClipImpl extends BaseImpl implements INoteClip
                 if (relToPage < 0 || relToPage >= this.numSteps)
                     continue;
 
-                // 0: not set, 1: note continues playing, 2: start of note
-                this.data[relToPage][row].setState (2);
+                final StepInfoImpl stepInfo = this.data[relToPage][row];
+                if (stepInfo.isEditing ())
+                    continue;
+
+                stepInfo.setState (IStepInfo.NOTE_START);
+                stepInfo.setDuration (note.getEnd () - note.getStart ());
+                stepInfo.setVelocity (note.getVelocity () / 127.0);
+
+                // Extend longer notes
                 final int endStep = Math.min ((int) Math.floor (note.getEnd () / this.stepLength) - pageOffset, this.numSteps);
                 for (int i = relToPage + 1; i < endStep; i++)
-                    this.data[i][row].setState (1);
+                    this.data[i][row].setState (IStepInfo.NOTE_CONTINUE);
             }
 
             this.calcPages ();

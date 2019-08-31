@@ -1,7 +1,25 @@
 8.00 (unreleased)
-- TODO add DBM changes
-- Fixed: Stepping out of track folders did skip a level
-- Fixed: Changing track selection did not correctly adjust the track bank page on the device (except Push)
+* All devices
+  * Fixed: Changing track selection did not correctly adjust the track bank page on the device (except Push)
+* Komplete Kontrol A-Series / M32
+  * Fixed: Track name was not displayed
+* Novation Remote SL Mk III
+  * New: Added setting to disable the faders (to prevent accidently changing volume)
+* Push 1/2
+  * New: Changed layout of Repeat configuration settings (long press Repeat button)
+  * New: Changed the layout of the quantize/groove mode
+  * New: Implemented editing of note parameters: length and velocity
+  * New: Session: The octave and page buttons navigate the pages of the session grid
+  * New: Push 1: Show longer track/layer names in Details mode
+  * New: Push 1: Indicate volume with one bar when VU is active
+  * New: Push 2: Improved layout of transport mode
+  * New: Push 2: Only redraw display image if something has changed
+  * Fixed: Stepping out of track folders did skip a level
+  * Fixed: Do not close transport mode when accidently tempo or position knob is touched.
+  * Fixed: Push 1: Groove mode crashed
+  * Fixed: Push 1: Layout of panorama on max right
+  * Fixed: Push 1: Send modes could not be accessed
+  * Fixed: Push 2: Notification messages were not shown on the display
 
 7.05
 - Generic Flexi:

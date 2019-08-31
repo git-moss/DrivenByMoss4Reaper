@@ -205,6 +205,14 @@ public abstract class AbstractGraphicDisplay implements IGraphicDisplay
 
     /** {@inheritDoc} */
     @Override
+    public void addEmptyElement (final boolean hasSmallEmptyMenu)
+    {
+        this.addOptionElement ("", " ", false, "", "", false, true);
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
     public void addChannelSelectorElement (final String topMenu, final boolean isTopMenuOn, final String bottomMenu, final ChannelType type, final double [] bottomMenuColor, final boolean isBottomMenuOn, final boolean isActive)
     {
         this.columns.add (new ChannelSelectComponent (type, topMenu, isTopMenuOn, bottomMenu, new ColorEx (bottomMenuColor[0], bottomMenuColor[1], bottomMenuColor[2]), isBottomMenuOn, isActive));

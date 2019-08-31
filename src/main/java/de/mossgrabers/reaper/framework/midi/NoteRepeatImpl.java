@@ -61,7 +61,7 @@ public class NoteRepeatImpl implements INoteRepeat
     @Override
     public void setNoteLength (final ITrack track, final double length)
     {
-        // TODO Auto-generated method stub
+        // Not supported
     }
 
 
@@ -69,7 +69,7 @@ public class NoteRepeatImpl implements INoteRepeat
     @Override
     public double getNoteLength (final ITrack track)
     {
-        // TODO Auto-generated method stub
+        // Not supported
         return 0;
     }
 
@@ -78,7 +78,7 @@ public class NoteRepeatImpl implements INoteRepeat
     @Override
     public boolean isShuffle (final ITrack track)
     {
-        // TODO Auto-generated method stub
+        // Not supported
         return false;
     }
 
@@ -87,7 +87,7 @@ public class NoteRepeatImpl implements INoteRepeat
     @Override
     public void toggleShuffle (final ITrack track)
     {
-        // TODO Auto-generated method stub
+        // Not supported
     }
 
 
@@ -95,7 +95,7 @@ public class NoteRepeatImpl implements INoteRepeat
     @Override
     public boolean usePressure (final ITrack track)
     {
-        // TODO Auto-generated method stub
+        // Not supported
         return false;
     }
 
@@ -104,7 +104,7 @@ public class NoteRepeatImpl implements INoteRepeat
     @Override
     public void toggleUsePressure (final ITrack track)
     {
-        // TODO Auto-generated method stub
+        // Not supported
     }
 
 
@@ -112,7 +112,7 @@ public class NoteRepeatImpl implements INoteRepeat
     @Override
     public double getVelocityRamp (final ITrack track)
     {
-        // TODO Auto-generated method stub
+        // Not supported
         return 0;
     }
 
@@ -121,7 +121,7 @@ public class NoteRepeatImpl implements INoteRepeat
     @Override
     public String getVelocityRampStr (final ITrack track)
     {
-        // TODO Auto-generated method stub
+        // Not supported
         return null;
     }
 
@@ -130,7 +130,6 @@ public class NoteRepeatImpl implements INoteRepeat
     @Override
     public void setVelocityRamp (final ITrack track, final double value)
     {
-        // TODO Auto-generated method stub
-
+        // Not supported
     }
 }

@@ -42,7 +42,7 @@ public class TrackImpl extends ChannelImpl implements ITrack
     /** Automation write is write. */
     public static final String                           AUTOMATION_WRITE = "write";
 
-    private final static Map<RecordQuantization, Double> QUANT_MAP        = new EnumMap<> (RecordQuantization.class);
+    private static final Map<RecordQuantization, Double> QUANT_MAP        = new EnumMap<> (RecordQuantization.class);
     static
     {
         QUANT_MAP.put (RecordQuantization.RES_OFF, Double.valueOf (0));
@@ -434,9 +434,7 @@ public class TrackImpl extends ChannelImpl implements ITrack
     @Override
     public void toggleRecordQuantizationNoteLength ()
     {
-        final boolean isEnabled = !this.recordQuantizationNoteLength;
-        this.setRecordQuantizationNoteLengthState (isEnabled);
-        this.sendTrackOSC ("inQuantLengthEnabled", isEnabled ? 1 : 0);
+        // Not supported
     }
 
 

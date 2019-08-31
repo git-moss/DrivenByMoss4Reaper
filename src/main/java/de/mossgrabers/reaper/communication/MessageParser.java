@@ -36,7 +36,9 @@ import de.mossgrabers.reaper.framework.daw.data.SceneImpl;
 import de.mossgrabers.reaper.framework.daw.data.SendImpl;
 import de.mossgrabers.reaper.framework.daw.data.TrackImpl;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.LinkedBlockingDeque;
@@ -49,24 +51,24 @@ import java.util.concurrent.LinkedBlockingDeque;
  */
 public class MessageParser
 {
-    private static final String    TAG_COLOR  = "color";
-    private static final String    TAG_SELECT = "select";
-    private static final String    TAG_NUMBER = "number";
-    private static final String    TAG_COUNT  = "count";
-    private static final String    TAG_EXISTS = "exists";
-    private static final String    TAG_NAME   = "name";
+    private static final String          TAG_COLOR  = "color";
+    private static final String          TAG_SELECT = "select";
+    private static final String          TAG_NUMBER = "number";
+    private static final String          TAG_COUNT  = "count";
+    private static final String          TAG_EXISTS = "exists";
+    private static final String          TAG_NAME   = "name";
 
-    private final IControllerSetup controllerSetup;
+    private final IControllerSetup<?, ?> controllerSetup;
 
-    private final IHost            host;
-    private final IProject         project;
-    private final ApplicationImpl  application;
-    private final MasterTrackImpl  masterTrack;
-    private final TransportImpl    transport;
-    private final CursorDeviceImpl cursorDevice;
-    private final CursorDeviceImpl instrumentDevice;
-    private final IBrowser         browser;
-    private final IModel           model;
+    private final IHost                  host;
+    private final IProject               project;
+    private final ApplicationImpl        application;
+    private final MasterTrackImpl        masterTrack;
+    private final TransportImpl          transport;
+    private final CursorDeviceImpl       cursorDevice;
+    private final CursorDeviceImpl       instrumentDevice;
+    private final IBrowser               browser;
+    private final IModel                 model;
 
 
     /**
@@ -74,7 +76,7 @@ public class MessageParser
      *
      * @param controllerSetup The model
      */
-    public MessageParser (final IControllerSetup controllerSetup)
+    public MessageParser (final IControllerSetup<?, ?> controllerSetup)
     {
         this.controllerSetup = controllerSetup;
         this.model = controllerSetup.getModel ();
@@ -131,6 +133,7 @@ public class MessageParser
                 {
                     case TAG_NAME:
                         ((ProjectImpl) this.project).setName (value);
+                        this.host.scheduleTask ( () -> this.controllerSetup.getSurface ().getViewManager ().getActiveView ().updateNoteMapping (), 1000);
                         break;
                     case "engine":
                         this.application.setInternalEngineActive (Integer.parseInt (value) > 0);
@@ -754,7 +757,7 @@ public class MessageParser
                 break;
 
             case "notes":
-                modelImpl.setCursorClipNotes (Note.parseNotes (value));
+                modelImpl.setCursorClipNotes (parseNotes (value));
                 break;
 
             case "all":
@@ -781,5 +784,26 @@ public class MessageParser
         // Remove first empty element
         oscParts.poll ();
         return oscParts;
+    }
+
+
+    /**
+     * Parses notes from a string.
+     *
+     * @param notesStr Formatted like start1:end1:pitch1:velocity1;...;startN:endN:pitchN:velocityN;
+     * @return The parsed notes
+     */
+    public static List<Note> parseNotes (final String notesStr)
+    {
+        final List<Note> notes = new ArrayList<> ();
+        if (notesStr != null)
+        {
+            for (final String part: notesStr.trim ().split (";"))
+            {
+                final String [] noteParts = part.split (":");
+                notes.add (new Note (Double.parseDouble (noteParts[0]), Double.parseDouble (noteParts[1]), Integer.parseInt (noteParts[2]), Integer.parseInt (noteParts[3])));
+            }
+        }
+        return notes;
     }
 }

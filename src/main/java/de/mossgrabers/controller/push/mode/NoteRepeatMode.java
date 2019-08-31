@@ -10,7 +10,9 @@ import de.mossgrabers.framework.controller.IValueChanger;
 import de.mossgrabers.framework.controller.display.Format;
 import de.mossgrabers.framework.controller.display.IGraphicDisplay;
 import de.mossgrabers.framework.controller.display.ITextDisplay;
+import de.mossgrabers.framework.daw.IHost;
 import de.mossgrabers.framework.daw.IModel;
+import de.mossgrabers.framework.daw.constants.EditCapability;
 import de.mossgrabers.framework.daw.constants.Resolution;
 import de.mossgrabers.framework.daw.data.IParameter;
 import de.mossgrabers.framework.daw.data.ITrack;
@@ -28,6 +30,7 @@ import de.mossgrabers.framework.utils.Pair;
  */
 public class NoteRepeatMode extends BaseMode
 {
+    private final IHost       host;
     private final INoteRepeat noteRepeat;
 
 
@@ -42,6 +45,7 @@ public class NoteRepeatMode extends BaseMode
         super ("Note Repeat", surface, model);
 
         this.isTemporary = true;
+        this.host = this.model.getHost ();
 
         final INoteInput defaultNoteInput = surface.getInput ().getDefaultNoteInput ();
         this.noteRepeat = defaultNoteInput == null ? null : defaultNoteInput.getNoteRepeat ();
@@ -64,16 +68,21 @@ public class NoteRepeatMode extends BaseMode
 
             case 2:
             case 3:
-                final int sel2 = Resolution.change (Resolution.getMatch (this.noteRepeat.getNoteLength (selectedTrack)), this.model.getValueChanger ().calcKnobSpeed (value) > 0);
-                this.noteRepeat.setNoteLength (selectedTrack, Resolution.getValueAt (sel2));
+                if (this.host.canEdit (EditCapability.NOTE_REPEAT_LENGTH))
+                {
+                    final int sel2 = Resolution.change (Resolution.getMatch (this.noteRepeat.getNoteLength (selectedTrack)), this.model.getValueChanger ().calcKnobSpeed (value) > 0);
+                    this.noteRepeat.setNoteLength (selectedTrack, Resolution.getValueAt (sel2));
+                }
                 break;
 
             case 6:
-                this.model.getGroove ().getParameters ()[1].changeValue (value);
+                if (this.host.canEdit (EditCapability.NOTE_REPEAT_SWING))
+                    this.model.getGroove ().getParameters ()[1].changeValue (value);
                 break;
 
             case 7:
-                this.changeVelocityRamp (selectedTrack, value);
+                if (this.host.canEdit (EditCapability.NOTE_REPEAT_VELOCITY_RAMP))
+                    this.changeVelocityRamp (selectedTrack, value);
                 break;
 
             default:
@@ -93,9 +102,9 @@ public class NoteRepeatMode extends BaseMode
         {
             this.surface.setTriggerConsumed (this.surface.getDeleteTriggerId ());
 
-            if (index == 6)
+            if (index == 6 && this.host.canEdit (EditCapability.NOTE_REPEAT_SWING))
                 this.model.getGroove ().getParameters ()[1].resetValue ();
-            else if (index == 7)
+            else if (index == 7 && this.host.canEdit (EditCapability.NOTE_REPEAT_VELOCITY_RAMP))
                 this.noteRepeat.setVelocityRamp (this.model.getCurrentTrackBank ().getSelectedItem (), 0);
         }
     }
@@ -119,16 +128,21 @@ public class NoteRepeatMode extends BaseMode
 
             case 2:
             case 3:
-                final int sel2 = Resolution.change (Resolution.getMatch (this.noteRepeat.getNoteLength (selectedTrack)), index == 3);
-                this.noteRepeat.setNoteLength (selectedTrack, Resolution.getValueAt (sel2));
+                if (this.host.canEdit (EditCapability.NOTE_REPEAT_LENGTH))
+                {
+                    final int sel2 = Resolution.change (Resolution.getMatch (this.noteRepeat.getNoteLength (selectedTrack)), index == 3);
+                    this.noteRepeat.setNoteLength (selectedTrack, Resolution.getValueAt (sel2));
+                }
                 break;
 
             case 6:
-                this.noteRepeat.toggleShuffle (selectedTrack);
+                if (this.host.canEdit (EditCapability.NOTE_REPEAT_SWING))
+                    this.noteRepeat.toggleShuffle (selectedTrack);
                 break;
 
             case 7:
-                this.noteRepeat.toggleUsePressure (selectedTrack);
+                if (this.host.canEdit (EditCapability.NOTE_REPEAT_VELOCITY_RAMP))
+                    this.noteRepeat.toggleUsePressure (selectedTrack);
                 break;
 
             default:
@@ -144,14 +158,20 @@ public class NoteRepeatMode extends BaseMode
     {
         this.surface.updateTrigger (20, AbstractMode.BUTTON_COLOR_ON);
         this.surface.updateTrigger (21, AbstractMode.BUTTON_COLOR_ON);
-        this.surface.updateTrigger (22, AbstractMode.BUTTON_COLOR_ON);
-        this.surface.updateTrigger (23, AbstractMode.BUTTON_COLOR_ON);
+        this.surface.updateTrigger (22, this.host.canEdit (EditCapability.NOTE_REPEAT_LENGTH) ? AbstractMode.BUTTON_COLOR_ON : AbstractMode.BUTTON_COLOR_OFF);
+        this.surface.updateTrigger (23, this.host.canEdit (EditCapability.NOTE_REPEAT_LENGTH) ? AbstractMode.BUTTON_COLOR_ON : AbstractMode.BUTTON_COLOR_OFF);
 
         this.surface.updateTrigger (24, AbstractMode.BUTTON_COLOR_OFF);
         this.surface.updateTrigger (25, AbstractMode.BUTTON_COLOR_OFF);
         final ITrack selectedTrack = this.model.getCurrentTrackBank ().getSelectedItem ();
-        this.surface.updateTrigger (26, this.noteRepeat != null && this.noteRepeat.isShuffle (selectedTrack) ? AbstractMode.BUTTON_COLOR_HI : AbstractMode.BUTTON_COLOR_ON);
-        this.surface.updateTrigger (27, this.noteRepeat != null && this.noteRepeat.usePressure (selectedTrack) ? AbstractMode.BUTTON_COLOR_HI : AbstractMode.BUTTON_COLOR_ON);
+        if (this.host.canEdit (EditCapability.NOTE_REPEAT_SWING))
+            this.surface.updateTrigger (26, this.noteRepeat.isShuffle (selectedTrack) ? AbstractMode.BUTTON_COLOR_HI : AbstractMode.BUTTON_COLOR_ON);
+        else
+            this.surface.updateTrigger (26, AbstractMode.BUTTON_COLOR_OFF);
+        if (this.host.canEdit (EditCapability.NOTE_REPEAT_VELOCITY_RAMP))
+            this.surface.updateTrigger (27, this.noteRepeat.usePressure (selectedTrack) ? AbstractMode.BUTTON_COLOR_HI : AbstractMode.BUTTON_COLOR_ON);
+        else
+            this.surface.updateTrigger (27, AbstractMode.BUTTON_COLOR_OFF);
     }
 
 
@@ -170,26 +190,34 @@ public class NoteRepeatMode extends BaseMode
             pos++;
         }
 
-        display.setCell (0, 2, "Length:");
-        final int selLengthIndex = this.getSelectedNoteLengthIndex (selectedTrack);
-        pos = 0;
-        for (final Pair<String, Boolean> p: Push1Display.createMenuList (4, Resolution.getNames (), selLengthIndex))
+        if (this.host.canEdit (EditCapability.NOTE_REPEAT_LENGTH))
         {
-            display.setCell (pos, 3, (p.getValue ().booleanValue () ? Push1Display.SELECT_ARROW : " ") + p.getKey ());
-            pos++;
+            display.setCell (0, 2, "Length:");
+            final int selLengthIndex = this.getSelectedNoteLengthIndex (selectedTrack);
+            pos = 0;
+            for (final Pair<String, Boolean> p: Push1Display.createMenuList (4, Resolution.getNames (), selLengthIndex))
+            {
+                display.setCell (pos, 3, (p.getValue ().booleanValue () ? Push1Display.SELECT_ARROW : " ") + p.getKey ());
+                pos++;
+            }
         }
 
-        final IParameter shuffleParam = this.model.getGroove ().getParameters ()[1];
-        display.setCell (0, 6, shuffleParam.getName (10));
-        display.setCell (1, 6, shuffleParam.getDisplayedValue (8));
-        display.setCell (2, 6, shuffleParam.getValue (), Format.FORMAT_VALUE);
+        if (this.host.canEdit (EditCapability.NOTE_REPEAT_SWING))
+        {
+            final IParameter shuffleParam = this.model.getGroove ().getParameters ()[1];
+            display.setCell (0, 6, shuffleParam.getName (10));
+            display.setCell (1, 6, shuffleParam.getDisplayedValue (8));
+            display.setCell (2, 6, shuffleParam.getValue (), Format.FORMAT_VALUE);
+            display.setCell (3, 6, "Shuffle");
+        }
 
-        display.setCell (0, 7, "Accent");
-        display.setCell (1, 7, this.noteRepeat.getVelocityRampStr (selectedTrack));
-        display.setCell (2, 7, this.getRampDisplayValue (selectedTrack), Format.FORMAT_VALUE);
-
-        display.setCell (3, 6, "Shuffle");
-        display.setCell (3, 7, "Pressure");
+        if (this.host.canEdit (EditCapability.NOTE_REPEAT_VELOCITY_RAMP))
+        {
+            display.setCell (0, 7, "Vel.Ramp");
+            display.setCell (1, 7, this.noteRepeat.getVelocityRampStr (selectedTrack));
+            display.setCell (2, 7, this.getRampDisplayValue (selectedTrack), Format.FORMAT_VALUE);
+            display.setCell (3, 7, "Pressure");
+        }
     }
 
 
@@ -206,16 +234,33 @@ public class NoteRepeatMode extends BaseMode
         final int selPeriodIndex = this.getSelectedPeriodIndex (selectedTrack);
         display.addListElement (6, Resolution.getNames (), selPeriodIndex);
 
-        display.addOptionElement ("  Length", "", false, "", "", false, false);
-        final int selLengthIndex = this.getSelectedNoteLengthIndex (selectedTrack);
-        display.addListElement (6, Resolution.getNames (), selLengthIndex);
+        if (this.host.canEdit (EditCapability.NOTE_REPEAT_LENGTH))
+        {
+            display.addOptionElement ("  Length", "", false, "", "", false, false);
+            final int selLengthIndex = this.getSelectedNoteLengthIndex (selectedTrack);
+            display.addListElement (6, Resolution.getNames (), selLengthIndex);
+        }
+        else
+        {
+            display.addEmptyElement ();
+            display.addEmptyElement ();
+        }
 
         display.addEmptyElement ();
         display.addEmptyElement ();
 
-        final IParameter shuffleParam = this.model.getGroove ().getParameters ()[1];
-        display.addParameterElementWithPlainMenu ("", false, "Shuffle", null, this.noteRepeat.isShuffle (selectedTrack), shuffleParam.getName (10), shuffleParam.getValue (), shuffleParam.getDisplayedValue (8), this.isKnobTouched[6], -1);
-        display.addParameterElementWithPlainMenu ("", false, "Pressure", null, this.noteRepeat.usePressure (selectedTrack), "Vel. Ramp", this.getRampDisplayValue (selectedTrack), this.noteRepeat.getVelocityRampStr (selectedTrack), this.isKnobTouched[7], -1);
+        if (this.host.canEdit (EditCapability.NOTE_REPEAT_SWING))
+        {
+            final IParameter shuffleParam = this.model.getGroove ().getParameters ()[1];
+            display.addParameterElementWithPlainMenu ("", false, "Shuffle", null, this.noteRepeat.isShuffle (selectedTrack), shuffleParam.getName (10), shuffleParam.getValue (), shuffleParam.getDisplayedValue (8), this.isKnobTouched[6], -1);
+        }
+        else
+            display.addEmptyElement ();
+
+        if (this.host.canEdit (EditCapability.NOTE_REPEAT_VELOCITY_RAMP))
+            display.addParameterElementWithPlainMenu ("", false, "Pressure", null, this.noteRepeat.usePressure (selectedTrack), "Vel. Ramp", this.getRampDisplayValue (selectedTrack), this.noteRepeat.getVelocityRampStr (selectedTrack), this.isKnobTouched[7], -1);
+        else
+            display.addEmptyElement ();
     }
 
 

@@ -6,6 +6,7 @@ package de.mossgrabers.reaper.framework.daw;
 
 import de.mossgrabers.framework.daw.IHost;
 import de.mossgrabers.framework.daw.IMemoryBlock;
+import de.mossgrabers.framework.daw.constants.EditCapability;
 import de.mossgrabers.framework.graphics.IBitmap;
 import de.mossgrabers.framework.graphics.IImage;
 import de.mossgrabers.framework.osc.IOpenSoundControlCallback;
@@ -118,9 +119,31 @@ public class HostImpl implements IHost
 
     /** {@inheritDoc} */
     @Override
-    public boolean canEditMarkers ()
+    public boolean canEdit (final EditCapability capability)
     {
-        return true;
+        switch (capability)
+        {
+            case MARKERS:
+                return true;
+
+            case NOTE_REPEAT_LENGTH:
+            case NOTE_REPEAT_SWING:
+            case NOTE_REPEAT_VELOCITY_RAMP:
+                return false;
+
+            case NOTE_EDIT_RELEASE_VELOCITY:
+            case NOTE_EDIT_PRESSURE:
+            case NOTE_EDIT_TIMBRE:
+            case NOTE_EDIT_PANORAMA:
+            case NOTE_EDIT_TRANSPOSE:
+                return false;
+
+            case QUANTIZE_INPUT_NOTE_LENGTH:
+                return false;
+            case QUANTIZE_AMOUNT:
+                return false;
+        }
+        return false;
     }
 
 
@@ -130,7 +153,8 @@ public class HostImpl implements IHost
     {
         try
         {
-            this.executor.schedule (task, delay, TimeUnit.MILLISECONDS);
+            if (!this.executor.isShutdown ())
+                this.executor.schedule (task, delay, TimeUnit.MILLISECONDS);
         }
         catch (final java.util.concurrent.RejectedExecutionException ex)
         {

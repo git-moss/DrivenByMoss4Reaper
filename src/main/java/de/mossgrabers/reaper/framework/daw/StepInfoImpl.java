@@ -14,14 +14,16 @@ import de.mossgrabers.framework.daw.IStepInfo;
  */
 public class StepInfoImpl implements IStepInfo
 {
-    private int    state;
-    private double duration = 1.0 / 4.0; // 16th
-    private double velocity;
-    private double releaseVelocity;
-    private double pressure;
-    private double timbre;
-    private double pan;
-    private double transpose;
+    private int     state;
+    private double  duration = 1.0 / 4.0; // 16th
+    private double  velocity;
+    private double  releaseVelocity;
+    private double  pressure;
+    private double  timbre;
+    private double  pan;
+    private double  transpose;
+
+    private boolean isEditing;
 
 
     /**
@@ -94,6 +96,22 @@ public class StepInfoImpl implements IStepInfo
     public double getTranspose ()
     {
         return this.transpose;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean isEditing ()
+    {
+        return this.isEditing;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void setEditing (final boolean isEditing)
+    {
+        this.isEditing = isEditing;
     }
 
 

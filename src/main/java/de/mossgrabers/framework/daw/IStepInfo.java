@@ -81,4 +81,20 @@ public interface IStepInfo
      * @return The transposition of the note in semitones, from -24 to +24
      */
     double getTranspose ();
+
+
+    /**
+     * Check if the note is currently edited.
+     *
+     * @return True if editing is happening
+     */
+    boolean isEditing ();
+
+
+    /**
+     * Set that the note is currently edited.
+     * 
+     * @param isEditing True if editing is happening
+     */
+    void setEditing (boolean isEditing);
 }

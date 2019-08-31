@@ -9,6 +9,7 @@ import de.mossgrabers.controller.push.controller.PushControlSurface;
 import de.mossgrabers.framework.controller.display.IGraphicDisplay;
 import de.mossgrabers.framework.controller.display.ITextDisplay;
 import de.mossgrabers.framework.daw.IModel;
+import de.mossgrabers.framework.daw.resource.ChannelType;
 import de.mossgrabers.framework.mode.AbstractMode;
 import de.mossgrabers.framework.mode.Modes;
 import de.mossgrabers.framework.utils.ButtonEvent;
@@ -142,11 +143,11 @@ public class SetupMode extends BaseMode
 
         display.addOptionElement ("", "Setup", true, "", "", false, true);
         display.addOptionElement ("Brightness", "Info", false, "", "", false, true);
-        display.addParameterElement ("Display", displayBrightness * 1023 / 100, displayBrightness + "%", this.isKnobTouched[2], -1);
-        display.addParameterElement ("LEDs", ledBrightness * 1023 / 100, ledBrightness + "%", this.isKnobTouched[3], -1);
-        display.addOptionElement ("        Pads", "", false, "", "", false, false);
-        display.addParameterElement ("Sensitivity", padSensitivity * 1023 / 10, Integer.toString (padSensitivity), this.isKnobTouched[5], -1);
-        display.addParameterElement ("Gain", padGain * 1023 / 10, Integer.toString (padGain), this.isKnobTouched[6], -1);
-        display.addParameterElement ("Dynamics", padDynamics * 1023 / 10, Integer.toString (padDynamics), this.isKnobTouched[7], -1);
+        display.addParameterElement (" ", false, "", (ChannelType) null, null, false, "Display", displayBrightness * 1023 / 100, displayBrightness + "%", this.isKnobTouched[2], -1);
+        display.addParameterElement (" ", false, "", (ChannelType) null, null, false, "LEDs", ledBrightness * 1023 / 100, ledBrightness + "%", this.isKnobTouched[3], -1);
+        display.addOptionElement ("        Pads", " ", false, "", "", false, true);
+        display.addParameterElement (" ", false, "", (ChannelType) null, null, false, "Sensitivity", padSensitivity * 1023 / 10, Integer.toString (padSensitivity), this.isKnobTouched[5], -1);
+        display.addParameterElement (" ", false, "", (ChannelType) null, null, false, "Gain", padGain * 1023 / 10, Integer.toString (padGain), this.isKnobTouched[6], -1);
+        display.addParameterElement (" ", false, "", (ChannelType) null, null, false, "Dynamics", padDynamics * 1023 / 10, Integer.toString (padDynamics), this.isKnobTouched[7], -1);
     }
 }

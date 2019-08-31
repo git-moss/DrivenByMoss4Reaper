@@ -69,11 +69,11 @@ public class InfoMode extends BaseMode
     {
         display.addOptionElement ("  Firmware: " + this.surface.getMajorVersion () + "." + this.surface.getMinorVersion () + " Build " + this.surface.getBuildNumber (), "Setup", false, "", "", false, true);
         display.addOptionElement ("", "Info", true, "", "", false, true);
-        display.addEmptyElement ();
-        display.addOptionElement ("Board Revision: " + this.surface.getBoardRevision (), "", false, "", "", false, false);
-        display.addEmptyElement ();
-        display.addOptionElement ("        Serial Number: " + this.surface.getSerialNumber (), "", false, "", "", false, false);
-        display.addEmptyElement ();
-        display.addEmptyElement ();
+        display.addEmptyElement (true);
+        display.addOptionElement ("Board Revision: " + this.surface.getBoardRevision (), " ", false, "", "", false, true);
+        display.addEmptyElement (true);
+        display.addOptionElement ("        Serial Number: " + this.surface.getSerialNumber (), " ", false, "", "", false, true);
+        display.addEmptyElement (true);
+        display.addEmptyElement (true);
     }
 }
