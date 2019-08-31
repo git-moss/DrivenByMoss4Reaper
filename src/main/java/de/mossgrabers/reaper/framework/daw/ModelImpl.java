@@ -79,7 +79,7 @@ public class ModelImpl extends AbstractModel
 
         final int numResults = modelSetup.getNumResults ();
         if (numResults > 0)
-            this.browser = new BrowserImpl (this.cursorDevice, modelSetup.getNumFilterColumnEntries (), numResults);
+            this.browser = new BrowserImpl (dataSetup, this.cursorDevice, modelSetup.getNumFilterColumnEntries (), numResults);
 
         this.currentTrackBank = this.trackBank;
     }

@@ -13,7 +13,7 @@ import de.mossgrabers.framework.daw.IModel;
  *
  * @param <C> The type of the configuration
  * @param <S> The type of the control surface
- * 
+ *
  * @author J&uuml;rgen Mo&szlig;graber
  */
 public interface IControllerSetup<S extends IControlSurface<C>, C extends Configuration>

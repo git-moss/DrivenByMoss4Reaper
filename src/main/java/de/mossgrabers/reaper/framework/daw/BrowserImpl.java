@@ -67,7 +67,7 @@ public class BrowserImpl extends AbstractBrowser
     int                                selectedIndex;
     List<Device>                       filteredDevices    = Collections.emptyList ();
 
-    private MessageSender              sender;
+    private final MessageSender        sender;
     private final IBrowserColumn [] [] columnDataContentTypes;
 
     private int                        insertPosition;
@@ -75,14 +75,17 @@ public class BrowserImpl extends AbstractBrowser
 
     /**
      * Constructor.
-     *
+     * 
+     * @param dataSetup Some configuration variables
      * @param cursorDevice The cursor device
      * @param numFilterColumnEntries The number of entries in a filter column page
      * @param numResults The number of entries in a results column page
      */
-    public BrowserImpl (final ICursorDevice cursorDevice, final int numFilterColumnEntries, final int numResults)
+    public BrowserImpl (final DataSetupEx dataSetup, final ICursorDevice cursorDevice, final int numFilterColumnEntries, final int numResults)
     {
         super (cursorDevice, numFilterColumnEntries, numResults);
+
+        this.sender = dataSetup != null ? dataSetup.getSender () : null;
 
         this.deviceCollectionFilterColumn = new DeviceCollectionFilterColumn (0, numFilterColumnEntries);
         this.deviceLocationFilterColumn = new DeviceLocationFilterColumn (1, numFilterColumnEntries);
