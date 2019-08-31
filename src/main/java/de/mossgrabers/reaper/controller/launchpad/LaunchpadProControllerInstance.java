@@ -37,14 +37,9 @@ public class LaunchpadProControllerInstance extends AbstractControllerInstance
     }
 
 
-    /**
-     * Create a controller setup instance.
-     *
-     * @param setupFactory The setup factory
-     * @return The controller setup
-     */
+    /** {@inheritDoc} */
     @Override
-    protected IControllerSetup createControllerSetup (final ReaperSetupFactory setupFactory)
+    protected IControllerSetup<?, ?> createControllerSetup (final ReaperSetupFactory setupFactory)
     {
         return new LaunchpadControllerSetup (this.host, setupFactory, this.settingsUI, this.settingsUI, true);
     }

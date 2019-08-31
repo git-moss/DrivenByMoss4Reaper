@@ -37,14 +37,9 @@ public class AutoColorInstance extends AbstractControllerInstance
     }
 
 
-    /**
-     * Create a controller setup instance.
-     *
-     * @param setupFactory The setup factory
-     * @return The controller setup
-     */
+    /** {@inheritDoc} */
     @Override
-    protected IControllerSetup createControllerSetup (final ReaperSetupFactory setupFactory)
+    protected IControllerSetup<?, ?> createControllerSetup (final ReaperSetupFactory setupFactory)
     {
         return new AutoColorSetup (this.host, setupFactory, this.settingsUI, this.settingsUI);
     }

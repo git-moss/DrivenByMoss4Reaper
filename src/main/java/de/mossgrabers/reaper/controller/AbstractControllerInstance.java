@@ -42,7 +42,7 @@ public abstract class AbstractControllerInstance implements IControllerInstance
     protected HostImpl                    host;
     protected SettingsUI                  settingsUI;
     protected ReaperSetupFactory          setupFactory;
-    protected IControllerSetup            controllerSetup;
+    protected IControllerSetup<?, ?>      controllerSetup;
     protected PropertiesEx                controllerConfiguration = new PropertiesEx ();
 
     protected MessageParser               oscParser;
@@ -116,7 +116,7 @@ public abstract class AbstractControllerInstance implements IControllerInstance
     }
 
 
-    protected abstract IControllerSetup createControllerSetup (final ReaperSetupFactory setupFactory);
+    protected abstract IControllerSetup<?, ?> createControllerSetup (final ReaperSetupFactory setupFactory);
 
 
     /** {@inheritDoc} */
