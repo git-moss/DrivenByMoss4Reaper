@@ -4,8 +4,6 @@
 
 package de.mossgrabers.reaper.framework.midi;
 
-import uk.co.xfactorylibrarians.coremidi4j.CoreMidiDeviceProvider;
-
 import javax.sound.midi.MidiDevice;
 import javax.sound.midi.MidiSystem;
 import javax.sound.midi.MidiUnavailableException;
@@ -46,7 +44,11 @@ public class Midi
 
         // Using the provider lookup instead of MidiSystem.getMidiDeviceInfo () ensures that the
         // broken devices on Mac are hidden. The function is transparent on other platforms.
-        for (final MidiDevice.Info info: CoreMidiDeviceProvider.getMidiDeviceInfo ())
+
+        // Activate default Java MIDI devices until problem with macOS is fixed:
+        // https://github.com/DerekCook/CoreMidi4J/issues/32
+        // for (final MidiDevice.Info info: CoreMidiDeviceProvider.getMidiDeviceInfo ())
+        for (final MidiDevice.Info info: MidiSystem.getMidiDeviceInfo ())
         {
             final MidiDevice device = MidiSystem.getMidiDevice (info);
             if (device.getMaxReceivers () != 0)
