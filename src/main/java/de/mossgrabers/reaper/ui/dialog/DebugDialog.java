@@ -1,0 +1,126 @@
+// Written by Jürgen Moßgraber - mossgrabers.de
+// (c) 2017-2019
+// Licensed under LGPLv3 - http://www.gnu.org/licenses/lgpl-3.0.txt
+
+package de.mossgrabers.reaper.ui.dialog;
+
+import de.mossgrabers.reaper.communication.MessageSender;
+import de.mossgrabers.reaper.ui.widget.BoxPanel;
+import de.mossgrabers.reaper.ui.widget.TwoColsPanel;
+
+import javax.swing.BoxLayout;
+import javax.swing.JCheckBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
+import java.awt.BorderLayout;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Window;
+
+
+/**
+ * Dialog for configuring some debug settings.
+ *
+ * @author J&uuml;rgen Mo&szlig;graber
+ */
+public class DebugDialog extends BasicDialog
+{
+    private static final long      serialVersionUID = 3020319469692178785L;
+
+    private static final String [] LABELS           =
+    {
+        "Transport",
+        "Project",
+        "Track",
+        "Playing Notes",
+        "Device",
+        "Mastertrack",
+        "Browser",
+        "Marker",
+        "Clip",
+        "Session"
+    };
+
+    private static final String [] MNEMONICS        =
+    {
+        "T",
+        "P",
+        "R",
+        "N",
+        "D",
+        "M",
+        "B",
+        "A",
+        "C",
+        "S"
+    };
+
+    private static final String [] PROCESSORS       =
+    {
+        "transport",
+        "project",
+        "track",
+        "playingnotes",
+        "device",
+        "mastertrack",
+        "browser",
+        "marker",
+        "clip",
+        "session"
+    };
+
+    private final MessageSender    sender;
+    private final JCheckBox []     boxes            = new JCheckBox [LABELS.length];
+
+
+    /**
+     * Constructor.
+     *
+     * @param owner The owner of the dialog
+     * @param sender Where ti sebd tge devug settings
+     */
+    public DebugDialog (final Window owner, final MessageSender sender)
+    {
+        super ((JFrame) owner, "Debug", true, true);
+
+        this.sender = sender;
+
+        this.setResizable (false);
+        this.setMinimumSize (new Dimension (300, 400));
+
+        this.basicInit ();
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    protected Container init () throws Exception
+    {
+        final JPanel contentPane = new JPanel (new BorderLayout ());
+
+        final TwoColsPanel mainColumn = new TwoColsPanel (true);
+        final JPanel wrapper = new JPanel (new BorderLayout ());
+        wrapper.add (mainColumn, BorderLayout.NORTH);
+
+        for (int i = 0; i < LABELS.length; i++)
+        {
+            final int count = i;
+            this.boxes[i] = mainColumn.createCheckBox (LABELS[i], MNEMONICS[i], BoxPanel.NORMAL);
+            this.boxes[i].setSelected (true);
+            this.boxes[i].addActionListener (event -> this.sender.enableUpdates (PROCESSORS[count], this.boxes[count].isSelected ()));
+        }
+
+        contentPane.add (new JLabel ("Enable data update from"), BorderLayout.NORTH);
+        contentPane.add (mainColumn, BorderLayout.CENTER);
+
+        // Close button
+        final BoxPanel buttons = new BoxPanel (BoxLayout.X_AXIS, true);
+        buttons.createSpace (BoxPanel.GLUE);
+        this.setButtons (null, buttons.createButton ("Close", null, BoxPanel.NONE));
+        contentPane.add (buttons, BorderLayout.SOUTH);
+
+        return contentPane;
+    }
+}

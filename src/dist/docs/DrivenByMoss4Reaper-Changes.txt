@@ -1,11 +1,27 @@
-8.01 (unreleased)
+8.10 (unreleased)
 - All devices
   * Fixed: Creating clips did not start recording.
   * Fixed: Send values were always sent for Send 1.
   * Fixed: Only use send envelopes when active
+- APCmini
+  * Fixed: Sometimes the pad grid was not drawn after startup, since the APCmini is slow to be ready for receiving commands.
+- APC40mkI/mkII, APCmini, Launchpad MkII/Pro, Novation SL, Push
+  * Fixed: Deactivate all sequencers if no clip is selected. This caused weird effects if 
+    the grid resolution of the sequencer was changed with no clip selected and then a clip
+    was selected.
+- Beatstep Pro
+  * Fixed: Some knobs did not toggle its value
+- Native Instruments Komplete S-MkII, A-series/M32
+  * New: The extension is now split up into two. One for the S-series and one for the A-series/M32. You need to add your Kontrol device again.
+- Novation SLMkIII
+  * New: Notification messages are also displayed on the SL display
+  * New: Firmware version is displayed on startup
 - OSC
   * New: /playbutton - Toggles playback, you can configure the Stop behaviour in the configuration settings
   * Fixed: All /vkb_midi commands did crash
+- Push
+  * Fixed: Display a message if no clip is selected in clip mode
+  * Fixed: Octave buttons were not updated in sequencer modes.
 
 8.00
 - All devices

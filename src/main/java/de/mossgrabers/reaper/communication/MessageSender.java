@@ -108,6 +108,15 @@ public interface MessageSender
 
 
     /**
+     * Dis-/enable an update processor for performance improvements.
+     *
+     * @param processor The processor to The processor to dis-/enable
+     * @param enable True to enable processor updates, false to disable
+     */
+    void enableUpdates (final String processor, final boolean enable);
+
+
+    /**
      * Call Reaper MIDI command in DLL.
      *
      * @param status MIDI status byte

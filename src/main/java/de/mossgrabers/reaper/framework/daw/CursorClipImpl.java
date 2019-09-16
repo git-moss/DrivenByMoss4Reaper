@@ -64,6 +64,14 @@ public class CursorClipImpl extends BaseImpl implements INoteClip
 
     /** {@inheritDoc} */
     @Override
+    public void enableObservers (final boolean enable)
+    {
+        this.sender.enableUpdates ("clip", enable);
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
     public boolean doesExist ()
     {
         return this.exists;

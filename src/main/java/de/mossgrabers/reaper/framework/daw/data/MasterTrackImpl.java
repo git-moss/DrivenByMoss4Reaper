@@ -45,6 +45,14 @@ public class MasterTrackImpl extends TrackImpl implements IMasterTrack
 
     /** {@inheritDoc} */
     @Override
+    public void enableObservers (final boolean enable)
+    {
+        this.sender.enableUpdates ("mastertrack", enable);
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
     public int getIndex ()
     {
         return (this.trackBank.getItemCount () - 1) % this.trackBank.getPageSize ();

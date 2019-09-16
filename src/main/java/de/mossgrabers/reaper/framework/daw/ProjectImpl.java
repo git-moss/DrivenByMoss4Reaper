@@ -31,6 +31,14 @@ public class ProjectImpl extends BaseImpl implements IProject
 
     /** {@inheritDoc} */
     @Override
+    public void enableObservers (final boolean enable)
+    {
+        this.sender.enableUpdates ("project", enable);
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
     public String getName ()
     {
         return this.name != null && this.name.length () > 0 ? this.name : "None";

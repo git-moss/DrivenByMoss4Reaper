@@ -62,6 +62,14 @@ public class TrackBankImpl extends AbstractTrackBankImpl
     }
 
 
+    /** {@inheritDoc} */
+    @Override
+    public void enableObservers (final boolean enable)
+    {
+        this.sender.enableUpdates ("track", enable);
+    }
+
+
     /**
      * Set the related master track.
      *

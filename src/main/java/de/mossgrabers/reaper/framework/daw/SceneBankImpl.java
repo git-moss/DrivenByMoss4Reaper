@@ -35,6 +35,14 @@ public class SceneBankImpl extends AbstractPagedBankImpl<SceneImpl, IScene> impl
     }
 
 
+    /** {@inheritDoc} */
+    @Override
+    public void enableObservers (final boolean enable)
+    {
+        this.sender.enableUpdates ("session", enable);
+    }
+
+
     /** {@inheritDoc}} */
     @Override
     protected SceneImpl createItem (final int position)

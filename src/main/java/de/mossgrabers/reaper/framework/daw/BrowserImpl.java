@@ -130,7 +130,7 @@ public class BrowserImpl extends AbstractBrowser
     @Override
     public void enableObservers (final boolean enable)
     {
-        // Not supported
+        this.sender.enableUpdates ("browser", enable);
     }
 
 

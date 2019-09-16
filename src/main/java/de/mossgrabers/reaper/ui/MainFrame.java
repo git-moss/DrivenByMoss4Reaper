@@ -14,6 +14,7 @@ import de.mossgrabers.reaper.framework.device.DeviceManager;
 import de.mossgrabers.reaper.framework.graphics.SVGImage;
 import de.mossgrabers.reaper.framework.midi.Midi;
 import de.mossgrabers.reaper.framework.midi.MidiConnection;
+import de.mossgrabers.reaper.ui.dialog.DebugDialog;
 import de.mossgrabers.reaper.ui.utils.LogModel;
 import de.mossgrabers.reaper.ui.utils.SafeRunLater;
 import de.mossgrabers.reaper.ui.widget.CheckboxListItem;
@@ -77,6 +78,7 @@ public class MainFrame extends JFrame implements MessageSender
 
     private JButton                             removeButton;
     private JButton                             configButton;
+    private final DebugDialog                   debugDialog;
 
 
     /**
@@ -109,6 +111,7 @@ public class MainFrame extends JFrame implements MessageSender
             this.loadINIFiles (this.iniPath);
         }
 
+        this.debugDialog = new DebugDialog (this, this);
         this.createUI ();
         this.configureFrame (this);
 
@@ -172,15 +175,19 @@ public class MainFrame extends JFrame implements MessageSender
         final JButton enableButton = new JButton ("Dis-/enable");
         enableButton.addActionListener (event -> this.toggleEnableController ());
 
+        final JButton debugButton = new JButton ("Debug");
+        debugButton.addActionListener (event -> this.displayDebugDialog ());
+
         final JPanel deviceButtonContainer = new JPanel ();
         deviceButtonContainer.setBorder (new EmptyBorder (0, GAP, 0, 0));
-        deviceButtonContainer.setLayout (new GridLayout (5, 1, 0, GAP));
+        deviceButtonContainer.setLayout (new GridLayout (6, 1, 0, GAP));
 
         deviceButtonContainer.add (addButton);
         deviceButtonContainer.add (this.removeButton);
         deviceButtonContainer.add (this.configButton);
         deviceButtonContainer.add (enableButton);
         deviceButtonContainer.add (refreshButton);
+        deviceButtonContainer.add (debugButton);
 
         this.controllerList.setMinimumSize (new Dimension (300, 200));
         this.controllerList.setCellRenderer (new CheckboxListRenderer ());
@@ -456,6 +463,11 @@ public class MainFrame extends JFrame implements MessageSender
 
     /** {@inheritDoc} */
     @Override
+    public native void enableUpdates (String processor, boolean enable);
+
+
+    /** {@inheritDoc} */
+    @Override
     public native void processMidiArg (final int status, final int data1, final int data2);
 
 
@@ -490,6 +502,12 @@ public class MainFrame extends JFrame implements MessageSender
         }
         else
             controller.stop ();
+    }
+
+
+    private void displayDebugDialog ()
+    {
+        this.debugDialog.setVisible (true);
     }
 
 

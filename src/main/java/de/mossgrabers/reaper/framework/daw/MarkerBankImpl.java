@@ -29,6 +29,14 @@ public class MarkerBankImpl extends AbstractPagedBankImpl<MarkerImpl, IMarker> i
     }
 
 
+    /** {@inheritDoc} */
+    @Override
+    public void enableObservers (final boolean enable)
+    {
+        this.sender.enableUpdates ("marker", enable);
+    }
+
+
     /** {@inheritDoc}} */
     @Override
     protected MarkerImpl createItem (final int position)

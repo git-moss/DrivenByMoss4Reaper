@@ -67,6 +67,14 @@ public class TransportImpl extends BaseImpl implements ITransport
 
     /** {@inheritDoc} */
     @Override
+    public void enableObservers (final boolean enable)
+    {
+        this.sender.enableUpdates ("transport", enable);
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
     public void play ()
     {
         this.sender.processNoArg ("play");

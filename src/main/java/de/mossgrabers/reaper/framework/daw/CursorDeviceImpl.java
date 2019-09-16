@@ -76,6 +76,14 @@ public class CursorDeviceImpl extends DeviceImpl implements ICursorDevice
 
     /** {@inheritDoc} */
     @Override
+    public void enableObservers (final boolean enable)
+    {
+        this.sender.enableUpdates ("device", enable);
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
     public String getID ()
     {
         if (this.parameterBank == null || this.parameterBank.getItemCount () == 0)
