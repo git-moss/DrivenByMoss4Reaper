@@ -1,5 +1,7 @@
-8.10 (unreleased)
+8.10
 - All devices
+  * New: Added new scales
+  * New: Added a Debug dialog where you can test to deactivate update routines
   * Fixed: Creating clips did not start recording.
   * Fixed: Send values were always sent for Send 1.
   * Fixed: Only use send envelopes when active
@@ -11,6 +13,8 @@
     was selected.
 - Beatstep Pro
   * Fixed: Some knobs did not toggle its value
+- Mackie HUI
+  * Fixed: Crash on startup and shutdown if Display was active
 - Native Instruments Komplete S-MkII, A-series/M32
   * New: The extension is now split up into two. One for the S-series and one for the A-series/M32. You need to add your Kontrol device again.
 - Novation SLMkIII
