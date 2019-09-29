@@ -37,6 +37,7 @@ import de.mossgrabers.reaper.controller.kontrol.mki.KontrolMkIS49ControllerInsta
 import de.mossgrabers.reaper.controller.kontrol.mki.KontrolMkIS61ControllerInstance;
 import de.mossgrabers.reaper.controller.kontrol.mki.KontrolMkIS88ControllerInstance;
 import de.mossgrabers.reaper.controller.kontrol.mkii.KontrolProtocolV1ControllerInstance;
+import de.mossgrabers.reaper.controller.kontrol.mkii.KontrolProtocolV2ControllerInstance;
 import de.mossgrabers.reaper.controller.launchpad.LaunchpadMkIIControllerInstance;
 import de.mossgrabers.reaper.controller.launchpad.LaunchpadProControllerInstance;
 import de.mossgrabers.reaper.controller.maschine.mikro.mk3.MaschineMikroMk3ControllerInstance;
@@ -86,7 +87,7 @@ public class ControllerInstanceManager
         KontrolMkIS61ControllerInstance.class,
         KontrolMkIS88ControllerInstance.class,
         KontrolProtocolV1ControllerInstance.class,
-        KontrolProtocolV1ControllerInstance.class,
+        KontrolProtocolV2ControllerInstance.class,
         LaunchpadMkIIControllerInstance.class,
         LaunchpadProControllerInstance.class,
         MaschineMikroMk3ControllerInstance.class,
@@ -148,7 +149,6 @@ public class ControllerInstanceManager
     private final Window                          window;
     private final MessageSender                   sender;
     private final IniFiles                        iniFiles;
-
 
     /**
      * Constructor.

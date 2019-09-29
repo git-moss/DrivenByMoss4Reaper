@@ -8,6 +8,7 @@ import de.mossgrabers.framework.daw.AbstractBrowser;
 import de.mossgrabers.framework.daw.ICursorDevice;
 import de.mossgrabers.framework.daw.data.IBrowserColumn;
 import de.mossgrabers.framework.daw.data.IBrowserColumnItem;
+import de.mossgrabers.framework.daw.data.IItem;
 import de.mossgrabers.framework.utils.StringUtils;
 import de.mossgrabers.reaper.communication.MessageSender;
 import de.mossgrabers.reaper.framework.daw.data.ItemImpl;
@@ -72,7 +73,6 @@ public class BrowserImpl extends AbstractBrowser
 
     private int                        insertPosition;
 
-
     /**
      * Constructor.
      *
@@ -83,7 +83,7 @@ public class BrowserImpl extends AbstractBrowser
      */
     public BrowserImpl (final DataSetupEx dataSetup, final ICursorDevice cursorDevice, final int numFilterColumnEntries, final int numResults)
     {
-        super (cursorDevice, numFilterColumnEntries, numResults);
+        super (numFilterColumnEntries, numResults);
 
         this.sender = dataSetup != null ? dataSetup.getSender () : null;
 
@@ -123,6 +123,8 @@ public class BrowserImpl extends AbstractBrowser
 
         for (final IBrowserColumn column: this.columnDataContentTypes[ContentType.DEVICE.ordinal ()])
             ((BaseColumn) column).addSelectionListener (this::updateFilteredDevices);
+
+        this.enableObservers (false);
     }
 
 
@@ -218,36 +220,39 @@ public class BrowserImpl extends AbstractBrowser
 
     /** {@inheritDoc} */
     @Override
-    public void browseForPresets ()
+    public void replace (final IItem item)
     {
-        this.stopBrowsing (false);
-        this.insertPosition = this.cursorDevice.getPosition ();
-        this.setContentType (ContentType.PRESET);
-        this.isBrowserActive = true;
+        // Slot and Drum Pad not supported
+        if (item instanceof CursorDeviceImpl)
+            this.browse (ContentType.PRESET, ((CursorDeviceImpl) item).getPosition ());
     }
 
 
     /** {@inheritDoc} */
     @Override
-    public void browseToInsertBeforeDevice ()
+    public void insertBefore (final IItem item)
     {
-        this.insertDevice (this.cursorDevice.getPosition ());
+        if (item instanceof CursorDeviceImpl)
+            this.browse (ContentType.DEVICE, ((CursorDeviceImpl) item).getPosition ());
     }
 
 
     /** {@inheritDoc} */
     @Override
-    public void browseToInsertAfterDevice ()
+    public void insertAfter (final IItem item)
     {
-        this.insertDevice (this.cursorDevice.getPosition () + 1);
+        if (item instanceof CursorDeviceImpl)
+            this.browse (ContentType.DEVICE, ((CursorDeviceImpl) item).getPosition () + 1);
     }
 
 
-    private void insertDevice (final int insertPos)
+    private void browse (final ContentType contentType, final int insertPos)
     {
         this.stopBrowsing (false);
+
+        this.enableObservers (true);
         this.insertPosition = insertPos;
-        this.setContentType (ContentType.DEVICE);
+        this.setContentType (contentType);
         this.isBrowserActive = true;
     }
 
@@ -278,6 +283,7 @@ public class BrowserImpl extends AbstractBrowser
             }
         }
 
+        this.enableObservers (false);
         this.insertPosition = -1;
         this.isBrowserActive = false;
     }

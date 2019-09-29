@@ -211,7 +211,7 @@ public class ControlView extends ControlOnlyView<SLControlSurface, SLConfigurati
 
             // Browse
             case 4:
-                this.model.getBrowser ().browseForPresets ();
+                this.model.getBrowser ().replace (this.model.getCursorDevice ());
                 modeManager.setActiveMode (Modes.BROWSER);
                 break;
 

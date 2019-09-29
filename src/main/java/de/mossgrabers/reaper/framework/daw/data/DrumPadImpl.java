@@ -26,12 +26,4 @@ public class DrumPadImpl extends ChannelImpl implements IDrumPad
     {
         super (dataSetup, index, numSends);
     }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void browseToInsert ()
-    {
-        // Intentionally empty
-    }
 }

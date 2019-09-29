@@ -20,7 +20,6 @@ public class SlotImpl extends ItemImpl implements ISlot
     private double green = 0;
     private double blue  = 0;
 
-
     /**
      * Constructor.
      *
@@ -148,14 +147,6 @@ public class SlotImpl extends ItemImpl implements ISlot
     public void duplicate ()
     {
         this.sender.processNoArg ("clip", "duplicate");
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void browse ()
-    {
-        // Not supported
     }
 
 

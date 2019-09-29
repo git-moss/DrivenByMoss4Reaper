@@ -72,14 +72,13 @@ public class MainFrame extends JFrame implements MessageSender
     private final JList<CheckboxListItem>       controllerList    = new JList<> (new DefaultListModel<> ());
 
     private transient ControllerInstanceManager instanceManager;
-    private final Timer                         animationTimer;
+    private final Timer                         animationTimer    = null;
     private String                              iniPath;
     private final transient IniFiles            iniFiles          = new IniFiles ();
 
     private JButton                             removeButton;
     private JButton                             configButton;
-    private final DebugDialog                   debugDialog;
-
+    private DebugDialog                         debugDialog;
 
     /**
      * Constructor.
@@ -89,48 +88,32 @@ public class MainFrame extends JFrame implements MessageSender
     public MainFrame (final String iniPath)
     {
         this.iniPath = iniPath;
-
-        // To not again loose any exception from executors or delayed methods...
-        Thread.setDefaultUncaughtExceptionHandler ( (thread, throwable) -> {
-            final StringWriter writer = new StringWriter ();
-            throwable.printStackTrace (new PrintWriter (writer));
-            this.logModel.info (writer.toString ());
-        });
-
-        this.instanceManager = new ControllerInstanceManager (this.logModel, this, this, this.iniFiles);
-
-        this.setType (Type.UTILITY);
-
-        this.updateTitle ();
-
-        if (this.iniPath.isEmpty ())
-            this.logModel.info ("Missing INI path parameter! Cannot start the application.");
-        else
-        {
-            this.loadConfig ();
-            this.loadINIFiles (this.iniPath);
-        }
-
-        this.debugDialog = new DebugDialog (this, this);
-        this.createUI ();
-        this.configureFrame (this);
-
-        this.animationTimer = new Timer (20, event -> {
-            try
-            {
-                this.flushToController ();
-            }
-            catch (final RuntimeException ex)
-            {
-                this.logModel.error ("Crash in flush timer.", ex);
-            }
-        });
-
-        if (this.iniPath != null)
-        {
-            this.initUSB ();
-            SafeRunLater.execute (this.logModel, this::startupInfrastructure);
-        }
+        /*
+         * // To not again loose any exception from executors or delayed methods...
+         * Thread.setDefaultUncaughtExceptionHandler ( (thread, throwable) -> { final StringWriter
+         * writer = new StringWriter (); throwable.printStackTrace (new PrintWriter (writer));
+         * this.logModel.info (writer.toString ()); });
+         * 
+         * this.instanceManager = new ControllerInstanceManager (this.logModel, this, this,
+         * this.iniFiles);
+         * 
+         * this.setType (Type.UTILITY);
+         * 
+         * this.updateTitle ();
+         * 
+         * if (this.iniPath.isEmpty ()) this.logModel.info
+         * ("Missing INI path parameter! Cannot start the application."); else { this.loadConfig ();
+         * this.loadINIFiles (this.iniPath); }
+         * 
+         * this.debugDialog = new DebugDialog (this, this); this.createUI (); this.configureFrame
+         * (this);
+         * 
+         * this.animationTimer = new Timer (20, event -> { try { this.flushToController (); } catch
+         * (final RuntimeException ex) { this.logModel.error ("Crash in flush timer.", ex); } });
+         * 
+         * if (this.iniPath != null) { this.initUSB (); SafeRunLater.execute (this.logModel,
+         * this::startupInfrastructure); }
+         */
     }
 
 

@@ -33,7 +33,6 @@ public class CursorDeviceImpl extends DeviceImpl implements ICursorDevice
     private final ILayerBank            layerBank;
     private final IDrumPadBank          drumPadBank;
 
-
     /**
      * Constructor.
      *
@@ -398,30 +397,6 @@ public class CursorDeviceImpl extends DeviceImpl implements ICursorDevice
     public IChannelBank<?> getLayerOrDrumPadBank ()
     {
         return this.hasDrumPads () ? this.drumPadBank : this.layerBank;
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void browseToReplaceDevice ()
-    {
-        // Not used
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void browseToInsertBeforeDevice ()
-    {
-        // Not used
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void browseToInsertAfterDevice ()
-    {
-        // Not used
     }
 
 

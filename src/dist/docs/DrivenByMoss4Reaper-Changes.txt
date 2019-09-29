@@ -1,3 +1,7 @@
+8.11 (unreleased)
+- Native Instruments Komplete S-MkII, A-series/M32
+	* Fixed: Definition files were mixed up and therefore the devices did not work properly
+
 8.10
 - All devices
   * New: Added new scales

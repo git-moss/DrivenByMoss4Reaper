@@ -68,6 +68,7 @@ public interface IGraphicDisplay extends IDisplay
 
 
     /**
+<<<<<<< HEAD
      * Adds an empty element.
      *
      * @param hasSmallEmptyMenu If true draws an empty small menu
@@ -76,6 +77,8 @@ public interface IGraphicDisplay extends IDisplay
 
 
     /**
+=======
+>>>>>>> remotes/origin/master
      * Adds a channel selector element.
      *
      * @param topMenu The text of the top menu

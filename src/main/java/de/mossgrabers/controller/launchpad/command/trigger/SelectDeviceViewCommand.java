@@ -7,7 +7,9 @@ package de.mossgrabers.controller.launchpad.command.trigger;
 import de.mossgrabers.controller.launchpad.LaunchpadConfiguration;
 import de.mossgrabers.controller.launchpad.controller.LaunchpadControlSurface;
 import de.mossgrabers.framework.command.core.AbstractTriggerCommand;
+import de.mossgrabers.framework.daw.ICursorDevice;
 import de.mossgrabers.framework.daw.IModel;
+import de.mossgrabers.framework.mode.BrowserActivator;
 import de.mossgrabers.framework.utils.ButtonEvent;
 import de.mossgrabers.framework.view.ViewManager;
 import de.mossgrabers.framework.view.Views;
@@ -20,7 +22,7 @@ import de.mossgrabers.framework.view.Views;
  */
 public class SelectDeviceViewCommand extends AbstractTriggerCommand<LaunchpadControlSurface, LaunchpadConfiguration>
 {
-    protected int startRetries;
+    private final BrowserActivator<LaunchpadControlSurface, LaunchpadConfiguration> browserModeActivator;
 
 
     /**
@@ -32,6 +34,8 @@ public class SelectDeviceViewCommand extends AbstractTriggerCommand<LaunchpadCon
     public SelectDeviceViewCommand (final IModel model, final LaunchpadControlSurface surface)
     {
         super (model, surface);
+
+        this.browserModeActivator = new BrowserActivator<> (Views.BROWSER, model, surface);
     }
 
 
@@ -52,31 +56,16 @@ public class SelectDeviceViewCommand extends AbstractTriggerCommand<LaunchpadCon
 
         if (viewManager.isActiveView (Views.DEVICE))
         {
-            if (this.surface.isShiftPressed () || !this.model.getCursorDevice ().doesExist ())
-                this.model.getBrowser ().browseToInsertAfterDevice ();
+            final ICursorDevice cursorDevice = this.model.getCursorDevice ();
+            if (this.surface.isShiftPressed () || !cursorDevice.doesExist ())
+                this.model.getBrowser ().insertAfter (cursorDevice);
             else
-                this.model.getBrowser ().browseForPresets ();
+                this.model.getBrowser ().replace (cursorDevice);
 
-            this.startRetries = 0;
-            this.activateBrowserView ();
+            this.browserModeActivator.activate ();
             return;
         }
 
         viewManager.setActiveView (Views.DEVICE);
-    }
-
-
-    /**
-     * Tries to activate the view 20 times.
-     */
-    protected void activateBrowserView ()
-    {
-        if (this.model.getBrowser ().isActive ())
-            this.surface.getViewManager ().setActiveView (Views.BROWSER);
-        else if (this.startRetries < 20)
-        {
-            this.startRetries++;
-            this.surface.scheduleTask (this::activateBrowserView, 200);
-        }
     }
 }
