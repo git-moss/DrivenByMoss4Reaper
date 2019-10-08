@@ -5,6 +5,8 @@
       chunk only is read and analysed if playback is stopped, GUI only gets created if 
       dialog is opened, ...
     * Fixed: Layout of Debug dialog
+- MCU
+  * New: Added new function key option "Toggle use faders like editing knobs".
 - Native Instruments Komplete S-MkII, A-series/M32
 	* Fixed: Definition files were mixed up and therefore the devices did not work properly
 - Push 2    

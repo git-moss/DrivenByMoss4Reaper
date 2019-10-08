@@ -4,8 +4,8 @@
 
 package de.mossgrabers.reaper.controller.launchpad;
 
-import de.mossgrabers.controller.launchpad.LaunchpadControllerDefinition;
 import de.mossgrabers.controller.launchpad.LaunchpadControllerSetup;
+import de.mossgrabers.controller.launchpad.definition.LaunchpadMkIIControllerDefinition;
 import de.mossgrabers.framework.controller.IControllerSetup;
 import de.mossgrabers.reaper.communication.MessageSender;
 import de.mossgrabers.reaper.controller.AbstractControllerInstance;
@@ -23,7 +23,7 @@ import de.mossgrabers.reaper.ui.utils.LogModel;
 public class LaunchpadMkIIControllerInstance extends AbstractControllerInstance
 {
     /** The controller definition instance. */
-    public static final LaunchpadControllerDefinition CONTROLLER_DEFINITION = new LaunchpadControllerDefinition (true);
+    public static final LaunchpadMkIIControllerDefinition CONTROLLER_DEFINITION = new LaunchpadMkIIControllerDefinition ();
 
 
     /**
@@ -44,6 +44,6 @@ public class LaunchpadMkIIControllerInstance extends AbstractControllerInstance
     @Override
     protected IControllerSetup<?, ?> createControllerSetup (final ReaperSetupFactory setupFactory)
     {
-        return new LaunchpadControllerSetup (this.host, setupFactory, this.settingsUI, this.settingsUI, false);
+        return new LaunchpadControllerSetup (this.host, setupFactory, this.settingsUI, this.settingsUI, CONTROLLER_DEFINITION);
     }
 }

@@ -6,6 +6,7 @@ package de.mossgrabers.controller.push.mode;
 
 import de.mossgrabers.controller.push.controller.Push1Display;
 import de.mossgrabers.controller.push.controller.PushControlSurface;
+import de.mossgrabers.framework.controller.ButtonID;
 import de.mossgrabers.framework.controller.color.ColorManager;
 import de.mossgrabers.framework.controller.display.Format;
 import de.mossgrabers.framework.controller.display.IGraphicDisplay;
@@ -87,7 +88,7 @@ public class GrooveMode extends BaseMode
         final IParameter [] parameters = this.model.getGroove ().getParameters ();
         if (isTouched && this.surface.isDeletePressed ())
         {
-            this.surface.setTriggerConsumed (this.surface.getDeleteTriggerId ());
+            this.surface.setTriggerConsumed (this.surface.getTriggerId (ButtonID.DELETE));
             parameters[index - 2].resetValue ();
         }
 

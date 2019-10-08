@@ -5,7 +5,7 @@
 package de.mossgrabers.reaper.controller.launchpad;
 
 import de.mossgrabers.controller.launchpad.LaunchpadControllerSetup;
-import de.mossgrabers.controller.launchpad.definition.LaunchpadProControllerDefinition;
+import de.mossgrabers.controller.launchpad.definition.LaunchpadMiniMkIIIControllerDefinition;
 import de.mossgrabers.framework.controller.IControllerSetup;
 import de.mossgrabers.reaper.communication.MessageSender;
 import de.mossgrabers.reaper.controller.AbstractControllerInstance;
@@ -16,14 +16,14 @@ import de.mossgrabers.reaper.ui.utils.LogModel;
 
 
 /**
- * Launchpad Pro controller instance.
+ * Launchpad Mini MkIII controller instance.
  *
  * @author J&uuml;rgen Mo&szlig;graber
  */
-public class LaunchpadProControllerInstance extends AbstractControllerInstance
+public class LaunchpadMiniMkIIIControllerInstance extends AbstractControllerInstance
 {
     /** The controller definition instance. */
-    public static final LaunchpadProControllerDefinition CONTROLLER_DEFINITION = new LaunchpadProControllerDefinition ();
+    public static final LaunchpadMiniMkIIIControllerDefinition CONTROLLER_DEFINITION = new LaunchpadMiniMkIIIControllerDefinition ();
 
 
     /**
@@ -34,7 +34,7 @@ public class LaunchpadProControllerInstance extends AbstractControllerInstance
      * @param sender The sender
      * @param iniFiles The INI configuration files
      */
-    public LaunchpadProControllerInstance (final LogModel logModel, final WindowManager windowManager, final MessageSender sender, final IniFiles iniFiles)
+    public LaunchpadMiniMkIIIControllerInstance (final LogModel logModel, final WindowManager windowManager, final MessageSender sender, final IniFiles iniFiles)
     {
         super (CONTROLLER_DEFINITION, logModel, windowManager, sender, iniFiles);
     }

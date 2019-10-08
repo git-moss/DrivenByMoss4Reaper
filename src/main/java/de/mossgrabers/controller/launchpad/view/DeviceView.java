@@ -6,10 +6,11 @@ package de.mossgrabers.controller.launchpad.view;
 
 import de.mossgrabers.controller.launchpad.controller.LaunchpadColors;
 import de.mossgrabers.controller.launchpad.controller.LaunchpadControlSurface;
+import de.mossgrabers.controller.launchpad.definition.LaunchpadProControllerDefinition;
+import de.mossgrabers.framework.controller.ButtonID;
 import de.mossgrabers.framework.daw.ICursorDevice;
 import de.mossgrabers.framework.daw.IModel;
 import de.mossgrabers.framework.daw.IParameterBank;
-import de.mossgrabers.framework.daw.midi.IMidiOutput;
 import de.mossgrabers.framework.utils.ButtonEvent;
 
 
@@ -38,21 +39,13 @@ public class DeviceView extends AbstractFaderView
 
     /** {@inheritDoc} */
     @Override
-    public void updateNoteMapping ()
-    {
-        // Intentionally empty
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
     protected void delayedUpdateArrowButtons ()
     {
-        this.surface.setTrigger (this.surface.getSessionButton (), LaunchpadColors.LAUNCHPAD_COLOR_GREY_LO);
-        this.surface.setTrigger (this.surface.getNoteButton (), LaunchpadColors.LAUNCHPAD_COLOR_GREY_LO);
-        this.surface.setTrigger (this.surface.getDeviceButton (), LaunchpadColors.LAUNCHPAD_COLOR_AMBER);
-        if (this.surface.getConfiguration ().isPro ())
-            this.surface.setTrigger (LaunchpadControlSurface.LAUNCHPAD_PRO_BUTTON_USER, this.model.getHost ().hasUserParameters () ? LaunchpadColors.LAUNCHPAD_COLOR_GREY_LO : LaunchpadColors.LAUNCHPAD_COLOR_BLACK);
+        this.surface.setTrigger (this.surface.getTriggerId (ButtonID.SESSION), LaunchpadColors.LAUNCHPAD_COLOR_GREY_LO);
+        this.surface.setTrigger (this.surface.getTriggerId (ButtonID.NOTE), LaunchpadColors.LAUNCHPAD_COLOR_GREY_LO);
+        this.surface.setTrigger (this.surface.getTriggerId (ButtonID.DEVICE), LaunchpadColors.LAUNCHPAD_COLOR_AMBER);
+        if (this.surface.isPro ())
+            this.surface.setTrigger (LaunchpadProControllerDefinition.LAUNCHPAD_BUTTON_USER, this.model.getHost ().hasUserParameters () ? LaunchpadColors.LAUNCHPAD_COLOR_GREY_LO : LaunchpadColors.LAUNCHPAD_COLOR_BLACK);
     }
 
 
@@ -60,7 +53,7 @@ public class DeviceView extends AbstractFaderView
     @Override
     public void setupFader (final int index)
     {
-        this.surface.setupFader (index, LaunchpadColors.DAW_INDICATOR_COLORS[index]);
+        this.surface.setupFader (index, LaunchpadColors.DAW_INDICATOR_COLORS[index], false);
     }
 
 
@@ -74,12 +67,19 @@ public class DeviceView extends AbstractFaderView
 
     /** {@inheritDoc} */
     @Override
+    protected int getFaderValue (int index)
+    {
+        return this.cursorDevice.getParameterBank ().getItem (index).getValue ();
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
     public void drawGrid ()
     {
         final IParameterBank parameterBank = this.cursorDevice.getParameterBank ();
-        final IMidiOutput output = this.surface.getOutput ();
         for (int i = 0; i < 8; i++)
-            output.sendCC (LaunchpadControlSurface.LAUNCHPAD_FADER_1 + i, parameterBank.getItem (i).getValue ());
+            this.surface.setFaderValue (i, parameterBank.getItem (i).getValue ());
     }
 
 

@@ -14,7 +14,7 @@ import de.mossgrabers.framework.view.AbstractSequencerView;
 
 
 /**
- * Different colors to use for the pads and buttons of Launchpad 1 and Launchpad 2.
+ * Different colors to use for the pads and buttons of Launchpad.
  *
  * @author J&uuml;rgen Mo&szlig;graber
  */
@@ -150,7 +150,7 @@ public class LaunchpadColors
         colorManager.registerColor (DAWColors.DAW_COLOR_BROWN, LAUNCHPAD_COLOR_AMBER_YELLOW);
         colorManager.registerColor (DAWColors.DAW_COLOR_DARK_BLUE, LAUNCHPAD_COLOR_OCEAN);
         colorManager.registerColor (DAWColors.DAW_COLOR_PURPLE_BLUE, LAUNCHPAD_COLOR_OCEAN_BLUE);
-        colorManager.registerColor (DAWColors.DAW_COLOR_PURPLE, LAUNCHPAD_COLOR_PINK);
+        colorManager.registerColor (DAWColors.DAW_COLOR_PURPLE, LAUNCHPAD_COLOR_ORCHID_HI);
         colorManager.registerColor (DAWColors.DAW_COLOR_PINK, LAUNCHPAD_COLOR_PINK_HI);
         colorManager.registerColor (DAWColors.DAW_COLOR_RED, LAUNCHPAD_COLOR_RED);
         colorManager.registerColor (DAWColors.DAW_COLOR_ORANGE, LAUNCHPAD_COLOR_ORANGE);

@@ -6,6 +6,7 @@ package de.mossgrabers.controller.slmkiii.controller;
 
 import de.mossgrabers.controller.slmkiii.SLMkIIIConfiguration;
 import de.mossgrabers.framework.controller.AbstractControlSurface;
+import de.mossgrabers.framework.controller.ButtonID;
 import de.mossgrabers.framework.controller.color.ColorManager;
 import de.mossgrabers.framework.daw.IHost;
 import de.mossgrabers.framework.daw.midi.DeviceInquiry;
@@ -123,10 +124,10 @@ public class SLMkIIIControlSurface extends AbstractControlSurface<SLMkIIIConfigu
 
         this.defaultMidiChannel = 15;
 
-        this.shiftButtonId = MKIII_SHIFT;
-        this.deleteButtonId = MKIII_CLEAR;
-        this.leftButtonId = MKIII_TRACK_LEFT;
-        this.rightButtonId = MKIII_TRACK_RIGHT;
+        this.setTriggerId (ButtonID.SHIFT, MKIII_SHIFT);
+        this.setTriggerId (ButtonID.DELETE, MKIII_CLEAR);
+        this.setTriggerId (ButtonID.LEFT, MKIII_TRACK_LEFT);
+        this.setTriggerId (ButtonID.RIGHT, MKIII_TRACK_RIGHT);
 
         this.addTextDisplay (new SLMkIIIDisplay (host, output));
 
@@ -159,9 +160,7 @@ public class SLMkIIIControlSurface extends AbstractControlSurface<SLMkIIIConfigu
         if (revisionLevel.length == 4)
         {
             final String firmwareVersion = String.format ("%d%d%d%d", Integer.valueOf (revisionLevel[0]), Integer.valueOf (revisionLevel[1]), Integer.valueOf (revisionLevel[2]), Integer.valueOf (revisionLevel[3]));
-            final String text = "Firmware version: " + firmwareVersion;
-            this.host.println (text);
-            this.getTextDisplay ().notify (text);
+            this.host.println ("Firmware version: " + (firmwareVersion.charAt (0) == '0' ? firmwareVersion.substring (1) : firmwareVersion));
         }
     }
 

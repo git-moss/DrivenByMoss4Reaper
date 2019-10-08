@@ -6,6 +6,7 @@ package de.mossgrabers.controller.push.mode;
 
 import de.mossgrabers.controller.push.controller.Push1Display;
 import de.mossgrabers.controller.push.controller.PushControlSurface;
+import de.mossgrabers.framework.controller.ButtonID;
 import de.mossgrabers.framework.controller.IValueChanger;
 import de.mossgrabers.framework.controller.display.Format;
 import de.mossgrabers.framework.controller.display.IGraphicDisplay;
@@ -100,7 +101,7 @@ public class NoteRepeatMode extends BaseMode
 
         if (isTouched && this.surface.isDeletePressed ())
         {
-            this.surface.setTriggerConsumed (this.surface.getDeleteTriggerId ());
+            this.surface.setTriggerConsumed (this.surface.getTriggerId (ButtonID.DELETE));
 
             if (index == 6 && this.host.canEdit (EditCapability.NOTE_REPEAT_SWING))
                 this.model.getGroove ().getParameters ()[1].resetValue ();
