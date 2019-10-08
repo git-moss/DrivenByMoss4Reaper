@@ -65,7 +65,7 @@ public class LaunchpadXControllerDefinition extends DefaultControllerDefinition 
                 break;
 
             case MAC:
-                midiDiscoveryPairs.add (this.addDeviceDiscoveryPair ("Launchpad X LPX MIDI In", "Launchpad X LPX MIDI Out"));
+                midiDiscoveryPairs.add (this.addDeviceDiscoveryPair ("Launchpad X LPX MIDI Out", "Launchpad X LPX MIDI In"));
                 break;
 
             default:

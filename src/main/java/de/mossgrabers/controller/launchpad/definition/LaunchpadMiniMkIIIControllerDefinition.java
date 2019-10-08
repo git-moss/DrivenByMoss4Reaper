@@ -65,7 +65,7 @@ public class LaunchpadMiniMkIIIControllerDefinition extends DefaultControllerDef
                 break;
 
             case MAC:
-                midiDiscoveryPairs.add (this.addDeviceDiscoveryPair ("Launchpad Mini MK3 LPMiniMK3 MIDI In", "Launchpad Mini MK3 LPMiniMK3 MIDI Out"));
+                midiDiscoveryPairs.add (this.addDeviceDiscoveryPair ("Launchpad Mini MK3 LPMiniMK3 MIDI Out", "Launchpad Mini MK3 LPMiniMK3 MIDI In"));
                 break;
 
             default:
