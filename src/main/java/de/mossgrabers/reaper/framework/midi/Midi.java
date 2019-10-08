@@ -24,7 +24,7 @@ public class Midi
     private static final List<MidiDevice> INPUTS  = new ArrayList<> ();
     private static final List<MidiDevice> OUTPUTS = new ArrayList<> ();
 
-
+    
     /**
      * Utility class.
      */
@@ -90,6 +90,32 @@ public class Midi
      */
     public static MidiDevice getOutputDevice (final String name)
     {
+        final MidiDevice device = getInternalOutputDevice (name);
+        return device == null ? getInternalOutputDevice ("CoreMIDI4J - " + name) : device;
+    }
+
+
+    /**
+     * Get a specific input device.
+     *
+     * @param name The full name of the device to lookup
+     * @return The device or null if not found
+     */
+    public static MidiDevice getInputDevice (final String name)
+    {
+        final MidiDevice device = getInternalInputDevice (name);
+        return device == null ? getInternalInputDevice ("CoreMIDI4J - " + name) : device;
+    }
+
+
+    /**
+     * Ï Get a specific output device.
+     *
+     * @param name The full name of the device to lookup
+     * @return The device or null if not found
+     */
+    private static MidiDevice getInternalOutputDevice (final String name)
+    {
         for (final MidiDevice device: OUTPUTS)
             if (device.getDeviceInfo ().getName ().equals (name))
                 return device;
@@ -103,7 +129,7 @@ public class Midi
      * @param name The full name of the device to lookup
      * @return The device or null if not found
      */
-    public static MidiDevice getInputDevice (final String name)
+    private static MidiDevice getInternalInputDevice (final String name)
     {
         for (final MidiDevice device: INPUTS)
             if (device.getDeviceInfo ().getName ().equals (name))
