@@ -15,6 +15,8 @@
   * Fixed: Mixer-LED on MkII was not lit.
   * Fixed: Play-Layout was not set when first time switching between Session and Play.
   * Fixed: Stop-Clip mode could not be activated on MkII
+- Native Instruments Komplete S-MkII, A-series/M32
+  * New: You can now set the speed of the knobs in the settings.
 
 8.11
 - All devices
