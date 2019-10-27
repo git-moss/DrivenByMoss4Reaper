@@ -428,7 +428,7 @@ public class CursorDeviceImpl extends DeviceImpl implements ICursorDevice
 
     /** {@inheritDoc} */
     @Override
-    public void selectSlotChain (String slotChainName)
+    public void selectSlotChain (final String slotChainName)
     {
         // Not supported
     }

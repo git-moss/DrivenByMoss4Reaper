@@ -291,12 +291,12 @@ public class NoteRepeatMode extends BaseMode
             }
         }
 
-        int upperBound = this.model.getValueChanger ().getUpperBound ();
+        final int upperBound = this.model.getValueChanger ().getUpperBound ();
         if (this.host.canEdit (EditCapability.NOTE_REPEAT_MODE))
         {
             final String bottomMenu = this.host.canEdit (EditCapability.NOTE_REPEAT_IS_FREE_RUNNING) ? "Sync" : "";
             final String mode = this.noteRepeat.getMode (selectedTrack);
-            int value = NoteRepeatModes.getIndex (mode) * upperBound / (NoteRepeatModes.values ().length - 1);
+            final int value = NoteRepeatModes.getIndex (mode) * upperBound / (NoteRepeatModes.values ().length - 1);
             display.setCell (0, 5, "Mode");
             display.setCell (1, 5, StringUtils.optimizeName (NoteRepeatModes.getName (mode), 8));
             display.setCell (2, 5, value, Format.FORMAT_VALUE);
@@ -307,7 +307,7 @@ public class NoteRepeatMode extends BaseMode
         {
             final int octaves = this.noteRepeat.getOctaves (selectedTrack);
             final String bottomMenu = this.host.canEdit (EditCapability.NOTE_REPEAT_USE_PRESSURE_TO_VELOCITY) ? "Use Pressure" : "";
-            int value = octaves * upperBound / 8;
+            final int value = octaves * upperBound / 8;
             display.setCell (0, 6, "Octaves");
             display.setCell (1, 6, Integer.toString (octaves));
             display.setCell (2, 6, value, Format.FORMAT_VALUE);
@@ -352,13 +352,13 @@ public class NoteRepeatMode extends BaseMode
 
         display.addEmptyElement ();
 
-        int upperBound = this.model.getValueChanger ().getUpperBound ();
+        final int upperBound = this.model.getValueChanger ().getUpperBound ();
         if (this.host.canEdit (EditCapability.NOTE_REPEAT_MODE))
         {
             final String bottomMenu = this.host.canEdit (EditCapability.NOTE_REPEAT_IS_FREE_RUNNING) ? "Sync" : "";
             final boolean isBottomMenuEnabled = !this.noteRepeat.isFreeRunning (selectedTrack);
             final String mode = this.noteRepeat.getMode (selectedTrack);
-            int value = NoteRepeatModes.getIndex (mode) * upperBound / (NoteRepeatModes.values ().length - 1);
+            final int value = NoteRepeatModes.getIndex (mode) * upperBound / (NoteRepeatModes.values ().length - 1);
             display.addParameterElementWithPlainMenu ("", false, bottomMenu, null, isBottomMenuEnabled, "Mode", value, StringUtils.optimizeName (NoteRepeatModes.getName (mode), 8), this.isKnobTouched[5], -1);
         }
         else
@@ -369,7 +369,7 @@ public class NoteRepeatMode extends BaseMode
             final int octaves = this.noteRepeat.getOctaves (selectedTrack);
             final String bottomMenu = this.host.canEdit (EditCapability.NOTE_REPEAT_USE_PRESSURE_TO_VELOCITY) ? "Use Pressure" : "";
             final boolean isBottomMenuEnabled = this.noteRepeat.usePressure (selectedTrack);
-            int value = octaves * upperBound / 8;
+            final int value = octaves * upperBound / 8;
             display.addParameterElementWithPlainMenu ("", false, bottomMenu, null, isBottomMenuEnabled, "Octaves", value, Integer.toString (octaves), this.isKnobTouched[6], -1);
         }
         else
@@ -379,7 +379,7 @@ public class NoteRepeatMode extends BaseMode
         {
             final IParameter [] grooveParameters = this.model.getGroove ().getParameters ();
             final IParameter shuffleParam = grooveParameters[1];
-            int value = grooveParameters[0].getValue ();
+            final int value = grooveParameters[0].getValue ();
             display.addParameterElementWithPlainMenu ("Groove " + grooveParameters[0].getDisplayedValue (8), value != 0, "Shuffle", null, this.noteRepeat.isShuffle (selectedTrack), shuffleParam.getName (10), shuffleParam.getValue (), shuffleParam.getDisplayedValue (8), this.isKnobTouched[7], -1);
         }
         else

@@ -524,7 +524,7 @@ public class PushControllerSetup extends AbstractControllerSetup<PushControlSurf
         final ViewManager viewManager = surface.getViewManager ();
         viewManager.registerPitchbendCommand (new PitchbendCommand (this.model, surface));
 
-        Views [] views =
+        final Views [] views =
         {
             Views.PLAY,
             Views.PIANO,

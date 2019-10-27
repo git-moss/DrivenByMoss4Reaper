@@ -24,7 +24,7 @@ public class Midi
     private static final List<MidiDevice> INPUTS  = new ArrayList<> ();
     private static final List<MidiDevice> OUTPUTS = new ArrayList<> ();
 
-    
+
     /**
      * Utility class.
      */

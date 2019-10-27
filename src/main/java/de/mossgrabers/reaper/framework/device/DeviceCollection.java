@@ -149,7 +149,7 @@ public class DeviceCollection
 
     /**
      * Parses the filter query and tests it against the given device.
-     * 
+     *
      * @param mustMatch The terms to match
      * @param mustNotMatch The terms to not match
      * @param device The device to test

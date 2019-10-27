@@ -19,7 +19,7 @@ public interface AppCallback
 {
     /**
      * Detect controllers.
-     * 
+     *
      * @return The detected instances
      */
     List<IControllerInstance> detectControllers ();

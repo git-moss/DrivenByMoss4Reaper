@@ -6,6 +6,7 @@ package de.mossgrabers.reaper.controller;
 
 import de.mossgrabers.framework.controller.IControllerDefinition;
 
+
 /**
  * Interface to an controller instance.
  *

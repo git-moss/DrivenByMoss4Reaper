@@ -27,7 +27,7 @@ public class NoteRepeatImpl implements INoteRepeat
 
     /** {@inheritDoc} */
     @Override
-    public void enableObservers (boolean enable)
+    public void enableObservers (final boolean enable)
     {
         // Not supported
     }
@@ -118,7 +118,7 @@ public class NoteRepeatImpl implements INoteRepeat
 
     /** {@inheritDoc} */
     @Override
-    public int getOctaves (ITrack track)
+    public int getOctaves (final ITrack track)
     {
         // Not supported
         return 0;
@@ -127,7 +127,7 @@ public class NoteRepeatImpl implements INoteRepeat
 
     /** {@inheritDoc} */
     @Override
-    public void setOctaves (ITrack track, int octaves)
+    public void setOctaves (final ITrack track, final int octaves)
     {
         // Not supported
     }
@@ -135,7 +135,7 @@ public class NoteRepeatImpl implements INoteRepeat
 
     /** {@inheritDoc} */
     @Override
-    public String getMode (ITrack track)
+    public String getMode (final ITrack track)
     {
         // Not supported
         return "";
@@ -144,7 +144,7 @@ public class NoteRepeatImpl implements INoteRepeat
 
     /** {@inheritDoc} */
     @Override
-    public void setMode (ITrack track, String mode)
+    public void setMode (final ITrack track, final String mode)
     {
         // Not supported
     }
@@ -152,7 +152,7 @@ public class NoteRepeatImpl implements INoteRepeat
 
     /** {@inheritDoc} */
     @Override
-    public boolean isFreeRunning (ITrack track)
+    public boolean isFreeRunning (final ITrack track)
     {
         // Not supported
         return false;
@@ -161,7 +161,7 @@ public class NoteRepeatImpl implements INoteRepeat
 
     /** {@inheritDoc} */
     @Override
-    public void toggleIsFreeRunning (ITrack track)
+    public void toggleIsFreeRunning (final ITrack track)
     {
         // Not supported
     }
