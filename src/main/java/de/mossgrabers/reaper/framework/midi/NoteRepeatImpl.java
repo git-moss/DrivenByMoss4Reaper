@@ -4,9 +4,8 @@
 
 package de.mossgrabers.reaper.framework.midi;
 
-import de.mossgrabers.framework.daw.data.ITrack;
 import de.mossgrabers.framework.daw.midi.INoteRepeat;
-import de.mossgrabers.reaper.framework.daw.data.TrackImpl;
+import de.mossgrabers.reaper.communication.MessageSender;
 
 
 /**
@@ -16,12 +15,19 @@ import de.mossgrabers.reaper.framework.daw.data.TrackImpl;
  */
 public class NoteRepeatImpl implements INoteRepeat
 {
+    private final MessageSender sender;
+    private boolean             isNoteRepeat;
+    private double              noteRepeatPeriod;
+
+
     /**
      * Constructor.
+     *
+     * @param sender The sender
      */
-    public NoteRepeatImpl ()
+    public NoteRepeatImpl (final MessageSender sender)
     {
-        // Intentionally empty
+        this.sender = sender;
     }
 
 
@@ -35,65 +41,61 @@ public class NoteRepeatImpl implements INoteRepeat
 
     /** {@inheritDoc} */
     @Override
-    public boolean isActive (final ITrack track)
+    public boolean isActive ()
     {
-        return ((TrackImpl) track).isNoteRepeatActive ();
+        return this.isNoteRepeat;
     }
 
 
     /** {@inheritDoc} */
     @Override
-    public void toggleActive (final ITrack track)
+    public void toggleActive ()
     {
-        ((TrackImpl) track).toggleNoteRepeat ();
+        this.sender.processBooleanArg ("noterepeat", "active", !this.isNoteRepeat);
     }
 
 
     /** {@inheritDoc} */
     @Override
-    public void setPeriod (final ITrack track, final double length)
+    public void setPeriod (final double length)
     {
-        ((TrackImpl) track).setNoteRepeatPeriod (length);
+        this.sender.processDoubleArg ("noterepeat", "length", length);
     }
 
 
     /** {@inheritDoc} */
     @Override
-    public double getPeriod (final ITrack track)
+    public double getPeriod ()
     {
-        return ((TrackImpl) track).getNoteRepeatPeriod ();
+        return this.noteRepeatPeriod;
+    }
+
+
+    /**
+     * Set if repeat is enabled.
+     *
+     * @param enable True if enabled
+     */
+    public void setInternalActive (final boolean enable)
+    {
+        this.isNoteRepeat = enable;
+    }
+
+
+    /**
+     * Set the note length for note repeat.
+     *
+     * @param length The length
+     */
+    public void setInternalPeriod (final double length)
+    {
+        this.noteRepeatPeriod = length;
     }
 
 
     /** {@inheritDoc} */
     @Override
-    public void setNoteLength (final ITrack track, final double length)
-    {
-        // Not supported
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public double getNoteLength (final ITrack track)
-    {
-        // Not supported
-        return 0;
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public boolean isShuffle (final ITrack track)
-    {
-        // Not supported
-        return false;
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void toggleShuffle (final ITrack track)
+    public void setNoteLength (final double length)
     {
         // Not supported
     }
@@ -101,24 +103,7 @@ public class NoteRepeatImpl implements INoteRepeat
 
     /** {@inheritDoc} */
     @Override
-    public boolean usePressure (final ITrack track)
-    {
-        // Not supported
-        return false;
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void toggleUsePressure (final ITrack track)
-    {
-        // Not supported
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public int getOctaves (final ITrack track)
+    public double getNoteLength ()
     {
         // Not supported
         return 0;
@@ -127,7 +112,16 @@ public class NoteRepeatImpl implements INoteRepeat
 
     /** {@inheritDoc} */
     @Override
-    public void setOctaves (final ITrack track, final int octaves)
+    public boolean isShuffle ()
+    {
+        // Not supported
+        return false;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void toggleShuffle ()
     {
         // Not supported
     }
@@ -135,7 +129,41 @@ public class NoteRepeatImpl implements INoteRepeat
 
     /** {@inheritDoc} */
     @Override
-    public String getMode (final ITrack track)
+    public boolean usePressure ()
+    {
+        // Not supported
+        return false;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void toggleUsePressure ()
+    {
+        // Not supported
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public int getOctaves ()
+    {
+        // Not supported
+        return 0;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void setOctaves (final int octaves)
+    {
+        // Not supported
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public String getMode ()
     {
         // Not supported
         return "";
@@ -144,7 +172,7 @@ public class NoteRepeatImpl implements INoteRepeat
 
     /** {@inheritDoc} */
     @Override
-    public void setMode (final ITrack track, final String mode)
+    public void setMode (final String mode)
     {
         // Not supported
     }
@@ -152,7 +180,7 @@ public class NoteRepeatImpl implements INoteRepeat
 
     /** {@inheritDoc} */
     @Override
-    public boolean isFreeRunning (final ITrack track)
+    public boolean isFreeRunning ()
     {
         // Not supported
         return false;
@@ -161,7 +189,7 @@ public class NoteRepeatImpl implements INoteRepeat
 
     /** {@inheritDoc} */
     @Override
-    public void toggleIsFreeRunning (final ITrack track)
+    public void toggleIsFreeRunning ()
     {
         // Not supported
     }

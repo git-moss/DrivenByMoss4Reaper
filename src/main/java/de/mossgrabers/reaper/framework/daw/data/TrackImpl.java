@@ -59,8 +59,6 @@ public class TrackImpl extends ChannelImpl implements ITrack
     private boolean                       autoMonitor;
     private String                        automation = AUTOMATION_TRIM;
     private final ISlotBank               slotBank;
-    private boolean                       isNoteRepeat;
-    private double                        noteRepeatPeriod;
     private int                           depth;
     private boolean                       recordQuantizationNoteLength;
     private RecordQuantization            recordQuantization;
@@ -192,48 +190,6 @@ public class TrackImpl extends ChannelImpl implements ITrack
     }
 
 
-    /**
-     * Toggle note repeat on the channel.
-     */
-    public void toggleNoteRepeat ()
-    {
-        this.sendTrackOSC ("noterepeat", !this.isNoteRepeat);
-    }
-
-
-    /**
-     * Check if note repeat is enabled.
-     *
-     * @return True if enabled
-     */
-    public boolean isNoteRepeatActive ()
-    {
-        return this.isNoteRepeat;
-    }
-
-
-    /**
-     * Set the note repeat period.
-     *
-     * @param length The length of the period
-     */
-    public void setNoteRepeatPeriod (final double length)
-    {
-        this.sendTrackOSC ("noterepeatlength", length);
-    }
-
-
-    /**
-     * Get the note repeat period.
-     *
-     * @return The current length of the period
-     */
-    public double getNoteRepeatPeriod ()
-    {
-        return this.noteRepeatPeriod;
-    }
-
-
     /** {@inheritDoc} */
     @Override
     public boolean canHoldNotes ()
@@ -339,28 +295,6 @@ public class TrackImpl extends ChannelImpl implements ITrack
     public String getAutomation ()
     {
         return this.automation;
-    }
-
-
-    /**
-     * Set if repeat is enabled.
-     *
-     * @param enable True if enabled
-     */
-    public void setInternalNoteRepeat (final boolean enable)
-    {
-        this.isNoteRepeat = enable;
-    }
-
-
-    /**
-     * Set the note length for note repeat.
-     *
-     * @param length The length
-     */
-    public void setInternalNoteRepeatLength (final double length)
-    {
-        this.noteRepeatPeriod = length;
     }
 
 

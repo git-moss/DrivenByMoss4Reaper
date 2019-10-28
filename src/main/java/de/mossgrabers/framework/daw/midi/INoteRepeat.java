@@ -4,7 +4,6 @@
 
 package de.mossgrabers.framework.daw.midi;
 
-import de.mossgrabers.framework.daw.data.ITrack;
 import de.mossgrabers.framework.observer.ObserverManagement;
 
 
@@ -17,140 +16,125 @@ public interface INoteRepeat extends ObserverManagement
 {
     /**
      * Toggle if note repeat is active.
-     *
-     * @param track The track for which to toggle the note repeat
      */
-    void toggleActive (ITrack track);
+    void toggleActive ();
 
 
     /**
      * True if note repeat is enabled.
      *
-     * @param track The track
      * @return True if note repeat is enabled
      */
-    boolean isActive (ITrack track);
+    boolean isActive ();
 
 
     /**
      * Set the note repeat period.
-     *
-     * @param track The track
+     * 
      * @param period The period
      */
-    void setPeriod (ITrack track, double period);
+    void setPeriod (double period);
 
 
     /**
      * Get the note repeat period.
-     *
-     * @param track The track
+     * 
      * @return The period
      */
-    double getPeriod (ITrack track);
+    double getPeriod ();
 
 
     /**
      * Get the note length.
-     *
-     * @param track The track
+     * 
      * @param length The length
      */
-    void setNoteLength (ITrack track, double length);
+    void setNoteLength (double length);
 
 
     /**
      * Get the note length.
      *
-     * @param track The track
      * @return The length
      */
-    double getNoteLength (ITrack track);
+    double getNoteLength ();
 
 
     /**
      * Check if shuffle is active.
-     *
-     * @param track The track for which to check the note repeat shuffle
+     * 
      * @return True if active
      */
-    boolean isShuffle (ITrack track);
+    boolean isShuffle ();
 
 
     /**
      * Toggle if shuffle is active.
      *
-     * @param track The track for which to toggle the note repeat shuffle
+     * for which to toggle the note repeat shuffle
      */
-    void toggleShuffle (ITrack track);
+    void toggleShuffle ();
 
 
     /**
      * Check if use pressure as the velocity for new notes is active.
      *
-     * @param track The track
      * @return True if active
      */
-    boolean usePressure (ITrack track);
+    boolean usePressure ();
 
 
     /**
      * Use the pressure as the velocity for new notes.
      *
-     * @param track The track for which to toggle use pressure
+     * for which to toggle use pressure
      */
-    void toggleUsePressure (ITrack track);
+    void toggleUsePressure ();
 
 
     /**
      * Get the arpeggiator octaves.
      *
-     * @param track The track
      * @return The octaves (0-8)
      */
-    int getOctaves (ITrack track);
+    int getOctaves ();
 
 
     /**
      * Set the arpeggiator octaves.
      *
-     * @param track The track
      * @param octaves The octaves (0-8)
      */
-    void setOctaves (ITrack track, int octaves);
+    void setOctaves (int octaves);
 
 
     /**
      * Get the arpeggiator mode.
      *
-     * @param track The track
      * @return The mode
      */
-    String getMode (ITrack track);
+    String getMode ();
 
 
     /**
      * Set the arpeggiator mode.
      *
-     * @param track The track
      * @param mode The mode
      */
-    void setMode (ITrack track, String mode);
+    void setMode (String mode);
 
 
     /**
      * Is the note repeat arpeggiator free running?
      *
-     * @param track The track
+     * 
      * @return True if free running
      */
-    boolean isFreeRunning (ITrack track);
+    boolean isFreeRunning ();
 
 
     /**
      * Toggle the free running state.
-     *
-     * @param track The track
      */
-    void toggleIsFreeRunning (ITrack track);
+    void toggleIsFreeRunning ();
 }

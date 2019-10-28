@@ -58,7 +58,7 @@ class MidiInputImpl implements IMidiInput
         this.device = device;
 
         this.midiConnection.setInput (this.device, (message, timeStamp) -> this.handleMidiMessage (message));
-        this.defaultNoteInput = new NoteInputImpl (filters);
+        this.defaultNoteInput = new NoteInputImpl (sender, filters);
         this.noteInputs.add (this.defaultNoteInput);
     }
 
@@ -67,7 +67,7 @@ class MidiInputImpl implements IMidiInput
     @Override
     public INoteInput createNoteInput (final String name, final String... filters)
     {
-        final NoteInputImpl noteInput = new NoteInputImpl (filters);
+        final NoteInputImpl noteInput = new NoteInputImpl (this.sender, filters);
         this.noteInputs.add (noteInput);
         return noteInput;
     }

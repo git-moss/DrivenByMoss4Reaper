@@ -6,6 +6,7 @@ package de.mossgrabers.reaper.framework.midi;
 
 import de.mossgrabers.framework.daw.midi.INoteInput;
 import de.mossgrabers.framework.daw.midi.INoteRepeat;
+import de.mossgrabers.reaper.communication.MessageSender;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -26,13 +27,15 @@ public class NoteInputImpl implements INoteInput
 
     /**
      * Constructor.
+     * 
+     * @param sender
      *
      * @param filters a filter string formatted as hexadecimal value with `?` as wildcard. For
      *            example `80????` would match note-off on channel 1 (0). When this parameter is
      *            {@null}, a standard filter will be used to forward note-related messages on
      *            channel 1 (0).
      */
-    public NoteInputImpl (final String... filters)
+    public NoteInputImpl (final MessageSender sender, final String... filters)
     {
         if (filters.length == 0)
         {
@@ -46,7 +49,7 @@ public class NoteInputImpl implements INoteInput
                 this.filters.add (filter.replace ('?', ' ').trim ());
         }
 
-        this.noteRepeat = new NoteRepeatImpl ();
+        this.noteRepeat = new NoteRepeatImpl (sender);
     }
 
 

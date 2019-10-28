@@ -15,6 +15,7 @@ import de.mossgrabers.framework.daw.data.IMarker;
 import de.mossgrabers.framework.daw.data.IParameter;
 import de.mossgrabers.framework.daw.data.IScene;
 import de.mossgrabers.framework.daw.data.ISend;
+import de.mossgrabers.framework.daw.midi.IMidiInput;
 import de.mossgrabers.framework.daw.resource.ChannelType;
 import de.mossgrabers.reaper.framework.daw.ApplicationImpl;
 import de.mossgrabers.reaper.framework.daw.BrowserImpl;
@@ -35,6 +36,7 @@ import de.mossgrabers.reaper.framework.daw.data.ParameterImpl;
 import de.mossgrabers.reaper.framework.daw.data.SceneImpl;
 import de.mossgrabers.reaper.framework.daw.data.SendImpl;
 import de.mossgrabers.reaper.framework.daw.data.TrackImpl;
+import de.mossgrabers.reaper.framework.midi.NoteRepeatImpl;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -179,6 +181,10 @@ public class MessageParser
             case "quantize":
                 if ("strength".equals (parts.poll ()))
                     this.controllerSetup.getConfiguration ().setQuantizeAmount (Integer.parseInt (value));
+                break;
+
+            case "noterepeat":
+                this.parseNoteRepeat (parts, value);
                 break;
 
             default:
@@ -386,14 +392,6 @@ public class MessageParser
 
             case "send":
                 this.parseSend (track, parts, value);
-                break;
-
-            case "repeatActive":
-                track.setInternalNoteRepeat (Double.parseDouble (value) > 0);
-                break;
-
-            case "noterepeatlength":
-                track.setInternalNoteRepeatLength (Double.parseDouble (value));
                 break;
 
             case "playingnotes":
@@ -770,6 +768,31 @@ public class MessageParser
 
             default:
                 this.host.error ("Unhandled Clip Parameter: " + command);
+                break;
+        }
+    }
+
+
+    private void parseNoteRepeat (Queue<String> parts, String value)
+    {
+        final IMidiInput input = this.controllerSetup.getSurface ().getInput ();
+        if (input == null)
+            return;
+        final NoteRepeatImpl noteRepeat = (NoteRepeatImpl) input.getDefaultNoteInput ().getNoteRepeat ();
+
+        final String command = parts.poll ();
+        switch (command)
+        {
+            case "active":
+                noteRepeat.setInternalActive (Double.parseDouble (value) > 0);
+                break;
+
+            case "period":
+                noteRepeat.setInternalPeriod (Double.parseDouble (value));
+                break;
+
+            default:
+                this.host.error ("Unhandled NoteRepeat Parameter: " + command);
                 break;
         }
     }
