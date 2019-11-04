@@ -73,8 +73,7 @@ public class NoteRepeatImpl implements INoteRepeat
     @Override
     public void setActive (boolean active)
     {
-        // TODO Auto-generated method stub
-
+        this.sender.processBooleanArg (NOTEREPEAT_TAG, "active", active);
     }
 
 

@@ -211,6 +211,7 @@ public class MainFrame extends JFrame
             return;
         final CheckboxListItem item = this.listModel.getElementAt (selectedIndex);
         item.setSelected (!item.isSelected ());
+        this.callback.toggleEnableController (selectedIndex);
         // Force a redraw
         this.listModel.setElementAt (item, selectedIndex);
     }

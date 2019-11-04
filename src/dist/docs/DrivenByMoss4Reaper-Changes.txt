@@ -1,9 +1,12 @@
-8.31 (unreleased)
-- Do not display note feedback from muted media items
-- Switched to "MIDI Arpeggiator" instead of "MIDI Note Repeater" for Note Repeat.
+8.40 (unreleased)
+- New: Do not display note feedback from muted media items
+- New: Switched to "MIDI Arpeggiator" instead of "MIDI Note Repeater" for Note Repeat.
   This requires a fix on the MIDI Arpeggiator JS plugin to make the note length work:
   Increase the note length step resolution from 0.1 to 0.001 like this:
     slider2:1<0.01,1,0.001>Note Length
+- New: Support for Novation Launchpad X
+- New: Support for Novation Launchpad Mini Mk3
+- Fixed: Controller instance was not stopped when deactivated
 - Launchpad
   * New: Shift mode: Enable note repeat and set the note repeat period and length with the pads in the middle
 - Maschine Mikro Mk3
