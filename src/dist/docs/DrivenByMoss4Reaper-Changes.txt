@@ -1,4 +1,4 @@
-8.40 (unreleased)
+8.40
 - New: Do not display note feedback from muted media items
 - New: Switched to "MIDI Arpeggiator" instead of "MIDI Note Repeater" for Note Repeat.
   This requires a fix on the MIDI Arpeggiator JS plugin to make the note length work:
