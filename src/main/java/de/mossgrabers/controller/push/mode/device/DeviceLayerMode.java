@@ -9,7 +9,6 @@ import de.mossgrabers.controller.push.controller.Push1Display;
 import de.mossgrabers.controller.push.controller.PushColors;
 import de.mossgrabers.controller.push.controller.PushControlSurface;
 import de.mossgrabers.controller.push.mode.BaseMode;
-import de.mossgrabers.framework.command.TriggerCommandID;
 import de.mossgrabers.framework.controller.ButtonID;
 import de.mossgrabers.framework.controller.IValueChanger;
 import de.mossgrabers.framework.controller.display.Format;
@@ -197,7 +196,7 @@ public class DeviceLayerMode extends BaseMode
         final ICursorDevice cd = this.model.getCursorDevice ();
         if (!cd.doesExist ())
         {
-            this.surface.getViewManager ().getActiveView ().executeTriggerCommand (TriggerCommandID.TRACK, ButtonEvent.DOWN);
+            this.surface.getButton (ButtonID.TRACK).trigger (ButtonEvent.DOWN);
             return;
         }
 
@@ -536,28 +535,22 @@ public class DeviceLayerMode extends BaseMode
 
     /** {@inheritDoc} */
     @Override
-    public void updateFirstRow ()
+    public int getFirstRowColor (final int index)
     {
         final ICursorDevice cd = this.model.getCursorDevice ();
         if (cd == null || !cd.hasLayers ())
-        {
-            this.disableFirstRow ();
-            return;
-        }
+            return super.getFirstRowColor (index);
 
         final int offset = getDrumPadIndex (cd);
         final IChannelBank<?> bank = this.model.getCursorDevice ().getLayerOrDrumPadBank ();
-        for (int i = 0; i < 8; i++)
-        {
-            final IChannel dl = bank.getItem (offset + i);
-            this.surface.updateTrigger (20 + i, dl.doesExist () && dl.isActivated () ? dl.isSelected () ? this.isPush2 ? PushColors.PUSH2_COLOR_ORANGE_HI : PushColors.PUSH1_COLOR_ORANGE_HI : this.isPush2 ? PushColors.PUSH2_COLOR_YELLOW_LO : PushColors.PUSH1_COLOR_YELLOW_LO : this.isPush2 ? PushColors.PUSH2_COLOR_BLACK : PushColors.PUSH1_COLOR_BLACK);
-        }
+        final IChannel dl = bank.getItem (offset + index);
+        return dl.doesExist () && dl.isActivated () ? dl.isSelected () ? this.isPush2 ? PushColors.PUSH2_COLOR_ORANGE_HI : PushColors.PUSH1_COLOR_ORANGE_HI : this.isPush2 ? PushColors.PUSH2_COLOR_YELLOW_LO : PushColors.PUSH1_COLOR_YELLOW_LO : this.isPush2 ? PushColors.PUSH2_COLOR_BLACK : PushColors.PUSH1_COLOR_BLACK;
     }
 
 
     /** {@inheritDoc} */
     @Override
-    public void updateSecondRow ()
+    public int getSecondRowColor (final int index)
     {
         final ICursorDevice cd = this.model.getCursorDevice ();
         final IChannelBank<?> bank = cd.getLayerOrDrumPadBank ();
@@ -571,63 +564,53 @@ public class DeviceLayerMode extends BaseMode
                 // Drum Pad Bank has size of 16, layers only 8
                 final int offset = getDrumPadIndex (cd);
 
-                for (int i = 0; i < 8; i++)
+                final IChannel layer = bank.getItem (offset + index);
+
+                if (layer.doesExist ())
                 {
-                    final IChannel layer = bank.getItem (offset + i);
-
-                    int color = PushColors.PUSH2_COLOR_BLACK;
-                    if (layer.doesExist ())
+                    if (muteState)
                     {
-                        if (muteState)
-                        {
-                            if (layer.isMute ())
-                                color = PushColors.PUSH2_COLOR2_AMBER_LO;
-                        }
-                        else if (layer.isSolo ())
-                            color = PushColors.PUSH2_COLOR2_YELLOW_HI;
+                        if (layer.isMute ())
+                            return PushColors.PUSH2_COLOR2_AMBER_LO;
                     }
-
-                    this.surface.updateTrigger (102 + i, color);
+                    else if (layer.isSolo ())
+                        return PushColors.PUSH2_COLOR2_YELLOW_HI;
                 }
-                return;
+                return PushColors.PUSH2_COLOR_BLACK;
             }
 
             final ModeManager modeManager = this.surface.getModeManager ();
-            this.surface.updateTrigger (102, modeManager.isActiveOrTempMode (Modes.DEVICE_LAYER_VOLUME) ? PushColors.PUSH2_COLOR2_WHITE : PushColors.PUSH2_COLOR_BLACK);
-            this.surface.updateTrigger (103, modeManager.isActiveOrTempMode (Modes.DEVICE_LAYER_PAN) ? PushColors.PUSH2_COLOR2_WHITE : PushColors.PUSH2_COLOR_BLACK);
-            this.surface.updateTrigger (104, PushColors.PUSH2_COLOR_BLACK);
-            this.surface.updateTrigger (105, PushColors.PUSH2_COLOR_BLACK);
-            this.surface.updateTrigger (106, modeManager.isActiveOrTempMode (config.isSendsAreToggled () ? Modes.DEVICE_LAYER_SEND5 : Modes.DEVICE_LAYER_SEND1) ? PushColors.PUSH2_COLOR2_WHITE : PushColors.PUSH2_COLOR_BLACK);
-            this.surface.updateTrigger (107, modeManager.isActiveOrTempMode (config.isSendsAreToggled () ? Modes.DEVICE_LAYER_SEND6 : Modes.DEVICE_LAYER_SEND2) ? PushColors.PUSH2_COLOR2_WHITE : PushColors.PUSH2_COLOR_BLACK);
-            this.surface.updateTrigger (108, modeManager.isActiveOrTempMode (config.isSendsAreToggled () ? Modes.DEVICE_LAYER_SEND7 : Modes.DEVICE_LAYER_SEND3) ? PushColors.PUSH2_COLOR2_WHITE : PushColors.PUSH2_COLOR_BLACK);
-            this.surface.updateTrigger (109, modeManager.isActiveOrTempMode (config.isSendsAreToggled () ? Modes.DEVICE_LAYER_SEND8 : Modes.DEVICE_LAYER_SEND4) ? PushColors.PUSH2_COLOR2_WHITE : PushColors.PUSH2_COLOR_BLACK);
-            return;
+            switch (index)
+            {
+                case 0:
+                    return modeManager.isActiveOrTempMode (Modes.DEVICE_LAYER_VOLUME) ? PushColors.PUSH2_COLOR2_WHITE : PushColors.PUSH2_COLOR_BLACK;
+                case 1:
+                    return modeManager.isActiveOrTempMode (Modes.DEVICE_LAYER_PAN) ? PushColors.PUSH2_COLOR2_WHITE : PushColors.PUSH2_COLOR_BLACK;
+                case 4:
+                    return modeManager.isActiveOrTempMode (config.isSendsAreToggled () ? Modes.DEVICE_LAYER_SEND5 : Modes.DEVICE_LAYER_SEND1) ? PushColors.PUSH2_COLOR2_WHITE : PushColors.PUSH2_COLOR_BLACK;
+                case 5:
+                    return modeManager.isActiveOrTempMode (config.isSendsAreToggled () ? Modes.DEVICE_LAYER_SEND6 : Modes.DEVICE_LAYER_SEND2) ? PushColors.PUSH2_COLOR2_WHITE : PushColors.PUSH2_COLOR_BLACK;
+                case 6:
+                    return modeManager.isActiveOrTempMode (config.isSendsAreToggled () ? Modes.DEVICE_LAYER_SEND7 : Modes.DEVICE_LAYER_SEND3) ? PushColors.PUSH2_COLOR2_WHITE : PushColors.PUSH2_COLOR_BLACK;
+                case 7:
+                    return modeManager.isActiveOrTempMode (config.isSendsAreToggled () ? Modes.DEVICE_LAYER_SEND8 : Modes.DEVICE_LAYER_SEND4) ? PushColors.PUSH2_COLOR2_WHITE : PushColors.PUSH2_COLOR_BLACK;
+                default:
+                    return PushColors.PUSH2_COLOR_BLACK;
+            }
         }
 
         if (!cd.hasLayers ())
-        {
-            this.disableSecondRow ();
-            this.surface.updateTrigger (109, PushColors.PUSH1_COLOR2_WHITE);
-            return;
-        }
+            return index == 7 ? PushColors.PUSH1_COLOR2_WHITE : super.getSecondRowColor (index);
 
         final int offset = getDrumPadIndex (cd);
-        for (int i = 0; i < 8; i++)
+        final IChannel dl = bank.getItem (offset + index);
+        if (dl.doesExist ())
         {
-            final IChannel dl = bank.getItem (offset + i);
-            int color = PushColors.PUSH1_COLOR_BLACK;
-            if (dl.doesExist ())
-            {
-                if (muteState)
-                {
-                    if (!dl.isMute ())
-                        color = PushColors.PUSH1_COLOR2_YELLOW_HI;
-                }
-                else
-                    color = dl.isSolo () ? PushColors.PUSH1_COLOR2_BLUE_HI : PushColors.PUSH1_COLOR2_GREY_LO;
-            }
-            this.surface.updateTrigger (102 + i, color);
+            if (muteState)
+                return dl.isMute () ? PushColors.PUSH1_COLOR_BLACK : PushColors.PUSH1_COLOR2_YELLOW_HI;
+            return dl.isSolo () ? PushColors.PUSH1_COLOR2_BLUE_HI : PushColors.PUSH1_COLOR2_GREY_LO;
         }
+        return PushColors.PUSH1_COLOR_BLACK;
     }
 
 

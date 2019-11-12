@@ -90,6 +90,14 @@ public abstract class AbstractDrumView64<S extends IControlSurface<C>, C extends
 
     /** {@inheritDoc} */
     @Override
+    public void updateSceneButton (final int scene)
+    {
+        // TODO remove
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
     public void onActivate ()
     {
         super.onActivate ();
@@ -257,6 +265,22 @@ public abstract class AbstractDrumView64<S extends IControlSurface<C>, C extends
             for (int i = 0; i < BLOCK_SIZE; i++)
                 drumPadBank.scrollForwards ();
         }
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean isOctaveUpButtonOn ()
+    {
+        return this.drumOctave < 1;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean isOctaveDownButtonOn ()
+    {
+        return this.drumOctave > Scales.DRUM_OCTAVE_LOWER;
     }
 
 

@@ -56,6 +56,10 @@ public class APCminiColors
         colorManager.registerColor (Scales.SCALE_COLOR_NOTE, APC_COLOR_BLACK);
         colorManager.registerColor (Scales.SCALE_COLOR_OUT_OF_SCALE, APC_COLOR_BLACK);
 
+        colorManager.registerColor (ColorManager.BUTTON_STATE_OFF, APC_COLOR_BLACK);
+        colorManager.registerColor (ColorManager.BUTTON_STATE_ON, APC_COLOR_GREEN);
+        colorManager.registerColor (ColorManager.BUTTON_STATE_HI, APC_COLOR_GREEN_BLINK);
+
         colorManager.registerColor (AbstractSequencerView.COLOR_STEP_HILITE_NO_CONTENT, APC_COLOR_GREEN);
         colorManager.registerColor (AbstractSequencerView.COLOR_STEP_HILITE_CONTENT, APC_COLOR_GREEN);
         colorManager.registerColor (AbstractSequencerView.COLOR_NO_CONTENT, APC_COLOR_BLACK);

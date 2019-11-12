@@ -7,7 +7,6 @@ package de.mossgrabers.controller.push.view;
 import de.mossgrabers.controller.push.PushConfiguration;
 import de.mossgrabers.controller.push.controller.PushControlSurface;
 import de.mossgrabers.framework.controller.ButtonID;
-import de.mossgrabers.framework.controller.color.ColorManager;
 import de.mossgrabers.framework.daw.ICursorDevice;
 import de.mossgrabers.framework.daw.IDrumPadBank;
 import de.mossgrabers.framework.daw.IModel;
@@ -17,7 +16,6 @@ import de.mossgrabers.framework.daw.data.IScene;
 import de.mossgrabers.framework.mode.BrowserActivator;
 import de.mossgrabers.framework.mode.ModeManager;
 import de.mossgrabers.framework.mode.Modes;
-import de.mossgrabers.framework.scale.Scales;
 import de.mossgrabers.framework.utils.ButtonEvent;
 import de.mossgrabers.framework.view.AbstractDrumView64;
 import de.mossgrabers.framework.view.AbstractSessionView;
@@ -44,23 +42,6 @@ public class DrumView64 extends AbstractDrumView64<PushControlSurface, PushConfi
         super (surface, model);
 
         this.browserModeActivator = new BrowserActivator<> (Modes.BROWSER, model, surface);
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void updateButtons ()
-    {
-        this.surface.updateTrigger (PushControlSurface.PUSH_BUTTON_OCTAVE_UP, this.drumOctave < 1 ? ColorManager.BUTTON_STATE_ON : ColorManager.BUTTON_STATE_OFF);
-        this.surface.updateTrigger (PushControlSurface.PUSH_BUTTON_OCTAVE_DOWN, this.drumOctave > Scales.DRUM_OCTAVE_LOWER ? ColorManager.BUTTON_STATE_ON : ColorManager.BUTTON_STATE_OFF);
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public boolean usesButton (final int buttonID)
-    {
-        return true;
     }
 
 
@@ -148,20 +129,13 @@ public class DrumView64 extends AbstractDrumView64<PushControlSurface, PushConfi
 
     /** {@inheritDoc} */
     @Override
-    public void updateSceneButtons ()
+    public String getSceneButtonColor (final int scene)
     {
-        final ColorManager colorManager = this.model.getColorManager ();
-        final int colorScene = colorManager.getColor (AbstractSessionView.COLOR_SCENE);
-        final int colorSceneSelected = colorManager.getColor (AbstractSessionView.COLOR_SELECTED_SCENE);
-        final int colorSceneOff = colorManager.getColor (AbstractSessionView.COLOR_SCENE_OFF);
-
         final ISceneBank sceneBank = this.model.getSceneBank ();
-        for (int i = 0; i < 8; i++)
-        {
-            final IScene scene = sceneBank.getItem (7 - i);
-            final int color = scene.doesExist () ? scene.isSelected () ? colorSceneSelected : colorScene : colorSceneOff;
-            this.surface.updateTrigger (PushControlSurface.PUSH_BUTTON_SCENE1 + i, color);
-        }
+        final IScene s = sceneBank.getItem (7 - scene);
+        if (s.doesExist ())
+            return s.isSelected () ? AbstractSessionView.COLOR_SELECTED_SCENE : AbstractSessionView.COLOR_SCENE;
+        return AbstractSessionView.COLOR_SCENE_OFF;
     }
 
 

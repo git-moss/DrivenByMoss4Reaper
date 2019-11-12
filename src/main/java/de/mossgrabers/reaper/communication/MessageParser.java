@@ -771,7 +771,7 @@ public class MessageParser
     }
 
 
-    private void parseNoteRepeat (Queue<String> parts, String value)
+    private void parseNoteRepeat (final Queue<String> parts, final String value)
     {
         final IMidiInput input = this.controllerSetup.getSurface ().getInput ();
         if (input == null)

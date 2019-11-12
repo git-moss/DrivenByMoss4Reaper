@@ -66,7 +66,7 @@ public abstract class BaseSequencerView extends AbstractSequencerView<BeatstepCo
 
     /** {@inheritDoc} */
     @Override
-    public void updateSceneButtons ()
+    public void updateSceneButton (final int scene)
     {
         // Intentionally empty
     }

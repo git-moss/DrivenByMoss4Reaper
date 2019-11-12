@@ -11,10 +11,16 @@ import de.mossgrabers.framework.controller.display.IDisplay;
 import de.mossgrabers.framework.controller.display.IGraphicDisplay;
 import de.mossgrabers.framework.controller.display.ITextDisplay;
 import de.mossgrabers.framework.controller.grid.PadGrid;
+import de.mossgrabers.framework.controller.hardware.IButton;
+import de.mossgrabers.framework.controller.hardware.IFader;
+import de.mossgrabers.framework.controller.hardware.ILight;
 import de.mossgrabers.framework.daw.midi.IMidiInput;
 import de.mossgrabers.framework.daw.midi.IMidiOutput;
 import de.mossgrabers.framework.mode.ModeManager;
 import de.mossgrabers.framework.view.ViewManager;
+
+import java.util.function.IntConsumer;
+import java.util.function.IntSupplier;
 
 
 /**
@@ -377,8 +383,18 @@ public interface IControlSurface<C extends Configuration>
      * Sets a trigger as consumed which prevents LONG and UP events following a DOWN event for a
      * trigger.
      *
+     * @param buttonID The trigger to set as consumed
+     */
+    void setTriggerConsumed (ButtonID buttonID);
+
+
+    /**
+     * Sets a trigger as consumed which prevents LONG and UP events following a DOWN event for a
+     * trigger.
+     *
      * @param cc The trigger to set as consumed
      */
+    @Deprecated
     void setTriggerConsumed (int cc);
 
 
@@ -389,6 +405,7 @@ public interface IControlSurface<C extends Configuration>
      * @param channel The midi channel to use
      * @param cc The trigger to test
      */
+    @Deprecated
     void setTriggerConsumed (int channel, int cc);
 
 
@@ -398,6 +415,7 @@ public interface IControlSurface<C extends Configuration>
      * @param cc The trigger to set as consumed
      * @return The consumed flag
      */
+    @Deprecated
     boolean isTriggerConsumed (int cc);
 
 
@@ -408,6 +426,7 @@ public interface IControlSurface<C extends Configuration>
      * @param cc The trigger to set as consumed
      * @return The consumed flag
      */
+    @Deprecated
     boolean isTriggerConsumed (int channel, int cc);
 
 
@@ -495,6 +514,44 @@ public interface IControlSurface<C extends Configuration>
      * @param colorID A registered color ID of the color / brightness depending on the controller
      */
     void setTrigger (int channel, int cc, String colorID);
+
+
+    /**
+     * Creates a button for the surface.
+     *
+     * @param buttonID The ID of the button for looking it up
+     * @param label The label of the button
+     * @return The created button
+     */
+    IButton createButton (ButtonID buttonID, String label);
+
+
+    /**
+     * Get a button the was created with the given ID.
+     *
+     * @param buttonID The button ID
+     * @return The button or null if not created
+     */
+    IButton getButton (ButtonID buttonID);
+
+
+    /**
+     * Creates a light (e.g. LED) for the surface.
+     *
+     * @param supplier Callback for retrieving the state of the light
+     * @param sendConsumer Callback for sending the update command to the controller surface
+     * @return The created light
+     */
+    ILight createLight (IntSupplier supplier, IntConsumer sendConsumer);
+
+
+    /**
+     * Create a fader for the surface.
+     *
+     * @param label The label of the fader
+     * @return The created fader
+     */
+    IFader createFader (String label);
 
 
     /**

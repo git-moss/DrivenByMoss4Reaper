@@ -66,7 +66,8 @@ public class SlotBankImpl extends AbstractPagedBankImpl<SlotImpl, ISlot> impleme
     @Override
     public List<ISlot> getSelectedItems ()
     {
-        return Collections.singletonList (this.getSelectedItem ());
+        final ISlot selectedItem = this.getSelectedItem ();
+        return selectedItem == null ? Collections.emptyList () : Collections.singletonList (selectedItem);
     }
 
 

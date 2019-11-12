@@ -190,6 +190,24 @@ public abstract class AbstractSequencerView<S extends IControlSurface<C>, C exte
     }
 
 
+    /** {@inheritDoc} */
+    @Override
+    public String getSceneButtonColor (final int scene)
+    {
+        if (!this.isActive ())
+            return AbstractSequencerView.COLOR_RESOLUTION_OFF;
+        return scene == this.selectedResolutionIndex ? AbstractSequencerView.COLOR_RESOLUTION_SELECTED : AbstractSequencerView.COLOR_RESOLUTION;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void updateSceneButton (final int scene)
+    {
+        // TODO REmove
+    }
+
+
     /**
      * Checks if the given number is in the current display.
      *

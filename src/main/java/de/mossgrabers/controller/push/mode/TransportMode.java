@@ -81,34 +81,29 @@ public class TransportMode extends BaseMode
 
     /** {@inheritDoc} */
     @Override
-    public void updateFirstRow ()
+    protected String getFirstRowColorID (final int index)
     {
-        final ITransport transport = this.model.getTransport ();
-        final String preroll = transport.getPreroll ();
-        this.surface.updateTrigger (20, TransportConstants.PREROLL_NONE.equals (preroll) ? AbstractMode.BUTTON_COLOR_HI : AbstractMode.BUTTON_COLOR_ON);
-        this.surface.updateTrigger (21, TransportConstants.PREROLL_1_BAR.equals (preroll) ? AbstractMode.BUTTON_COLOR_HI : AbstractMode.BUTTON_COLOR_ON);
-        this.surface.updateTrigger (22, TransportConstants.PREROLL_2_BARS.equals (preroll) ? AbstractMode.BUTTON_COLOR_HI : AbstractMode.BUTTON_COLOR_ON);
-        this.surface.updateTrigger (23, TransportConstants.PREROLL_4_BARS.equals (preroll) ? AbstractMode.BUTTON_COLOR_HI : AbstractMode.BUTTON_COLOR_ON);
-        this.surface.updateTrigger (24, AbstractMode.BUTTON_COLOR_OFF);
-        this.surface.updateTrigger (25, AbstractMode.BUTTON_COLOR_OFF);
-        this.surface.updateTrigger (26, AbstractMode.BUTTON_COLOR_OFF);
-        this.surface.updateTrigger (27, AbstractMode.BUTTON_COLOR_OFF);
+        final String preroll = this.model.getTransport ().getPreroll ();
+        if (index == 0)
+            return TransportConstants.PREROLL_NONE.equals (preroll) ? AbstractMode.BUTTON_COLOR_HI : AbstractMode.BUTTON_COLOR_ON;
+        if (index == 1)
+            return TransportConstants.PREROLL_1_BAR.equals (preroll) ? AbstractMode.BUTTON_COLOR_HI : AbstractMode.BUTTON_COLOR_ON;
+        if (index == 2)
+            return TransportConstants.PREROLL_2_BARS.equals (preroll) ? AbstractMode.BUTTON_COLOR_HI : AbstractMode.BUTTON_COLOR_ON;
+        if (index == 3)
+            return TransportConstants.PREROLL_4_BARS.equals (preroll) ? AbstractMode.BUTTON_COLOR_HI : AbstractMode.BUTTON_COLOR_ON;
+        return AbstractMode.BUTTON_COLOR_OFF;
     }
 
 
     /** {@inheritDoc} */
     @Override
-    public void updateSecondRow ()
+    protected String getSecondRowColorID (final int index)
     {
         final ITransport transport = this.model.getTransport ();
-        this.surface.updateTrigger (102, transport.isPrerollMetronomeEnabled () ? AbstractMode.BUTTON_COLOR2_HI : AbstractMode.BUTTON_COLOR_ON);
-        this.surface.updateTrigger (103, AbstractMode.BUTTON_COLOR_OFF);
-        this.surface.updateTrigger (104, AbstractMode.BUTTON_COLOR_OFF);
-        this.surface.updateTrigger (105, AbstractMode.BUTTON_COLOR_OFF);
-        this.surface.updateTrigger (106, AbstractMode.BUTTON_COLOR_OFF);
-        this.surface.updateTrigger (107, AbstractMode.BUTTON_COLOR_OFF);
-        this.surface.updateTrigger (108, AbstractMode.BUTTON_COLOR_OFF);
-        this.surface.updateTrigger (109, AbstractMode.BUTTON_COLOR_OFF);
+        if (index == 0)
+            return transport.isPrerollMetronomeEnabled () ? AbstractMode.BUTTON_COLOR2_HI : AbstractMode.BUTTON_COLOR_ON;
+        return AbstractMode.BUTTON_COLOR_OFF;
     }
 
 

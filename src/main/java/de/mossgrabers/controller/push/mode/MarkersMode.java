@@ -143,19 +143,17 @@ public class MarkersMode extends BaseMode
 
     /** {@inheritDoc} */
     @Override
-    public void updateFirstRow ()
+    protected String getFirstRowColorID (final int index)
     {
-        for (int i = 0; i < 8; i++)
-            this.surface.updateTrigger (20 + i, this.markerBank.getItem (i).doesExist () ? AbstractMode.BUTTON_COLOR_ON : AbstractMode.BUTTON_COLOR_OFF);
+        return this.markerBank.getItem (index).doesExist () ? AbstractMode.BUTTON_COLOR_ON : AbstractMode.BUTTON_COLOR_OFF;
     }
 
 
     /** {@inheritDoc} */
     @Override
-    public void updateSecondRow ()
+    protected String getSecondRowColorID (final int index)
     {
-        for (int i = 0; i < 8; i++)
-            this.surface.updateTrigger (102 + i, this.canEditMarkers && !EDIT_MENU[i].isEmpty () ? AbstractMode.BUTTON_COLOR2_ON : AbstractMode.BUTTON_COLOR_OFF);
+        return this.canEditMarkers && !EDIT_MENU[index].isEmpty () ? AbstractMode.BUTTON_COLOR2_ON : AbstractMode.BUTTON_COLOR_OFF;
     }
 
 

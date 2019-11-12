@@ -83,14 +83,10 @@ public class RaindropsView extends AbstractRaindropsView<APCControlSurface, APCC
 
     /** {@inheritDoc} */
     @Override
-    public void updateSceneButtons ()
+    public void updateSceneButton (final int scene)
     {
         final String color = this.isActive () ? ColorManager.BUTTON_STATE_ON : ColorManager.BUTTON_STATE_OFF;
-        this.surface.updateTrigger (APCControlSurface.APC_BUTTON_SCENE_LAUNCH_1, color);
-        this.surface.updateTrigger (APCControlSurface.APC_BUTTON_SCENE_LAUNCH_2, color);
-        this.surface.updateTrigger (APCControlSurface.APC_BUTTON_SCENE_LAUNCH_3, ColorManager.BUTTON_STATE_OFF);
-        this.surface.updateTrigger (APCControlSurface.APC_BUTTON_SCENE_LAUNCH_4, color);
-        this.surface.updateTrigger (APCControlSurface.APC_BUTTON_SCENE_LAUNCH_5, color);
+        this.surface.updateTrigger (APCControlSurface.APC_BUTTON_SCENE_LAUNCH_1 + scene, scene == 2 ? ColorManager.BUTTON_STATE_OFF : color);
     }
 
 

@@ -6,6 +6,7 @@ package de.mossgrabers.controller.apcmini.view;
 
 import de.mossgrabers.controller.apcmini.APCminiConfiguration;
 import de.mossgrabers.controller.apcmini.controller.APCminiControlSurface;
+import de.mossgrabers.framework.controller.color.ColorManager;
 import de.mossgrabers.framework.daw.IModel;
 import de.mossgrabers.framework.utils.ButtonEvent;
 import de.mossgrabers.framework.view.AbstractPlayView;
@@ -19,7 +20,7 @@ import de.mossgrabers.framework.view.SceneView;
  */
 public class PlayView extends AbstractPlayView<APCminiControlSurface, APCminiConfiguration> implements APCminiView, SceneView
 {
-    private TrackButtons extensions;
+    private final TrackButtons trackButtons;
 
 
     /**
@@ -27,12 +28,13 @@ public class PlayView extends AbstractPlayView<APCminiControlSurface, APCminiCon
      *
      * @param surface The controller
      * @param model The model
+     * @param trackButtons The track button control
      */
-    public PlayView (final APCminiControlSurface surface, final IModel model)
+    public PlayView (final APCminiControlSurface surface, final IModel model, final TrackButtons trackButtons)
     {
         super (surface, model, false);
 
-        this.extensions = new TrackButtons (surface, model);
+        this.trackButtons = trackButtons;
     }
 
 
@@ -40,18 +42,31 @@ public class PlayView extends AbstractPlayView<APCminiControlSurface, APCminiCon
     @Override
     public void onSelectTrack (final int index, final ButtonEvent event)
     {
-        this.extensions.onSelectTrack (index, event);
+        this.trackButtons.onSelectTrack (index, event);
     }
 
 
     /** {@inheritDoc} */
     @Override
-    public void updateSceneButtons ()
+    public int getTrackButtonColor (final int index)
     {
-        for (int i = 0; i < 8; i++)
-            this.surface.updateTrigger (APCminiControlSurface.APC_BUTTON_SCENE_BUTTON1 + i, i == 2 ? APCminiControlSurface.APC_BUTTON_STATE_OFF : APCminiControlSurface.APC_BUTTON_STATE_ON);
+        return this.trackButtons.getTrackButtonColor (index);
+    }
 
-        this.extensions.updateTrackButtons ();
+
+    /** {@inheritDoc} */
+    @Override
+    public void updateSceneButton (final int scene)
+    {
+        // TODO Remove
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public String getSceneButtonColor (final int scene)
+    {
+        return scene == 2 ? ColorManager.BUTTON_STATE_OFF : ColorManager.BUTTON_STATE_ON;
     }
 
 

@@ -7,7 +7,6 @@ package de.mossgrabers.controller.push.view;
 import de.mossgrabers.controller.push.PushConfiguration;
 import de.mossgrabers.controller.push.controller.PushColors;
 import de.mossgrabers.controller.push.controller.PushControlSurface;
-import de.mossgrabers.framework.controller.color.ColorManager;
 import de.mossgrabers.framework.daw.IClip;
 import de.mossgrabers.framework.daw.IModel;
 import de.mossgrabers.framework.daw.INoteClip;
@@ -50,22 +49,6 @@ public class ClipView extends AbstractSequencerView<PushControlSurface, PushConf
     public void updateNoteMapping ()
     {
         this.delayedUpdateNoteMapping (EMPTY_TABLE);
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public boolean usesButton (final int buttonID)
-    {
-        switch (buttonID)
-        {
-            case PushControlSurface.PUSH_BUTTON_OCTAVE_DOWN:
-            case PushControlSurface.PUSH_BUTTON_OCTAVE_UP:
-                return false;
-
-            default:
-                return true;
-        }
     }
 
 
@@ -144,25 +127,19 @@ public class ClipView extends AbstractSequencerView<PushControlSurface, PushConf
 
     /** {@inheritDoc} */
     @Override
-    public void updateSceneButtons ()
+    public void updateSceneButton (final int scene)
     {
-        final ColorManager colorManager = this.model.getColorManager ();
-        final int colorResolution = colorManager.getColor (AbstractSequencerView.COLOR_RESOLUTION);
-        final int colorSelectedResolution = colorManager.getColor (AbstractSequencerView.COLOR_RESOLUTION_SELECTED);
-        final int colorOff = colorManager.getColor (AbstractSequencerView.COLOR_RESOLUTION_OFF);
-        for (int i = 0; i < 3; i++)
-            this.surface.updateTrigger (PushControlSurface.PUSH_BUTTON_SCENE1 + i, i == this.padResolution ? colorSelectedResolution : colorResolution);
-        for (int i = 3; i < 8; i++)
-            this.surface.updateTrigger (PushControlSurface.PUSH_BUTTON_SCENE1 + i, colorOff);
+        // TODO Remove
     }
 
 
     /** {@inheritDoc} */
     @Override
-    public void updateButtons ()
+    public String getSceneButtonColor (final int scene)
     {
-        this.surface.updateTrigger (PushControlSurface.PUSH_BUTTON_OCTAVE_UP, ColorManager.BUTTON_STATE_OFF);
-        this.surface.updateTrigger (PushControlSurface.PUSH_BUTTON_OCTAVE_DOWN, ColorManager.BUTTON_STATE_OFF);
+        if (scene < 3)
+            return scene == this.padResolution ? AbstractSequencerView.COLOR_RESOLUTION_SELECTED : AbstractSequencerView.COLOR_RESOLUTION;
+        return AbstractSequencerView.COLOR_RESOLUTION_OFF;
     }
 
 

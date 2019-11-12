@@ -65,7 +65,7 @@ public class SessionView extends AbstractSessionView<LaunchkeyMiniMk3ControlSurf
 
     /** {@inheritDoc} */
     @Override
-    public void updateSceneButtons ()
+    public void updateSceneButton (final int scene)
     {
         final ColorManager colorManager = this.model.getColorManager ();
         final int colorScene = colorManager.getColor (AbstractSessionView.COLOR_SCENE);
@@ -73,13 +73,18 @@ public class SessionView extends AbstractSessionView<LaunchkeyMiniMk3ControlSurf
         final int colorSceneOff = colorManager.getColor (AbstractSessionView.COLOR_SCENE_OFF);
 
         final ISceneBank sceneBank = this.model.getSceneBank ();
-        IScene scene = sceneBank.getItem (0);
-        this.surface.updateTrigger (LaunchkeyMiniMk3ControlSurface.LAUNCHKEY_SCENE1, scene.doesExist () ? scene.isSelected () ? colorSceneSelected : colorScene : colorSceneOff);
+        IScene s = sceneBank.getItem (0);
+
+        if (scene == 0)
+        {
+            this.surface.updateTrigger (LaunchkeyMiniMk3ControlSurface.LAUNCHKEY_SCENE1, s.doesExist () ? s.isSelected () ? colorSceneSelected : colorScene : colorSceneOff);
+            return;
+        }
 
         if (this.padMode == null)
         {
-            scene = sceneBank.getItem (1);
-            this.surface.updateTrigger (LaunchkeyMiniMk3ControlSurface.LAUNCHKEY_SCENE2, scene.doesExist () ? scene.isSelected () ? colorSceneSelected : colorScene : colorSceneOff);
+            s = sceneBank.getItem (1);
+            this.surface.updateTrigger (LaunchkeyMiniMk3ControlSurface.LAUNCHKEY_SCENE2, s.doesExist () ? s.isSelected () ? colorSceneSelected : colorScene : colorSceneOff);
             return;
         }
 
@@ -105,6 +110,14 @@ public class SessionView extends AbstractSessionView<LaunchkeyMiniMk3ControlSurf
                 break;
         }
 
+    }
+
+
+    @Override
+    public String getSceneButtonColor (final int scene)
+    {
+        // TODO Auto-generated method stub
+        return ColorManager.BUTTON_STATE_OFF;
     }
 
 

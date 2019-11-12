@@ -128,14 +128,6 @@ public abstract class AbstractView<S extends IControlSurface<C>, C extends Confi
 
     /** {@inheritDoc} */
     @Override
-    public boolean usesButton (final int buttonID)
-    {
-        return true;
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
     public void registerAftertouchCommand (final AftertouchCommand command)
     {
         this.aftertouchCommand = command;
@@ -305,6 +297,7 @@ public abstract class AbstractView<S extends IControlSurface<C>, C extends Confi
     /**
      * Implement to update button LEDs.
      */
+    @Deprecated
     protected void updateButtons ()
     {
         // Intentionally empty
@@ -314,6 +307,7 @@ public abstract class AbstractView<S extends IControlSurface<C>, C extends Confi
     /**
      * Implement to update arrow button LEDs.
      */
+    @Deprecated
     protected void updateArrows ()
     {
         // Intentionally empty

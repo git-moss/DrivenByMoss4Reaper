@@ -8,6 +8,7 @@ import de.mossgrabers.controller.launchpad.LaunchpadConfiguration;
 import de.mossgrabers.controller.launchpad.controller.LaunchpadColors;
 import de.mossgrabers.controller.launchpad.controller.LaunchpadControlSurface;
 import de.mossgrabers.framework.controller.ButtonID;
+import de.mossgrabers.framework.controller.color.ColorManager;
 import de.mossgrabers.framework.daw.IModel;
 import de.mossgrabers.framework.view.AbstractDrumView64;
 
@@ -43,9 +44,16 @@ public class DrumView64 extends AbstractDrumView64<LaunchpadControlSurface, Laun
 
     /** {@inheritDoc} */
     @Override
-    public void updateSceneButtons ()
+    public void updateSceneButton (final int scene)
     {
-        for (int i = 0; i < 8; i++)
-            this.surface.setTrigger (this.surface.getSceneTrigger (i), LaunchpadColors.LAUNCHPAD_COLOR_BLACK);
+        this.surface.setTrigger (this.surface.getSceneTrigger (scene), LaunchpadColors.LAUNCHPAD_COLOR_BLACK);
+    }
+
+
+    @Override
+    public String getSceneButtonColor (final int scene)
+    {
+        // TODO Auto-generated method stub
+        return ColorManager.BUTTON_STATE_OFF;
     }
 }

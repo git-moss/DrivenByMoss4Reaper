@@ -136,25 +136,10 @@ public abstract class BaseMode extends AbstractMode<PushControlSurface, PushConf
     }
 
 
-    /** {@inheritDoc} */
-    @Override
-    public void updateFirstRow ()
-    {
-        this.disableFirstRow ();
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void updateSecondRow ()
-    {
-        this.disableSecondRow ();
-    }
-
-
     /**
      * Turn off all buttons of the first row.
      */
+    @Deprecated
     protected void disableFirstRow ()
     {
         final ColorManager colorManager = this.model.getColorManager ();
@@ -166,6 +151,7 @@ public abstract class BaseMode extends AbstractMode<PushControlSurface, PushConf
     /**
      * Turn off all buttons of the second row.
      */
+    @Deprecated
     protected void disableSecondRow ()
     {
         final ColorManager colorManager = this.model.getColorManager ();

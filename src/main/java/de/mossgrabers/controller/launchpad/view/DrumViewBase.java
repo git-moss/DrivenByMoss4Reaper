@@ -72,8 +72,10 @@ public abstract class DrumViewBase extends AbstractDrumView<LaunchpadControlSurf
 
     /** {@inheritDoc} */
     @Override
-    public void updateSceneButtons ()
+    public void updateSceneButton (final int scene)
     {
+        // TODO
+
         if (this.surface.isShiftPressed ())
         {
             for (int i = 0; i < 4; i++)

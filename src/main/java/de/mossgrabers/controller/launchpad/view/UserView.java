@@ -90,18 +90,10 @@ public class UserView extends AbstractFaderView
 
     /** {@inheritDoc} */
     @Override
-    public void updateSceneButtons ()
+    public void updateSceneButton (final int scene)
     {
         final IParameterBank userParameterBank = this.model.getUserParameterBank ();
         final int page = userParameterBank.getScrollPosition () / userParameterBank.getPageSize ();
-
-        this.surface.setTrigger (LaunchpadControlSurface.LAUNCHPAD_BUTTON_SCENE1, page == 0 ? LaunchpadColors.LAUNCHPAD_COLOR_MAGENTA : LaunchpadColors.LAUNCHPAD_COLOR_BLACK);
-        this.surface.setTrigger (LaunchpadControlSurface.LAUNCHPAD_BUTTON_SCENE2, page == 1 ? LaunchpadColors.LAUNCHPAD_COLOR_MAGENTA : LaunchpadColors.LAUNCHPAD_COLOR_BLACK);
-        this.surface.setTrigger (LaunchpadControlSurface.LAUNCHPAD_BUTTON_SCENE3, page == 2 ? LaunchpadColors.LAUNCHPAD_COLOR_MAGENTA : LaunchpadColors.LAUNCHPAD_COLOR_BLACK);
-        this.surface.setTrigger (LaunchpadControlSurface.LAUNCHPAD_BUTTON_SCENE4, page == 3 ? LaunchpadColors.LAUNCHPAD_COLOR_MAGENTA : LaunchpadColors.LAUNCHPAD_COLOR_BLACK);
-        this.surface.setTrigger (LaunchpadControlSurface.LAUNCHPAD_BUTTON_SCENE5, page == 4 ? LaunchpadColors.LAUNCHPAD_COLOR_MAGENTA : LaunchpadColors.LAUNCHPAD_COLOR_BLACK);
-        this.surface.setTrigger (LaunchpadControlSurface.LAUNCHPAD_BUTTON_SCENE6, page == 5 ? LaunchpadColors.LAUNCHPAD_COLOR_MAGENTA : LaunchpadColors.LAUNCHPAD_COLOR_BLACK);
-        this.surface.setTrigger (LaunchpadControlSurface.LAUNCHPAD_BUTTON_SCENE7, page == 6 ? LaunchpadColors.LAUNCHPAD_COLOR_MAGENTA : LaunchpadColors.LAUNCHPAD_COLOR_BLACK);
-        this.surface.setTrigger (LaunchpadControlSurface.LAUNCHPAD_BUTTON_SCENE8, page == 7 ? LaunchpadColors.LAUNCHPAD_COLOR_MAGENTA : LaunchpadColors.LAUNCHPAD_COLOR_BLACK);
+        this.surface.setTrigger (this.surface.getSceneTrigger (scene), page == scene ? LaunchpadColors.LAUNCHPAD_COLOR_MAGENTA : LaunchpadColors.LAUNCHPAD_COLOR_BLACK);
     }
 }

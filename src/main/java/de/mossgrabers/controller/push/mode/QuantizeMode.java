@@ -7,7 +7,6 @@ package de.mossgrabers.controller.push.mode;
 import de.mossgrabers.controller.push.controller.Push1Display;
 import de.mossgrabers.controller.push.controller.PushControlSurface;
 import de.mossgrabers.framework.controller.ButtonID;
-import de.mossgrabers.framework.controller.color.ColorManager;
 import de.mossgrabers.framework.controller.display.Format;
 import de.mossgrabers.framework.controller.display.IGraphicDisplay;
 import de.mossgrabers.framework.controller.display.ITextDisplay;
@@ -28,7 +27,7 @@ import de.mossgrabers.framework.utils.ButtonEvent;
  */
 public class QuantizeMode extends BaseMode
 {
-    private final static String [] MENU =
+    private static final String [] MENU =
     {
         "Quantize",
         "Groove",
@@ -179,28 +178,27 @@ public class QuantizeMode extends BaseMode
 
     /** {@inheritDoc} */
     @Override
-    public void updateFirstRow ()
+    protected String getFirstRowColorID (final int index)
     {
-        final ColorManager colorManager = this.model.getColorManager ();
         final RecordQuantization [] values = RecordQuantization.values ();
         final ITrack track = this.model.getSelectedTrack ();
         final RecordQuantization recQuant = track == null ? RecordQuantization.RES_OFF : track.getRecordQuantizationGrid ();
-        for (int i = 0; i < values.length; i++)
-            this.surface.updateTrigger (20 + i, colorManager.getColor (values[i] == recQuant ? AbstractMode.BUTTON_COLOR_HI : AbstractMode.BUTTON_COLOR_ON));
-        this.surface.updateTrigger (25, colorManager.getColor (AbstractMode.BUTTON_COLOR_OFF));
-        this.surface.updateTrigger (26, colorManager.getColor (track != null && track.isRecordQuantizationNoteLength () ? AbstractMode.BUTTON_COLOR_HI : AbstractMode.BUTTON_COLOR_ON));
-        this.surface.updateTrigger (27, colorManager.getColor (AbstractMode.BUTTON_COLOR_OFF));
+        if (index < values.length)
+            return values[index] == recQuant ? AbstractMode.BUTTON_COLOR_HI : AbstractMode.BUTTON_COLOR_ON;
+        if (index == 6)
+            return track != null && track.isRecordQuantizationNoteLength () ? AbstractMode.BUTTON_COLOR_HI : AbstractMode.BUTTON_COLOR_ON;
+        return AbstractMode.BUTTON_COLOR_OFF;
     }
 
 
     /** {@inheritDoc} */
     @Override
-    public void updateSecondRow ()
+    protected String getSecondRowColorID (final int index)
     {
-        final ColorManager colorManager = this.model.getColorManager ();
-        this.surface.updateTrigger (102, colorManager.getColor (AbstractMode.BUTTON_COLOR_HI));
-        this.surface.updateTrigger (103, colorManager.getColor (AbstractMode.BUTTON_COLOR_ON));
-        for (int i = 0; i < 6; i++)
-            this.surface.updateTrigger (104 + i, colorManager.getColor (AbstractMode.BUTTON_COLOR_OFF));
+        if (index == 0)
+            return AbstractMode.BUTTON_COLOR_HI;
+        if (index == 1)
+            return AbstractMode.BUTTON_COLOR_ON;
+        return AbstractMode.BUTTON_COLOR_OFF;
     }
 }

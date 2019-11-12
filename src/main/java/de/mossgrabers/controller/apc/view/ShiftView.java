@@ -9,6 +9,7 @@ import de.mossgrabers.controller.apc.command.trigger.APCBrowserCommand;
 import de.mossgrabers.controller.apc.controller.APCColors;
 import de.mossgrabers.controller.apc.controller.APCControlSurface;
 import de.mossgrabers.framework.command.TriggerCommandID;
+import de.mossgrabers.framework.controller.color.ColorManager;
 import de.mossgrabers.framework.controller.grid.PadGrid;
 import de.mossgrabers.framework.daw.IModel;
 import de.mossgrabers.framework.daw.data.ITrack;
@@ -175,13 +176,23 @@ public class ShiftView extends AbstractView<APCControlSurface, APCConfiguration>
 
     /** {@inheritDoc} */
     @Override
-    public void updateSceneButtons ()
+    public void updateSceneButton (final int scene)
     {
+        // TODO
+
         final Views previousViewId = this.surface.getViewManager ().getPreviousViewId ();
         this.surface.updateTrigger (APCControlSurface.APC_BUTTON_SCENE_LAUNCH_1, Views.SESSION.equals (previousViewId) ? APCColors.COLOR_VIEW_SELECTED : APCColors.COLOR_VIEW_UNSELECTED);
         this.surface.updateTrigger (APCControlSurface.APC_BUTTON_SCENE_LAUNCH_2, Views.PLAY.equals (previousViewId) ? APCColors.COLOR_VIEW_SELECTED : APCColors.COLOR_VIEW_UNSELECTED);
         this.surface.updateTrigger (APCControlSurface.APC_BUTTON_SCENE_LAUNCH_3, Views.DRUM.equals (previousViewId) ? APCColors.COLOR_VIEW_SELECTED : APCColors.COLOR_VIEW_UNSELECTED);
         this.surface.updateTrigger (APCControlSurface.APC_BUTTON_SCENE_LAUNCH_4, Views.SEQUENCER.equals (previousViewId) ? APCColors.COLOR_VIEW_SELECTED : APCColors.COLOR_VIEW_UNSELECTED);
         this.surface.updateTrigger (APCControlSurface.APC_BUTTON_SCENE_LAUNCH_5, Views.RAINDROPS.equals (previousViewId) ? APCColors.COLOR_VIEW_SELECTED : APCColors.COLOR_VIEW_UNSELECTED);
+    }
+
+
+    @Override
+    public String getSceneButtonColor (final int scene)
+    {
+        // TODO Auto-generated method stub
+        return ColorManager.BUTTON_STATE_OFF;
     }
 }

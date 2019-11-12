@@ -199,6 +199,22 @@ public abstract class AbstractRaindropsView<S extends IControlSurface<C>, C exte
     }
 
 
+    /** {@inheritDoc} */
+    @Override
+    public boolean isOctaveUpButtonOn ()
+    {
+        return this.isActive ();
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean isOctaveDownButtonOn ()
+    {
+        return this.isActive ();
+    }
+
+
     protected int getNoteDistance (final int row, final int length)
     {
         int step;

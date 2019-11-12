@@ -115,16 +115,16 @@ public class SessionMode extends AbstractTrackMode
 
     /** {@inheritDoc} */
     @Override
-    public void updateSecondRow ()
+    public int getSecondRowColor (final int index)
     {
         final ColorManager colorManager = this.model.getColorManager ();
         this.surface.updateTrigger (102, colorManager.getColor (this.rowDisplayMode == RowDisplayMode.UPPER ? AbstractMode.BUTTON_COLOR_HI : AbstractMode.BUTTON_COLOR_ON));
         this.surface.updateTrigger (103, colorManager.getColor (this.rowDisplayMode == RowDisplayMode.LOWER ? AbstractMode.BUTTON_COLOR_HI : AbstractMode.BUTTON_COLOR_ON));
-        for (int i = 0; i < 5; i++)
-            this.surface.updateTrigger (104 + i, colorManager.getColor (AbstractMode.BUTTON_COLOR_OFF));
+        if (index < 5)
+            return colorManager.getColor (AbstractMode.BUTTON_COLOR_OFF);
 
         final ITrackBank tb = this.model.getCurrentTrackBank ();
-        this.surface.updateTrigger (109, tb.hasParent () ? PushColors.PUSH2_COLOR2_WHITE : PushColors.PUSH2_COLOR_BLACK);
+        return tb.hasParent () ? PushColors.PUSH2_COLOR2_WHITE : PushColors.PUSH2_COLOR_BLACK;
     }
 
 

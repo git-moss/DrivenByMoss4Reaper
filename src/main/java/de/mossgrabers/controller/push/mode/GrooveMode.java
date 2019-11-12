@@ -7,7 +7,6 @@ package de.mossgrabers.controller.push.mode;
 import de.mossgrabers.controller.push.controller.Push1Display;
 import de.mossgrabers.controller.push.controller.PushControlSurface;
 import de.mossgrabers.framework.controller.ButtonID;
-import de.mossgrabers.framework.controller.color.ColorManager;
 import de.mossgrabers.framework.controller.display.Format;
 import de.mossgrabers.framework.controller.display.IGraphicDisplay;
 import de.mossgrabers.framework.controller.display.ITextDisplay;
@@ -150,13 +149,13 @@ public class GrooveMode extends BaseMode
 
     /** {@inheritDoc} */
     @Override
-    public void updateSecondRow ()
+    protected String getSecondRowColorID (final int index)
     {
-        final ColorManager colorManager = this.model.getColorManager ();
-        this.surface.updateTrigger (102, colorManager.getColor (AbstractMode.BUTTON_COLOR_ON));
-        this.surface.updateTrigger (103, colorManager.getColor (AbstractMode.BUTTON_COLOR_HI));
-        for (int i = 0; i < 6; i++)
-            this.surface.updateTrigger (104 + i, colorManager.getColor (AbstractMode.BUTTON_COLOR_OFF));
+        if (index == 0)
+            return AbstractMode.BUTTON_COLOR_ON;
+        if (index == 1)
+            return AbstractMode.BUTTON_COLOR_HI;
+        return AbstractMode.BUTTON_COLOR_OFF;
     }
 
 

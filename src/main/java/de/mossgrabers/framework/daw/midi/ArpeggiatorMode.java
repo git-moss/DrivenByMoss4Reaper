@@ -18,7 +18,7 @@ public class ArpeggiatorMode
 
     /**
      * Constructor.
-     * 
+     *
      * @param index The index of the mode
      * @param name The name of the mode
      * @param value The value of the mode

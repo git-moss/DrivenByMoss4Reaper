@@ -6,7 +6,6 @@ package de.mossgrabers.controller.push.mode;
 
 import de.mossgrabers.controller.push.controller.Push1Display;
 import de.mossgrabers.controller.push.controller.PushControlSurface;
-import de.mossgrabers.framework.controller.color.ColorManager;
 import de.mossgrabers.framework.controller.display.IGraphicDisplay;
 import de.mossgrabers.framework.controller.display.ITextDisplay;
 import de.mossgrabers.framework.daw.IModel;
@@ -142,23 +141,23 @@ public class NoteViewSelectMode extends BaseMode
 
     /** {@inheritDoc} */
     @Override
-    public void updateFirstRow ()
+    protected String getFirstRowColorID (final int index)
     {
-        final ColorManager colorManager = this.model.getColorManager ();
         final ViewManager viewManager = this.surface.getViewManager ();
-        for (int i = 0; i < 8; i++)
-            this.surface.updateTrigger (20 + i, colorManager.getColor (VIEWS[i] == null ? AbstractMode.BUTTON_COLOR_OFF : viewManager.isActiveView (VIEWS[i]) ? AbstractMode.BUTTON_COLOR_HI : AbstractMode.BUTTON_COLOR_ON));
+        if (VIEWS[index] == null)
+            return AbstractMode.BUTTON_COLOR_OFF;
+        return viewManager.isActiveView (VIEWS[index]) ? AbstractMode.BUTTON_COLOR_HI : AbstractMode.BUTTON_COLOR_ON;
     }
 
 
     /** {@inheritDoc} */
     @Override
-    public void updateSecondRow ()
+    protected String getSecondRowColorID (final int index)
     {
-        final ColorManager colorManager = this.model.getColorManager ();
         final ViewManager viewManager = this.surface.getViewManager ();
-        for (int i = 0; i < 8; i++)
-            this.surface.updateTrigger (102 + i, colorManager.getColor (VIEWS_TOP[i] == null ? AbstractMode.BUTTON_COLOR_OFF : viewManager.isActiveView (VIEWS_TOP[i]) ? AbstractMode.BUTTON_COLOR_HI : AbstractMode.BUTTON_COLOR_ON));
+        if (VIEWS_TOP[index] == null)
+            return AbstractMode.BUTTON_COLOR_OFF;
+        return viewManager.isActiveView (VIEWS_TOP[index]) ? AbstractMode.BUTTON_COLOR_HI : AbstractMode.BUTTON_COLOR_ON;
     }
 
 

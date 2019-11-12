@@ -4,6 +4,11 @@
 
 package de.mossgrabers.framework.daw.midi;
 
+import de.mossgrabers.framework.controller.hardware.BindType;
+import de.mossgrabers.framework.controller.hardware.IButton;
+import de.mossgrabers.framework.controller.hardware.IFader;
+
+
 /**
  * Interface to a MIDI input.
  *
@@ -56,4 +61,26 @@ public interface IMidiInput
      * @param data2 The MIDI data byte 2
      */
     void sendRawMidiEvent (int status, int data1, int data2);
+
+
+    /**
+     * Bind the given button to a MIDI command received on this midi input.
+     *
+     * @param button The button to bind
+     * @param type THe MIDI binding type
+     * @param channel The MIDI channel
+     * @param value The MIDI command (CC, Note, ...)
+     */
+    void bind (IButton button, BindType type, int channel, int value);
+
+
+    /**
+     * Bind the given fader to a MIDI command received on this midi input.
+     *
+     * @param fader The fader to bind
+     * @param type THe MIDI binding type
+     * @param channel The MIDI channel
+     * @param value The MIDI command (CC, Note, ...)
+     */
+    void bind (IFader fader, BindType type, int channel, int value);
 }

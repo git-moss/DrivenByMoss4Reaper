@@ -9,7 +9,6 @@ import de.mossgrabers.controller.push.controller.PushControlSurface;
 import de.mossgrabers.framework.command.trigger.clip.TemporaryNewCommand;
 import de.mossgrabers.framework.configuration.AbstractConfiguration;
 import de.mossgrabers.framework.configuration.Configuration;
-import de.mossgrabers.framework.controller.color.ColorManager;
 import de.mossgrabers.framework.controller.display.IGraphicDisplay;
 import de.mossgrabers.framework.controller.display.ITextDisplay;
 import de.mossgrabers.framework.daw.IModel;
@@ -61,22 +60,18 @@ public class FixedMode extends BaseMode
 
     /** {@inheritDoc} */
     @Override
-    public void updateFirstRow ()
+    public String getFirstRowColorID (final int index)
     {
-        final ColorManager colorManager = this.model.getColorManager ();
         final Configuration configuration = this.surface.getConfiguration ();
-        for (int i = 0; i < 8; i++)
-            this.surface.updateTrigger (20 + i, colorManager.getColor (configuration.getNewClipLength () == i ? AbstractMode.BUTTON_COLOR_HI : AbstractMode.BUTTON_COLOR_ON));
+        return configuration.getNewClipLength () == index ? AbstractMode.BUTTON_COLOR_HI : AbstractMode.BUTTON_COLOR_ON;
     }
 
 
     /** {@inheritDoc} */
     @Override
-    public void updateSecondRow ()
+    public String getSecondRowColorID (final int index)
     {
-        final ColorManager colorManager = this.model.getColorManager ();
-        for (int i = 0; i < 8; i++)
-            this.surface.updateTrigger (102 + i, colorManager.getColor (AbstractMode.BUTTON_COLOR_ON));
+        return AbstractMode.BUTTON_COLOR_ON;
     }
 
 

@@ -199,27 +199,22 @@ public class ClipMode extends AbstractTrackMode
     }
 
 
+    /** {@inheritDoc} */
+    @Override
+    public int getSecondRowColor (final int index)
+    {
+        if (index == 7)
+            return this.displayMidiNotes ? PushColors.PUSH2_COLOR_BLACK : PushColors.PUSH2_COLOR2_WHITE;
+        return PushColors.PUSH2_COLOR_BLACK;
+    }
+
+
     /**
      * Toggles the clip parameter with the piano roll display.
      */
     public void togglePianoRoll ()
     {
         this.displayMidiNotes = !this.displayMidiNotes;
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void updateSecondRow ()
-    {
-        this.surface.updateTrigger (102, PushColors.PUSH2_COLOR_BLACK);
-        this.surface.updateTrigger (103, PushColors.PUSH2_COLOR_BLACK);
-        this.surface.updateTrigger (104, PushColors.PUSH2_COLOR_BLACK);
-        this.surface.updateTrigger (105, PushColors.PUSH2_COLOR_BLACK);
-        this.surface.updateTrigger (106, PushColors.PUSH2_COLOR_BLACK);
-        this.surface.updateTrigger (107, PushColors.PUSH2_COLOR_BLACK);
-        this.surface.updateTrigger (108, PushColors.PUSH2_COLOR_BLACK);
-        this.surface.updateTrigger (109, this.displayMidiNotes ? PushColors.PUSH2_COLOR_BLACK : PushColors.PUSH2_COLOR2_WHITE);
     }
 
 

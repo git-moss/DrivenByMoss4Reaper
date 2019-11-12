@@ -4,6 +4,7 @@
 
 package de.mossgrabers.framework.daw;
 
+import de.mossgrabers.framework.controller.hardware.ISurfaceFactory;
 import de.mossgrabers.framework.daw.constants.EditCapability;
 import de.mossgrabers.framework.graphics.IBitmap;
 import de.mossgrabers.framework.graphics.IImage;
@@ -121,6 +122,14 @@ public interface IHost
      * @param message The message to display
      */
     void showNotification (String message);
+
+
+    /**
+     * Create a factory for creating hardware surface elements like buttons and knobs.
+     *
+     * @return Create a new factory.
+     */
+    ISurfaceFactory createSurfaceFactory ();
 
 
     /**

@@ -6,6 +6,7 @@ package de.mossgrabers.controller.slmkiii.view;
 
 import de.mossgrabers.controller.slmkiii.SLMkIIIConfiguration;
 import de.mossgrabers.controller.slmkiii.controller.SLMkIIIControlSurface;
+import de.mossgrabers.framework.controller.color.ColorManager;
 import de.mossgrabers.framework.controller.grid.PadGrid;
 import de.mossgrabers.framework.daw.DAWColors;
 import de.mossgrabers.framework.daw.IModel;
@@ -87,11 +88,21 @@ public class ColorView extends AbstractView<SLMkIIIControlSurface, SLMkIIIConfig
 
     /** {@inheritDoc} */
     @Override
-    public void updateSceneButtons ()
+    public void updateSceneButton (final int scene)
     {
         final int colorOff = this.model.getColorManager ().getColor (AbstractSequencerView.COLOR_RESOLUTION_OFF);
-        this.surface.updateTrigger (SLMkIIIControlSurface.MKIII_SCENE_1, colorOff);
-        this.surface.updateTrigger (SLMkIIIControlSurface.MKIII_SCENE_2, colorOff);
+        if (scene == 0)
+            this.surface.updateTrigger (SLMkIIIControlSurface.MKIII_SCENE_1, colorOff);
+        else
+            this.surface.updateTrigger (SLMkIIIControlSurface.MKIII_SCENE_2, colorOff);
+    }
+
+
+    @Override
+    public String getSceneButtonColor (final int scene)
+    {
+        // TODO Auto-generated method stub
+        return ColorManager.BUTTON_STATE_OFF;
     }
 
 

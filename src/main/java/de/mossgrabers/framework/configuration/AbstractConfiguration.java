@@ -717,7 +717,7 @@ public abstract class AbstractConfiguration implements Configuration
 
     /** {@inheritDoc} */
     @Override
-    public void setNoteRepeatPeriod (Resolution noteRepeatPeriod)
+    public void setNoteRepeatPeriod (final Resolution noteRepeatPeriod)
     {
         this.noteRepeatPeriodSetting.set (noteRepeatPeriod.getName ());
     }
@@ -733,7 +733,7 @@ public abstract class AbstractConfiguration implements Configuration
 
     /** {@inheritDoc} */
     @Override
-    public void setNoteRepeatLength (Resolution noteRepeatLength)
+    public void setNoteRepeatLength (final Resolution noteRepeatLength)
     {
         this.noteRepeatLengthSetting.set (noteRepeatLength.getName ());
     }

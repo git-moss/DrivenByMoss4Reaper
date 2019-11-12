@@ -195,15 +195,6 @@ public interface View
 
 
     /**
-     * Check if a specific button is used by this view.
-     *
-     * @param buttonID The button ID to check
-     * @return True if the button is used
-     */
-    boolean usesButton (int buttonID);
-
-
-    /**
      * Update the note mapping of the grid pads.
      */
     void updateNoteMapping ();

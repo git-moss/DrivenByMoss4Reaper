@@ -79,15 +79,15 @@ public class ScalesMode extends BaseMode
 
     /** {@inheritDoc} */
     @Override
-    public void updateFirstRow ()
+    public int getFirstRowColor (final int index)
     {
-        final int offset = this.scales.getScaleOffset ();
         final ColorManager cm = this.model.getColorManager ();
-        for (int i = 0; i < 8; i++)
-        {
-            final boolean isFirstOrLast = i == 0 || i == 7;
-            this.surface.updateTrigger (20 + i, i == 7 ? cm.getColor (AbstractMode.BUTTON_COLOR_OFF) : isFirstOrLast ? this.isPush2 ? PushColors.PUSH2_COLOR_ORANGE_LO : PushColors.PUSH1_COLOR_ORANGE_LO : cm.getColor (offset == i - 1 ? AbstractMode.BUTTON_COLOR_HI : AbstractMode.BUTTON_COLOR_ON));
-        }
+        if (index == 7)
+            return cm.getColor (AbstractMode.BUTTON_COLOR_OFF);
+
+        final int offset = this.scales.getScaleOffset ();
+        final boolean isFirstOrLast = index == 0 || index == 7;
+        return isFirstOrLast ? this.isPush2 ? PushColors.PUSH2_COLOR_ORANGE_LO : PushColors.PUSH1_COLOR_ORANGE_LO : cm.getColor (offset == index - 1 ? AbstractMode.BUTTON_COLOR_HI : AbstractMode.BUTTON_COLOR_ON);
     }
 
 
@@ -114,15 +114,14 @@ public class ScalesMode extends BaseMode
 
     /** {@inheritDoc} */
     @Override
-    public void updateSecondRow ()
+    public int getSecondRowColor (final int index)
     {
         final int offset = this.scales.getScaleOffset ();
+        final boolean isFirstOrLast = index == 0 || index == 7;
+        if (isFirstOrLast)
+            return this.isPush2 ? PushColors.PUSH2_COLOR2_AMBER : PushColors.PUSH1_COLOR2_AMBER;
         final ColorManager cm = this.model.getColorManager ();
-        for (int i = 0; i < 8; i++)
-        {
-            final boolean isFirstOrLast = i == 0 || i == 7;
-            this.surface.updateTrigger (102 + i, isFirstOrLast ? this.isPush2 ? PushColors.PUSH2_COLOR2_AMBER : PushColors.PUSH1_COLOR2_AMBER : cm.getColor (offset == i - 1 + 6 ? AbstractMode.BUTTON_COLOR2_HI : AbstractMode.BUTTON_COLOR2_ON));
-        }
+        return cm.getColor (offset == index - 1 + 6 ? AbstractMode.BUTTON_COLOR2_HI : AbstractMode.BUTTON_COLOR2_ON);
     }
 
 

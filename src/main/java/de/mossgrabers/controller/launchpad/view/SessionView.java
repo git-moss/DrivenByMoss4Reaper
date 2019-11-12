@@ -9,6 +9,7 @@ import de.mossgrabers.controller.launchpad.controller.LaunchpadColors;
 import de.mossgrabers.controller.launchpad.controller.LaunchpadControlSurface;
 import de.mossgrabers.controller.launchpad.definition.LaunchpadProControllerDefinition;
 import de.mossgrabers.framework.controller.ButtonID;
+import de.mossgrabers.framework.controller.color.ColorManager;
 import de.mossgrabers.framework.controller.grid.PadGrid;
 import de.mossgrabers.framework.daw.DAWColors;
 import de.mossgrabers.framework.daw.IModel;
@@ -184,18 +185,24 @@ public class SessionView extends AbstractSessionView<LaunchpadControlSurface, La
 
     /** {@inheritDoc} */
     @Override
-    public void updateSceneButtons ()
+    public void updateSceneButton (final int scene)
     {
         final ITrackBank tb = this.model.getCurrentTrackBank ();
         final ISceneBank sceneBank = tb.getSceneBank ();
-        for (int i = 0; i < 8; i++)
-        {
-            final IScene scene = sceneBank.getItem (i);
-            if (scene.doesExist ())
-                this.surface.setTrigger (LaunchpadControlSurface.LAUNCHPAD_BUTTON_SCENE1 - i * 10, DAWColors.getColorIndex (scene.getColor ()));
-            else
-                this.surface.setTrigger (LaunchpadControlSurface.LAUNCHPAD_BUTTON_SCENE1 - i * 10, LaunchpadColors.LAUNCHPAD_COLOR_BLACK);
-        }
+        final IScene s = sceneBank.getItem (scene);
+
+        if (s.doesExist ())
+            this.surface.setTrigger (this.surface.getSceneTrigger (scene), DAWColors.getColorIndex (s.getColor ()));
+        else
+            this.surface.setTrigger (this.surface.getSceneTrigger (scene), LaunchpadColors.LAUNCHPAD_COLOR_BLACK);
+    }
+
+
+    @Override
+    public String getSceneButtonColor (final int scene)
+    {
+        // TODO Auto-generated method stub
+        return ColorManager.BUTTON_STATE_OFF;
     }
 
 

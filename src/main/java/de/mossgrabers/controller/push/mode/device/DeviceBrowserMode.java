@@ -323,27 +323,25 @@ public class DeviceBrowserMode extends BaseMode
 
     /** {@inheritDoc} */
     @Override
-    public void updateFirstRow ()
+    public String getFirstRowColorID (final int index)
     {
-        for (int i = 0; i < 7; i++)
-        {
-            final IBrowserColumn col = this.getFilterColumn (i);
-            this.surface.updateTrigger (20 + i, col != null && col.doesExist () ? AbstractMode.BUTTON_COLOR_ON : AbstractMode.BUTTON_COLOR_OFF);
-        }
-        this.surface.updateTrigger (27, AbstractMode.BUTTON_COLOR_ON);
+        if (index == 7)
+            return AbstractMode.BUTTON_COLOR_ON;
+        final IBrowserColumn col = this.getFilterColumn (index);
+        return col != null && col.doesExist () ? AbstractMode.BUTTON_COLOR_ON : AbstractMode.BUTTON_COLOR_OFF;
     }
 
 
     /** {@inheritDoc} */
     @Override
-    public void updateSecondRow ()
+    public String getSecondRowColorID (final int index)
     {
-        for (int i = 0; i < 7; i++)
+        if (index < 7)
         {
-            final IBrowserColumn col = this.getFilterColumn (i);
-            this.surface.updateTrigger (102 + i, col != null && col.doesExist () ? AbstractMode.BUTTON_COLOR2_ON : AbstractMode.BUTTON_COLOR_OFF);
+            final IBrowserColumn col = this.getFilterColumn (index);
+            return col != null && col.doesExist () ? AbstractMode.BUTTON_COLOR2_ON : AbstractMode.BUTTON_COLOR_OFF;
         }
-        this.surface.updateTrigger (109, AbstractMode.BUTTON_COLOR2_ON);
+        return AbstractMode.BUTTON_COLOR2_ON;
     }
 
 

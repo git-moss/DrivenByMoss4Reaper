@@ -71,7 +71,7 @@ public class DrumView extends AbstractDrumView<MaschineMikroMk3ControlSurface, M
 
     /** {@inheritDoc} */
     @Override
-    public void updateSceneButtons ()
+    public void updateSceneButton (final int scene)
     {
         // Not used
     }

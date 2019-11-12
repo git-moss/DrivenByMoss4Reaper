@@ -12,6 +12,8 @@ import de.mossgrabers.framework.configuration.AbstractConfiguration;
 import de.mossgrabers.framework.configuration.Configuration;
 import de.mossgrabers.framework.configuration.ISettingsUI;
 import de.mossgrabers.framework.controller.color.ColorManager;
+import de.mossgrabers.framework.controller.hardware.BindType;
+import de.mossgrabers.framework.controller.hardware.IButton;
 import de.mossgrabers.framework.daw.IHost;
 import de.mossgrabers.framework.daw.IModel;
 import de.mossgrabers.framework.mode.Modes;
@@ -20,6 +22,8 @@ import de.mossgrabers.framework.view.View;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BooleanSupplier;
+import java.util.function.IntSupplier;
 
 
 /**
@@ -128,7 +132,9 @@ public abstract class AbstractControllerSetup<S extends IControlSurface<C>, C ex
     @Override
     public void flush ()
     {
-        this.flushSurfaces ();
+        for (final S surface: this.surfaces)
+            surface.flush ();
+
         this.updateButtons ();
     }
 
@@ -136,19 +142,10 @@ public abstract class AbstractControllerSetup<S extends IControlSurface<C>, C ex
     /**
      * Update all button LEDs, except the ones controlled by the views. Refreshed on flush.
      */
+    @Deprecated
     protected void updateButtons ()
     {
         // Overwrite to update button LEDs
-    }
-
-
-    /**
-     * Flush all surfaces.
-     */
-    public void flushSurfaces ()
-    {
-        for (final S surface: this.surfaces)
-            surface.flush ();
     }
 
 
@@ -235,6 +232,7 @@ public abstract class AbstractControllerSetup<S extends IControlSurface<C>, C ex
      * @param midiCC The midi CC
      * @param command The command to register
      */
+    @Deprecated
     protected void addTriggerCommand (final TriggerCommandID commandID, final int midiCC, final TriggerCommand command)
     {
         this.addTriggerCommand (commandID, midiCC, command, 0);
@@ -249,6 +247,7 @@ public abstract class AbstractControllerSetup<S extends IControlSurface<C>, C ex
      * @param command The command to register
      * @param deviceIndex The index of the device
      */
+    @Deprecated
     protected void addTriggerCommand (final TriggerCommandID commandID, final int midiCC, final TriggerCommand command, final int deviceIndex)
     {
         final S surface = this.surfaces.get (deviceIndex);
@@ -265,6 +264,7 @@ public abstract class AbstractControllerSetup<S extends IControlSurface<C>, C ex
      * @param midiChannel The midi channel to assign to
      * @param command The command to register
      */
+    @Deprecated
     protected void addTriggerCommand (final TriggerCommandID commandID, final int midiCC, final int midiChannel, final TriggerCommand command)
     {
         this.addTriggerCommand (commandID, midiCC, midiChannel, command, 0);
@@ -280,11 +280,216 @@ public abstract class AbstractControllerSetup<S extends IControlSurface<C>, C ex
      * @param command The command to register
      * @param deviceIndex The index of the device
      */
+    @Deprecated
     protected void addTriggerCommand (final TriggerCommandID commandID, final int midiCC, final int midiChannel, final TriggerCommand command, final int deviceIndex)
     {
         final S surface = this.surfaces.get (deviceIndex);
         surface.getViewManager ().registerTriggerCommand (commandID, command);
         surface.assignTriggerCommand (midiChannel, midiCC, commandID);
+    }
+
+
+    /**
+     * Create a hardware button on/off proxy on controller device 1, bind a trigger command to it
+     * and bind it to a MIDI CC on MIDI channel 1. State colors are ON and HI.
+     *
+     * @param buttonID The ID of the button (for later access)
+     * @param label The label of the button
+     * @param supplier Callback for retrieving the state of the light
+     * @param midiValue The MIDI CC or note
+     * @param command The command to bind
+     */
+    protected void setupButton (final ButtonID buttonID, final String label, final TriggerCommand command, final int midiValue, final BooleanSupplier supplier)
+    {
+        this.setupButton (buttonID, label, command, midiValue, () -> supplier.getAsBoolean () ? 1 : 0, ColorManager.BUTTON_STATE_ON, ColorManager.BUTTON_STATE_HI);
+    }
+
+
+    /**
+     * Create a hardware button on/off proxy on controller device 1, bind a trigger command to it
+     * and bind it to a MIDI CC on MIDI channel 1.
+     *
+     * @param buttonID The ID of the button (for later access)
+     * @param label The label of the button
+     * @param supplier Callback for retrieving the state of the light
+     * @param midiValue The MIDI CC or note
+     * @param command The command to bind
+     * @param colorIdOn The color ID for on state
+     * @param colorIdHi The color ID for off state
+     */
+    protected void setupButton (final ButtonID buttonID, final String label, final TriggerCommand command, final int midiValue, final BooleanSupplier supplier, final String colorIdOn, final String colorIdHi)
+    {
+        this.setupButton (buttonID, label, command, midiValue, () -> supplier.getAsBoolean () ? 1 : 0, colorIdOn, colorIdHi);
+    }
+
+
+    /**
+     * Create a hardware button proxy on controller device 1, bind a trigger command to it and bind
+     * it to a MIDI CC on MIDI channel 1. The button has an on/off state.
+     *
+     * @param buttonID The ID of the button (for later access)
+     * @param label The label of the button
+     * @param midiValue The MIDI CC or note
+     * @param command The command to bind
+     */
+    protected void setupButton (final ButtonID buttonID, final String label, final TriggerCommand command, final int midiValue)
+    {
+        this.setupButton (buttonID, label, command, midiValue, (IntSupplier) null, ColorManager.BUTTON_STATE_ON, ColorManager.BUTTON_STATE_HI);
+    }
+
+
+    /**
+     * Create a hardware button proxy on controller device 1, bind a trigger command to it and bind
+     * it to a MIDI CC on MIDI channel 1.
+     *
+     * @param buttonID The ID of the button (for later access)
+     * @param label The label of the button
+     * @param supplier Callback for retrieving the state of the light
+     * @param midiValaue The MIDI CC or note
+     * @param command The command to bind
+     * @param colorIds The color IDs to map to the states
+     */
+    protected void setupButton (final ButtonID buttonID, final String label, final TriggerCommand command, final int midiValaue, final IntSupplier supplier, final String... colorIds)
+    {
+        this.setupButton (0, buttonID, label, command, midiValaue, supplier, colorIds);
+    }
+
+
+    /**
+     * Create a hardware button proxy on controller device 1, bind a trigger command to it and bind
+     * it to a MIDI CC on MIDI channel 1.
+     *
+     * @param deviceIndex The index of the device
+     * @param buttonID The ID of the button (for later access)
+     * @param label The label of the button
+     * @param supplier Callback for retrieving the state of the light
+     * @param midiValue The MIDI CC or note
+     * @param command The command to bind
+     * @param colorIds The color IDs to map to the states
+     */
+    protected void setupButton (final int deviceIndex, final ButtonID buttonID, final String label, final TriggerCommand command, final int midiValue, final IntSupplier supplier, final String... colorIds)
+    {
+        this.setupButton (this.surfaces.get (deviceIndex), buttonID, label, command, midiValue, supplier, colorIds);
+    }
+
+
+    /**
+     * Create a hardware button proxy on controller device 1, bind a trigger command to it and bind
+     * it to a MIDI CC on MIDI channel 1.
+     *
+     * @param buttonID The ID of the button (for later access)
+     * @param label The label of the button
+     * @param supplier Callback for retrieving the state of the light
+     * @param midiValue The MIDI CC or note
+     * @param command The command to bind
+     */
+    protected void setupButton (final ButtonID buttonID, final String label, final TriggerCommand command, final int midiValue, final IntSupplier supplier)
+    {
+        this.setupButton (0, buttonID, label, command, midiValue, supplier);
+    }
+
+
+    /**
+     * Create a hardware button proxy on controller device 1, bind a trigger command to it and bind
+     * it to a MIDI CC on MIDI channel 1.
+     *
+     * @param deviceIndex The index of the device
+     * @param buttonID The ID of the button (for later access)
+     * @param label The label of the button
+     * @param supplier Callback for retrieving the state of the light
+     * @param midiValue The MIDI CC or note
+     * @param command The command to bind
+     */
+    protected void setupButton (final int deviceIndex, final ButtonID buttonID, final String label, final TriggerCommand command, final int midiValue, final IntSupplier supplier)
+    {
+        this.setupButton (this.surfaces.get (deviceIndex), buttonID, label, command, midiValue, supplier);
+    }
+
+
+    /**
+     * Create a hardware button proxy on controller device 1, bind a trigger command to it and bind
+     * it to a MIDI CC on MIDI channel 1.
+     *
+     * @param surface The control surface
+     * @param buttonID The ID of the button (for later access)
+     * @param label The label of the button
+     * @param supplier Callback for retrieving the state of the light
+     * @param midiValue The MIDI CC or note
+     * @param command The command to bind
+     * @param colorIds The color IDs to map to the states
+     */
+    protected void setupButton (final S surface, final ButtonID buttonID, final String label, final TriggerCommand command, final int midiValue, final IntSupplier supplier, final String... colorIds)
+    {
+        final IButton button = surface.createButton (buttonID, label).bind (command);
+        button.bind (surface.getInput (), this.getTriggerBindType (), midiValue);
+        final IntSupplier supp = supplier == null ? () -> button.isPressed () ? 1 : 0 : supplier;
+        button.addLight (surface.createLight ( () -> {
+            final int state = supp.getAsInt ();
+            return this.colorManager.getColor (state < 0 ? ColorManager.BUTTON_STATE_OFF : colorIds[state]);
+        }, color -> surface.setTrigger (midiValue, color)));
+    }
+
+
+    /**
+     * Create a hardware button proxy on controller device 1, bind a trigger command to it and bind
+     * it to a MIDI CC on MIDI channel 1.
+     *
+     * @param surface The control surface
+     * @param buttonID The ID of the button (for later access)
+     * @param label The label of the button
+     * @param supplier Callback for retrieving the state of the light, the state is the color value
+     *            of the device
+     * @param midiValue The MIDI CC or note
+     * @param command The command to bind
+     */
+    protected void setupButton (final S surface, final ButtonID buttonID, final String label, final TriggerCommand command, final int midiValue, final IntSupplier supplier)
+    {
+        final IButton button = surface.createButton (buttonID, label).bind (command);
+        button.bind (surface.getInput (), this.getTriggerBindType (), midiValue);
+        final IntSupplier supp = supplier == null ? () -> button.isPressed () ? 1 : 0 : supplier;
+        button.addLight (surface.createLight (supp, color -> surface.setTrigger (midiValue, color)));
+    }
+
+
+    /**
+     * Get the default bind type for triggering buttons.
+     *
+     * @return The default, returns CC as default
+     */
+    protected BindType getTriggerBindType ()
+    {
+        return BindType.CC;
+    }
+
+
+    /**
+     * Create a hardware fader proxy on controller device 1, bind a continuous command to it and
+     * bind it to a MIDI CC on MIDI channel 1.
+     *
+     * @param label The label of the fader
+     * @param midiValue The MIDI CC or note
+     * @param command The command to bind
+     * @param bindType The MIDI bind type
+     */
+    protected void setupFader (final String label, final ContinuousCommand command, final BindType bindType, final int midiValue)
+    {
+        this.setupFader (this.getSurface (), label, command, bindType, midiValue);
+    }
+
+
+    /**
+     * Create a hardware fader proxy on a controller, bind a continuous command to it and bind it to
+     * a MIDI CC on MIDI channel 1.
+     *
+     * @param surface The control surface
+     * @param label The label of the fader
+     * @param midiValue The MIDI CC or note
+     * @param command The command to bind
+     * @param bindType The MIDI bind type
+     */
+    protected void setupFader (final S surface, final String label, final ContinuousCommand command, final BindType bindType, final int midiValue)
+    {
+        surface.createFader (label).bind (command).bind (surface.getInput (), bindType, midiValue);
     }
 
 
@@ -296,6 +501,7 @@ public abstract class AbstractControllerSetup<S extends IControlSurface<C>, C ex
      * @param midiChannel The midi channel to assign to
      * @param command The command to register
      */
+    @Deprecated
     protected void addContinuousCommand (final ContinuousCommandID commandID, final int midiCC, final int midiChannel, final ContinuousCommand command)
     {
         final S surface = this.surfaces.get (0);
@@ -311,6 +517,7 @@ public abstract class AbstractControllerSetup<S extends IControlSurface<C>, C ex
      * @param midiCC The midi CC
      * @param command The command to register
      */
+    @Deprecated
     protected void addContinuousCommand (final ContinuousCommandID commandID, final int midiCC, final ContinuousCommand command)
     {
         final S surface = this.surfaces.get (0);
@@ -326,6 +533,7 @@ public abstract class AbstractControllerSetup<S extends IControlSurface<C>, C ex
      * @param note The midi note
      * @param command The command to register
      */
+    @Deprecated
     protected void addNoteCommand (final TriggerCommandID commandID, final int note, final TriggerCommand command)
     {
         final S surface = this.surfaces.get (0);

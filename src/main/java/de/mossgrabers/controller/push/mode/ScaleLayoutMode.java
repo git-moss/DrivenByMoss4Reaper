@@ -60,15 +60,13 @@ public class ScaleLayoutMode extends BaseMode
 
     /** {@inheritDoc} */
     @Override
-    public void updateFirstRow ()
+    protected String getFirstRowColorID (final int index)
     {
         final int sl = this.scales.getScaleLayout ().ordinal ();
         final int pos = sl / 2;
-        for (int i = 0; i < ScaleLayout.getNames ().length / 2; i++)
-            this.surface.updateTrigger (20 + i, pos == i ? AbstractMode.BUTTON_COLOR_HI : AbstractMode.BUTTON_COLOR_ON);
-        this.surface.updateTrigger (25, AbstractMode.BUTTON_COLOR_OFF);
-        this.surface.updateTrigger (26, AbstractMode.BUTTON_COLOR_OFF);
-        this.surface.updateTrigger (27, AbstractMode.BUTTON_COLOR_ON);
+        if (index < ScaleLayout.getNames ().length / 2)
+            return pos == index ? AbstractMode.BUTTON_COLOR_HI : AbstractMode.BUTTON_COLOR_ON;
+        return index == 7 ? AbstractMode.BUTTON_COLOR_ON : AbstractMode.BUTTON_COLOR_OFF;
     }
 
 

@@ -5,13 +5,9 @@
 package de.mossgrabers.controller.slmkiii.command.trigger;
 
 import de.mossgrabers.controller.slmkiii.SLMkIIIConfiguration;
-import de.mossgrabers.controller.slmkiii.controller.SLMkIIIColors;
 import de.mossgrabers.controller.slmkiii.controller.SLMkIIIControlSurface;
-import de.mossgrabers.controller.slmkiii.mode.device.ParametersMode;
 import de.mossgrabers.framework.command.trigger.mode.CursorCommand;
 import de.mossgrabers.framework.daw.IModel;
-import de.mossgrabers.framework.mode.ModeManager;
-import de.mossgrabers.framework.mode.Modes;
 
 
 /**
@@ -33,23 +29,23 @@ public class SLMkIIICursorCommand extends CursorCommand<SLMkIIIControlSurface, S
         super (direction, model, surface);
     }
 
-
-    /** {@inheritDoc} */
-    @Override
-    protected int getButtonOnColor ()
-    {
-        final ModeManager modeManager = this.surface.getModeManager ();
-
-        if (Modes.isTrackMode (modeManager.getActiveModeId ()))
-            return SLMkIIIColors.SLMKIII_GREEN_HALF;
-
-        if (modeManager.isActiveMode (Modes.DEVICE_PARAMS))
-        {
-            if (((ParametersMode) modeManager.getMode (Modes.DEVICE_PARAMS)).isShowDevices ())
-                return SLMkIIIColors.SLMKIII_MINT_HALF;
-            return SLMkIIIColors.SLMKIII_PURPLE_HALF;
-        }
-
-        return super.getButtonOnColor ();
-    }
+    // TODO
+    // /** {@inheritDoc} */
+    // @Override
+    // protected int getButtonOnColor ()
+    // {
+    // final ModeManager modeManager = this.surface.getModeManager ();
+    //
+    // if (Modes.isTrackMode (modeManager.getActiveModeId ()))
+    // return SLMkIIIColors.SLMKIII_GREEN_HALF;
+    //
+    // if (modeManager.isActiveMode (Modes.DEVICE_PARAMS))
+    // {
+    // if (((ParametersMode) modeManager.getMode (Modes.DEVICE_PARAMS)).isShowDevices ())
+    // return SLMkIIIColors.SLMKIII_MINT_HALF;
+    // return SLMkIIIColors.SLMKIII_PURPLE_HALF;
+    // }
+    //
+    // return super.getButtonOnColor ();
+    // }
 }

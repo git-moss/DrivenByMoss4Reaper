@@ -72,14 +72,18 @@ public class SessionView extends AbstractSessionView<APCControlSurface, APCConfi
 
     /** {@inheritDoc} */
     @Override
-    public void updateSceneButtons ()
+    public void updateSceneButton (final int scene)
     {
         final int green = this.surface.isMkII () ? APCColors.APC_MKII_COLOR_GREEN : APCColors.APC_COLOR_GREEN;
-        this.surface.updateTrigger (APCControlSurface.APC_BUTTON_SCENE_LAUNCH_1, green);
-        this.surface.updateTrigger (APCControlSurface.APC_BUTTON_SCENE_LAUNCH_2, green);
-        this.surface.updateTrigger (APCControlSurface.APC_BUTTON_SCENE_LAUNCH_3, green);
-        this.surface.updateTrigger (APCControlSurface.APC_BUTTON_SCENE_LAUNCH_4, green);
-        this.surface.updateTrigger (APCControlSurface.APC_BUTTON_SCENE_LAUNCH_5, green);
+        this.surface.updateTrigger (APCControlSurface.APC_BUTTON_SCENE_LAUNCH_1 + scene, green);
+    }
+
+
+    @Override
+    public String getSceneButtonColor (final int scene)
+    {
+        // TODO Auto-generated method stub
+        return ColorManager.BUTTON_STATE_OFF;
     }
 
 

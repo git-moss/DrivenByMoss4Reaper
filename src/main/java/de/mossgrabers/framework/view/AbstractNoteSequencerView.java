@@ -236,6 +236,22 @@ public abstract class AbstractNoteSequencerView<S extends IControlSurface<C>, C 
     }
 
 
+    /** {@inheritDoc} */
+    @Override
+    public boolean isOctaveUpButtonOn ()
+    {
+        return this.isActive ();
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean isOctaveDownButtonOn ()
+    {
+        return this.isActive ();
+    }
+
+
     protected void updateScale ()
     {
         this.delayedUpdateNoteMapping (this.model.canSelectedTrackHoldNotes () ? this.scales.getSequencerMatrix (8, this.offsetY) : EMPTY_TABLE);

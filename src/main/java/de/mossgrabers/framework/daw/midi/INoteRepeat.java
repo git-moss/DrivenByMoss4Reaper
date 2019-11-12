@@ -38,7 +38,7 @@ public interface INoteRepeat extends ObserverManagement
 
     /**
      * Set the note repeat period.
-     * 
+     *
      * @param period The period
      */
     void setPeriod (double period);
@@ -46,7 +46,7 @@ public interface INoteRepeat extends ObserverManagement
 
     /**
      * Get the note repeat period.
-     * 
+     *
      * @return The period
      */
     double getPeriod ();
@@ -54,7 +54,7 @@ public interface INoteRepeat extends ObserverManagement
 
     /**
      * Get the note length.
-     * 
+     *
      * @param length The length
      */
     void setNoteLength (double length);
@@ -70,7 +70,7 @@ public interface INoteRepeat extends ObserverManagement
 
     /**
      * Check if shuffle is active.
-     * 
+     *
      * @return True if active
      */
     boolean isShuffle ();
@@ -142,7 +142,7 @@ public interface INoteRepeat extends ObserverManagement
 
     /**
      * Change the arpeggiator mode.
-     * 
+     *
      * @param increase True to increase otherwise descrease
      */
     void changeMode (boolean increase);
@@ -151,7 +151,7 @@ public interface INoteRepeat extends ObserverManagement
     /**
      * Is the note repeat arpeggiator free running?
      *
-     * 
+     *
      * @return True if free running
      */
     boolean isFreeRunning ();

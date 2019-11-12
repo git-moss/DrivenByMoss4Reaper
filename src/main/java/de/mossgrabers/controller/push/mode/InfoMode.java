@@ -46,12 +46,13 @@ public class InfoMode extends BaseMode
 
     /** {@inheritDoc} */
     @Override
-    public void updateSecondRow ()
+    protected String getSecondRowColorID (final int index)
     {
-        this.surface.updateTrigger (102, AbstractMode.BUTTON_COLOR_ON);
-        this.surface.updateTrigger (103, AbstractMode.BUTTON_COLOR_HI);
-        for (int i = 2; i < 8; i++)
-            this.surface.updateTrigger (102 + i, AbstractMode.BUTTON_COLOR_OFF);
+        if (index == 0)
+            return AbstractMode.BUTTON_COLOR_ON;
+        if (index == 1)
+            return AbstractMode.BUTTON_COLOR_HI;
+        return AbstractMode.BUTTON_COLOR_OFF;
     }
 
 

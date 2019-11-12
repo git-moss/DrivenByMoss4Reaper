@@ -295,6 +295,22 @@ public abstract class AbstractDrumView<S extends IControlSurface<C>, C extends C
     }
 
 
+    /** {@inheritDoc} */
+    @Override
+    public boolean isOctaveUpButtonOn ()
+    {
+        return this.scales.canScrollDrumOctaveUp ();
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean isOctaveDownButtonOn ()
+    {
+        return this.scales.canScrollDrumOctaveDown ();
+    }
+
+
     /**
      * Switch the drum octave up or down.
      *

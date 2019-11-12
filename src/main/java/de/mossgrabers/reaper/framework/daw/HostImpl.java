@@ -4,6 +4,7 @@
 
 package de.mossgrabers.reaper.framework.daw;
 
+import de.mossgrabers.framework.controller.hardware.ISurfaceFactory;
 import de.mossgrabers.framework.daw.IHost;
 import de.mossgrabers.framework.daw.IMemoryBlock;
 import de.mossgrabers.framework.daw.constants.EditCapability;
@@ -18,6 +19,7 @@ import de.mossgrabers.framework.usb.UsbException;
 import de.mossgrabers.framework.usb.UsbMatcher;
 import de.mossgrabers.reaper.framework.graphics.BitmapImpl;
 import de.mossgrabers.reaper.framework.graphics.SVGImage;
+import de.mossgrabers.reaper.framework.hardware.SurfaceFactoryImpl;
 import de.mossgrabers.reaper.framework.osc.OpenSoundControlClientImpl;
 import de.mossgrabers.reaper.framework.osc.OpenSoundControlMessageImpl;
 import de.mossgrabers.reaper.framework.osc.OpenSoundControlServerImpl;
@@ -308,5 +310,13 @@ public class HostImpl implements IHost
             receiver.close ();
         for (final OpenSoundControlClientImpl sender: this.oscSenders)
             sender.close ();
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public ISurfaceFactory createSurfaceFactory ()
+    {
+        return new SurfaceFactoryImpl (this);
     }
 }

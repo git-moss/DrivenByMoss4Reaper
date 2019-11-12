@@ -13,6 +13,10 @@ import de.mossgrabers.framework.controller.display.IDisplay;
 import de.mossgrabers.framework.controller.display.IGraphicDisplay;
 import de.mossgrabers.framework.controller.display.ITextDisplay;
 import de.mossgrabers.framework.controller.grid.PadGrid;
+import de.mossgrabers.framework.controller.hardware.IButton;
+import de.mossgrabers.framework.controller.hardware.IFader;
+import de.mossgrabers.framework.controller.hardware.ILight;
+import de.mossgrabers.framework.controller.hardware.ISurfaceFactory;
 import de.mossgrabers.framework.daw.IHost;
 import de.mossgrabers.framework.daw.midi.IMidiInput;
 import de.mossgrabers.framework.daw.midi.IMidiOutput;
@@ -31,6 +35,8 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.IntConsumer;
+import java.util.function.IntSupplier;
 
 
 /**
@@ -51,12 +57,14 @@ public abstract class AbstractControlSurface<C extends Configuration> implements
     protected final ColorManager                                    colorManager;
     protected final IMidiOutput                                     output;
     protected final IMidiInput                                      input;
+    protected final ISurfaceFactory                                 surfaceFactory;
 
     protected final ViewManager                                     viewManager           = new ViewManager ();
     protected final ModeManager                                     modeManager           = new ModeManager ();
 
     protected int                                                   defaultMidiChannel    = 0;
 
+    private Map<ButtonID, IButton>                                  buttons               = new HashMap<> ();
     protected final EnumMap<ButtonID, Integer>                      buttonIDs             = new EnumMap<> (ButtonID.class);
     private final TriggerInfo [] []                                 triggerInfos          = new TriggerInfo [16] [NUM_INFOS];
     private final ContinuousInfo [] []                              continuousInfos       = new ContinuousInfo [16] [NUM_INFOS];
@@ -95,6 +103,8 @@ public abstract class AbstractControlSurface<C extends Configuration> implements
         this.configuration = configuration;
         this.colorManager = colorManager;
         this.pads = padGrid;
+
+        this.surfaceFactory = host.createSurfaceFactory ();
 
         this.dummyDisplay = new DummyDisplay (host);
 
@@ -361,6 +371,14 @@ public abstract class AbstractControlSurface<C extends Configuration> implements
 
     /** {@inheritDoc} */
     @Override
+    public IButton getButton (final ButtonID buttonID)
+    {
+        return this.buttons.get (buttonID);
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
     public boolean isShiftPressed ()
     {
         return this.isPressed (ButtonID.SHIFT);
@@ -403,6 +421,10 @@ public abstract class AbstractControlSurface<C extends Configuration> implements
     @Override
     public boolean isPressed (final ButtonID buttonID)
     {
+        final IButton button = this.buttons.get (buttonID);
+        if (button != null)
+            return button.isPressed ();
+
         final Integer cc = this.buttonIDs.get (buttonID);
         return cc != null && this.isPressed (cc.intValue ());
     }
@@ -455,9 +477,36 @@ public abstract class AbstractControlSurface<C extends Configuration> implements
     }
 
 
+    @Deprecated
     protected void setTriggerId (final ButtonID trigger, final int cc)
     {
         this.buttonIDs.put (trigger, Integer.valueOf (cc));
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public IButton createButton (final ButtonID buttonID, final String label)
+    {
+        final IButton button = this.surfaceFactory.createButton (buttonID, label);
+        this.buttons.put (buttonID, button);
+        return button;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public ILight createLight (final IntSupplier supplier, final IntConsumer sendConsumer)
+    {
+        return this.surfaceFactory.createLight (supplier, sendConsumer);
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public IFader createFader (final String label)
+    {
+        return this.surfaceFactory.createFader (label);
     }
 
 
@@ -596,6 +645,20 @@ public abstract class AbstractControlSurface<C extends Configuration> implements
 
     /** {@inheritDoc} */
     @Override
+    public void setTriggerConsumed (final ButtonID buttonID)
+    {
+        final IButton button = this.buttons.get (buttonID);
+        if (button != null)
+            button.setConsumed ();
+
+        final Integer cc = this.buttonIDs.get (buttonID);
+        if (cc != null)
+            this.setTriggerConsumed (cc.intValue ());
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
     public void setTriggerConsumed (final int cc)
     {
         this.setTriggerConsumed (this.defaultMidiChannel, cc);
@@ -641,6 +704,13 @@ public abstract class AbstractControlSurface<C extends Configuration> implements
                     this.setTrigger (channel, cc, 0);
             }
         }
+
+        this.buttons.values ().forEach (button -> {
+            final ILight light = button.getLight ();
+            if (light != null)
+                light.turnOff ();
+        });
+        this.surfaceFactory.flush ();
     }
 
 
@@ -1082,6 +1152,8 @@ public abstract class AbstractControlSurface<C extends Configuration> implements
         if (view != null)
             view.updateControlSurface ();
         this.textDisplays.forEach (ITextDisplay::flush);
+
+        this.surfaceFactory.flush ();
     }
 
 

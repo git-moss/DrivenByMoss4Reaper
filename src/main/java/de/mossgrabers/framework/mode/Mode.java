@@ -54,13 +54,33 @@ public interface Mode
     /**
      * Update the first row buttons.
      */
+    @Deprecated
     void updateFirstRow ();
+
+
+    /**
+     * Get the color index of the 1st row button.
+     *
+     * @param index The index of the button in the row
+     * @return The color index
+     */
+    int getFirstRowColor (int index);
 
 
     /**
      * Update the second row buttons.
      */
+    @Deprecated
     void updateSecondRow ();
+
+
+    /**
+     * Get the color index of the 2nd row button.
+     *
+     * @param index The index of the button in the row
+     * @return The color index
+     */
+    int getSecondRowColor (int index);
 
 
     /**

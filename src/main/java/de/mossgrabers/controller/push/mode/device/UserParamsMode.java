@@ -10,7 +10,6 @@ import de.mossgrabers.controller.push.controller.PushControlSurface;
 import de.mossgrabers.controller.push.mode.BaseMode;
 import de.mossgrabers.framework.controller.ButtonID;
 import de.mossgrabers.framework.controller.IValueChanger;
-import de.mossgrabers.framework.controller.color.ColorManager;
 import de.mossgrabers.framework.controller.display.IGraphicDisplay;
 import de.mossgrabers.framework.controller.display.ITextDisplay;
 import de.mossgrabers.framework.daw.IBank;
@@ -82,15 +81,14 @@ public class UserParamsMode extends BaseMode
 
     /** {@inheritDoc} */
     @Override
-    public void updateFirstRow ()
+    public int getFirstRowColor (final int index)
     {
         final int selectedColor = this.isPush2 ? PushColors.PUSH2_COLOR_ORANGE_HI : PushColors.PUSH1_COLOR_ORANGE_HI;
         final int existsColor = this.isPush2 ? PushColors.PUSH2_COLOR_YELLOW_LO : PushColors.PUSH1_COLOR_YELLOW_LO;
 
         final IParameterBank bank = this.model.getUserParameterBank ();
         final int selectedPage = bank.getScrollPosition () / bank.getPageSize ();
-        for (int i = 0; i < bank.getPageSize (); i++)
-            this.surface.updateTrigger (20 + i, i == selectedPage ? selectedColor : existsColor);
+        return index == selectedPage ? selectedColor : existsColor;
     }
 
 
@@ -113,21 +111,15 @@ public class UserParamsMode extends BaseMode
 
     /** {@inheritDoc} */
     @Override
-    public void updateSecondRow ()
+    protected String getSecondRowColorID (final int index)
     {
-        final ColorManager colorManager = this.model.getColorManager ();
-        final int colorOff = colorManager.getColor (AbstractMode.BUTTON_COLOR_OFF);
-        final int colorOn = colorManager.getColor (AbstractMode.BUTTON_COLOR_ON);
-        final int colorHi = colorManager.getColor (AbstractMode.BUTTON_COLOR_HI);
-
         final IParameterBank bank = this.model.getUserParameterBank ();
+        final IParameter param = bank.getItem (index);
+        if (!param.doesExist ())
+            return AbstractMode.BUTTON_COLOR_OFF;
+
         final int max = this.model.getValueChanger ().getUpperBound () - 1;
-        for (int i = 0; i < bank.getPageSize (); i++)
-        {
-            final IParameter param = this.model.getUserParameterBank ().getItem (i);
-            final boolean isHi = param.getValue () > max / 2;
-            this.surface.updateTrigger (102 + i, bank.getItem (i).doesExist () ? isHi ? colorHi : colorOn : colorOff);
-        }
+        return param.getValue () > max / 2 ? AbstractMode.BUTTON_COLOR_HI : AbstractMode.BUTTON_COLOR_ON;
     }
 
 

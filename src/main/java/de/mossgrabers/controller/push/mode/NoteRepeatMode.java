@@ -216,41 +216,53 @@ public class NoteRepeatMode extends BaseMode
 
     /** {@inheritDoc} */
     @Override
-    public void updateFirstRow ()
+    public int getFirstRowColor (final int index)
     {
-        this.surface.updateTrigger (20, AbstractMode.BUTTON_COLOR_ON);
-        this.surface.updateTrigger (21, AbstractMode.BUTTON_COLOR_ON);
-        this.surface.updateTrigger (22, this.host.canEdit (EditCapability.NOTE_REPEAT_LENGTH) ? AbstractMode.BUTTON_COLOR_ON : AbstractMode.BUTTON_COLOR_OFF);
-        this.surface.updateTrigger (23, this.host.canEdit (EditCapability.NOTE_REPEAT_LENGTH) ? AbstractMode.BUTTON_COLOR_ON : AbstractMode.BUTTON_COLOR_OFF);
+        final ColorManager colorManager = this.model.getColorManager ();
+        final int offColor = colorManager.getColor (AbstractMode.BUTTON_COLOR_OFF);
+        final int onColor = colorManager.getColor (AbstractMode.BUTTON_COLOR_ON);
+        final int hiColor = colorManager.getColor (AbstractMode.BUTTON_COLOR_HI);
 
-        this.surface.updateTrigger (24, AbstractMode.BUTTON_COLOR_OFF);
+        switch (index)
+        {
+            default:
+            case 0:
+            case 1:
+                return onColor;
+            case 2:
+                return this.host.canEdit (EditCapability.NOTE_REPEAT_LENGTH) ? onColor : offColor;
+            case 3:
+                return this.host.canEdit (EditCapability.NOTE_REPEAT_LENGTH) ? onColor : offColor;
 
-        if (this.host.canEdit (EditCapability.NOTE_REPEAT_USE_PRESSURE_TO_VELOCITY))
-            this.surface.updateTrigger (25, this.noteRepeat.usePressure () ? AbstractMode.BUTTON_COLOR_HI : AbstractMode.BUTTON_COLOR_ON);
-        else
-            this.surface.updateTrigger (25, AbstractMode.BUTTON_COLOR_OFF);
+            case 4:
+                return offColor;
 
-        if (this.host.canEdit (EditCapability.NOTE_REPEAT_IS_FREE_RUNNING))
-            this.surface.updateTrigger (26, !this.noteRepeat.isFreeRunning () ? AbstractMode.BUTTON_COLOR_HI : AbstractMode.BUTTON_COLOR_ON);
-        else
-            this.surface.updateTrigger (26, AbstractMode.BUTTON_COLOR_OFF);
+            case 5:
+                if (this.host.canEdit (EditCapability.NOTE_REPEAT_USE_PRESSURE_TO_VELOCITY))
+                    return this.noteRepeat.usePressure () ? hiColor : onColor;
+                return offColor;
 
-        if (this.host.canEdit (EditCapability.NOTE_REPEAT_SWING))
-            this.surface.updateTrigger (27, this.noteRepeat.isShuffle () ? AbstractMode.BUTTON_COLOR_HI : AbstractMode.BUTTON_COLOR_ON);
-        else
-            this.surface.updateTrigger (27, AbstractMode.BUTTON_COLOR_OFF);
+            case 6:
+                if (this.host.canEdit (EditCapability.NOTE_REPEAT_IS_FREE_RUNNING))
+                    return !this.noteRepeat.isFreeRunning () ? hiColor : onColor;
+                return offColor;
+
+            case 7:
+                if (this.host.canEdit (EditCapability.NOTE_REPEAT_SWING))
+                    return this.noteRepeat.isShuffle () ? hiColor : onColor;
+                return offColor;
+        }
     }
 
 
     /** {@inheritDoc} */
     @Override
-    public void updateSecondRow ()
+    public int getSecondRowColor (final int index)
     {
         final ColorManager colorManager = this.model.getColorManager ();
-        for (int i = 0; i < 7; i++)
-            this.surface.updateTrigger (102 + i, colorManager.getColor (AbstractMode.BUTTON_COLOR_OFF));
-
-        this.surface.updateTrigger (109, this.model.getGroove ().getParameters ()[0].getValue () > 0 ? AbstractMode.BUTTON_COLOR_HI : AbstractMode.BUTTON_COLOR_ON);
+        if (index < 7)
+            return colorManager.getColor (AbstractMode.BUTTON_COLOR_OFF);
+        return this.model.getGroove ().getParameters ()[0].getValue () > 0 ? colorManager.getColor (AbstractMode.BUTTON_COLOR_HI) : colorManager.getColor (AbstractMode.BUTTON_COLOR_ON);
     }
 
 

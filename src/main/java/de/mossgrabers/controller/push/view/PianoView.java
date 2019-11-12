@@ -114,11 +114,18 @@ public class PianoView extends PlayView
 
     /** {@inheritDoc} */
     @Override
-    public void updateButtons ()
+    public boolean isOctaveUpButtonOn ()
     {
-        super.updateButtons ();
         final int octave = this.scales.getPianoOctave ();
-        this.surface.updateTrigger (PushControlSurface.PUSH_BUTTON_OCTAVE_UP, octave < Scales.PIANO_OCTAVE_RANGE ? ColorManager.BUTTON_STATE_ON : ColorManager.BUTTON_STATE_OFF);
-        this.surface.updateTrigger (PushControlSurface.PUSH_BUTTON_OCTAVE_DOWN, octave > -Scales.PIANO_OCTAVE_RANGE ? ColorManager.BUTTON_STATE_ON : ColorManager.BUTTON_STATE_OFF);
+        return octave < Scales.PIANO_OCTAVE_RANGE;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean isOctaveDownButtonOn ()
+    {
+        final int octave = this.scales.getPianoOctave ();
+        return octave > -Scales.PIANO_OCTAVE_RANGE;
     }
 }

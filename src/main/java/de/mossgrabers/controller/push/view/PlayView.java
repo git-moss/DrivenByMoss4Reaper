@@ -9,11 +9,9 @@ import de.mossgrabers.controller.push.controller.PushControlSurface;
 import de.mossgrabers.framework.configuration.AbstractConfiguration;
 import de.mossgrabers.framework.configuration.Configuration;
 import de.mossgrabers.framework.controller.ButtonID;
-import de.mossgrabers.framework.controller.color.ColorManager;
 import de.mossgrabers.framework.daw.IModel;
 import de.mossgrabers.framework.daw.ISceneBank;
 import de.mossgrabers.framework.daw.data.IScene;
-import de.mossgrabers.framework.scale.Scales;
 import de.mossgrabers.framework.utils.ButtonEvent;
 import de.mossgrabers.framework.view.AbstractPlayView;
 import de.mossgrabers.framework.view.AbstractSessionView;
@@ -59,33 +57,6 @@ public class PlayView extends AbstractPlayView<PushControlSurface, PushConfigura
 
     /** {@inheritDoc} */
     @Override
-    public void onActivate ()
-    {
-        super.onActivate ();
-        this.initMaxVelocity ();
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public boolean usesButton (final int buttonID)
-    {
-        return true;
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void updateButtons ()
-    {
-        final int octave = this.scales.getOctave ();
-        this.surface.updateTrigger (PushControlSurface.PUSH_BUTTON_OCTAVE_UP, octave < Scales.OCTAVE_RANGE ? ColorManager.BUTTON_STATE_ON : ColorManager.BUTTON_STATE_OFF);
-        this.surface.updateTrigger (PushControlSurface.PUSH_BUTTON_OCTAVE_DOWN, octave > -Scales.OCTAVE_RANGE ? ColorManager.BUTTON_STATE_ON : ColorManager.BUTTON_STATE_OFF);
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
     public void onScene (final int sceneIndex, final ButtonEvent event)
     {
         if (event != ButtonEvent.DOWN)
@@ -107,20 +78,21 @@ public class PlayView extends AbstractPlayView<PushControlSurface, PushConfigura
 
     /** {@inheritDoc} */
     @Override
-    public void updateSceneButtons ()
+    public void updateSceneButton (final int scene)
     {
-        final ColorManager colorManager = this.model.getColorManager ();
-        final int colorScene = colorManager.getColor (AbstractSessionView.COLOR_SCENE);
-        final int colorSceneSelected = colorManager.getColor (AbstractSessionView.COLOR_SELECTED_SCENE);
-        final int colorSceneOff = colorManager.getColor (AbstractSessionView.COLOR_SCENE_OFF);
+        // TODO REmove
+    }
 
+
+    /** {@inheritDoc} */
+    @Override
+    public String getSceneButtonColor (final int scene)
+    {
         final ISceneBank sceneBank = this.model.getSceneBank ();
-        for (int i = 0; i < 8; i++)
-        {
-            final IScene scene = sceneBank.getItem (7 - i);
-            final int color = scene.doesExist () ? scene.isSelected () ? colorSceneSelected : colorScene : colorSceneOff;
-            this.surface.updateTrigger (PushControlSurface.PUSH_BUTTON_SCENE1 + i, color);
-        }
+        final IScene s = sceneBank.getItem (7 - scene);
+        if (s.doesExist ())
+            return s.isSelected () ? AbstractSessionView.COLOR_SELECTED_SCENE : AbstractSessionView.COLOR_SCENE;
+        return AbstractSessionView.COLOR_SCENE_OFF;
     }
 
 

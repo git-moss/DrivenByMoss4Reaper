@@ -91,7 +91,7 @@ public class SessionView extends AbstractSessionView<SLMkIIIControlSurface, SLMk
 
     /** {@inheritDoc} */
     @Override
-    public void updateSceneButtons ()
+    public void updateSceneButton (final int scene)
     {
         final ColorManager colorManager = this.model.getColorManager ();
         final int colorScene = colorManager.getColor (AbstractSessionView.COLOR_SCENE);
@@ -99,11 +99,16 @@ public class SessionView extends AbstractSessionView<SLMkIIIControlSurface, SLMk
         final int colorSceneOff = colorManager.getColor (AbstractSessionView.COLOR_SCENE_OFF);
 
         final ISceneBank sceneBank = this.model.getSceneBank ();
-        for (int i = 0; i < sceneBank.getPageSize (); i++)
-        {
-            final IScene scene = sceneBank.getItem (i);
-            final int color = scene.doesExist () ? scene.isSelected () ? colorSceneSelected : colorScene : colorSceneOff;
-            this.surface.updateTrigger (SLMkIIIControlSurface.MKIII_SCENE_1 + i, color);
-        }
+        final IScene s = sceneBank.getItem (scene);
+        final int color = s.doesExist () ? s.isSelected () ? colorSceneSelected : colorScene : colorSceneOff;
+        this.surface.updateTrigger (SLMkIIIControlSurface.MKIII_SCENE_1 + scene, color);
+    }
+
+
+    @Override
+    public String getSceneButtonColor (final int scene)
+    {
+        // TODO Auto-generated method stub
+        return ColorManager.BUTTON_STATE_OFF;
     }
 }

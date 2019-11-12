@@ -20,11 +20,23 @@ public interface SceneView
      * @param scene The scene
      * @param event The button event
      */
-    void onScene (final int scene, final ButtonEvent event);
+    void onScene (int scene, ButtonEvent event);
 
 
     /**
-     * Update the scene buttons.
+     * Update a scene button.
+     *
+     * @param scene The scene
      */
-    void updateSceneButtons ();
+    @Deprecated
+    void updateSceneButton (int scene);
+
+
+    /**
+     * Get scene button color.
+     *
+     * @param scene The scene
+     * @return A color ID
+     */
+    String getSceneButtonColor (int scene);
 }

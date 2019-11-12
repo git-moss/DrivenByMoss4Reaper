@@ -27,7 +27,7 @@ public class NoteInputImpl implements INoteInput
 
     /**
      * Constructor.
-     * 
+     *
      * @param sender
      *
      * @param filters a filter string formatted as hexadecimal value with `?` as wildcard. For

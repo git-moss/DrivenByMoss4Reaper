@@ -8,7 +8,6 @@ import de.mossgrabers.controller.push.controller.Push1Display;
 import de.mossgrabers.controller.push.controller.PushColors;
 import de.mossgrabers.controller.push.controller.PushControlSurface;
 import de.mossgrabers.controller.push.mode.BaseMode;
-import de.mossgrabers.framework.command.TriggerCommandID;
 import de.mossgrabers.framework.controller.ButtonID;
 import de.mossgrabers.framework.controller.IValueChanger;
 import de.mossgrabers.framework.controller.display.IGraphicDisplay;
@@ -29,7 +28,6 @@ import de.mossgrabers.framework.mode.ModeManager;
 import de.mossgrabers.framework.mode.Modes;
 import de.mossgrabers.framework.utils.ButtonEvent;
 import de.mossgrabers.framework.utils.StringUtils;
-import de.mossgrabers.framework.view.View;
 
 
 /**
@@ -197,11 +195,10 @@ public class DeviceParamsMode extends BaseMode
         }
 
         // There is no device on the track move upwards to the track view
-        final View activeView = this.surface.getViewManager ().getActiveView ();
         final ICursorDevice cd = this.model.getCursorDevice ();
         if (!cd.doesExist ())
         {
-            activeView.executeTriggerCommand (TriggerCommandID.TRACK, ButtonEvent.DOWN);
+            this.surface.getButton (ButtonID.TRACK).trigger (ButtonEvent.DOWN);
             return;
         }
 
@@ -230,25 +227,19 @@ public class DeviceParamsMode extends BaseMode
 
         // Move up to the track
         if (this.model.isCursorDeviceOnMasterTrack ())
-        {
-            activeView.executeTriggerCommand (TriggerCommandID.MASTERTRACK, ButtonEvent.DOWN);
-            activeView.executeTriggerCommand (TriggerCommandID.MASTERTRACK, ButtonEvent.UP);
-        }
+            this.surface.getButton (ButtonID.MASTERTRACK).trigger (ButtonEvent.DOWN);
         else
-            activeView.executeTriggerCommand (TriggerCommandID.TRACK, ButtonEvent.DOWN);
+            this.surface.getButton (ButtonID.TRACK).trigger (ButtonEvent.DOWN);
     }
 
 
     /** {@inheritDoc} */
     @Override
-    public void updateFirstRow ()
+    public int getFirstRowColor (final int index)
     {
         final ICursorDevice cd = this.model.getCursorDevice ();
         if (!cd.doesExist ())
-        {
-            this.disableFirstRow ();
-            return;
-        }
+            return super.getFirstRowColor (index);
 
         final int selectedColor = this.isPush2 ? PushColors.PUSH2_COLOR_ORANGE_HI : PushColors.PUSH1_COLOR_ORANGE_HI;
         final int existsColor = this.isPush2 ? PushColors.PUSH2_COLOR_YELLOW_LO : PushColors.PUSH1_COLOR_YELLOW_LO;
@@ -257,16 +248,11 @@ public class DeviceParamsMode extends BaseMode
         if (this.showDevices)
         {
             final IDeviceBank bank = cd.getDeviceBank ();
-            for (int i = 0; i < bank.getPageSize (); i++)
-                this.surface.updateTrigger (20 + i, bank.getItem (i).doesExist () ? i == cd.getIndex () ? selectedColor : existsColor : offColor);
+            return bank.getItem (index).doesExist () ? index == cd.getIndex () ? selectedColor : existsColor : offColor;
         }
-        else
-        {
-            final IParameterPageBank bank = cd.getParameterPageBank ();
-            final int selectedItemIndex = bank.getSelectedItemIndex ();
-            for (int i = 0; i < bank.getPageSize (); i++)
-                this.surface.updateTrigger (20 + i, !bank.getItem (i).isEmpty () ? i == selectedItemIndex ? selectedColor : existsColor : offColor);
-        }
+        final IParameterPageBank bank = cd.getParameterPageBank ();
+        final int selectedItemIndex = bank.getSelectedItemIndex ();
+        return !bank.getItem (index).isEmpty () ? index == selectedItemIndex ? selectedColor : existsColor : offColor;
     }
 
 
@@ -327,17 +313,13 @@ public class DeviceParamsMode extends BaseMode
 
     /** {@inheritDoc} */
     @Override
-    public void updateSecondRow ()
+    public int getSecondRowColor (final int index)
     {
         final int white = this.isPush2 ? PushColors.PUSH2_COLOR2_WHITE : PushColors.PUSH1_COLOR2_WHITE;
 
         final ICursorDevice cd = this.model.getCursorDevice ();
         if (!cd.doesExist ())
-        {
-            this.disableSecondRow ();
-            this.surface.updateTrigger (109, white);
-            return;
-        }
+            return index == 7 ? white : super.getFirstRowColor (index);
 
         final int green = this.isPush2 ? PushColors.PUSH2_COLOR2_GREEN : PushColors.PUSH1_COLOR2_GREEN;
         final int grey = this.isPush2 ? PushColors.PUSH2_COLOR2_GREY_LO : PushColors.PUSH1_COLOR2_GREY_LO;
@@ -345,14 +327,26 @@ public class DeviceParamsMode extends BaseMode
         final int off = this.isPush2 ? PushColors.PUSH2_COLOR_BLACK : PushColors.PUSH1_COLOR_BLACK;
         final int turquoise = this.isPush2 ? PushColors.PUSH2_COLOR2_TURQUOISE_HI : PushColors.PUSH1_COLOR2_TURQUOISE_HI;
 
-        this.surface.updateTrigger (102, cd.isEnabled () ? green : grey);
-        this.surface.updateTrigger (103, cd.isParameterPageSectionVisible () ? orange : white);
-        this.surface.updateTrigger (104, cd.isExpanded () ? orange : white);
-        this.surface.updateTrigger (105, this.surface.getModeManager ().isActiveOrTempMode (Modes.DEVICE_CHAINS) ? orange : white);
-        this.surface.updateTrigger (106, this.showDevices ? white : orange);
-        this.surface.updateTrigger (107, this.model.getHost ().hasPinning () ? cd.isPinned () ? turquoise : grey : off);
-        this.surface.updateTrigger (108, cd.isWindowOpen () ? turquoise : grey);
-        this.surface.updateTrigger (109, white);
+        switch (index)
+        {
+            case 0:
+                return cd.isEnabled () ? green : grey;
+            case 1:
+                return cd.isParameterPageSectionVisible () ? orange : white;
+            case 2:
+                return cd.isExpanded () ? orange : white;
+            case 3:
+                return this.surface.getModeManager ().isActiveOrTempMode (Modes.DEVICE_CHAINS) ? orange : white;
+            case 4:
+                return this.showDevices ? white : orange;
+            case 5:
+                return this.model.getHost ().hasPinning () ? cd.isPinned () ? turquoise : grey : off;
+            case 6:
+                return cd.isWindowOpen () ? turquoise : grey;
+            default:
+            case 7:
+                return white;
+        }
     }
 
 

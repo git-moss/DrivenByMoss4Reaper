@@ -7,18 +7,17 @@ package de.mossgrabers.controller.apcmini.view;
 import de.mossgrabers.controller.apcmini.APCminiConfiguration;
 import de.mossgrabers.controller.apcmini.controller.APCminiColors;
 import de.mossgrabers.controller.apcmini.controller.APCminiControlSurface;
+import de.mossgrabers.framework.command.trigger.clip.NewCommand;
 import de.mossgrabers.framework.command.trigger.transport.PlayCommand;
+import de.mossgrabers.framework.controller.color.ColorManager;
 import de.mossgrabers.framework.controller.grid.PadGrid;
 import de.mossgrabers.framework.daw.IClip;
 import de.mossgrabers.framework.daw.ICursorDevice;
 import de.mossgrabers.framework.daw.IModel;
 import de.mossgrabers.framework.daw.IParameterBank;
 import de.mossgrabers.framework.daw.ISceneBank;
-import de.mossgrabers.framework.daw.ISlotBank;
 import de.mossgrabers.framework.daw.ITrackBank;
 import de.mossgrabers.framework.daw.ITransport;
-import de.mossgrabers.framework.daw.data.ISlot;
-import de.mossgrabers.framework.daw.data.ITrack;
 import de.mossgrabers.framework.mode.ModeManager;
 import de.mossgrabers.framework.mode.Modes;
 import de.mossgrabers.framework.scale.Scales;
@@ -27,8 +26,6 @@ import de.mossgrabers.framework.view.AbstractView;
 import de.mossgrabers.framework.view.SceneView;
 import de.mossgrabers.framework.view.ViewManager;
 import de.mossgrabers.framework.view.Views;
-
-import java.util.List;
 
 
 /**
@@ -59,6 +56,7 @@ public class ShiftView extends AbstractView<APCminiControlSurface, APCminiConfig
     };
 
     final PlayCommand<APCminiControlSurface, APCminiConfiguration> playCommand;
+    final NewCommand<APCminiControlSurface, APCminiConfiguration>  newCommand;
 
 
     /**
@@ -72,6 +70,7 @@ public class ShiftView extends AbstractView<APCminiControlSurface, APCminiConfig
         super ("Shift", surface, model);
 
         this.playCommand = new PlayCommand<> (this.model, this.surface);
+        this.newCommand = new NewCommand<> (this.model, this.surface);
     }
 
 
@@ -372,58 +371,75 @@ public class ShiftView extends AbstractView<APCminiControlSurface, APCminiConfig
 
     /** {@inheritDoc} */
     @Override
-    public void updateSceneButtons ()
+    public void updateSceneButton (final int scene)
     {
-        // Draw the track states on the scene buttons
-        final int trackState = this.surface.getTrackState ();
-        this.surface.updateTrigger (APCminiControlSurface.APC_BUTTON_SCENE_BUTTON1, trackState == APCminiControlSurface.TRACK_STATE_CLIP_STOP ? APCminiControlSurface.APC_BUTTON_STATE_ON : APCminiControlSurface.APC_BUTTON_STATE_OFF);
-        this.surface.updateTrigger (APCminiControlSurface.APC_BUTTON_SCENE_BUTTON2, trackState == APCminiControlSurface.TRACK_STATE_SOLO ? APCminiControlSurface.APC_BUTTON_STATE_ON : APCminiControlSurface.APC_BUTTON_STATE_OFF);
-        this.surface.updateTrigger (APCminiControlSurface.APC_BUTTON_SCENE_BUTTON3, trackState == APCminiControlSurface.TRACK_STATE_REC_ARM ? APCminiControlSurface.APC_BUTTON_STATE_ON : APCminiControlSurface.APC_BUTTON_STATE_OFF);
-        this.surface.updateTrigger (APCminiControlSurface.APC_BUTTON_SCENE_BUTTON4, trackState == APCminiControlSurface.TRACK_STATE_MUTE ? APCminiControlSurface.APC_BUTTON_STATE_ON : APCminiControlSurface.APC_BUTTON_STATE_OFF);
-        this.surface.updateTrigger (APCminiControlSurface.APC_BUTTON_SCENE_BUTTON5, trackState == APCminiControlSurface.TRACK_STATE_SELECT ? APCminiControlSurface.APC_BUTTON_STATE_ON : APCminiControlSurface.APC_BUTTON_STATE_OFF);
-        this.surface.updateTrigger (APCminiControlSurface.APC_BUTTON_SCENE_BUTTON6, this.model.isEffectTrackBankActive () ? APCminiControlSurface.APC_BUTTON_STATE_ON : APCminiControlSurface.APC_BUTTON_STATE_OFF);
-        this.surface.updateTrigger (APCminiControlSurface.APC_BUTTON_SCENE_BUTTON7, APCminiControlSurface.APC_BUTTON_STATE_OFF);
-        this.surface.updateTrigger (APCminiControlSurface.APC_BUTTON_SCENE_BUTTON8, APCminiControlSurface.APC_BUTTON_STATE_OFF);
+        // TODO Remove
+    }
 
+
+    /** {@inheritDoc} */
+    @Override
+    public int getTrackButtonColor (final int index)
+    {
         final ITrackBank tb = this.model.getCurrentTrackBank ();
         final ISceneBank sceneBank = tb.getSceneBank ();
-        this.surface.updateTrigger (APCminiControlSurface.APC_BUTTON_TRACK_BUTTON1, sceneBank.canScrollPageBackwards () ? APCminiControlSurface.APC_BUTTON_STATE_ON : APCminiControlSurface.APC_BUTTON_STATE_OFF);
-        this.surface.updateTrigger (APCminiControlSurface.APC_BUTTON_TRACK_BUTTON2, sceneBank.canScrollPageForwards () ? APCminiControlSurface.APC_BUTTON_STATE_ON : APCminiControlSurface.APC_BUTTON_STATE_OFF);
-        this.surface.updateTrigger (APCminiControlSurface.APC_BUTTON_TRACK_BUTTON3, tb.canScrollPageBackwards () ? APCminiControlSurface.APC_BUTTON_STATE_ON : APCminiControlSurface.APC_BUTTON_STATE_OFF);
-        this.surface.updateTrigger (APCminiControlSurface.APC_BUTTON_TRACK_BUTTON4, tb.canScrollPageForwards () ? APCminiControlSurface.APC_BUTTON_STATE_ON : APCminiControlSurface.APC_BUTTON_STATE_OFF);
-
         final Modes mode = this.surface.getModeManager ().getActiveOrTempModeId ();
-        this.surface.updateTrigger (APCminiControlSurface.APC_BUTTON_TRACK_BUTTON5, Modes.VOLUME.equals (mode) ? APCminiControlSurface.APC_BUTTON_STATE_ON : APCminiControlSurface.APC_BUTTON_STATE_OFF);
-        this.surface.updateTrigger (APCminiControlSurface.APC_BUTTON_TRACK_BUTTON6, Modes.PAN.equals (mode) ? APCminiControlSurface.APC_BUTTON_STATE_ON : APCminiControlSurface.APC_BUTTON_STATE_OFF);
-        this.surface.updateTrigger (APCminiControlSurface.APC_BUTTON_TRACK_BUTTON7, Modes.isSendMode (mode) ? APCminiControlSurface.APC_BUTTON_STATE_ON : APCminiControlSurface.APC_BUTTON_STATE_OFF);
-        this.surface.updateTrigger (APCminiControlSurface.APC_BUTTON_TRACK_BUTTON8, Modes.DEVICE_PARAMS.equals (mode) ? APCminiControlSurface.APC_BUTTON_STATE_ON : APCminiControlSurface.APC_BUTTON_STATE_OFF);
 
+        switch (index)
+        {
+            case 0:
+                return sceneBank.canScrollPageBackwards () ? APCminiControlSurface.APC_BUTTON_STATE_ON : APCminiControlSurface.APC_BUTTON_STATE_OFF;
+            case 1:
+                return sceneBank.canScrollPageForwards () ? APCminiControlSurface.APC_BUTTON_STATE_ON : APCminiControlSurface.APC_BUTTON_STATE_OFF;
+            case 2:
+                return tb.canScrollPageBackwards () ? APCminiControlSurface.APC_BUTTON_STATE_ON : APCminiControlSurface.APC_BUTTON_STATE_OFF;
+            case 3:
+                return tb.canScrollPageForwards () ? APCminiControlSurface.APC_BUTTON_STATE_ON : APCminiControlSurface.APC_BUTTON_STATE_OFF;
+            case 4:
+                return Modes.VOLUME.equals (mode) ? APCminiControlSurface.APC_BUTTON_STATE_ON : APCminiControlSurface.APC_BUTTON_STATE_OFF;
+            case 5:
+                return Modes.PAN.equals (mode) ? APCminiControlSurface.APC_BUTTON_STATE_ON : APCminiControlSurface.APC_BUTTON_STATE_OFF;
+            case 6:
+                return Modes.isSendMode (mode) ? APCminiControlSurface.APC_BUTTON_STATE_ON : APCminiControlSurface.APC_BUTTON_STATE_OFF;
+            case 7:
+                return Modes.DEVICE_PARAMS.equals (mode) ? APCminiControlSurface.APC_BUTTON_STATE_ON : APCminiControlSurface.APC_BUTTON_STATE_OFF;
+        }
+
+        return APCminiColors.APC_COLOR_BLACK;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public String getSceneButtonColor (final int scene)
+    {
+
+        // Draw the track states on the scene buttons
+        final int trackState = this.surface.getTrackState ();
+
+        switch (scene)
+        {
+            case 0:
+                return trackState == APCminiControlSurface.TRACK_STATE_CLIP_STOP ? ColorManager.BUTTON_STATE_ON : ColorManager.BUTTON_STATE_OFF;
+            case 1:
+                return trackState == APCminiControlSurface.TRACK_STATE_SOLO ? ColorManager.BUTTON_STATE_ON : ColorManager.BUTTON_STATE_OFF;
+            case 2:
+                return trackState == APCminiControlSurface.TRACK_STATE_REC_ARM ? ColorManager.BUTTON_STATE_ON : ColorManager.BUTTON_STATE_OFF;
+            case 3:
+                return trackState == APCminiControlSurface.TRACK_STATE_MUTE ? ColorManager.BUTTON_STATE_ON : ColorManager.BUTTON_STATE_OFF;
+            case 4:
+                return trackState == APCminiControlSurface.TRACK_STATE_SELECT ? ColorManager.BUTTON_STATE_ON : ColorManager.BUTTON_STATE_OFF;
+            case 5:
+                return this.model.isEffectTrackBankActive () ? ColorManager.BUTTON_STATE_ON : ColorManager.BUTTON_STATE_OFF;
+            default:
+                return ColorManager.BUTTON_STATE_OFF;
+        }
     }
 
 
     private void onNew ()
     {
-        final ITrack t = this.model.getSelectedTrack ();
-        if (t != null)
-        {
-            final ISlotBank slotBank = t.getSlotBank ();
-            final List<ISlot> slotIndexes = slotBank.getSelectedItems ();
-            if (!slotIndexes.isEmpty ())
-            {
-                final int slotIndex = slotIndexes.get (0).getIndex ();
-                for (int i = 0; i < 8; i++)
-                {
-                    final int sIndex = (slotIndex + i) % 8;
-                    final ISlot s = slotIndexes.get (sIndex);
-                    if (s.hasContent ())
-                        continue;
-                    final int lengthInBeats = this.surface.getConfiguration ().getNewClipLenghthInBeats (this.model.getTransport ().getQuartersPerMeasure ());
-                    this.model.createNoteClip (t, s, lengthInBeats, true);
-                    return;
-                }
-            }
-        }
-        this.surface.getDisplay ().notify ("In the current selected grid view there is no empty slot. Please scroll down.");
+        this.newCommand.executeNormal (ButtonEvent.DOWN);
     }
 
 

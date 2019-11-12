@@ -6,7 +6,6 @@ package de.mossgrabers.controller.push.view;
 
 import de.mossgrabers.controller.push.controller.PushColors;
 import de.mossgrabers.controller.push.controller.PushControlSurface;
-import de.mossgrabers.framework.controller.color.ColorManager;
 import de.mossgrabers.framework.daw.IModel;
 import de.mossgrabers.framework.daw.INoteClip;
 import de.mossgrabers.framework.view.AbstractSequencerView;
@@ -107,15 +106,6 @@ public class DrumView4 extends DrumViewBase
 
     /** {@inheritDoc} */
     @Override
-    public void updateButtons ()
-    {
-        this.surface.updateTrigger (PushControlSurface.PUSH_BUTTON_OCTAVE_UP, ColorManager.BUTTON_STATE_ON);
-        this.surface.updateTrigger (PushControlSurface.PUSH_BUTTON_OCTAVE_DOWN, ColorManager.BUTTON_STATE_ON);
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
     protected void onLowerScene (final int index)
     {
         // 7, 6, 5, 4
@@ -126,14 +116,16 @@ public class DrumView4 extends DrumViewBase
 
     /** {@inheritDoc} */
     @Override
-    protected void updateLowerSceneButtons ()
+    protected String updateLowerSceneButtons (final int scene)
     {
-        final ColorManager colorManager = this.model.getColorManager ();
-        final int colorTranspose = colorManager.getColor (AbstractSequencerView.COLOR_TRANSPOSE);
-        final int colorSelectedTranspose = colorManager.getColor (AbstractSequencerView.COLOR_TRANSPOSE_SELECTED);
-        this.surface.updateTrigger (PushControlSurface.PUSH_BUTTON_SCENE1, this.soundOffset == 0 ? colorSelectedTranspose : colorTranspose);
-        this.surface.updateTrigger (PushControlSurface.PUSH_BUTTON_SCENE2, this.soundOffset == 4 ? colorSelectedTranspose : colorTranspose);
-        this.surface.updateTrigger (PushControlSurface.PUSH_BUTTON_SCENE3, this.soundOffset == 8 ? colorSelectedTranspose : colorTranspose);
-        this.surface.updateTrigger (PushControlSurface.PUSH_BUTTON_SCENE4, this.soundOffset == 12 ? colorSelectedTranspose : colorTranspose);
+        final int [] offsets =
+        {
+            0,
+            4,
+            8,
+            12
+        };
+
+        return this.soundOffset == offsets[scene] ? AbstractSequencerView.COLOR_TRANSPOSE_SELECTED : AbstractSequencerView.COLOR_TRANSPOSE;
     }
 }

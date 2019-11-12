@@ -161,10 +161,12 @@ public class DrumView extends AbstractDrumView<LaunchkeyMiniMk3ControlSurface, L
 
     /** {@inheritDoc} */
     @Override
-    public void updateSceneButtons ()
+    public void updateSceneButton (final int scene)
     {
-        this.surface.updateTrigger (LaunchkeyMiniMk3ControlSurface.LAUNCHKEY_SCENE1, this.isPlayMode ? LaunchkeyMiniMk3Colors.LAUNCHKEY_COLOR_GREEN : LaunchkeyMiniMk3Colors.LAUNCHKEY_COLOR_BLUE);
-        this.surface.updateTrigger (LaunchkeyMiniMk3ControlSurface.LAUNCHKEY_SCENE2, LaunchkeyMiniMk3Colors.LAUNCHKEY_COLOR_GREY_LO);
+        if (scene == 0)
+            this.surface.updateTrigger (LaunchkeyMiniMk3ControlSurface.LAUNCHKEY_SCENE1, this.isPlayMode ? LaunchkeyMiniMk3Colors.LAUNCHKEY_COLOR_GREEN : LaunchkeyMiniMk3Colors.LAUNCHKEY_COLOR_BLUE);
+        else
+            this.surface.updateTrigger (LaunchkeyMiniMk3ControlSurface.LAUNCHKEY_SCENE2, LaunchkeyMiniMk3Colors.LAUNCHKEY_COLOR_GREY_LO);
     }
 
 

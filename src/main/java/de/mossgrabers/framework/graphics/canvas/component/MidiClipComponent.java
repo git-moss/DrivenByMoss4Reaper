@@ -158,7 +158,7 @@ public class MidiClipComponent implements IComponent
 
                     if (isStart && fontSize > 0)
                     {
-                        final String text = (channel + 1) + ": " + Scales.formatDrumNote (note);
+                        final String text = channel + 1 + ": " + Scales.formatDrumNote (note);
                         final ColorEx textColor = ColorEx.calcContrastColor (noteColor);
                         gc.drawTextInBounds (text, x, top + (range - row - 1) * stepHeight + 2, w - 1, stepHeight - 3, Align.CENTER, textColor, fontSize);
                     }

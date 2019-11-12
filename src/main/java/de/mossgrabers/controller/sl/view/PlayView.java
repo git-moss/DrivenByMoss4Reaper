@@ -474,7 +474,7 @@ public class PlayView extends AbstractSequencerView<SLControlSurface, SLConfigur
 
     /** {@inheritDoc} */
     @Override
-    public void updateSceneButtons ()
+    public void updateSceneButton (final int scene)
     {
         // Intentionally empty
     }

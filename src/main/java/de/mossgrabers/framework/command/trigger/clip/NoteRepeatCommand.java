@@ -4,9 +4,9 @@
 
 package de.mossgrabers.framework.command.trigger.clip;
 
-import de.mossgrabers.controller.push.controller.PushControlSurface;
 import de.mossgrabers.framework.command.core.AbstractTriggerCommand;
 import de.mossgrabers.framework.configuration.Configuration;
+import de.mossgrabers.framework.controller.ButtonID;
 import de.mossgrabers.framework.controller.IControlSurface;
 import de.mossgrabers.framework.daw.IModel;
 import de.mossgrabers.framework.daw.midi.INoteInput;
@@ -46,7 +46,7 @@ public class NoteRepeatCommand<S extends IControlSurface<C>, C extends Configura
         if (event == ButtonEvent.LONG || event == ButtonEvent.DOWN && this.surface.isShiftPressed ())
         {
             modeManager.setActiveMode (Modes.REPEAT_NOTE);
-            this.surface.setTriggerConsumed (PushControlSurface.PUSH_BUTTON_REPEAT);
+            this.surface.setTriggerConsumed (ButtonID.REPEAT);
             return;
         }
 

@@ -78,13 +78,12 @@ public class DeviceChainsMode extends DeviceParamsMode
 
     /** {@inheritDoc} */
     @Override
-    public void updateFirstRow ()
+    public int getFirstRowColor (final int index)
     {
         final int existsColor = this.isPush2 ? PushColors.PUSH2_COLOR_YELLOW_LO : PushColors.PUSH1_COLOR_YELLOW_LO;
         final int offColor = this.isPush2 ? PushColors.PUSH2_COLOR_BLACK : PushColors.PUSH1_COLOR_BLACK;
         final String [] slotChains = this.model.getCursorDevice ().getSlotChains ();
-        for (int i = 0; i < 8; i++)
-            this.surface.updateTrigger (20 + i, i < slotChains.length ? existsColor : offColor);
+        return index < slotChains.length ? existsColor : offColor;
     }
 
 

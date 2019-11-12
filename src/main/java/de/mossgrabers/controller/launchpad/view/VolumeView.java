@@ -72,16 +72,13 @@ public class VolumeView extends AbstractFaderView
 
     /** {@inheritDoc} */
     @Override
-    public void updateSceneButtons ()
+    public void updateSceneButton (final int scene)
     {
         final ColorManager cm = this.model.getColorManager ();
         final IMasterTrack track = this.model.getMasterTrack ();
         final int sceneMax = 9 * track.getVolume () / this.model.getValueChanger ().getUpperBound ();
-        for (int i = 0; i < 8; i++)
-        {
-            final int color = cm.getColor (DAWColors.getColorIndex (track.getColor ()));
-            this.surface.setTrigger (LaunchpadControlSurface.LAUNCHPAD_BUTTON_SCENE8 + 10 * i, i < sceneMax ? color : LaunchpadColors.LAUNCHPAD_COLOR_BLACK);
-        }
+        final int color = cm.getColor (DAWColors.getColorIndex (track.getColor ()));
+        this.surface.setTrigger (this.surface.getSceneTrigger (scene), scene < sceneMax ? color : LaunchpadColors.LAUNCHPAD_COLOR_BLACK);
     }
 
 

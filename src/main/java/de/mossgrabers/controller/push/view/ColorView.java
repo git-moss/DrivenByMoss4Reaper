@@ -66,22 +66,6 @@ public class ColorView extends AbstractView<PushControlSurface, PushConfiguratio
 
     /** {@inheritDoc} */
     @Override
-    public boolean usesButton (final int buttonID)
-    {
-        switch (buttonID)
-        {
-            case PushControlSurface.PUSH_BUTTON_OCTAVE_UP:
-            case PushControlSurface.PUSH_BUTTON_OCTAVE_DOWN:
-                return false;
-
-            default:
-                return true;
-        }
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
     public void drawGrid ()
     {
         final PadGrid padGrid = this.surface.getPadGrid ();
@@ -140,10 +124,16 @@ public class ColorView extends AbstractView<PushControlSurface, PushConfiguratio
 
     /** {@inheritDoc} */
     @Override
-    public void updateSceneButtons ()
+    public void updateSceneButton (final int scene)
     {
-        final int colorOff = this.model.getColorManager ().getColor (AbstractSequencerView.COLOR_RESOLUTION_OFF);
-        for (int i = 0; i < 8; i++)
-            this.surface.updateTrigger (PushControlSurface.PUSH_BUTTON_SCENE1 + i, colorOff);
+        // TODO Remove
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public String getSceneButtonColor (final int scene)
+    {
+        return AbstractSequencerView.COLOR_RESOLUTION_OFF;
     }
 }

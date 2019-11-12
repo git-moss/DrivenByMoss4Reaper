@@ -54,13 +54,10 @@ public class SequencerView extends AbstractNoteSequencerView<LaunchpadControlSur
 
     /** {@inheritDoc} */
     @Override
-    public void updateSceneButtons ()
+    public void updateSceneButton (final int scene)
     {
         final boolean isActive = this.isActive ();
-        for (int i = 0; i < 8; i++)
-        {
-            final int color = i == 7 - this.selectedResolutionIndex ? LaunchpadColors.LAUNCHPAD_COLOR_YELLOW : LaunchpadColors.LAUNCHPAD_COLOR_GREEN;
-            this.surface.setTrigger (this.surface.getSceneTrigger (i), isActive ? color : LaunchpadColors.LAUNCHPAD_COLOR_BLACK);
-        }
+        final int color = scene == 7 - this.selectedResolutionIndex ? LaunchpadColors.LAUNCHPAD_COLOR_YELLOW : LaunchpadColors.LAUNCHPAD_COLOR_GREEN;
+        this.surface.setTrigger (this.surface.getSceneTrigger (scene), isActive ? color : LaunchpadColors.LAUNCHPAD_COLOR_BLACK);
     }
 }

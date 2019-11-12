@@ -6,7 +6,6 @@ package de.mossgrabers.controller.push.view;
 
 import de.mossgrabers.controller.push.PushConfiguration;
 import de.mossgrabers.controller.push.controller.PushControlSurface;
-import de.mossgrabers.framework.controller.color.ColorManager;
 import de.mossgrabers.framework.controller.grid.PadGrid;
 import de.mossgrabers.framework.daw.IModel;
 import de.mossgrabers.framework.daw.INoteClip;
@@ -51,14 +50,6 @@ public class PolySequencerView extends AbstractSequencerView<PushControlSurface,
 
         this.sequencerSteps = NUM_SEQUENCER_LINES * GRID_COLUMNS;
         this.useTrackColor = useTrackColor;
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public boolean usesButton (final int buttonID)
-    {
-        return true;
     }
 
 
@@ -116,6 +107,22 @@ public class PolySequencerView extends AbstractSequencerView<PushControlSurface,
 
     /** {@inheritDoc} */
     @Override
+    public boolean isOctaveUpButtonOn ()
+    {
+        return true;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean isOctaveDownButtonOn ()
+    {
+        return true;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
     public void onGridNote (final int key, final int velocity)
     {
         final boolean isKeyboardEnabled = this.model.canSelectedTrackHoldNotes ();
@@ -155,7 +162,7 @@ public class PolySequencerView extends AbstractSequencerView<PushControlSurface,
         final INoteClip clip = this.getClip ();
         final int col = GRID_COLUMNS * (NUM_LINES - 1 - y) + x;
         final int editMidiChannel = this.surface.getConfiguration ().getMidiEditChannel ();
-        if (getStep (clip, col) > 0)
+        if (this.getStep (clip, col) > 0)
         {
             for (int row = 0; row < 128; row++)
             {
@@ -180,34 +187,6 @@ public class PolySequencerView extends AbstractSequencerView<PushControlSurface,
 
     /** {@inheritDoc} */
     @Override
-    public void updateSceneButtons ()
-    {
-        if (!this.isActive ())
-        {
-            for (int i = PushControlSurface.PUSH_BUTTON_SCENE1; i <= PushControlSurface.PUSH_BUTTON_SCENE8; i++)
-                this.surface.updateTrigger (i, AbstractSequencerView.COLOR_RESOLUTION_OFF);
-            return;
-        }
-
-        final ColorManager colorManager = this.model.getColorManager ();
-        final int colorResolution = colorManager.getColor (AbstractSequencerView.COLOR_RESOLUTION);
-        final int colorSelectedResolution = colorManager.getColor (AbstractSequencerView.COLOR_RESOLUTION_SELECTED);
-        for (int i = PushControlSurface.PUSH_BUTTON_SCENE1; i <= PushControlSurface.PUSH_BUTTON_SCENE8; i++)
-            this.surface.updateTrigger (i, i == PushControlSurface.PUSH_BUTTON_SCENE1 + this.selectedResolutionIndex ? colorSelectedResolution : colorResolution);
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void updateButtons ()
-    {
-        this.surface.updateTrigger (PushControlSurface.PUSH_BUTTON_OCTAVE_UP, ColorManager.BUTTON_STATE_ON);
-        this.surface.updateTrigger (PushControlSurface.PUSH_BUTTON_OCTAVE_DOWN, ColorManager.BUTTON_STATE_ON);
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
     public void drawGrid ()
     {
         final PadGrid padGrid = this.surface.getPadGrid ();
@@ -227,7 +206,7 @@ public class PolySequencerView extends AbstractSequencerView<PushControlSurface,
         final int hiStep = this.isInXRange (step) ? step % this.sequencerSteps : -1;
         for (int col = 0; col < this.sequencerSteps; col++)
         {
-            final int isSet = getStep (clip, col);
+            final int isSet = this.getStep (clip, col);
             final boolean hilite = col == hiStep;
             final int x = col % GRID_COLUMNS;
             final int y = col / GRID_COLUMNS;

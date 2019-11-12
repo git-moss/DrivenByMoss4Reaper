@@ -9,6 +9,7 @@ package de.mossgrabers.framework.command;
  *
  * @author J&uuml;rgen Mo&szlig;graber
  */
+@Deprecated
 public enum TriggerCommandID
 {
     /** The play command. */

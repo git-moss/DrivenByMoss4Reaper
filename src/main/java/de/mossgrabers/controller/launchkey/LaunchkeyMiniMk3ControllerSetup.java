@@ -294,7 +294,10 @@ public class LaunchkeyMiniMk3ControllerSetup extends AbstractControllerSetup<Lau
         final ViewManager viewManager = surface.getViewManager ();
         final View activeView = viewManager.getActiveView ();
         if (activeView instanceof SceneView)
-            ((SceneView) activeView).updateSceneButtons ();
+        {
+            for (int i = 0; i < this.model.getSceneBank ().getPageSize (); i++)
+                ((SceneView) activeView).updateSceneButton (i);
+        }
     }
 
 

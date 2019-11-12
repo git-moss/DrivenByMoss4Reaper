@@ -10,6 +10,7 @@ import de.mossgrabers.framework.controller.grid.PadGrid;
 import de.mossgrabers.framework.daw.IModel;
 import de.mossgrabers.framework.daw.ITrackBank;
 import de.mossgrabers.framework.daw.data.ITrack;
+import de.mossgrabers.framework.scale.Scales;
 import de.mossgrabers.framework.utils.ButtonEvent;
 
 import java.util.Arrays;
@@ -145,6 +146,31 @@ public abstract class AbstractPlayView<S extends IControlSurface<C>, C extends C
         this.scales.incOctave ();
         this.updateNoteMapping ();
         this.surface.getDisplay ().notify (this.scales.getRangeText ());
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean isOctaveDownButtonOn ()
+    {
+        return this.scales.getOctave () > -Scales.OCTAVE_RANGE;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean isOctaveUpButtonOn ()
+    {
+        return this.scales.getOctave () < Scales.OCTAVE_RANGE;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void onActivate ()
+    {
+        super.onActivate ();
+        this.initMaxVelocity ();
     }
 
 

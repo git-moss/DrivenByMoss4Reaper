@@ -71,7 +71,7 @@ public class NoteRepeatImpl implements INoteRepeat
 
     /** {@inheritDoc} */
     @Override
-    public void setActive (boolean active)
+    public void setActive (final boolean active)
     {
         this.sender.processBooleanArg (NOTEREPEAT_TAG, "active", active);
     }
