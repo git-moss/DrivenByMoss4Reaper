@@ -5,17 +5,19 @@
 package de.mossgrabers.reaper.framework;
 
 import de.mossgrabers.framework.controller.ISetupFactory;
-import de.mossgrabers.framework.controller.IValueChanger;
 import de.mossgrabers.framework.controller.color.ColorManager;
+import de.mossgrabers.framework.controller.valuechanger.IValueChanger;
 import de.mossgrabers.framework.daw.IHost;
 import de.mossgrabers.framework.daw.IModel;
 import de.mossgrabers.framework.daw.ModelSetup;
+import de.mossgrabers.framework.daw.midi.ArpeggiatorMode;
 import de.mossgrabers.framework.daw.midi.IMidiAccess;
 import de.mossgrabers.framework.scale.Scales;
 import de.mossgrabers.reaper.communication.MessageSender;
 import de.mossgrabers.reaper.framework.daw.DataSetupEx;
 import de.mossgrabers.reaper.framework.daw.ModelImpl;
 import de.mossgrabers.reaper.framework.midi.MidiAccessImpl;
+import de.mossgrabers.reaper.framework.midi.NoteRepeatImpl;
 import de.mossgrabers.reaper.ui.utils.LogModel;
 
 import javax.sound.midi.MidiDevice;
@@ -77,4 +79,13 @@ public class ReaperSetupFactory implements ISetupFactory
     {
         return this.midiAccess;
     }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public ArpeggiatorMode [] getArpeggiatorModes ()
+    {
+        return NoteRepeatImpl.ARP_MODES;
+    }
+
 }

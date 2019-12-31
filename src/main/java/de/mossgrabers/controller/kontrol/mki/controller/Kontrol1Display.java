@@ -6,7 +6,6 @@ package de.mossgrabers.controller.kontrol.mki.controller;
 
 import de.mossgrabers.controller.kontrol.mki.Kontrol1Configuration;
 import de.mossgrabers.framework.controller.display.AbstractTextDisplay;
-import de.mossgrabers.framework.controller.display.Format;
 import de.mossgrabers.framework.controller.display.ITextDisplay;
 import de.mossgrabers.framework.daw.IHost;
 import de.mossgrabers.framework.utils.StringUtils;
@@ -75,25 +74,6 @@ public class Kontrol1Display extends AbstractTextDisplay
 
     /** {@inheritDoc} */
     @Override
-    public ITextDisplay clearRow (final int row)
-    {
-        for (int i = 0; i < this.noOfCells; i++)
-            this.clearCell (row, i);
-        return this;
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public ITextDisplay clearCell (final int row, final int cell)
-    {
-        this.cells[row * this.noOfCells + cell] = "        ";
-        return this;
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
     public ITextDisplay setBlock (final int row, final int block, final String value)
     {
         final int cell = 2 * block;
@@ -107,24 +87,6 @@ public class Kontrol1Display extends AbstractTextDisplay
             this.cells[row * this.noOfCells + cell] = StringUtils.pad (value, 9);
             this.clearCell (row, cell + 1);
         }
-        return this;
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public ITextDisplay setCell (final int row, final int column, final int value, final Format format)
-    {
-        this.setCell (row, column, Integer.toString (value));
-        return this;
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public Kontrol1Display setCell (final int row, final int cell, final String value)
-    {
-        this.cells[row * this.noOfCells + cell] = StringUtils.pad (value, 8);
         return this;
     }
 
@@ -199,5 +161,24 @@ public class Kontrol1Display extends AbstractTextDisplay
             this.isNotificationActive = false;
             this.forceFlush ();
         }, AbstractTextDisplay.NOTIFICATION_TIME);
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    protected String convertCharacterset (final String text)
+    {
+        final StringBuilder sb = new StringBuilder (text.length ());
+        int beginIndex = 0;
+        int endIndex = 8;
+        for (int i = 0; i < 9; i++)
+        {
+            sb.append (text.substring (beginIndex, endIndex));
+            beginIndex += 8;
+            endIndex += 8;
+            if (i != 8)
+                sb.append (' ');
+        }
+        return sb.toString ();
     }
 }

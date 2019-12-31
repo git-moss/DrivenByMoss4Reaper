@@ -34,23 +34,11 @@ public class BrowseMode extends BaseMode
     @Override
     public void onKnobValue (final int index, final int value)
     {
+        final int speed = (int) this.model.getValueChanger ().calcKnobSpeed (value);
         final IBrowser browser = this.model.getBrowser ();
-        for (int i = 0; i < Math.abs (value); i++)
-        {
-            if (value < 0)
-                browser.selectPreviousResult ();
-            else
-                browser.selectNextResult ();
-        }
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void onKnobTouch (final int index, final boolean isTouched)
-    {
-        if (!isTouched)
-            return;
-        this.model.getBrowser ().stopBrowsing (true);
+        if (speed < 0)
+            browser.selectPreviousResult ();
+        else
+            browser.selectNextResult ();
     }
 }

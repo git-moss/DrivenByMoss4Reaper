@@ -8,6 +8,7 @@ import de.mossgrabers.controller.launchpad.LaunchpadConfiguration;
 import de.mossgrabers.controller.launchpad.controller.LaunchpadControlSurface;
 import de.mossgrabers.controller.launchpad.view.DrumView;
 import de.mossgrabers.controller.launchpad.view.DrumView64;
+import de.mossgrabers.controller.launchpad.view.PolySequencerView;
 import de.mossgrabers.controller.launchpad.view.RaindropsView;
 import de.mossgrabers.controller.launchpad.view.SequencerView;
 import de.mossgrabers.framework.command.trigger.mode.CursorCommand;
@@ -103,7 +104,7 @@ public class LaunchpadCursorCommand extends CursorCommand<LaunchpadControlSurfac
             return;
         }
 
-        if (viewManager.isActiveView (Views.SEQUENCER) || viewManager.isActiveView (Views.RAINDROPS))
+        if (viewManager.isActiveView (Views.SEQUENCER) || viewManager.isActiveView (Views.RAINDROPS) || viewManager.isActiveView (Views.POLY_SEQUENCER))
         {
             final INoteClip clip = ((AbstractSequencerView<?, ?>) viewManager.getActiveView ()).getClip ();
             final int octave = this.model.getScales ().getOctave ();
@@ -117,8 +118,8 @@ public class LaunchpadCursorCommand extends CursorCommand<LaunchpadControlSurfac
         if (viewManager.isActiveView (Views.DEVICE))
         {
             final ICursorDevice cursorDevice = this.model.getCursorDevice ();
-            this.canScrollUp = cursorDevice.canSelectNextFX ();
-            this.canScrollDown = cursorDevice.canSelectPreviousFX ();
+            this.canScrollUp = cursorDevice.canSelectPreviousFX ();
+            this.canScrollDown = cursorDevice.canSelectNextFX ();
             final IParameterBank parameterBank = cursorDevice.getParameterBank ();
             this.canScrollLeft = parameterBank.canScrollPageBackwards ();
             this.canScrollRight = parameterBank.canScrollPageForwards ();
@@ -155,38 +156,6 @@ public class LaunchpadCursorCommand extends CursorCommand<LaunchpadControlSurfac
         this.canScrollDown = sceneBank.canScrollPageForwards ();
     }
 
-    // TODO
-    // /** {@inheritDoc} */
-    // @Override
-    // protected int getButtonOnColor ()
-    // {
-    // final ViewManager viewManager = this.surface.getViewManager ();
-    //
-    // if (viewManager.isActiveView (Views.SESSION) || viewManager.isActiveView (Views.TRACK_VOLUME)
-    // || viewManager.isActiveView (Views.TRACK_PAN) || viewManager.isActiveView
-    // (Views.TRACK_SENDS))
-    // return LaunchpadColors.LAUNCHPAD_COLOR_LIME;
-    //
-    // if (viewManager.isActiveView (Views.RAINDROPS))
-    // return LaunchpadColors.LAUNCHPAD_COLOR_GREEN;
-    //
-    // if (viewManager.isActiveView (Views.SEQUENCER))
-    // return LaunchpadColors.LAUNCHPAD_COLOR_BLUE;
-    //
-    // if (viewManager.isActiveView (Views.DEVICE))
-    // return LaunchpadColors.LAUNCHPAD_COLOR_AMBER;
-    //
-    // if (viewManager.isActiveView (Views.DRUM) || viewManager.isActiveView (Views.DRUM4) ||
-    // viewManager.isActiveView (Views.DRUM8) || viewManager.isActiveView (Views.DRUM64))
-    // return LaunchpadColors.LAUNCHPAD_COLOR_YELLOW;
-    //
-    // if (viewManager.isActiveView (Views.BROWSER))
-    // return LaunchpadColors.LAUNCHPAD_COLOR_TURQUOISE;
-    //
-    // // VIEW_PLAY, VIEW_PIANO, VIEW_SHIFT
-    // return LaunchpadColors.LAUNCHPAD_COLOR_OCEAN_HI;
-    // }
-
 
     /** {@inheritDoc} */
     @SuppressWarnings("rawtypes")
@@ -209,7 +178,7 @@ public class LaunchpadCursorCommand extends CursorCommand<LaunchpadControlSurfac
         {
             final ICursorDevice cursorDevice = this.model.getCursorDevice ();
             cursorDevice.getParameterBank ().scrollBackwards ();
-            this.surface.getDisplay ().notify (cursorDevice.getParameterPageBank ().getSelectedItem ());
+            this.model.getHost ().scheduleTask ( () -> this.surface.getDisplay ().notify (cursorDevice.getParameterPageBank ().getSelectedItem ()), 100);
             return;
         }
 
@@ -258,7 +227,7 @@ public class LaunchpadCursorCommand extends CursorCommand<LaunchpadControlSurfac
         {
             final ICursorDevice cursorDevice = this.model.getCursorDevice ();
             cursorDevice.getParameterBank ().scrollForwards ();
-            this.surface.getDisplay ().notify (cursorDevice.getParameterPageBank ().getSelectedItem ());
+            this.model.getHost ().scheduleTask ( () -> this.surface.getDisplay ().notify (cursorDevice.getParameterPageBank ().getSelectedItem ()), 100);
             return;
         }
 
@@ -316,6 +285,12 @@ public class LaunchpadCursorCommand extends CursorCommand<LaunchpadControlSurfac
             return;
         }
 
+        if (viewManager.isActiveView (Views.POLY_SEQUENCER))
+        {
+            ((PolySequencerView) viewManager.getView (Views.POLY_SEQUENCER)).onOctaveUp (ButtonEvent.DOWN);
+            return;
+        }
+
         if (viewManager.isActiveView (Views.RAINDROPS))
         {
             ((RaindropsView) viewManager.getView (Views.RAINDROPS)).onOctaveUp (ButtonEvent.DOWN);
@@ -324,7 +299,7 @@ public class LaunchpadCursorCommand extends CursorCommand<LaunchpadControlSurfac
 
         if (viewManager.isActiveView (Views.DEVICE))
         {
-            this.model.getCursorDevice ().selectNext ();
+            this.model.getCursorDevice ().selectPrevious ();
             return;
         }
 
@@ -366,6 +341,12 @@ public class LaunchpadCursorCommand extends CursorCommand<LaunchpadControlSurfac
             return;
         }
 
+        if (viewManager.isActiveView (Views.POLY_SEQUENCER))
+        {
+            ((PolySequencerView) viewManager.getView (Views.POLY_SEQUENCER)).onOctaveDown (ButtonEvent.DOWN);
+            return;
+        }
+
         if (viewManager.isActiveView (Views.RAINDROPS))
         {
             ((RaindropsView) viewManager.getView (Views.RAINDROPS)).onOctaveDown (ButtonEvent.DOWN);
@@ -374,7 +355,7 @@ public class LaunchpadCursorCommand extends CursorCommand<LaunchpadControlSurfac
 
         if (viewManager.isActiveView (Views.DEVICE))
         {
-            this.model.getCursorDevice ().selectPrevious ();
+            this.model.getCursorDevice ().selectNext ();
             return;
         }
 

@@ -97,12 +97,4 @@ public interface IStepInfo
      * @return True if editing is happening
      */
     boolean isEditing ();
-
-
-    /**
-     * Set that the note is currently edited.
-     *
-     * @param isEditing True if editing is happening
-     */
-    void setEditing (boolean isEditing);
 }

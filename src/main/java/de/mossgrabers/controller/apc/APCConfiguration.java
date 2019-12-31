@@ -6,8 +6,9 @@ package de.mossgrabers.controller.apc;
 
 import de.mossgrabers.framework.configuration.AbstractConfiguration;
 import de.mossgrabers.framework.configuration.ISettingsUI;
-import de.mossgrabers.framework.controller.IValueChanger;
+import de.mossgrabers.framework.controller.valuechanger.IValueChanger;
 import de.mossgrabers.framework.daw.IHost;
+import de.mossgrabers.framework.daw.midi.ArpeggiatorMode;
 
 
 /**
@@ -22,10 +23,11 @@ public class APCConfiguration extends AbstractConfiguration
      *
      * @param host The DAW host
      * @param valueChanger The value changer
+     * @param arpeggiatorModes The available arpeggiator modes
      */
-    public APCConfiguration (final IHost host, final IValueChanger valueChanger)
+    public APCConfiguration (final IHost host, final IValueChanger valueChanger, final ArpeggiatorMode [] arpeggiatorModes)
     {
-        super (host, valueChanger);
+        super (host, valueChanger, arpeggiatorModes);
     }
 
 

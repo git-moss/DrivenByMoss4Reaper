@@ -4,8 +4,10 @@
 
 package de.mossgrabers.framework.controller.display;
 
+import de.mossgrabers.framework.controller.hardware.IHwTextDisplay;
 import de.mossgrabers.framework.daw.IHost;
 import de.mossgrabers.framework.daw.midi.IMidiOutput;
+import de.mossgrabers.framework.utils.StringUtils;
 
 
 /**
@@ -16,22 +18,26 @@ import de.mossgrabers.framework.daw.midi.IMidiOutput;
 public abstract class AbstractTextDisplay implements ITextDisplay
 {
     /** Time to keep a notification displayed in ms. */
-    public static final int NOTIFICATION_TIME = 1000;
+    public static final int  NOTIFICATION_TIME = 1000;
 
-    protected IHost         host;
-    protected IMidiOutput   output;
+    protected IHost          host;
+    protected IMidiOutput    output;
 
-    protected int           noOfLines;
-    protected int           noOfCells;
-    protected int           noOfCharacters;
+    protected int            noOfLines;
+    protected int            noOfCells;
+    protected int            noOfCharacters;
+    protected int            charactersOfCell;
 
-    protected final String  emptyLine;
-    protected String        notificationMessage;
-    protected boolean       isNotificationActive;
+    protected final String   emptyLine;
+    protected String         notificationMessage;
+    protected boolean        isNotificationActive;
 
-    protected String []     currentMessage;
-    protected String []     message;
-    protected String []     cells;
+    private final String     emptyCell;
+    protected String []      currentMessage;
+    protected String []      message;
+    protected String []      cells;
+
+    protected IHwTextDisplay hwDisplay;
 
 
     /**
@@ -51,6 +57,9 @@ public abstract class AbstractTextDisplay implements ITextDisplay
         this.noOfLines = noOfLines;
         this.noOfCells = noOfCells;
         this.noOfCharacters = noOfCharacters;
+        this.charactersOfCell = this.noOfCharacters / this.noOfCells;
+
+        this.emptyCell = "                                                                     ".substring (0, this.charactersOfCell);
 
         final StringBuilder sb = new StringBuilder (this.noOfCharacters);
         for (int i = 0; i < this.noOfCharacters; i++)
@@ -63,6 +72,30 @@ public abstract class AbstractTextDisplay implements ITextDisplay
 
         this.message = new String [this.noOfLines];
         this.cells = new String [this.noOfLines * this.noOfCells];
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public int getNoOfLines ()
+    {
+        return this.noOfLines;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void setHardwareDisplay (final IHwTextDisplay display)
+    {
+        this.hwDisplay = display;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public IHwTextDisplay getHardwareDisplay ()
+    {
+        return this.hwDisplay;
     }
 
 
@@ -89,8 +122,8 @@ public abstract class AbstractTextDisplay implements ITextDisplay
     @Override
     public ITextDisplay clearRow (final int row)
     {
-        for (int i = 0; i < 4; i++)
-            this.clearBlock (row, i);
+        for (int i = 0; i < this.noOfCells; i++)
+            this.clearCell (row, i);
         return this;
     }
 
@@ -140,6 +173,59 @@ public abstract class AbstractTextDisplay implements ITextDisplay
 
     /** {@inheritDoc} */
     @Override
+    public ITextDisplay clearCell (final int row, final int column)
+    {
+        this.cells[row * this.noOfCells + column] = this.emptyCell;
+        return this;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public ITextDisplay setCell (final int row, final int column, final int value, final Format format)
+    {
+        this.setCell (row, column, Integer.toString (value));
+        return this;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public ITextDisplay setCell (final int row, final int column, final String value)
+    {
+        try
+        {
+            this.cells[row * this.noOfCells + column] = StringUtils.pad (value, this.charactersOfCell);
+        }
+        catch (final ArrayIndexOutOfBoundsException ex)
+        {
+            this.host.error ("Display array index out of bounds.", ex);
+        }
+        return this;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public ITextDisplay setBlock (final int row, final int block, final String value)
+    {
+        final int cell = 2 * block;
+        if (value.length () >= this.charactersOfCell)
+        {
+            this.cells[row * this.noOfCells + cell] = StringUtils.pad (value.substring (0, this.charactersOfCell), this.charactersOfCell);
+            this.cells[row * this.noOfCells + cell + 1] = StringUtils.pad (value.substring (this.charactersOfCell), this.charactersOfCell);
+        }
+        else
+        {
+            this.setCell (row, cell, value);
+            this.clearCell (row, cell + 1);
+        }
+        return this;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
     public void notify (final String message)
     {
         if (message == null)
@@ -169,9 +255,9 @@ public abstract class AbstractTextDisplay implements ITextDisplay
     {
         if (this.isNotificationActive)
         {
-            this.writeLine (0, this.notificationMessage);
+            this.updateLine (0, this.notificationMessage);
             for (int row = 1; row < this.noOfLines; row++)
-                this.writeLine (row, this.emptyLine);
+                this.updateLine (row, this.emptyLine);
             return;
         }
 
@@ -182,8 +268,33 @@ public abstract class AbstractTextDisplay implements ITextDisplay
                 continue;
             this.currentMessage[row] = this.message[row];
             if (this.currentMessage[row] != null)
-                this.writeLine (row, this.currentMessage[row]);
+                this.updateLine (row, this.currentMessage[row]);
         }
+    }
+
+
+    /**
+     * Update the line on the hardware and simulation display.
+     *
+     * @param row The text row
+     * @param text The text
+     */
+    protected void updateLine (final int row, final String text)
+    {
+        this.hwDisplay.setLine (row, this.convertCharacterset (text));
+        this.writeLine (row, text);
+    }
+
+
+    /**
+     * Overwrite if the device display uses a non-standard characterset.
+     *
+     * @param text The text
+     * @return The text adapted to the simulator GUI character set
+     */
+    protected String convertCharacterset (final String text)
+    {
+        return text;
     }
 
 

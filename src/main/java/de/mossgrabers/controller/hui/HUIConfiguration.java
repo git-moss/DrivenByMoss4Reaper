@@ -7,8 +7,9 @@ package de.mossgrabers.controller.hui;
 import de.mossgrabers.framework.configuration.AbstractConfiguration;
 import de.mossgrabers.framework.configuration.IEnumSetting;
 import de.mossgrabers.framework.configuration.ISettingsUI;
-import de.mossgrabers.framework.controller.IValueChanger;
+import de.mossgrabers.framework.controller.valuechanger.IValueChanger;
 import de.mossgrabers.framework.daw.IHost;
+import de.mossgrabers.framework.daw.midi.ArpeggiatorMode;
 
 import java.util.Arrays;
 
@@ -24,8 +25,6 @@ public class HUIConfiguration extends AbstractConfiguration
     public static final Integer    ZOOM_STATE              = Integer.valueOf (50);
     /** Has a display. */
     public static final Integer    HAS_DISPLAY1            = Integer.valueOf (51);
-    /** Has a second display. */
-    public static final Integer    HAS_DISPLAY2            = Integer.valueOf (52);
     /** Has a segment display. */
     public static final Integer    HAS_SEGMENT_DISPLAY     = Integer.valueOf (53);
     /** Has motor faders. */
@@ -69,13 +68,11 @@ public class HUIConfiguration extends AbstractConfiguration
 
     private IEnumSetting           zoomStateSetting;
     private IEnumSetting           hasDisplay1Setting;
-    private IEnumSetting           hasDisplay2Setting;
     private IEnumSetting           hasSegmentDisplaySetting;
     private IEnumSetting           hasMotorFadersSetting;
 
     private boolean                zoomState;
     private boolean                hasDisplay1;
-    private boolean                hasDisplay2;
     private boolean                hasSegmentDisplay;
     private boolean                hasMotorFaders;
     private boolean                touchChannel;
@@ -88,10 +85,12 @@ public class HUIConfiguration extends AbstractConfiguration
      *
      * @param host The DAW host
      * @param valueChanger The value changer
+     * @param arpeggiatorModes The available arpeggiator modes
      */
-    public HUIConfiguration (final IHost host, final IValueChanger valueChanger)
+    public HUIConfiguration (final IHost host, final IValueChanger valueChanger, final ArpeggiatorMode [] arpeggiatorModes)
     {
-        super (host, valueChanger);
+        super (host, valueChanger, arpeggiatorModes);
+
         Arrays.fill (this.assignableFunctions, 0);
     }
 
@@ -130,17 +129,9 @@ public class HUIConfiguration extends AbstractConfiguration
         profileSetting.addValueObserver (value -> {
             switch (value)
             {
+                case DEVICE_MACKIE_HUI:
                 case DEVICE_ICON_QCON_PRO_X:
                     this.hasDisplay1Setting.set (ON_OFF_OPTIONS[1]);
-                    this.hasDisplay2Setting.set (ON_OFF_OPTIONS[0]);
-                    this.hasSegmentDisplaySetting.set (ON_OFF_OPTIONS[1]);
-                    this.hasMotorFadersSetting.set (ON_OFF_OPTIONS[1]);
-                    this.setVUMetersEnabled (true);
-                    break;
-
-                case DEVICE_MACKIE_HUI:
-                    this.hasDisplay1Setting.set (ON_OFF_OPTIONS[1]);
-                    this.hasDisplay2Setting.set (ON_OFF_OPTIONS[1]);
                     this.hasSegmentDisplaySetting.set (ON_OFF_OPTIONS[1]);
                     this.hasMotorFadersSetting.set (ON_OFF_OPTIONS[1]);
                     this.setVUMetersEnabled (true);
@@ -148,7 +139,6 @@ public class HUIConfiguration extends AbstractConfiguration
 
                 case DEVICE_NOVATION_SLMKIII:
                     this.hasDisplay1Setting.set (ON_OFF_OPTIONS[1]);
-                    this.hasDisplay2Setting.set (ON_OFF_OPTIONS[0]);
                     this.hasSegmentDisplaySetting.set (ON_OFF_OPTIONS[0]);
                     this.hasMotorFadersSetting.set (ON_OFF_OPTIONS[0]);
                     this.setVUMetersEnabled (false);
@@ -166,14 +156,6 @@ public class HUIConfiguration extends AbstractConfiguration
             this.hasDisplay1 = "On".equals (value);
             this.notifyObservers (HAS_DISPLAY1);
         });
-
-        this.hasDisplay2Setting = settingsUI.getEnumSetting ("Has a second display", CATEGORY_HARDWARE_SETUP, ON_OFF_OPTIONS, ON_OFF_OPTIONS[1]);
-        this.hasDisplay2Setting.addValueObserver (value -> {
-            this.hasDisplay2 = "On".equals (value);
-            this.notifyObservers (HAS_DISPLAY2);
-        });
-        // Currently not supported
-        this.hasDisplay2Setting.setEnabled (false);
 
         this.hasSegmentDisplaySetting = settingsUI.getEnumSetting ("Has a position/tempo display", CATEGORY_HARDWARE_SETUP, ON_OFF_OPTIONS, ON_OFF_OPTIONS[1]);
         this.hasSegmentDisplaySetting.addValueObserver (value -> {
@@ -258,17 +240,6 @@ public class HUIConfiguration extends AbstractConfiguration
     public boolean hasDisplay1 ()
     {
         return this.hasDisplay1;
-    }
-
-
-    /**
-     * Returns true if it has a secondary display.
-     *
-     * @return True if it has a secondary display.
-     */
-    public boolean hasDisplay2 ()
-    {
-        return this.hasDisplay2;
     }
 
 

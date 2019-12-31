@@ -6,7 +6,7 @@ package de.mossgrabers.controller.push.view;
 
 import de.mossgrabers.controller.push.controller.PushControlSurface;
 import de.mossgrabers.framework.controller.color.ColorManager;
-import de.mossgrabers.framework.controller.grid.PadGrid;
+import de.mossgrabers.framework.controller.grid.IPadGrid;
 import de.mossgrabers.framework.daw.IModel;
 import de.mossgrabers.framework.daw.data.ITrack;
 import de.mossgrabers.framework.scale.Scales;
@@ -38,7 +38,7 @@ public class PianoView extends PlayView
     @Override
     public void drawGrid ()
     {
-        final PadGrid gridPad = this.surface.getPadGrid ();
+        final IPadGrid gridPad = this.surface.getPadGrid ();
         if (!this.model.canSelectedTrackHoldNotes ())
         {
             gridPad.turnOff ();
@@ -48,10 +48,10 @@ public class PianoView extends PlayView
         final ColorManager colorManager = this.model.getColorManager ();
         final boolean isRecording = this.model.hasRecordingState ();
         final ITrack track = this.model.getSelectedTrack ();
-        final int playKeyColor = colorManager.getColor (isRecording ? AbstractPlayView.COLOR_RECORD : AbstractPlayView.COLOR_PLAY);
-        final int whiteKeyColor = colorManager.getColor (Scales.SCALE_COLOR_NOTE);
-        final int blackKeyColor = colorManager.getColor (replaceOctaveColorWithTrackColor (track, Scales.SCALE_COLOR_OCTAVE));
-        final int offKeyColor = colorManager.getColor (Scales.SCALE_COLOR_OFF);
+        final int playKeyColor = colorManager.getColorIndex (isRecording ? AbstractPlayView.COLOR_RECORD : AbstractPlayView.COLOR_PLAY);
+        final int whiteKeyColor = colorManager.getColorIndex (Scales.SCALE_COLOR_NOTE);
+        final int blackKeyColor = colorManager.getColorIndex (replaceOctaveColorWithTrackColor (track, Scales.SCALE_COLOR_OCTAVE));
+        final int offKeyColor = colorManager.getColorIndex (Scales.SCALE_COLOR_OFF);
 
         for (int i = 0; i < 8; i++)
         {

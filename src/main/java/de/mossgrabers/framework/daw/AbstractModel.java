@@ -4,8 +4,8 @@
 
 package de.mossgrabers.framework.daw;
 
-import de.mossgrabers.framework.controller.IValueChanger;
 import de.mossgrabers.framework.controller.color.ColorManager;
+import de.mossgrabers.framework.controller.valuechanger.IValueChanger;
 import de.mossgrabers.framework.daw.data.IMasterTrack;
 import de.mossgrabers.framework.daw.data.ISlot;
 import de.mossgrabers.framework.daw.data.ITrack;
@@ -321,7 +321,7 @@ public abstract class AbstractModel implements IModel
     public boolean canConvertClip ()
     {
         final ITrack selectedTrack = this.getSelectedTrack ();
-        if (selectedTrack == null)
+        if (selectedTrack == null || !selectedTrack.canHoldAudioData ())
             return false;
         final List<ISlot> slots = selectedTrack.getSlotBank ().getSelectedItems ();
         if (slots.isEmpty ())

@@ -59,7 +59,7 @@ public class ModeCursorCommand<S extends IControlSurface<C>, C extends Configura
 
     /** {@inheritDoc} */
     @Override
-    public void execute (final ButtonEvent event)
+    public void execute (final ButtonEvent event, final int velocity)
     {
         if (event != ButtonEvent.DOWN)
             return;

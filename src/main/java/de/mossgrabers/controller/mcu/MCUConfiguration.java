@@ -7,8 +7,9 @@ package de.mossgrabers.controller.mcu;
 import de.mossgrabers.framework.configuration.AbstractConfiguration;
 import de.mossgrabers.framework.configuration.IEnumSetting;
 import de.mossgrabers.framework.configuration.ISettingsUI;
-import de.mossgrabers.framework.controller.IValueChanger;
+import de.mossgrabers.framework.controller.valuechanger.IValueChanger;
 import de.mossgrabers.framework.daw.IHost;
+import de.mossgrabers.framework.daw.midi.ArpeggiatorMode;
 
 import java.util.Arrays;
 
@@ -139,10 +140,12 @@ public class MCUConfiguration extends AbstractConfiguration
      *
      * @param host The DAW host
      * @param valueChanger The value changer
+     * @param arpeggiatorModes The available arpeggiator modes
      */
-    public MCUConfiguration (final IHost host, final IValueChanger valueChanger)
+    public MCUConfiguration (final IHost host, final IValueChanger valueChanger, final ArpeggiatorMode [] arpeggiatorModes)
     {
-        super (host, valueChanger);
+        super (host, valueChanger, arpeggiatorModes);
+
         Arrays.fill (this.assignableFunctions, 0);
     }
 
@@ -195,6 +198,7 @@ public class MCUConfiguration extends AbstractConfiguration
         profileSetting.addValueObserver (value -> {
             switch (value)
             {
+                case DEVICE_MACKIE_MCU_PRO:
                 case DEVICE_BEHRINGER_X_TOUCH_ONE:
                     this.hasDisplay1Setting.set (ON_OFF_OPTIONS[1]);
                     this.hasDisplay2Setting.set (ON_OFF_OPTIONS[0]);
@@ -226,18 +230,6 @@ public class MCUConfiguration extends AbstractConfiguration
                     this.hasAssignmentDisplaySetting.set (ON_OFF_OPTIONS[0]);
                     this.hasMotorFadersSetting.set (ON_OFF_OPTIONS[1]);
                     this.displayTrackNamesSetting.set (ON_OFF_OPTIONS[0]);
-                    this.useVertZoomForModesSetting.set (ON_OFF_OPTIONS[0]);
-                    this.useFadersAsKnobsSetting.set (ON_OFF_OPTIONS[0]);
-                    this.setVUMetersEnabled (true);
-                    break;
-
-                case DEVICE_MACKIE_MCU_PRO:
-                    this.hasDisplay1Setting.set (ON_OFF_OPTIONS[1]);
-                    this.hasDisplay2Setting.set (ON_OFF_OPTIONS[0]);
-                    this.hasSegmentDisplaySetting.set (ON_OFF_OPTIONS[1]);
-                    this.hasAssignmentDisplaySetting.set (ON_OFF_OPTIONS[1]);
-                    this.hasMotorFadersSetting.set (ON_OFF_OPTIONS[1]);
-                    this.displayTrackNamesSetting.set (ON_OFF_OPTIONS[1]);
                     this.useVertZoomForModesSetting.set (ON_OFF_OPTIONS[0]);
                     this.useFadersAsKnobsSetting.set (ON_OFF_OPTIONS[0]);
                     this.setVUMetersEnabled (true);

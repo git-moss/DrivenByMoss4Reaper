@@ -4,7 +4,7 @@
 
 package de.mossgrabers.controller.push.view;
 
-import de.mossgrabers.controller.push.controller.PushColors;
+import de.mossgrabers.controller.push.controller.PushColorManager;
 import de.mossgrabers.controller.push.controller.PushControlSurface;
 import de.mossgrabers.framework.daw.IModel;
 import de.mossgrabers.framework.view.AbstractSequencerView;
@@ -67,10 +67,10 @@ public class DrumView8 extends DrumViewBase
 
         // Paint the sequencer steps
         final boolean isPush2 = this.surface.getConfiguration ().isPush2 ();
-        final int blueHi = isPush2 ? PushColors.PUSH2_COLOR2_BLUE_HI : PushColors.PUSH1_COLOR2_BLUE_HI;
-        final int greenLo = isPush2 ? PushColors.PUSH2_COLOR2_GREEN_LO : PushColors.PUSH1_COLOR2_GREEN_LO;
-        final int greenHi = isPush2 ? PushColors.PUSH2_COLOR2_GREEN_HI : PushColors.PUSH1_COLOR2_GREEN_HI;
-        final int off = isPush2 ? PushColors.PUSH2_COLOR2_BLACK : PushColors.PUSH1_COLOR2_BLACK;
+        final int blueHi = isPush2 ? PushColorManager.PUSH2_COLOR2_BLUE_HI : PushColorManager.PUSH1_COLOR2_BLUE_HI;
+        final int greenLo = isPush2 ? PushColorManager.PUSH2_COLOR2_GREEN_LO : PushColorManager.PUSH1_COLOR2_GREEN_LO;
+        final int greenHi = isPush2 ? PushColorManager.PUSH2_COLOR2_GREEN_HI : PushColorManager.PUSH1_COLOR2_GREEN_HI;
+        final int off = isPush2 ? PushColorManager.PUSH2_COLOR2_BLACK : PushColorManager.PUSH1_COLOR2_BLACK;
         final int hiStep = this.isInXRange (step) ? step % DrumView8.NUM_DISPLAY_COLS : -1;
         final int offsetY = this.scales.getDrumOffset ();
         final int editMidiChannel = this.surface.getConfiguration ().getMidiEditChannel ();
@@ -118,10 +118,10 @@ public class DrumView8 extends DrumViewBase
     @Override
     protected void onLowerScene (final int index)
     {
-        // 7, 6, 5, 4
-        if (index < 6)
+        // 0, 8
+        if (index > 1)
             return;
-        this.soundOffset = index == 7 ? 0 : 8;
+        this.soundOffset = index == 0 ? 0 : 8;
         this.surface.getDisplay ().notify ("Offset: " + this.soundOffset);
     }
 }

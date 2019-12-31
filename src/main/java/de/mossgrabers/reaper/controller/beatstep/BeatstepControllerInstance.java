@@ -23,7 +23,7 @@ import de.mossgrabers.reaper.ui.utils.LogModel;
 public class BeatstepControllerInstance extends AbstractControllerInstance
 {
     /** The controller definition instance. */
-    public static final BeatstepControllerDefinition CONTROLLER_DEFINITION = new BeatstepControllerDefinition (false);
+    public static final BeatstepControllerDefinition CONTROLLER_DEFINITION = new BeatstepControllerDefinition ();
 
 
     /**
@@ -44,6 +44,6 @@ public class BeatstepControllerInstance extends AbstractControllerInstance
     @Override
     protected IControllerSetup<?, ?> createControllerSetup (final ReaperSetupFactory setupFactory)
     {
-        return new BeatstepControllerSetup (this.host, setupFactory, this.settingsUI, this.settingsUI, false);
+        return new BeatstepControllerSetup (this.host, setupFactory, this.settingsUI, this.settingsUI);
     }
 }

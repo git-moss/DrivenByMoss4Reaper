@@ -4,6 +4,7 @@
 
 package de.mossgrabers.reaper.framework.daw.data;
 
+import de.mossgrabers.framework.controller.color.ColorEx;
 import de.mossgrabers.framework.daw.data.IScene;
 import de.mossgrabers.reaper.framework.daw.DataSetupEx;
 
@@ -15,9 +16,7 @@ import de.mossgrabers.reaper.framework.daw.DataSetupEx;
  */
 public class SceneImpl extends ItemImpl implements IScene
 {
-    private double red   = 0;
-    private double green = 0;
-    private double blue  = 0;
+    private ColorEx color = new ColorEx (0.2, 0.2, 0.2);
 
 
     /**
@@ -35,24 +34,17 @@ public class SceneImpl extends ItemImpl implements IScene
 
     /** {@inheritDoc} */
     @Override
-    public double [] getColor ()
+    public ColorEx getColor ()
     {
-        return new double []
-        {
-            this.red,
-            this.green,
-            this.blue
-        };
+        return this.color;
     }
 
 
     /** {@inheritDoc} */
     @Override
-    public void setColor (final double red, final double green, final double blue)
+    public void setColor (final ColorEx color)
     {
-        this.red = red;
-        this.green = green;
-        this.blue = blue;
+        this.color = color;
     }
 
 

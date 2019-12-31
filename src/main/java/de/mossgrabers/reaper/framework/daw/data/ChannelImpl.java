@@ -4,12 +4,17 @@
 
 package de.mossgrabers.reaper.framework.daw.data;
 
+import de.mossgrabers.framework.controller.color.ColorEx;
 import de.mossgrabers.framework.daw.ISendBank;
 import de.mossgrabers.framework.daw.data.IChannel;
 import de.mossgrabers.framework.daw.resource.ChannelType;
+import de.mossgrabers.framework.observer.IValueObserver;
 import de.mossgrabers.reaper.framework.Actions;
 import de.mossgrabers.reaper.framework.daw.DataSetupEx;
 import de.mossgrabers.reaper.framework.daw.SendBankImpl;
+
+import java.util.HashSet;
+import java.util.Set;
 
 
 /**
@@ -19,27 +24,30 @@ import de.mossgrabers.reaper.framework.daw.SendBankImpl;
  */
 public class ChannelImpl extends ItemImpl implements IChannel
 {
-    private static final String PATH_TRACK         = "track";
-    private static final Object UPDATE_LOCK        = new Object ();
+    private static final String                PATH_TRACK         = "track";
+    private static final Object                UPDATE_LOCK        = new Object ();
+    private static final ColorEx               GRAY               = new ColorEx (0.2, 0.2, 0.2);
 
-    private ChannelType         type;
-    protected double            volume;
-    private String              volumeStr          = "";
-    private double              vuLeft;
-    private double              vuRight;
-    private String              panStr             = "";
-    protected double            pan;
-    private boolean             isMute;
-    private boolean             isSolo;
-    private boolean             isActivated        = true;
-    private double []           color;
+    private final Set<IValueObserver<ColorEx>> colorObservers     = new HashSet<> ();
 
-    private final ISendBank     sendBank;
+    private ChannelType                        type;
+    protected double                           volume;
+    private String                             volumeStr          = "";
+    private double                             vuLeft;
+    private double                             vuRight;
+    private String                             panStr             = "";
+    protected double                           pan;
+    private boolean                            isMute;
+    private boolean                            isSolo;
+    private boolean                            isActivated        = true;
+    private ColorEx                            color;
 
-    private boolean             isVolumeBeingTouched;
-    private double              lastReceivedVolume = -1;
-    private boolean             isPanBeingTouched;
-    private double              lastReceivedPan    = -1;
+    private final ISendBank                    sendBank;
+
+    private boolean                            isVolumeBeingTouched;
+    private double                             lastReceivedVolume = -1;
+    private boolean                            isPanBeingTouched;
+    private double                             lastReceivedPan    = -1;
 
 
     /**
@@ -281,22 +289,18 @@ public class ChannelImpl extends ItemImpl implements IChannel
 
     /** {@inheritDoc} */
     @Override
-    public double [] getColor ()
+    public ColorEx getColor ()
     {
-        return this.color == null ? new double []
-        {
-            0.2,
-            0.2,
-            0.2
-        } : this.color;
+        return this.color == null ? GRAY : this.color;
     }
 
 
     /** {@inheritDoc} */
     @Override
-    public void setColor (final double red, final double green, final double blue)
+    public void setColor (final ColorEx color)
     {
-        this.sendTrackOSC ("color", "RGB(" + Math.round (red * 255) + "," + Math.round (green * 255) + "," + Math.round (blue * 255) + ")");
+        final int [] rgb = color.toIntRGB255 ();
+        this.sendTrackOSC ("color", "RGB(" + rgb[0] + "," + rgb[1] + "," + rgb[2] + ")");
     }
 
 
@@ -527,7 +531,8 @@ public class ChannelImpl extends ItemImpl implements IChannel
      */
     public void setColorState (final double [] color)
     {
-        this.color = color;
+        this.color = new ColorEx (color);
+        this.colorObservers.forEach (observer -> observer.update (this.color));
     }
 
 
@@ -553,6 +558,14 @@ public class ChannelImpl extends ItemImpl implements IChannel
     public ISendBank getSendBank ()
     {
         return this.sendBank;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void addColorObserver (final IValueObserver<ColorEx> observer)
+    {
+        this.colorObservers.add (observer);
     }
 
 

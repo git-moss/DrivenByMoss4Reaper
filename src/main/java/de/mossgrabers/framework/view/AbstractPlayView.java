@@ -6,7 +6,7 @@ package de.mossgrabers.framework.view;
 
 import de.mossgrabers.framework.configuration.Configuration;
 import de.mossgrabers.framework.controller.IControlSurface;
-import de.mossgrabers.framework.controller.grid.PadGrid;
+import de.mossgrabers.framework.controller.grid.ILightGuide;
 import de.mossgrabers.framework.daw.IModel;
 import de.mossgrabers.framework.daw.ITrackBank;
 import de.mossgrabers.framework.daw.data.ITrack;
@@ -78,13 +78,18 @@ public abstract class AbstractPlayView<S extends IControlSurface<C>, C extends C
     @Override
     public void drawGrid ()
     {
+        this.drawLightGuide (this.surface.getPadGrid ());
+    }
+
+
+    protected void drawLightGuide (final ILightGuide lightGuide)
+    {
         final boolean isKeyboardEnabled = this.model.canSelectedTrackHoldNotes ();
         final boolean isRecording = this.model.hasRecordingState ();
 
         final ITrack selectedTrack = this.model.getSelectedTrack ();
-        final PadGrid gridPad = this.surface.getPadGrid ();
         for (int i = this.scales.getStartNote (); i < this.scales.getEndNote (); i++)
-            gridPad.light (i, this.getGridColor (isKeyboardEnabled, isRecording, selectedTrack, i));
+            lightGuide.light (i, this.getGridColor (isKeyboardEnabled, isRecording, selectedTrack, i));
     }
 
 
@@ -117,7 +122,7 @@ public abstract class AbstractPlayView<S extends IControlSurface<C>, C extends C
         {
             if (this.keyManager.isKeyPressed (note))
                 return isRecording ? AbstractPlayView.COLOR_RECORD : AbstractPlayView.COLOR_PLAY;
-            return this.getColor (note, this.useTrackColor ? track : null);
+            return this.getPadColor (note, this.useTrackColor ? track : null);
         }
         return AbstractPlayView.COLOR_OFF;
     }

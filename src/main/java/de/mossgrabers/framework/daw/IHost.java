@@ -4,7 +4,7 @@
 
 package de.mossgrabers.framework.daw;
 
-import de.mossgrabers.framework.controller.hardware.ISurfaceFactory;
+import de.mossgrabers.framework.controller.hardware.IHwSurfaceFactory;
 import de.mossgrabers.framework.daw.constants.EditCapability;
 import de.mossgrabers.framework.graphics.IBitmap;
 import de.mossgrabers.framework.graphics.IImage;
@@ -127,9 +127,11 @@ public interface IHost
     /**
      * Create a factory for creating hardware surface elements like buttons and knobs.
      *
+     * @param width The width of the controller device
+     * @param height The height of the controller device
      * @return Create a new factory.
      */
-    ISurfaceFactory createSurfaceFactory ();
+    IHwSurfaceFactory createSurfaceFactory (final double width, final double height);
 
 
     /**

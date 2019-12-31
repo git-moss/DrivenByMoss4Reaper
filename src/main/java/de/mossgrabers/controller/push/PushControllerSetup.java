@@ -7,8 +7,7 @@ package de.mossgrabers.controller.push;
 import de.mossgrabers.controller.push.command.continuous.ConfigurePitchbendCommand;
 import de.mossgrabers.controller.push.command.continuous.MastertrackTouchCommand;
 import de.mossgrabers.controller.push.command.continuous.SmallKnobTouchCommand;
-import de.mossgrabers.controller.push.command.pitchbend.PitchbendCommand;
-import de.mossgrabers.controller.push.command.pitchbend.PitchbendSessionCommand;
+import de.mossgrabers.controller.push.command.pitchbend.TouchstripCommand;
 import de.mossgrabers.controller.push.command.trigger.AccentCommand;
 import de.mossgrabers.controller.push.command.trigger.AutomationCommand;
 import de.mossgrabers.controller.push.command.trigger.ClipCommand;
@@ -22,6 +21,7 @@ import de.mossgrabers.controller.push.command.trigger.PageLeftCommand;
 import de.mossgrabers.controller.push.command.trigger.PageRightCommand;
 import de.mossgrabers.controller.push.command.trigger.PanSendCommand;
 import de.mossgrabers.controller.push.command.trigger.PushBrowserCommand;
+import de.mossgrabers.controller.push.command.trigger.PushCursorCommand;
 import de.mossgrabers.controller.push.command.trigger.PushQuantizeCommand;
 import de.mossgrabers.controller.push.command.trigger.RasteredKnobCommand;
 import de.mossgrabers.controller.push.command.trigger.ScalesCommand;
@@ -35,7 +35,7 @@ import de.mossgrabers.controller.push.command.trigger.TrackCommand;
 import de.mossgrabers.controller.push.command.trigger.VolumeCommand;
 import de.mossgrabers.controller.push.controller.Push1Display;
 import de.mossgrabers.controller.push.controller.Push2Display;
-import de.mossgrabers.controller.push.controller.PushColors;
+import de.mossgrabers.controller.push.controller.PushColorManager;
 import de.mossgrabers.controller.push.controller.PushControlSurface;
 import de.mossgrabers.controller.push.mode.AccentMode;
 import de.mossgrabers.controller.push.mode.AutomationMode;
@@ -87,9 +87,6 @@ import de.mossgrabers.controller.push.view.RaindropsView;
 import de.mossgrabers.controller.push.view.ScenePlayView;
 import de.mossgrabers.controller.push.view.SequencerView;
 import de.mossgrabers.controller.push.view.SessionView;
-import de.mossgrabers.framework.command.ContinuousCommandID;
-import de.mossgrabers.framework.command.SceneCommand;
-import de.mossgrabers.framework.command.TriggerCommandID;
 import de.mossgrabers.framework.command.aftertouch.AftertouchAbstractViewCommand;
 import de.mossgrabers.framework.command.continuous.FootswitchCommand;
 import de.mossgrabers.framework.command.continuous.KnobRowModeCommand;
@@ -106,7 +103,6 @@ import de.mossgrabers.framework.command.trigger.clip.NoteRepeatCommand;
 import de.mossgrabers.framework.command.trigger.clip.StopAllClipsCommand;
 import de.mossgrabers.framework.command.trigger.device.AddEffectCommand;
 import de.mossgrabers.framework.command.trigger.mode.ButtonRowModeCommand;
-import de.mossgrabers.framework.command.trigger.mode.CursorCommand;
 import de.mossgrabers.framework.command.trigger.mode.KnobRowTouchModeCommand;
 import de.mossgrabers.framework.command.trigger.mode.ModeCursorCommand.Direction;
 import de.mossgrabers.framework.command.trigger.mode.ModeSelectCommand;
@@ -115,17 +111,23 @@ import de.mossgrabers.framework.command.trigger.transport.MetronomeCommand;
 import de.mossgrabers.framework.command.trigger.transport.PlayCommand;
 import de.mossgrabers.framework.command.trigger.transport.RecordCommand;
 import de.mossgrabers.framework.command.trigger.transport.TapTempoCommand;
+import de.mossgrabers.framework.command.trigger.view.ViewButtonCommand;
 import de.mossgrabers.framework.configuration.AbstractConfiguration;
 import de.mossgrabers.framework.configuration.ISettingsUI;
 import de.mossgrabers.framework.controller.AbstractControllerSetup;
 import de.mossgrabers.framework.controller.ButtonID;
-import de.mossgrabers.framework.controller.DefaultValueChanger;
+import de.mossgrabers.framework.controller.ContinuousID;
 import de.mossgrabers.framework.controller.ISetupFactory;
 import de.mossgrabers.framework.controller.color.ColorManager;
+import de.mossgrabers.framework.controller.hardware.BindType;
+import de.mossgrabers.framework.controller.hardware.IHwFader;
+import de.mossgrabers.framework.controller.hardware.IHwRelativeKnob;
+import de.mossgrabers.framework.controller.valuechanger.DefaultValueChanger;
 import de.mossgrabers.framework.daw.ICursorDevice;
 import de.mossgrabers.framework.daw.IHost;
 import de.mossgrabers.framework.daw.INoteClip;
 import de.mossgrabers.framework.daw.IParameterBank;
+import de.mossgrabers.framework.daw.ISceneBank;
 import de.mossgrabers.framework.daw.ISendBank;
 import de.mossgrabers.framework.daw.ITrackBank;
 import de.mossgrabers.framework.daw.ITransport;
@@ -136,12 +138,10 @@ import de.mossgrabers.framework.daw.midi.DeviceInquiry;
 import de.mossgrabers.framework.daw.midi.IMidiAccess;
 import de.mossgrabers.framework.daw.midi.IMidiInput;
 import de.mossgrabers.framework.daw.midi.IMidiOutput;
-import de.mossgrabers.framework.mode.Mode;
 import de.mossgrabers.framework.mode.ModeManager;
 import de.mossgrabers.framework.mode.Modes;
 import de.mossgrabers.framework.view.AbstractSequencerView;
 import de.mossgrabers.framework.view.AbstractView;
-import de.mossgrabers.framework.view.SceneView;
 import de.mossgrabers.framework.view.TransposeView;
 import de.mossgrabers.framework.view.View;
 import de.mossgrabers.framework.view.ViewManager;
@@ -155,7 +155,8 @@ import de.mossgrabers.framework.view.Views;
  */
 public class PushControllerSetup extends AbstractControllerSetup<PushControlSurface, PushConfiguration>
 {
-    protected final boolean isPush2;
+    private final boolean isPush2;
+    private ISceneBank    sceneBank64;
 
 
     /**
@@ -170,11 +171,11 @@ public class PushControllerSetup extends AbstractControllerSetup<PushControlSurf
     public PushControllerSetup (final IHost host, final ISetupFactory factory, final ISettingsUI globalSettings, final ISettingsUI documentSettings, final boolean isPush2)
     {
         super (factory, host, globalSettings, documentSettings);
+
         this.isPush2 = isPush2;
-        this.colorManager = new ColorManager ();
-        PushColors.addColors (this.colorManager, isPush2);
+        this.colorManager = new PushColorManager (isPush2);
         this.valueChanger = new DefaultValueChanger (1024, 10, 1);
-        this.configuration = new PushConfiguration (host, this.valueChanger, isPush2);
+        this.configuration = new PushConfiguration (host, this.valueChanger, factory.getArpeggiatorModes (), isPush2);
     }
 
 
@@ -187,10 +188,7 @@ public class PushControllerSetup extends AbstractControllerSetup<PushControlSurf
         final PushControlSurface surface = this.getSurface ();
         this.updateMode (surface.getModeManager ().getActiveOrTempModeId ());
 
-        final View activeView = surface.getViewManager ().getActiveView ();
-        if (activeView == null)
-            return;
-        final de.mossgrabers.framework.command.core.PitchbendCommand pitchbendCommand = activeView.getPitchbendCommand ();
+        final de.mossgrabers.framework.command.core.PitchbendCommand pitchbendCommand = surface.getContinuous (ContinuousID.TOUCHSTRIP).getPitchbendCommand ();
         if (pitchbendCommand != null)
             pitchbendCommand.updateValue ();
     }
@@ -209,6 +207,7 @@ public class PushControllerSetup extends AbstractControllerSetup<PushControlSurf
         ms.setNumMarkers (8);
         ms.setHasFlatTrackList (false);
         this.model = this.factory.createModel (this.colorManager, this.valueChanger, this.scales, ms);
+        this.sceneBank64 = this.model.createSceneBank (64);
 
         final ITrackBank trackBank = this.model.getTrackBank ();
         trackBank.setIndication (true);
@@ -321,7 +320,7 @@ public class PushControllerSetup extends AbstractControllerSetup<PushControlSurf
         else
             modeManager.registerMode (Modes.CONFIGURATION, new ConfigurationMode (surface, this.model));
 
-        modeManager.registerMode (Modes.SESSION, new SessionMode (surface, this.model));
+        modeManager.registerMode (Modes.SESSION, new SessionMode (surface, this.model, this.sceneBank64));
         modeManager.registerMode (Modes.SESSION_VIEW_SELECT, new SessionViewSelectMode (surface, this.model));
 
         modeManager.registerMode (Modes.REPEAT_NOTE, new NoteRepeatMode (surface, this.model));
@@ -397,6 +396,7 @@ public class PushControllerSetup extends AbstractControllerSetup<PushControlSurf
         this.configuration.addSettingObserver (AbstractConfiguration.KNOB_SPEED_SLOW, () -> this.valueChanger.setSlowFractionValue (this.configuration.getKnobSpeedSlow ()));
 
         this.createScaleObservers (this.configuration);
+        this.createNoteRepeatObservers (this.configuration, surface);
     }
 
 
@@ -419,7 +419,7 @@ public class PushControllerSetup extends AbstractControllerSetup<PushControlSurf
         viewManager.registerView (Views.DRUM4, new DrumView4 (surface, this.model));
         viewManager.registerView (Views.DRUM8, new DrumView8 (surface, this.model));
         viewManager.registerView (Views.RAINDROPS, new RaindropsView (surface, this.model));
-        viewManager.registerView (Views.SCENE_PLAY, new ScenePlayView (surface, this.model));
+        viewManager.registerView (Views.SCENE_PLAY, new ScenePlayView (surface, this.model, this.sceneBank64));
 
         viewManager.registerView (Views.DRUM64, new DrumView64 (surface, this.model));
     }
@@ -435,74 +435,53 @@ public class PushControllerSetup extends AbstractControllerSetup<PushControlSurf
 
         final ITransport t = this.model.getTransport ();
 
-        this.setupButton (ButtonID.PLAY, "Play", new PlayCommand<> (this.model, surface), PushControlSurface.PUSH_BUTTON_PLAY, t::isPlaying, PushColors.PUSH_BUTTON_STATE_PLAY_ON, PushColors.PUSH_BUTTON_STATE_PLAY_HI);
+        this.addButton (ButtonID.PLAY, "Play", new PlayCommand<> (this.model, surface), PushControlSurface.PUSH_BUTTON_PLAY, t::isPlaying, PushColorManager.PUSH_BUTTON_STATE_PLAY_ON, PushColorManager.PUSH_BUTTON_STATE_PLAY_HI);
 
-        this.setupButton (ButtonID.RECORD, "Record", new RecordCommand<> (this.model, surface), PushControlSurface.PUSH_BUTTON_RECORD, () -> {
+        this.addButton (ButtonID.RECORD, "Record", new RecordCommand<> (this.model, surface), PushControlSurface.PUSH_BUTTON_RECORD, () -> {
 
             if (this.isRecordShifted (surface))
                 return t.isLauncherOverdub () ? 3 : 2;
             return t.isRecording () ? 1 : 0;
 
-        }, PushColors.PUSH_BUTTON_STATE_REC_ON, PushColors.PUSH_BUTTON_STATE_REC_HI, PushColors.PUSH_BUTTON_STATE_OVR_ON, PushColors.PUSH_BUTTON_STATE_OVR_HI);
+        }, PushColorManager.PUSH_BUTTON_STATE_REC_ON, PushColorManager.PUSH_BUTTON_STATE_REC_HI, PushColorManager.PUSH_BUTTON_STATE_OVR_ON, PushColorManager.PUSH_BUTTON_STATE_OVR_HI);
 
-        this.setupButton (ButtonID.NEW, "New", new NewCommand<> (this.model, surface), PushControlSurface.PUSH_BUTTON_NEW);
-        this.setupButton (ButtonID.FIXED_LENGTH, "Fixed Length", new FixedLengthCommand (this.model, surface), PushControlSurface.PUSH_BUTTON_FIXED_LENGTH, () -> modeManager.isActiveOrTempMode (Modes.VOLUME, Modes.FIXED));
-        this.setupButton (ButtonID.DUPLICATE, "Duplicate", new DuplicateCommand<> (this.model, surface), PushControlSurface.PUSH_BUTTON_DUPLICATE);
-        this.setupButton (ButtonID.QUANTIZE, "Quantize", new PushQuantizeCommand (this.model, surface), PushControlSurface.PUSH_BUTTON_QUANTIZE);
-        this.setupButton (ButtonID.DELETE, "Delete", new DeleteCommand<> (this.model, surface), PushControlSurface.PUSH_BUTTON_DELETE);
-        this.setupButton (ButtonID.DOUBLE, "Double", new DoubleCommand<> (this.model, surface), PushControlSurface.PUSH_BUTTON_DOUBLE);
-        this.setupButton (ButtonID.UNDO, "Undo", new UndoCommand<> (this.model, surface), PushControlSurface.PUSH_BUTTON_UNDO);
+        this.addButton (ButtonID.NEW, "New", new NewCommand<> (this.model, surface), PushControlSurface.PUSH_BUTTON_NEW);
+        this.addButton (ButtonID.FIXED_LENGTH, "Fixed Length", new FixedLengthCommand (this.model, surface), PushControlSurface.PUSH_BUTTON_FIXED_LENGTH, () -> modeManager.isActiveOrTempMode (Modes.VOLUME, Modes.FIXED));
+        this.addButton (ButtonID.DUPLICATE, "Duplicate", new DuplicateCommand<> (this.model, surface), PushControlSurface.PUSH_BUTTON_DUPLICATE);
+        this.addButton (ButtonID.QUANTIZE, "Quantize", new PushQuantizeCommand (this.model, surface), PushControlSurface.PUSH_BUTTON_QUANTIZE);
+        this.addButton (ButtonID.DELETE, "Delete", new DeleteCommand<> (this.model, surface), PushControlSurface.PUSH_BUTTON_DELETE);
+        this.addButton (ButtonID.DOUBLE, "Double Loop", new DoubleCommand<> (this.model, surface), PushControlSurface.PUSH_BUTTON_DOUBLE);
+        this.addButton (ButtonID.UNDO, "Undo", new UndoCommand<> (this.model, surface), PushControlSurface.PUSH_BUTTON_UNDO);
 
-        this.setupButton (ButtonID.AUTOMATION, "Automate", new AutomationCommand (this.model, surface), PushControlSurface.PUSH_BUTTON_AUTOMATION, () -> {
+        this.addButton (ButtonID.AUTOMATION, "Automate", new AutomationCommand (this.model, surface), PushControlSurface.PUSH_BUTTON_AUTOMATION, () -> {
 
             if (this.isRecordShifted (surface))
                 return t.isWritingClipLauncherAutomation () ? 3 : 2;
             return t.isWritingArrangerAutomation () ? 1 : 0;
 
-        }, PushColors.PUSH_BUTTON_STATE_REC_ON, PushColors.PUSH_BUTTON_STATE_REC_HI, PushColors.PUSH_BUTTON_STATE_OVR_ON, PushColors.PUSH_BUTTON_STATE_OVR_HI);
+        }, PushColorManager.PUSH_BUTTON_STATE_REC_ON, PushColorManager.PUSH_BUTTON_STATE_REC_HI, PushColorManager.PUSH_BUTTON_STATE_OVR_ON, PushColorManager.PUSH_BUTTON_STATE_OVR_HI);
 
-        this.setupButton (ButtonID.VOLUME, "Volume", new VolumeCommand (this.model, surface), PushControlSurface.PUSH_BUTTON_VOLUME, () -> modeManager.isActiveOrTempMode (Modes.VOLUME, Modes.CROSSFADER));
-        this.setupButton (ButtonID.PAN_SEND, "Pan/Send", new PanSendCommand (this.model, surface), PushControlSurface.PUSH_BUTTON_PAN_SEND, () -> modeManager.isActiveOrTempMode (Modes.PAN) || Modes.isSendMode (modeManager.getActiveOrTempModeId ()));
-        this.setupButton (ButtonID.TRACK, "Track", new TrackCommand (this.model, surface), PushControlSurface.PUSH_BUTTON_TRACK, () -> this.isPush2 ? Modes.isMixMode (modeManager.getActiveOrTempModeId ()) : modeManager.isActiveOrTempMode (Modes.TRACK));
-        this.setupButton (ButtonID.DEVICE, "Device", new DeviceCommand (this.model, surface), PushControlSurface.PUSH_BUTTON_DEVICE, () -> Modes.isDeviceMode (modeManager.getActiveOrTempModeId ()));
-        this.setupButton (ButtonID.BROWSE, "Browse", new PushBrowserCommand (Modes.BROWSER, this.model, surface), PushControlSurface.PUSH_BUTTON_BROWSE, () -> modeManager.isActiveOrTempMode (Modes.BROWSER));
-        this.setupButton (ButtonID.CLIP, "Clip", new ClipCommand (this.model, surface), PushControlSurface.PUSH_BUTTON_CLIP, () -> modeManager.isActiveOrTempMode (Modes.CLIP));
+        this.addButton (ButtonID.TRACK, this.isPush2 ? "Mix" : "Track", new TrackCommand (this.model, surface), PushControlSurface.PUSH_BUTTON_TRACK, () -> this.isPush2 ? Modes.isMixMode (modeManager.getActiveOrTempModeId ()) : modeManager.isActiveOrTempMode (Modes.TRACK));
+        this.addButton (ButtonID.DEVICE, "Device", new DeviceCommand (this.model, surface), PushControlSurface.PUSH_BUTTON_DEVICE, () -> Modes.isDeviceMode (modeManager.getActiveOrTempModeId ()));
+        this.addButton (ButtonID.BROWSE, "Browse", new PushBrowserCommand (Modes.BROWSER, this.model, surface), PushControlSurface.PUSH_BUTTON_BROWSE, () -> modeManager.isActiveOrTempMode (Modes.BROWSER));
+        this.addButton (ButtonID.CLIP, "Clip", new ClipCommand (this.model, surface), PushControlSurface.PUSH_BUTTON_CLIP, () -> modeManager.isActiveOrTempMode (Modes.CLIP));
 
         for (int i = 0; i < 8; i++)
         {
-            final int index = i;
-
-            this.setupButton (ButtonID.get (ButtonID.ROW1_1, i), "Row 1: " + (i + 1), new ButtonRowModeCommand<> (0, i, this.model, surface), PushControlSurface.PUSH_BUTTON_ROW1_1 + i, () -> {
-
-                final Mode mode = modeManager.getActiveOrTempMode ();
-                return mode == null ? 0 : mode.getFirstRowColor (index);
-
-            });
-
-            this.setupButton (ButtonID.get (ButtonID.ROW2_1, i), "Row 2: " + (i + 1), new ButtonRowModeCommand<> (1, i, this.model, surface), PushControlSurface.PUSH_BUTTON_ROW2_1 + i, () -> {
-
-                final Mode mode = modeManager.getActiveOrTempMode ();
-                return mode == null ? 0 : mode.getSecondRowColor (index);
-
-            });
-
-            this.setupButton (ButtonID.get (ButtonID.SCENE1, i), "Scene " + (i + 1), new SceneCommand<> (7 - i, this.model, surface), PushControlSurface.PUSH_BUTTON_SCENE1 + i, () -> {
-
-                final View activeView = viewManager.getActiveView ();
-                if (activeView instanceof SceneView)
-                    return this.colorManager.getColor (((SceneView) activeView).getSceneButtonColor (index));
-                return 0;
-
-            });
+            final ButtonID row1ButtonID = ButtonID.get (ButtonID.ROW1_1, i);
+            this.addButton (row1ButtonID, "Row 1: " + (i + 1), new ButtonRowModeCommand<> (0, i, this.model, surface), PushControlSurface.PUSH_BUTTON_ROW1_1 + i, () -> this.getModeColor (row1ButtonID));
+            final ButtonID row2ButtonID = ButtonID.get (ButtonID.ROW2_1, i);
+            this.addButton (row2ButtonID, "Row 2: " + (i + 1), new ButtonRowModeCommand<> (1, i, this.model, surface), PushControlSurface.PUSH_BUTTON_ROW2_1 + i, () -> this.getModeColor (row2ButtonID));
+            final ButtonID sceneButtonID = ButtonID.get (ButtonID.SCENE1, i);
+            this.addButton (sceneButtonID, "Scene " + (i + 1), new ViewButtonCommand<> (sceneButtonID, this.model, surface), PushControlSurface.PUSH_BUTTON_SCENE1 + 7 - i, () -> this.getViewColor (sceneButtonID));
         }
 
-        this.setupButton (ButtonID.SHIFT, "Shift", new ShiftCommand (this.model, surface), PushControlSurface.PUSH_BUTTON_SHIFT);
-        this.setupButton (ButtonID.SELECT, "Select", new SelectCommand (this.model, surface), PushControlSurface.PUSH_BUTTON_SELECT);
-        this.setupButton (ButtonID.LAYOUT, "Layout", new LayoutCommand (this.model, surface), PushControlSurface.PUSH_BUTTON_LAYOUT);
-        this.setupButton (ButtonID.TAP_TEMPO, "Tap Tempo", new TapTempoCommand<> (this.model, surface), PushControlSurface.PUSH_BUTTON_TAP);
-        this.setupButton (ButtonID.METRONOME, "Metronome", new MetronomeCommand<> (this.model, surface), PushControlSurface.PUSH_BUTTON_METRONOME, t::isMetronomeOn);
-        this.setupButton (ButtonID.MASTERTRACK, "Mastertrack", new MastertrackCommand (this.model, surface), PushControlSurface.PUSH_BUTTON_MASTER, () -> Modes.isMasterMode (modeManager.getActiveOrTempModeId ()));
-        this.setupButton (ButtonID.PAGE_LEFT, "Page Left", new PageLeftCommand (this.model, surface), PushControlSurface.PUSH_BUTTON_DEVICE_LEFT, () -> {
+        this.addButton (ButtonID.SHIFT, "Shift", new ShiftCommand (this.model, surface), PushControlSurface.PUSH_BUTTON_SHIFT);
+        this.addButton (ButtonID.SELECT, "Select", new SelectCommand (this.model, surface), PushControlSurface.PUSH_BUTTON_SELECT);
+        this.addButton (ButtonID.TAP_TEMPO, "Tap Tempo", new TapTempoCommand<> (this.model, surface), PushControlSurface.PUSH_BUTTON_TAP);
+        this.addButton (ButtonID.METRONOME, "Metronome", new MetronomeCommand<> (this.model, surface), PushControlSurface.PUSH_BUTTON_METRONOME, t::isMetronomeOn);
+        this.addButton (ButtonID.MASTERTRACK, "Mastertrack", new MastertrackCommand (this.model, surface), PushControlSurface.PUSH_BUTTON_MASTER, () -> Modes.isMasterMode (modeManager.getActiveOrTempModeId ()));
+        this.addButton (ButtonID.PAGE_LEFT, "Page Left", new PageLeftCommand (this.model, surface), PushControlSurface.PUSH_BUTTON_DEVICE_LEFT, () -> {
 
             if (viewManager.isActiveView (Views.SESSION))
                 return this.model.getCurrentTrackBank ().canScrollPageBackwards ();
@@ -511,7 +490,7 @@ public class PushControllerSetup extends AbstractControllerSetup<PushControlSurf
             return clip != null && clip.doesExist () && clip.canScrollStepsBackwards ();
 
         }, ColorManager.BUTTON_STATE_OFF, ColorManager.BUTTON_STATE_ON);
-        this.setupButton (ButtonID.PAGE_RIGHT, "Page Right", new PageRightCommand (this.model, surface), PushControlSurface.PUSH_BUTTON_DEVICE_RIGHT, () -> {
+        this.addButton (ButtonID.PAGE_RIGHT, "Page Right", new PageRightCommand (this.model, surface), PushControlSurface.PUSH_BUTTON_DEVICE_RIGHT, () -> {
 
             if (viewManager.isActiveView (Views.SESSION))
                 return this.model.getCurrentTrackBank ().canScrollPageForwards ();
@@ -521,56 +500,54 @@ public class PushControllerSetup extends AbstractControllerSetup<PushControlSurf
 
         }, ColorManager.BUTTON_STATE_OFF, ColorManager.BUTTON_STATE_ON);
 
-        this.setupButton (ButtonID.MUTE, "Mute", new MuteCommand (this.model, surface), PushControlSurface.PUSH_BUTTON_MUTE, this::getMuteState, PushColors.PUSH_BUTTON_STATE_MUTE_ON, PushColors.PUSH_BUTTON_STATE_MUTE_HI);
-        this.setupButton (ButtonID.SOLO, "Solo", new SoloCommand (this.model, surface), PushControlSurface.PUSH_BUTTON_SOLO, this::getSoloState, PushColors.PUSH_BUTTON_STATE_SOLO_ON, PushColors.PUSH_BUTTON_STATE_SOLO_HI);
-        this.setupButton (ButtonID.SCALES, "Scale", new ScalesCommand (this.model, surface), PushControlSurface.PUSH_BUTTON_SCALES, () -> modeManager.isActiveOrTempMode (Modes.SCALES));
-        this.setupButton (ButtonID.ACCENT, "Accent", new AccentCommand (this.model, surface), PushControlSurface.PUSH_BUTTON_ACCENT, this.configuration::isAccentActive);
-        this.setupButton (ButtonID.ADD_EFFECT, "Add Device", new AddEffectCommand<> (Modes.BROWSER, this.model, surface), PushControlSurface.PUSH_BUTTON_ADD_EFFECT);
-        this.setupButton (ButtonID.ADD_TRACK, "Add Track", new AddTrackCommand<> (this.model, surface), PushControlSurface.PUSH_BUTTON_ADD_TRACK);
-        this.setupButton (ButtonID.NOTE, "Note", new SelectPlayViewCommand (this.model, surface), PushControlSurface.PUSH_BUTTON_NOTE, () -> !Views.isSessionView (viewManager.getActiveViewId ()));
+        this.addButton (ButtonID.MUTE, "Mute", new MuteCommand (this.model, surface), PushControlSurface.PUSH_BUTTON_MUTE, this::getMuteState, PushColorManager.PUSH_BUTTON_STATE_MUTE_ON, PushColorManager.PUSH_BUTTON_STATE_MUTE_HI);
+        this.addButton (ButtonID.SOLO, "Solo", new SoloCommand (this.model, surface), PushControlSurface.PUSH_BUTTON_SOLO, this::getSoloState, PushColorManager.PUSH_BUTTON_STATE_SOLO_ON, PushColorManager.PUSH_BUTTON_STATE_SOLO_HI);
+        this.addButton (ButtonID.SCALES, "Scale", new ScalesCommand (this.model, surface), PushControlSurface.PUSH_BUTTON_SCALES, () -> modeManager.isActiveOrTempMode (Modes.SCALES));
+        this.addButton (ButtonID.ACCENT, "Accent", new AccentCommand (this.model, surface), PushControlSurface.PUSH_BUTTON_ACCENT, this.configuration::isAccentActive);
+        this.addButton (ButtonID.ADD_EFFECT, "Add Device", new AddEffectCommand<> (Modes.BROWSER, this.model, surface), PushControlSurface.PUSH_BUTTON_ADD_EFFECT);
+        this.addButton (ButtonID.ADD_TRACK, "Add Track", new AddTrackCommand<> (this.model, surface), PushControlSurface.PUSH_BUTTON_ADD_TRACK);
+        this.addButton (ButtonID.NOTE, "Note", new SelectPlayViewCommand (this.model, surface), PushControlSurface.PUSH_BUTTON_NOTE, () -> !Views.isSessionView (viewManager.getActiveViewId ()));
 
-        final CursorCommand<PushControlSurface, PushConfiguration> cursorDownCommand = new CursorCommand<> (Direction.DOWN, this.model, surface);
-        this.setupButton (ButtonID.ARROW_DOWN, "Down", cursorDownCommand, PushControlSurface.PUSH_BUTTON_DOWN, cursorDownCommand::canScroll, ColorManager.BUTTON_STATE_OFF, ColorManager.BUTTON_STATE_ON);
-        final CursorCommand<PushControlSurface, PushConfiguration> cursorUpCommand = new CursorCommand<> (Direction.UP, this.model, surface);
-        this.setupButton (ButtonID.ARROW_UP, "Up", cursorUpCommand, PushControlSurface.PUSH_BUTTON_UP, cursorUpCommand::canScroll, ColorManager.BUTTON_STATE_OFF, ColorManager.BUTTON_STATE_ON);
-        final CursorCommand<PushControlSurface, PushConfiguration> cursorLeftCommand = new CursorCommand<> (Direction.LEFT, this.model, surface);
-        this.setupButton (ButtonID.ARROW_LEFT, "Left", cursorLeftCommand, PushControlSurface.PUSH_BUTTON_LEFT, cursorLeftCommand::canScroll, ColorManager.BUTTON_STATE_OFF, ColorManager.BUTTON_STATE_ON);
-        final CursorCommand<PushControlSurface, PushConfiguration> cursorRightCommand = new CursorCommand<> (Direction.RIGHT, this.model, surface);
-        this.setupButton (ButtonID.ARROW_RIGHT, "Right", cursorRightCommand, PushControlSurface.PUSH_BUTTON_RIGHT, cursorRightCommand::canScroll, ColorManager.BUTTON_STATE_OFF, ColorManager.BUTTON_STATE_ON);
+        final PushCursorCommand cursorDownCommand = new PushCursorCommand (this.sceneBank64, Direction.DOWN, this.model, surface);
+        this.addButton (ButtonID.ARROW_DOWN, "Down", cursorDownCommand, PushControlSurface.PUSH_BUTTON_DOWN, cursorDownCommand::canScroll, ColorManager.BUTTON_STATE_OFF, ColorManager.BUTTON_STATE_ON);
+        final PushCursorCommand cursorUpCommand = new PushCursorCommand (this.sceneBank64, Direction.UP, this.model, surface);
+        this.addButton (ButtonID.ARROW_UP, "Up", cursorUpCommand, PushControlSurface.PUSH_BUTTON_UP, cursorUpCommand::canScroll, ColorManager.BUTTON_STATE_OFF, ColorManager.BUTTON_STATE_ON);
+        final PushCursorCommand cursorLeftCommand = new PushCursorCommand (this.sceneBank64, Direction.LEFT, this.model, surface);
+        this.addButton (ButtonID.ARROW_LEFT, "Left", cursorLeftCommand, PushControlSurface.PUSH_BUTTON_LEFT, cursorLeftCommand::canScroll, ColorManager.BUTTON_STATE_OFF, ColorManager.BUTTON_STATE_ON);
+        final PushCursorCommand cursorRightCommand = new PushCursorCommand (this.sceneBank64, Direction.RIGHT, this.model, surface);
+        this.addButton (ButtonID.ARROW_RIGHT, "Right", cursorRightCommand, PushControlSurface.PUSH_BUTTON_RIGHT, cursorRightCommand::canScroll, ColorManager.BUTTON_STATE_OFF, ColorManager.BUTTON_STATE_ON);
 
-        this.setupButton (ButtonID.OCTAVE_DOWN, "Octave Down", new OctaveCommand (false, this.model, surface), PushControlSurface.PUSH_BUTTON_OCTAVE_DOWN, () -> {
-
+        this.addButton (ButtonID.OCTAVE_DOWN, "Octave Down", new OctaveCommand (false, this.model, surface), PushControlSurface.PUSH_BUTTON_OCTAVE_DOWN, () -> {
             final View activeView = viewManager.getActiveView ();
-            return activeView instanceof TransposeView ? ((TransposeView) activeView).isOctaveDownButtonOn () : false;
-
+            return activeView instanceof TransposeView && ((TransposeView) activeView).isOctaveDownButtonOn ();
         }, ColorManager.BUTTON_STATE_OFF, ColorManager.BUTTON_STATE_ON);
-        this.setupButton (ButtonID.OCTAVE_UP, "Octave Up", new OctaveCommand (true, this.model, surface), PushControlSurface.PUSH_BUTTON_OCTAVE_UP, () -> {
-
+        this.addButton (ButtonID.OCTAVE_UP, "Octave Up", new OctaveCommand (true, this.model, surface), PushControlSurface.PUSH_BUTTON_OCTAVE_UP, () -> {
             final View activeView = viewManager.getActiveView ();
-            return activeView instanceof TransposeView ? ((TransposeView) activeView).isOctaveUpButtonOn () : false;
-
+            return activeView instanceof TransposeView && ((TransposeView) activeView).isOctaveUpButtonOn ();
         }, ColorManager.BUTTON_STATE_OFF, ColorManager.BUTTON_STATE_ON);
 
         if (this.isPush2)
         {
-            this.setupButton (ButtonID.SETUP, "Setup", new SetupCommand (this.isPush2, this.model, surface), PushControlSurface.PUSH_BUTTON_SETUP, () -> modeManager.isActiveOrTempMode (Modes.SETUP));
-            this.setupButton (ButtonID.CONVERT, "Convert", new ConvertCommand<> (this.model, surface), PushControlSurface.PUSH_BUTTON_CONVERT, this.model::canConvertClip);
-            this.setupButton (ButtonID.USER, "User", this.host.hasUserParameters () ? new ModeSelectCommand<> (this.model, surface, Modes.USER) : NopCommand.INSTANCE, PushControlSurface.PUSH_BUTTON_USER_MODE, () -> this.host.hasUserParameters () && modeManager.isActiveOrTempMode (Modes.USER));
+            this.addButton (ButtonID.LAYOUT, "Layout", new LayoutCommand (this.model, surface), PushControlSurface.PUSH_BUTTON_LAYOUT);
+            this.addButton (ButtonID.SETUP, "Setup", new SetupCommand (this.isPush2, this.model, surface), PushControlSurface.PUSH_BUTTON_SETUP, () -> modeManager.isActiveOrTempMode (Modes.SETUP));
+            this.addButton (ButtonID.CONVERT, "Convert", new ConvertCommand<> (this.model, surface), PushControlSurface.PUSH_BUTTON_CONVERT, () -> {
+                if (!this.model.canConvertClip ())
+                    return 0;
+                return surface.getButton (ButtonID.CONVERT).isPressed () ? 2 : 1;
+            }, ColorManager.BUTTON_STATE_OFF, ColorManager.BUTTON_STATE_ON, ColorManager.BUTTON_STATE_HI);
+            this.addButton (ButtonID.USER, "User", this.host.hasUserParameters () ? new ModeSelectCommand<> (this.model, surface, Modes.USER) : NopCommand.INSTANCE, PushControlSurface.PUSH_BUTTON_USER_MODE, () -> this.host.hasUserParameters () && modeManager.isActiveOrTempMode (Modes.USER));
         }
         else
-            this.setupButton (ButtonID.SETUP, "User", new SetupCommand (this.isPush2, this.model, surface), PushControlSurface.PUSH_BUTTON_USER_MODE, () -> modeManager.isActiveOrTempMode (Modes.SETUP));
+        {
+            this.addButton (ButtonID.VOLUME, "Volume", new VolumeCommand (this.model, surface), PushControlSurface.PUSH_BUTTON_VOLUME, () -> modeManager.isActiveOrTempMode (Modes.VOLUME, Modes.CROSSFADER));
+            this.addButton (ButtonID.PAN_SEND, "Pan/Send", new PanSendCommand (this.model, surface), PushControlSurface.PUSH_BUTTON_PAN_SEND, () -> modeManager.isActiveOrTempMode (Modes.PAN) || Modes.isSendMode (modeManager.getActiveOrTempModeId ()));
+            this.addButton (ButtonID.SETUP, "User", new SetupCommand (this.isPush2, this.model, surface), PushControlSurface.PUSH_BUTTON_USER_MODE, () -> modeManager.isActiveOrTempMode (Modes.SETUP));
+        }
 
-        this.setupButton (ButtonID.STOP_CLIP, "Stop Clip", new StopAllClipsCommand<> (this.model, surface), PushControlSurface.PUSH_BUTTON_STOP_CLIP, () -> surface.isPressed (ButtonID.STOP_CLIP), PushColors.PUSH_BUTTON_STATE_STOP_ON, PushColors.PUSH_BUTTON_STATE_STOP_HI);
-        this.setupButton (ButtonID.SESSION, "Session", new SelectSessionViewCommand (this.model, surface), PushControlSurface.PUSH_BUTTON_SESSION, () -> Views.isSessionView (viewManager.getActiveViewId ()));
-        this.setupButton (ButtonID.REPEAT, "Repeat", new NoteRepeatCommand<> (this.model, surface), PushControlSurface.PUSH_BUTTON_REPEAT, surface.getInput ().getDefaultNoteInput ().getNoteRepeat ()::isActive);
-    }
-
-
-    private boolean isRecordShifted (final PushControlSurface surface)
-    {
-        final boolean isShift = surface.isShiftPressed ();
-        final boolean isFlipRecord = this.configuration.isFlipRecord ();
-        return isShift && !isFlipRecord || !isShift && isFlipRecord;
+        this.addButton (ButtonID.STOP_CLIP, "Stop Clip", new StopAllClipsCommand<> (this.model, surface), PushControlSurface.PUSH_BUTTON_STOP_CLIP, () -> surface.isPressed (ButtonID.STOP_CLIP), PushColorManager.PUSH_BUTTON_STATE_STOP_ON, PushColorManager.PUSH_BUTTON_STATE_STOP_HI);
+        this.addButton (ButtonID.SESSION, "Session", new SelectSessionViewCommand (this.model, surface), PushControlSurface.PUSH_BUTTON_SESSION, () -> Views.isSessionView (viewManager.getActiveViewId ()));
+        this.addButton (ButtonID.REPEAT, "Repeat", new NoteRepeatCommand<> (this.model, surface, true), PushControlSurface.PUSH_BUTTON_REPEAT, this.configuration::isNoteRepeatActive);
+        this.addButton (ButtonID.FOOTSWITCH2, "Foot Controller", new FootswitchCommand<> (this.model, surface), PushControlSurface.PUSH_FOOTSWITCH2);
     }
 
 
@@ -584,29 +561,24 @@ public class PushControllerSetup extends AbstractControllerSetup<PushControlSurf
     protected void registerContinuousCommands ()
     {
         final PushControlSurface surface = this.getSurface ();
+        final IMidiInput input = surface.getMidiInput ();
+
         for (int i = 0; i < 8; i++)
-            this.addContinuousCommand (ContinuousCommandID.get (ContinuousCommandID.KNOB1, i), PushControlSurface.PUSH_KNOB1 + i, new KnobRowModeCommand<> (i, this.model, surface));
+        {
+            final IHwRelativeKnob knob = this.addRelativeKnob (ContinuousID.get (ContinuousID.KNOB1, i), "Knob " + i, new KnobRowModeCommand<> (i, this.model, surface), PushControlSurface.PUSH_KNOB1 + i);
+            knob.bindTouch (new KnobRowTouchModeCommand<> (i, this.model, surface), input, BindType.NOTE, PushControlSurface.PUSH_KNOB1_TOUCH + i);
+        }
 
-        this.addContinuousCommand (ContinuousCommandID.MASTER_KNOB, PushControlSurface.PUSH_KNOB9, new MasterVolumeCommand<> (this.model, surface));
-        this.addContinuousCommand (ContinuousCommandID.TEMPO, PushControlSurface.PUSH_SMALL_KNOB1, new RasteredKnobCommand (this.model, surface));
-        this.addContinuousCommand (ContinuousCommandID.PLAY_POSITION, PushControlSurface.PUSH_SMALL_KNOB2, new PlayPositionCommand<> (this.model, surface));
-        this.addContinuousCommand (ContinuousCommandID.FOOTSWITCH, PushControlSurface.PUSH_FOOTSWITCH2, new FootswitchCommand<> (this.model, surface));
+        final IHwRelativeKnob knobMaster = this.addRelativeKnob (ContinuousID.MASTER_KNOB, "Master", new MasterVolumeCommand<> (this.model, surface), PushControlSurface.PUSH_KNOB9);
+        knobMaster.bindTouch (new MastertrackTouchCommand (this.model, surface), input, BindType.NOTE, PushControlSurface.PUSH_KNOB9_TOUCH);
 
-        this.addNoteCommand (TriggerCommandID.KNOB1_TOUCH, PushControlSurface.PUSH_KNOB1_TOUCH, new KnobRowTouchModeCommand<> (0, this.model, surface));
-        this.addNoteCommand (TriggerCommandID.KNOB2_TOUCH, PushControlSurface.PUSH_KNOB2_TOUCH, new KnobRowTouchModeCommand<> (1, this.model, surface));
-        this.addNoteCommand (TriggerCommandID.KNOB3_TOUCH, PushControlSurface.PUSH_KNOB3_TOUCH, new KnobRowTouchModeCommand<> (2, this.model, surface));
-        this.addNoteCommand (TriggerCommandID.KNOB4_TOUCH, PushControlSurface.PUSH_KNOB4_TOUCH, new KnobRowTouchModeCommand<> (3, this.model, surface));
-        this.addNoteCommand (TriggerCommandID.KNOB5_TOUCH, PushControlSurface.PUSH_KNOB5_TOUCH, new KnobRowTouchModeCommand<> (4, this.model, surface));
-        this.addNoteCommand (TriggerCommandID.KNOB6_TOUCH, PushControlSurface.PUSH_KNOB6_TOUCH, new KnobRowTouchModeCommand<> (5, this.model, surface));
-        this.addNoteCommand (TriggerCommandID.KNOB7_TOUCH, PushControlSurface.PUSH_KNOB7_TOUCH, new KnobRowTouchModeCommand<> (6, this.model, surface));
-        this.addNoteCommand (TriggerCommandID.KNOB8_TOUCH, PushControlSurface.PUSH_KNOB8_TOUCH, new KnobRowTouchModeCommand<> (7, this.model, surface));
-        this.addNoteCommand (TriggerCommandID.TEMPO_TOUCH, PushControlSurface.PUSH_SMALL_KNOB1_TOUCH, new SmallKnobTouchCommand (this.model, surface, true));
-        this.addNoteCommand (TriggerCommandID.PLAYCURSOR_TOUCH, PushControlSurface.PUSH_SMALL_KNOB2_TOUCH, new SmallKnobTouchCommand (this.model, surface, false));
-        this.addNoteCommand (TriggerCommandID.CONFIGURE_PITCHBEND, PushControlSurface.PUSH_RIBBON_TOUCH, new ConfigurePitchbendCommand (this.model, surface));
-        this.addNoteCommand (TriggerCommandID.MASTERTRACK_TOUCH, PushControlSurface.PUSH_KNOB9_TOUCH, new MastertrackTouchCommand (this.model, surface));
+        final IHwRelativeKnob knobTempo = this.addRelativeKnob (ContinuousID.TEMPO, "Tempo", new RasteredKnobCommand (this.model, surface), PushControlSurface.PUSH_SMALL_KNOB1);
+        knobTempo.bindTouch (new SmallKnobTouchCommand (this.model, surface, true), input, BindType.NOTE, PushControlSurface.PUSH_SMALL_KNOB1_TOUCH);
+
+        final IHwRelativeKnob knobPlayPosition = this.addRelativeKnob (ContinuousID.PLAY_POSITION, "Play Position", new PlayPositionCommand<> (this.model, surface), PushControlSurface.PUSH_SMALL_KNOB2);
+        knobPlayPosition.bindTouch (new SmallKnobTouchCommand (this.model, surface, false), input, BindType.NOTE, PushControlSurface.PUSH_SMALL_KNOB2_TOUCH);
 
         final ViewManager viewManager = surface.getViewManager ();
-        viewManager.registerPitchbendCommand (new PitchbendCommand (this.model, surface));
 
         final Views [] views =
         {
@@ -621,7 +593,253 @@ public class PushControllerSetup extends AbstractControllerSetup<PushControlSurf
             view.registerAftertouchCommand (new AftertouchAbstractViewCommand<> (view, this.model, surface));
         }
 
-        viewManager.getView (Views.SESSION).registerPitchbendCommand (new PitchbendSessionCommand (this.model, surface));
+        final IHwFader touchstrip = this.addFader (ContinuousID.TOUCHSTRIP, "Touchstrip", new TouchstripCommand (this.model, surface));
+        touchstrip.bindTouch (new ConfigurePitchbendCommand (this.model, surface), input, BindType.NOTE, PushControlSurface.PUSH_RIBBON_TOUCH);
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    protected void layoutControls ()
+    {
+        final PushControlSurface surface = this.getSurface ();
+
+        surface.getButton (ButtonID.PAD1).setBounds (33.25, 141.75, 12.75, 10.0);
+        surface.getButton (ButtonID.PAD2).setBounds (48.75, 141.75, 12.75, 10.0);
+        surface.getButton (ButtonID.PAD3).setBounds (64.5, 141.75, 12.75, 10.0);
+        surface.getButton (ButtonID.PAD4).setBounds (80.0, 141.75, 12.75, 10.0);
+        surface.getButton (ButtonID.PAD5).setBounds (95.5, 141.75, 12.75, 10.0);
+        surface.getButton (ButtonID.PAD6).setBounds (110.75, 141.75, 12.75, 10.0);
+        surface.getButton (ButtonID.PAD7).setBounds (126.75, 141.75, 12.75, 10.0);
+        surface.getButton (ButtonID.PAD8).setBounds (142.75, 141.75, 12.75, 10.0);
+        surface.getButton (ButtonID.PAD9).setBounds (33.25, 130.0, 12.75, 10.0);
+        surface.getButton (ButtonID.PAD10).setBounds (48.75, 130.0, 12.75, 10.0);
+        surface.getButton (ButtonID.PAD11).setBounds (64.5, 130.0, 12.75, 10.0);
+        surface.getButton (ButtonID.PAD12).setBounds (80.0, 130.0, 12.75, 10.0);
+        surface.getButton (ButtonID.PAD13).setBounds (95.5, 130.0, 12.75, 10.0);
+        surface.getButton (ButtonID.PAD14).setBounds (110.75, 130.0, 12.75, 10.0);
+        surface.getButton (ButtonID.PAD15).setBounds (126.75, 130.0, 12.75, 10.0);
+        surface.getButton (ButtonID.PAD16).setBounds (142.75, 130.0, 12.75, 10.0);
+        surface.getButton (ButtonID.PAD17).setBounds (33.25, 118.25, 12.75, 10.0);
+        surface.getButton (ButtonID.PAD18).setBounds (48.75, 118.25, 12.75, 10.0);
+        surface.getButton (ButtonID.PAD19).setBounds (64.5, 118.25, 12.75, 10.0);
+        surface.getButton (ButtonID.PAD20).setBounds (80.0, 118.25, 12.75, 10.0);
+        surface.getButton (ButtonID.PAD21).setBounds (95.5, 118.25, 12.75, 10.0);
+        surface.getButton (ButtonID.PAD22).setBounds (110.75, 118.25, 12.75, 10.0);
+        surface.getButton (ButtonID.PAD23).setBounds (126.75, 118.25, 12.75, 10.0);
+        surface.getButton (ButtonID.PAD24).setBounds (142.75, 118.25, 12.75, 10.0);
+        surface.getButton (ButtonID.PAD25).setBounds (33.25, 105.75, 12.75, 10.0);
+        surface.getButton (ButtonID.PAD26).setBounds (48.75, 105.75, 12.75, 10.0);
+        surface.getButton (ButtonID.PAD27).setBounds (64.5, 105.75, 12.75, 10.0);
+        surface.getButton (ButtonID.PAD28).setBounds (80.0, 105.75, 12.75, 10.0);
+        surface.getButton (ButtonID.PAD29).setBounds (95.5, 105.75, 12.75, 10.0);
+        surface.getButton (ButtonID.PAD30).setBounds (110.75, 105.75, 12.75, 10.0);
+        surface.getButton (ButtonID.PAD31).setBounds (126.75, 105.75, 12.75, 10.0);
+        surface.getButton (ButtonID.PAD32).setBounds (142.75, 105.75, 12.75, 10.0);
+        surface.getButton (ButtonID.PAD33).setBounds (33.25, 93.75, 12.75, 10.0);
+        surface.getButton (ButtonID.PAD34).setBounds (48.75, 93.75, 12.75, 10.0);
+        surface.getButton (ButtonID.PAD35).setBounds (64.5, 93.75, 12.75, 10.0);
+        surface.getButton (ButtonID.PAD36).setBounds (80.0, 93.75, 12.75, 10.0);
+        surface.getButton (ButtonID.PAD37).setBounds (95.5, 93.75, 12.75, 10.0);
+        surface.getButton (ButtonID.PAD38).setBounds (110.75, 93.75, 12.75, 10.0);
+        surface.getButton (ButtonID.PAD39).setBounds (126.75, 93.75, 12.75, 10.0);
+        surface.getButton (ButtonID.PAD40).setBounds (142.75, 93.75, 12.75, 10.0);
+        surface.getButton (ButtonID.PAD41).setBounds (33.25, 82.0, 12.75, 10.0);
+        surface.getButton (ButtonID.PAD42).setBounds (48.75, 82.0, 12.75, 10.0);
+        surface.getButton (ButtonID.PAD43).setBounds (64.5, 82.0, 12.75, 10.0);
+        surface.getButton (ButtonID.PAD44).setBounds (80.0, 82.0, 12.75, 10.0);
+        surface.getButton (ButtonID.PAD45).setBounds (95.5, 82.0, 12.75, 10.0);
+        surface.getButton (ButtonID.PAD46).setBounds (110.75, 82.0, 12.75, 10.0);
+        surface.getButton (ButtonID.PAD47).setBounds (126.75, 82.0, 12.75, 10.0);
+        surface.getButton (ButtonID.PAD48).setBounds (142.75, 82.0, 12.75, 10.0);
+        surface.getButton (ButtonID.PAD49).setBounds (33.25, 70.75, 12.75, 10.0);
+        surface.getButton (ButtonID.PAD50).setBounds (48.75, 70.75, 12.75, 10.0);
+        surface.getButton (ButtonID.PAD51).setBounds (64.5, 70.75, 12.75, 10.0);
+        surface.getButton (ButtonID.PAD52).setBounds (80.0, 70.75, 12.75, 10.0);
+        surface.getButton (ButtonID.PAD53).setBounds (95.5, 70.75, 12.75, 10.0);
+        surface.getButton (ButtonID.PAD54).setBounds (110.75, 70.75, 12.75, 10.0);
+        surface.getButton (ButtonID.PAD55).setBounds (126.75, 70.75, 12.75, 10.0);
+        surface.getButton (ButtonID.PAD56).setBounds (142.75, 70.75, 12.75, 10.0);
+        surface.getButton (ButtonID.PAD57).setBounds (33.25, 59.25, 12.75, 10.0);
+        surface.getButton (ButtonID.PAD58).setBounds (48.75, 59.25, 12.75, 10.0);
+        surface.getButton (ButtonID.PAD59).setBounds (64.5, 59.25, 12.75, 10.0);
+        surface.getButton (ButtonID.PAD60).setBounds (80.0, 59.25, 12.75, 10.0);
+        surface.getButton (ButtonID.PAD61).setBounds (95.5, 59.25, 12.75, 10.0);
+        surface.getButton (ButtonID.PAD62).setBounds (110.75, 59.25, 12.75, 10.0);
+        surface.getButton (ButtonID.PAD63).setBounds (126.75, 59.25, 12.75, 10.0);
+        surface.getButton (ButtonID.PAD64).setBounds (142.75, 59.25, 12.75, 10.0);
+
+        if (this.isPush2)
+        {
+            surface.getGraphicsDisplay ().getHardwareDisplay ().setBounds (32.75, 28.0, 123.5, 21.0);
+
+            surface.getButton (ButtonID.PLAY).setBounds (4.75, 142.75, 10.0, 8.5);
+            surface.getButton (ButtonID.RECORD).setBounds (4.75, 132.25, 10.0, 8.5);
+            surface.getButton (ButtonID.NEW).setBounds (4.75, 121.75, 10.0, 8.5);
+            surface.getButton (ButtonID.FIXED_LENGTH).setBounds (4.75, 90.25, 10.0, 8.5);
+            surface.getButton (ButtonID.DUPLICATE).setBounds (4.75, 111.25, 10.0, 8.5);
+            surface.getButton (ButtonID.QUANTIZE).setBounds (4.75, 79.75, 10.0, 8.5);
+            surface.getButton (ButtonID.DELETE).setBounds (4.5, 28.25, 10.0, 10.0);
+            surface.getButton (ButtonID.DOUBLE).setBounds (4.75, 69.25, 10.0, 8.5);
+            surface.getButton (ButtonID.UNDO).setBounds (4.5, 39.5, 10.0, 10.0);
+            surface.getButton (ButtonID.AUTOMATION).setBounds (4.75, 100.75, 10.0, 8.5);
+            surface.getButton (ButtonID.TRACK).setBounds (185.5, 30.0, 10.0, 8.75);
+            surface.getButton (ButtonID.DEVICE).setBounds (173.5, 30.0, 10.0, 8.75);
+            surface.getButton (ButtonID.BROWSE).setBounds (173.5, 40.75, 10.0, 8.75);
+            surface.getButton (ButtonID.CLIP).setBounds (185.5, 40.75, 10.0, 8.75);
+
+            surface.getButton (ButtonID.ROW1_1).setBounds (33.5, 51.25, 13.0, 5.5);
+            surface.getButton (ButtonID.ROW2_1).setBounds (34.0, 20.25, 13.0, 5.5);
+            surface.getButton (ButtonID.SCENE1).setBounds (159.75, 59.25, 10.0, 10.0);
+            surface.getButton (ButtonID.ROW1_2).setBounds (49.0, 51.25, 13.0, 5.5);
+            surface.getButton (ButtonID.ROW2_2).setBounds (49.5, 20.25, 13.0, 5.5);
+            surface.getButton (ButtonID.SCENE2).setBounds (159.75, 70.75, 10.0, 10.0);
+            surface.getButton (ButtonID.ROW1_3).setBounds (64.75, 51.25, 13.0, 5.5);
+            surface.getButton (ButtonID.ROW2_3).setBounds (65.25, 20.25, 13.0, 5.5);
+            surface.getButton (ButtonID.SCENE3).setBounds (159.75, 82.0, 10.0, 10.0);
+            surface.getButton (ButtonID.ROW1_4).setBounds (80.25, 51.25, 13.0, 5.5);
+            surface.getButton (ButtonID.ROW2_4).setBounds (80.75, 20.25, 13.0, 5.5);
+            surface.getButton (ButtonID.SCENE4).setBounds (159.75, 93.75, 10.0, 10.0);
+            surface.getButton (ButtonID.ROW1_5).setBounds (95.75, 51.25, 13.0, 5.5);
+            surface.getButton (ButtonID.ROW2_5).setBounds (96.25, 20.25, 13.0, 5.5);
+            surface.getButton (ButtonID.SCENE5).setBounds (159.75, 105.75, 10.0, 10.0);
+            surface.getButton (ButtonID.ROW1_6).setBounds (111.25, 51.25, 13.0, 5.5);
+            surface.getButton (ButtonID.ROW2_6).setBounds (111.75, 20.25, 13.0, 5.5);
+            surface.getButton (ButtonID.SCENE6).setBounds (159.75, 118.25, 10.0, 10.0);
+            surface.getButton (ButtonID.ROW1_7).setBounds (127.0, 51.25, 13.0, 5.5);
+            surface.getButton (ButtonID.ROW2_7).setBounds (127.5, 20.25, 13.0, 5.5);
+            surface.getButton (ButtonID.SCENE7).setBounds (159.75, 130.0, 10.0, 10.0);
+            surface.getButton (ButtonID.ROW1_8).setBounds (142.5, 51.25, 13.0, 5.5);
+            surface.getButton (ButtonID.ROW2_8).setBounds (143.0, 20.25, 13.0, 5.5);
+            surface.getButton (ButtonID.SCENE8).setBounds (159.75, 141.75, 10.0, 10.0);
+
+            surface.getButton (ButtonID.SHIFT).setBounds (173.5, 145.0, 10.0, 6.0);
+            surface.getButton (ButtonID.SELECT).setBounds (185.5, 145.0, 10.0, 6.0);
+            surface.getButton (ButtonID.TAP_TEMPO).setBounds (4.5, 20.25, 11.25, 5.5);
+            surface.getButton (ButtonID.METRONOME).setBounds (17.5, 20.25, 11.25, 5.5);
+            surface.getButton (ButtonID.MASTERTRACK).setBounds (159.75, 51.5, 10.0, 5.0);
+            surface.getButton (ButtonID.PAGE_LEFT).setBounds (173.0, 131.0, 10.0, 6.25);
+            surface.getButton (ButtonID.PAGE_RIGHT).setBounds (185.75, 131.0, 10.0, 6.25);
+            surface.getButton (ButtonID.MUTE).setBounds (4.5, 51.0, 8.25, 5.5);
+            surface.getButton (ButtonID.SOLO).setBounds (12.5, 51.0, 8.25, 5.5);
+            surface.getButton (ButtonID.SCALES).setBounds (173.5, 105.75, 10.0, 6.25);
+            surface.getButton (ButtonID.ACCENT).setBounds (185.5, 93.75, 10.0, 6.25);
+            surface.getButton (ButtonID.ADD_EFFECT).setBounds (160.0, 30.0, 10.0, 8.75);
+            surface.getButton (ButtonID.ADD_TRACK).setBounds (160.0, 40.75, 10.0, 8.75);
+            surface.getButton (ButtonID.NOTE).setBounds (173.5, 113.75, 10.0, 6.25);
+            surface.getButton (ButtonID.ARROW_DOWN).setBounds (181.5, 61.75, 6.0, 9.25);
+            surface.getButton (ButtonID.ARROW_UP).setBounds (181.5, 51.75, 6.0, 9.25);
+            surface.getButton (ButtonID.ARROW_LEFT).setBounds (173.5, 59.0, 7.25, 5.75);
+            surface.getButton (ButtonID.ARROW_RIGHT).setBounds (187.75, 58.75, 7.25, 5.75);
+            surface.getButton (ButtonID.OCTAVE_DOWN).setBounds (180.25, 137.25, 10.0, 6.25);
+            surface.getButton (ButtonID.OCTAVE_UP).setBounds (179.75, 124.5, 10.0, 6.25);
+            surface.getButton (ButtonID.LAYOUT).setBounds (185.5, 105.75, 10.0, 6.25);
+            surface.getButton (ButtonID.SETUP).setBounds (173.5, 20.75, 10.0, 6.25);
+            surface.getButton (ButtonID.STOP_CLIP).setBounds (21.0, 51.0, 8.25, 5.5);
+            surface.getButton (ButtonID.SESSION).setBounds (185.5, 113.75, 10.0, 6.25);
+            surface.getButton (ButtonID.REPEAT).setBounds (173.5, 93.75, 10.0, 6.25);
+            surface.getButton (ButtonID.CONVERT).setBounds (4.75, 58.75, 10.0, 8.5);
+            surface.getButton (ButtonID.USER).setBounds (185.5, 20.5, 10.0, 6.25);
+            surface.getButton (ButtonID.FOOTSWITCH2).setBounds (160.0, 1.0, 12.0, 8.25);
+
+            surface.getContinuous (ContinuousID.KNOB1).setBounds (34.75, 5.75, 10.0, 10.0);
+            surface.getContinuous (ContinuousID.KNOB2).setBounds (50.25, 5.75, 10.0, 10.0);
+            surface.getContinuous (ContinuousID.KNOB3).setBounds (65.75, 5.75, 10.0, 10.0);
+            surface.getContinuous (ContinuousID.KNOB4).setBounds (81.25, 5.75, 10.0, 10.0);
+            surface.getContinuous (ContinuousID.KNOB5).setBounds (96.75, 5.75, 10.0, 10.0);
+            surface.getContinuous (ContinuousID.KNOB6).setBounds (112.25, 5.75, 10.0, 10.0);
+            surface.getContinuous (ContinuousID.KNOB7).setBounds (127.75, 5.75, 10.0, 10.0);
+            surface.getContinuous (ContinuousID.KNOB8).setBounds (143.25, 5.75, 10.0, 10.0);
+            surface.getContinuous (ContinuousID.MASTER_KNOB).setBounds (180.0, 5.75, 10.0, 10.0);
+
+            surface.getContinuous (ContinuousID.TEMPO).setBounds (4.0, 5.75, 10.0, 10.0);
+            surface.getContinuous (ContinuousID.PLAY_POSITION).setBounds (17.75, 5.75, 10.0, 10.0);
+            surface.getContinuous (ContinuousID.TOUCHSTRIP).setBounds (17.75, 58.5, 12.0, 93.0);
+        }
+        else
+        {
+            surface.getTextDisplay ().getHardwareDisplay ().setBounds (32.5, 23.25, 123.75, 17.0);
+
+            surface.getButton (ButtonID.SETUP).setBounds (185.5, 58.0, 10.0, 6.25);
+            surface.getButton (ButtonID.ACCENT).setBounds (185.38487435513716, 65.78321712343, 10.0, 6.366389099167296);
+            surface.getButton (ButtonID.ADD_EFFECT).setBounds (174.33869721660602, 93.94370160488351, 10.0, 5.912187736563206);
+            surface.getButton (ButtonID.ADD_TRACK).setBounds (185.38487435513716, 93.94370160488351, 10.0, 5.912187736563206);
+            surface.getButton (ButtonID.ARROW_DOWN).setBounds (182.32355717118574, 135.12462514765426, 5.912187736563204, 9.242997728993183);
+            surface.getButton (ButtonID.ARROW_LEFT).setBounds (174.33869721660602, 132.24801651782818, 7.274791824375465, 5.760787282361847);
+            surface.getButton (ButtonID.ARROW_RIGHT).setBounds (188.60970402962622, 132.0966160636268, 7.274791824375465, 5.760787282361847);
+            surface.getButton (ButtonID.ARROW_UP).setBounds (182.32355717118574, 124.9807947161627, 5.912187736563204, 9.242997728993183);
+            surface.getButton (ButtonID.AUTOMATION).setBounds (3.9828477685945423, 101.75094041477499, 10.0, 6.0);
+            surface.getButton (ButtonID.BROWSE).setBounds (185.38487435513716, 32.631962620823586, 10.0, 6.0);
+            surface.getButton (ButtonID.CLIP).setBounds (185.38487435513716, 24.796891814839974, 10.0, 6.0);
+            surface.getButton (ButtonID.DELETE).setBounds (3.9828477685945423, 65.86767055416846, 10.0, 6.0);
+            surface.getButton (ButtonID.DEVICE).setBounds (174.11462454438796, 32.631962620823586, 10.0, 6.0);
+            surface.getButton (ButtonID.DOUBLE).setBounds (3.9828477685945423, 73.94073976052265, 10.0, 6.0);
+            surface.getButton (ButtonID.DUPLICATE).setBounds (3.9828477685945423, 108.95374891266061, 10.0, 6.0);
+            surface.getButton (ButtonID.FIXED_LENGTH).setBounds (3.9828477685945423, 93.76485835884236, 10.0, 6.0);
+            surface.getButton (ButtonID.MASTERTRACK).setBounds (159.75883347701458, 44.09358805454295, 10.0, 5.003785011355033);
+            surface.getButton (ButtonID.METRONOME).setBounds (3.9828477685945423, 33.49555626044754, 10.0, 5.003785011355033);
+            surface.getButton (ButtonID.MUTE).setBounds (174.11462454438796, 50.945972611696554, 10.0, 6.366389099167296);
+            surface.getButton (ButtonID.NEW).setBounds (3.9828477685945423, 117.27727105546369, 10.0, 10.0);
+            surface.getButton (ButtonID.NOTE).setBounds (174.33869721660602, 101.96792567755568, 10.0, 5.912187736563206);
+            surface.getButton (ButtonID.OCTAVE_DOWN).setBounds (174.11462454438796, 73.35323983349807, 10.0, 6.366389099167296);
+            surface.getButton (ButtonID.OCTAVE_UP).setBounds (185.38487435513716, 73.35323983349807, 10.0, 6.366389099167296);
+            surface.getButton (ButtonID.PAGE_LEFT).setBounds (174.11462454438796, 44.09358805454292, 10.0, 6.366389099167296);
+            surface.getButton (ButtonID.PAGE_RIGHT).setBounds (185.38487435513716, 44.09358805454292, 10.0, 6.366389099167296);
+            surface.getButton (ButtonID.PAN_SEND).setBounds (185.38487435513716, 17.09278823980427, 10.0, 6.0);
+            surface.getButton (ButtonID.PLAY).setBounds (3.9828477685945423, 141.5252797892068, 10.0, 10.0);
+            surface.getButton (ButtonID.QUANTIZE).setBounds (3.9828477685945423, 81.7016671564154, 10.0, 6.0);
+            surface.getButton (ButtonID.RECORD).setBounds (3.9828477685945423, 129.39864829363117, 10.0, 10.0);
+            surface.getButton (ButtonID.REPEAT).setBounds (174.11462454438796, 65.78321712343, 10.0, 6.366389099167296);
+            surface.getButton (ButtonID.ROW1_1).setBounds (32.57639592970192, 43.44862211964502, 13.633610900832712, 5.457986373959121);
+            surface.getButton (ButtonID.ROW1_2).setBounds (48.17669873061028, 43.44862211964502, 13.633610900832712, 5.457986373959121);
+            surface.getButton (ButtonID.ROW1_3).setBounds (63.73763741342633, 43.44862211964502, 13.633610900832712, 5.457986373959121);
+            surface.getButton (ButtonID.ROW1_4).setBounds (79.10781152394877, 43.44862211964502, 13.633610900832712, 5.457986373959121);
+            surface.getButton (ButtonID.ROW1_5).setBounds (95.76791750426686, 43.44862211964502, 13.633610900832712, 5.457986373959121);
+            surface.getButton (ButtonID.ROW1_6).setBounds (110.68389025218505, 43.44862211964502, 13.633610900832712, 5.457986373959121);
+            surface.getButton (ButtonID.ROW1_7).setBounds (126.22060486232871, 43.44862211964502, 13.633610900832712, 5.457986373959121);
+            surface.getButton (ButtonID.ROW1_8).setBounds (141.97230811743864, 43.44862211964502, 13.633610900832712, 5.457986373959121);
+            surface.getButton (ButtonID.ROW2_1).setBounds (32.57639592970192, 51.6242466465187, 13.633610900832712, 5.457986373959121);
+            surface.getButton (ButtonID.ROW2_2).setBounds (48.17669873061028, 51.6242466465187, 13.633610900832712, 5.457986373959121);
+            surface.getButton (ButtonID.ROW2_3).setBounds (63.73763741342633, 51.6242466465187, 13.633610900832712, 5.457986373959121);
+            surface.getButton (ButtonID.ROW2_4).setBounds (79.10781152394877, 51.6242466465187, 13.633610900832712, 5.457986373959121);
+            surface.getButton (ButtonID.ROW2_5).setBounds (95.76791750426686, 51.6242466465187, 13.633610900832712, 5.457986373959121);
+            surface.getButton (ButtonID.ROW2_6).setBounds (110.68389025218505, 51.6242466465187, 13.633610900832712, 5.457986373959121);
+            surface.getButton (ButtonID.ROW2_7).setBounds (126.22060486232871, 51.6242466465187, 13.633610900832712, 5.457986373959121);
+            surface.getButton (ButtonID.ROW2_8).setBounds (141.97230811743864, 51.6242466465187, 13.633610900832712, 5.457986373959121);
+            surface.getButton (ButtonID.SCALES).setBounds (174.11462454438796, 58.0617939591608, 10.0, 6.366389099167296);
+            surface.getButton (ButtonID.SCENE1).setBounds (159.75883347701458, 57.98306572297601, 10.0, 10.0);
+            surface.getButton (ButtonID.SCENE2).setBounds (159.75883347701458, 70.24650251328632, 10.0, 10.0);
+            surface.getButton (ButtonID.SCENE3).setBounds (159.75883347701458, 82.05573794099264, 10.0, 10.0);
+            surface.getButton (ButtonID.SCENE4).setBounds (159.75883347701458, 93.5621724602962, 10.0, 10.0);
+            surface.getButton (ButtonID.SCENE5).setBounds (159.75883347701458, 105.67420879640525, 10.0, 10.0);
+            surface.getButton (ButtonID.SCENE6).setBounds (159.75883347701458, 118.12841015900918, 10.0, 10.0);
+            surface.getButton (ButtonID.SCENE7).setBounds (159.75883347701458, 129.93764558671543, 10.0, 10.0);
+            surface.getButton (ButtonID.SCENE8).setBounds (159.75883347701458, 141.74688101442194, 10.0, 10.0);
+            surface.getButton (ButtonID.SELECT).setBounds (174.33869721660602, 109.80138517793415, 10.0, 5.912187736563206);
+            surface.getButton (ButtonID.SESSION).setBounds (185.38487435513716, 101.96792567755568, 10.0, 5.912187736563206);
+            surface.getButton (ButtonID.SHIFT).setBounds (185.38487435513716, 109.80138517793415, 10.0, 5.912187736563206);
+            surface.getButton (ButtonID.SOLO).setBounds (185.38487435513716, 50.945972611696554, 10.0, 6.366389099167296);
+            surface.getButton (ButtonID.STOP_CLIP).setBounds (159.75883347701458, 51.2487735200992, 10.0, 5.003785011355033);
+            surface.getButton (ButtonID.TAP_TEMPO).setBounds (3.9828477685945423, 21.837721286942664, 10.0, 10.0);
+            surface.getButton (ButtonID.TRACK).setBounds (174.11462454438796, 24.796891814839974, 10.0, 6.0);
+            surface.getButton (ButtonID.UNDO).setBounds (3.9828477685945423, 58.423360817640344, 10.0, 6.0);
+            surface.getButton (ButtonID.VOLUME).setBounds (174.11462454438796, 17.09278823980427, 10.0, 6.0);
+            surface.getButton (ButtonID.FOOTSWITCH2).setBounds (4.0, 6.0, 10.0, 10.0);
+
+            surface.getContinuous (ContinuousID.KNOB1).setBounds (34.771069269783915, 5.655526992287918, 10.0, 10.0);
+            surface.getContinuous (ContinuousID.KNOB2).setBounds (49.71638991176253, 5.655526992287918, 10.0, 10.0);
+            surface.getContinuous (ContinuousID.KNOB3).setBounds (65.9326061279787, 5.655526992287918, 10.0, 10.0);
+            surface.getContinuous (ContinuousID.KNOB4).setBounds (81.17584937122217, 5.655526992287918, 10.0, 10.0);
+            surface.getContinuous (ContinuousID.KNOB5).setBounds (97.9326061279789, 5.655526992287918, 10.0, 10.0);
+            surface.getContinuous (ContinuousID.KNOB6).setBounds (112.04752310150776, 5.655526992287918, 10.0, 10.0);
+            surface.getContinuous (ContinuousID.KNOB7).setBounds (128.21593830334197, 5.655526992287918, 10.0, 10.0);
+            surface.getContinuous (ContinuousID.KNOB8).setBounds (143.5578406169669, 5.655526992287918, 10.0, 10.0);
+            surface.getContinuous (ContinuousID.MASTER_KNOB).setBounds (159.75, 5.75, 10.0, 10.0);
+
+            surface.getContinuous (ContinuousID.TEMPO).setBounds (4.0, 43.5, 10.0, 10.0);
+            surface.getContinuous (ContinuousID.PLAY_POSITION).setBounds (17.75, 43.5, 10.0, 10.0);
+            surface.getContinuous (ContinuousID.TOUCHSTRIP).setBounds (17.75, 58.5, 12.0, 93.0);
+        }
     }
 
 
@@ -633,7 +851,7 @@ public class PushControllerSetup extends AbstractControllerSetup<PushControlSurf
         surface.getViewManager ().setActiveView (this.configuration.getDefaultNoteView ());
 
         surface.sendPressureMode (true);
-        surface.getOutput ().sendSysex (DeviceInquiry.createQuery ());
+        surface.getMidiOutput ().sendSysex (DeviceInquiry.createQuery ());
 
         if (this.isPush2)
             surface.updateColorPalette ();

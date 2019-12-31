@@ -20,11 +20,11 @@ import de.mossgrabers.controller.osc.protocol.OSCParser;
 import de.mossgrabers.controller.osc.protocol.OSCWriter;
 import de.mossgrabers.framework.configuration.ISettingsUI;
 import de.mossgrabers.framework.controller.AbstractControllerSetup;
-import de.mossgrabers.framework.controller.DefaultValueChanger;
 import de.mossgrabers.framework.controller.IControlSurface;
 import de.mossgrabers.framework.controller.ISetupFactory;
 import de.mossgrabers.framework.controller.color.ColorManager;
 import de.mossgrabers.framework.controller.display.DummyDisplay;
+import de.mossgrabers.framework.controller.valuechanger.DefaultValueChanger;
 import de.mossgrabers.framework.daw.IHost;
 import de.mossgrabers.framework.daw.ITrackBank;
 import de.mossgrabers.framework.daw.ModelSetup;
@@ -67,7 +67,7 @@ public class OSCControllerSetup extends AbstractControllerSetup<IControlSurface<
 
         this.colorManager = new ColorManager ();
         this.valueChanger = new DefaultValueChanger (128, 1, 0.5);
-        this.configuration = new OSCConfiguration (host, this.valueChanger);
+        this.configuration = new OSCConfiguration (host, this.valueChanger, factory.getArpeggiatorModes ());
     }
 
 
@@ -157,6 +157,7 @@ public class OSCControllerSetup extends AbstractControllerSetup<IControlSurface<
         this.keyManager = new KeyManager (this.model, surface.getPadGrid ());
 
         // Send OSC messages
+        // TODO Bugfix required: https://github.com/teotigraphix/Framework4Bitwig/issues/245
         final IOpenSoundControlClient oscClient = this.host.connectToOSCServer (this.configuration.getSendHost (), this.configuration.getSendPort ());
         this.writer = new OSCWriter (this.host, this.model, oscClient, this.configuration);
 

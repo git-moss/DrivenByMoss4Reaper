@@ -37,7 +37,7 @@ public class MuteCommand extends AbstractTriggerCommand<PushControlSurface, Push
 
     /** {@inheritDoc} */
     @Override
-    public void execute (final ButtonEvent event)
+    public void execute (final ButtonEvent event, final int velocity)
     {
         // Update for key combinations
         this.surface.getViewManager ().getActiveView ().updateNoteMapping ();
@@ -45,7 +45,7 @@ public class MuteCommand extends AbstractTriggerCommand<PushControlSurface, Push
         if (this.surface.isSelectPressed ())
         {
             if (event == ButtonEvent.UP)
-                this.model.clearMute ();
+                this.model.getProject ().clearMute ();
             return;
         }
 

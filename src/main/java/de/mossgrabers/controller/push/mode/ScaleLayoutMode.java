@@ -6,6 +6,7 @@ package de.mossgrabers.controller.push.mode;
 
 import de.mossgrabers.controller.push.controller.Push1Display;
 import de.mossgrabers.controller.push.controller.PushControlSurface;
+import de.mossgrabers.framework.controller.ButtonID;
 import de.mossgrabers.framework.controller.display.IGraphicDisplay;
 import de.mossgrabers.framework.controller.display.ITextDisplay;
 import de.mossgrabers.framework.daw.IModel;
@@ -60,13 +61,19 @@ public class ScaleLayoutMode extends BaseMode
 
     /** {@inheritDoc} */
     @Override
-    protected String getFirstRowColorID (final int index)
+    public String getButtonColorID (final ButtonID buttonID)
     {
-        final int sl = this.scales.getScaleLayout ().ordinal ();
-        final int pos = sl / 2;
-        if (index < ScaleLayout.getNames ().length / 2)
-            return pos == index ? AbstractMode.BUTTON_COLOR_HI : AbstractMode.BUTTON_COLOR_ON;
-        return index == 7 ? AbstractMode.BUTTON_COLOR_ON : AbstractMode.BUTTON_COLOR_OFF;
+        final int index = this.isButtonRow (0, buttonID);
+        if (index >= 0)
+        {
+            final int sl = this.scales.getScaleLayout ().ordinal ();
+            final int pos = sl / 2;
+            if (index < ScaleLayout.getNames ().length / 2)
+                return pos == index ? AbstractMode.BUTTON_COLOR_HI : AbstractMode.BUTTON_COLOR_ON;
+            return index == 7 ? AbstractMode.BUTTON_COLOR_ON : AbstractMode.BUTTON_COLOR_OFF;
+        }
+
+        return AbstractMode.BUTTON_COLOR_OFF;
     }
 
 

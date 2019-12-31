@@ -4,8 +4,8 @@
 
 package de.mossgrabers.framework.daw;
 
-import de.mossgrabers.framework.controller.IValueChanger;
 import de.mossgrabers.framework.controller.color.ColorManager;
+import de.mossgrabers.framework.controller.valuechanger.IValueChanger;
 import de.mossgrabers.framework.daw.data.IMasterTrack;
 import de.mossgrabers.framework.daw.data.ISlot;
 import de.mossgrabers.framework.daw.data.ITrack;
@@ -263,26 +263,6 @@ public interface IModel
      * @return The scene bank
      */
     ISceneBank createSceneBank (final int numScenes);
-
-
-    /**
-     * Check if any of the tracks is soloed.
-     *
-     * @return True if there is at least one soloed track
-     */
-    boolean hasSolo ();
-
-
-    /**
-     * Deactivate all solo states of all tracks.
-     */
-    void clearSolo ();
-
-
-    /**
-     * Deactivate all mute states of all tracks.
-     */
-    void clearMute ();
 
 
     /**

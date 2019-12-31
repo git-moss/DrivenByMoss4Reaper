@@ -4,7 +4,7 @@
 
 package de.mossgrabers.reaper.framework.daw;
 
-import de.mossgrabers.framework.daw.DAWColors;
+import de.mossgrabers.framework.daw.DAWColor;
 import de.mossgrabers.framework.daw.ILayerBank;
 import de.mossgrabers.framework.daw.ISceneBank;
 import de.mossgrabers.framework.daw.data.ILayer;
@@ -50,7 +50,7 @@ public class LayerBankImpl extends AbstractBankImpl<ILayer> implements ILayerBan
     @Override
     public String getSelectedChannelColorEntry ()
     {
-        return DAWColors.COLOR_OFF;
+        return DAWColor.COLOR_OFF.name ();
     }
 
 

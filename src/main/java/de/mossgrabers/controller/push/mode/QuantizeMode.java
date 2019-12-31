@@ -67,7 +67,7 @@ public class QuantizeMode extends BaseMode
     {
         if (isTouched && this.surface.isDeletePressed ())
         {
-            this.surface.setTriggerConsumed (this.surface.getTriggerId (ButtonID.DELETE));
+            this.surface.setTriggerConsumed (ButtonID.DELETE);
             if (index == 7)
                 this.surface.getConfiguration ().resetQuantizeAmount ();
         }
@@ -178,27 +178,31 @@ public class QuantizeMode extends BaseMode
 
     /** {@inheritDoc} */
     @Override
-    protected String getFirstRowColorID (final int index)
+    public String getButtonColorID (final ButtonID buttonID)
     {
-        final RecordQuantization [] values = RecordQuantization.values ();
-        final ITrack track = this.model.getSelectedTrack ();
-        final RecordQuantization recQuant = track == null ? RecordQuantization.RES_OFF : track.getRecordQuantizationGrid ();
-        if (index < values.length)
-            return values[index] == recQuant ? AbstractMode.BUTTON_COLOR_HI : AbstractMode.BUTTON_COLOR_ON;
-        if (index == 6)
-            return track != null && track.isRecordQuantizationNoteLength () ? AbstractMode.BUTTON_COLOR_HI : AbstractMode.BUTTON_COLOR_ON;
-        return AbstractMode.BUTTON_COLOR_OFF;
-    }
+        int index = this.isButtonRow (0, buttonID);
+        if (index >= 0)
+        {
+            final RecordQuantization [] values = RecordQuantization.values ();
+            final ITrack track = this.model.getSelectedTrack ();
+            final RecordQuantization recQuant = track == null ? RecordQuantization.RES_OFF : track.getRecordQuantizationGrid ();
+            if (index < values.length)
+                return values[index] == recQuant ? AbstractMode.BUTTON_COLOR_HI : AbstractMode.BUTTON_COLOR_ON;
+            if (index == 6)
+                return track != null && track.isRecordQuantizationNoteLength () ? AbstractMode.BUTTON_COLOR_HI : AbstractMode.BUTTON_COLOR_ON;
+            return AbstractMode.BUTTON_COLOR_OFF;
+        }
 
+        index = this.isButtonRow (1, buttonID);
+        if (index >= 0)
+        {
+            if (index == 0)
+                return AbstractMode.BUTTON_COLOR_HI;
+            if (index == 1)
+                return AbstractMode.BUTTON_COLOR_ON;
+            return AbstractMode.BUTTON_COLOR_OFF;
+        }
 
-    /** {@inheritDoc} */
-    @Override
-    protected String getSecondRowColorID (final int index)
-    {
-        if (index == 0)
-            return AbstractMode.BUTTON_COLOR_HI;
-        if (index == 1)
-            return AbstractMode.BUTTON_COLOR_ON;
         return AbstractMode.BUTTON_COLOR_OFF;
     }
 }

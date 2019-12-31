@@ -41,14 +41,14 @@ public class SelectNoteViewCommand extends AbstractTriggerCommand<LaunchpadContr
         super (model, surface);
 
         this.playSelect = new ViewMultiSelectCommand<> (model, surface, true, Views.PLAY, Views.PIANO, Views.DRUM, Views.DRUM4, Views.DRUM8, Views.DRUM64);
-        this.seqSelect = new ViewMultiSelectCommand<> (model, surface, true, Views.SEQUENCER, Views.RAINDROPS);
-        Collections.addAll (this.views, Views.PLAY, Views.PIANO, Views.DRUM, Views.DRUM4, Views.DRUM8, Views.DRUM64, Views.SEQUENCER, Views.RAINDROPS);
+        this.seqSelect = new ViewMultiSelectCommand<> (model, surface, true, Views.SEQUENCER, Views.POLY_SEQUENCER, Views.RAINDROPS);
+        Collections.addAll (this.views, Views.PLAY, Views.PIANO, Views.DRUM, Views.DRUM4, Views.DRUM8, Views.DRUM64, Views.SEQUENCER, Views.POLY_SEQUENCER, Views.RAINDROPS);
     }
 
 
     /** {@inheritDoc} */
     @Override
-    public void execute (final ButtonEvent event)
+    public void execute (final ButtonEvent event, final int velocity)
     {
         if (event != ButtonEvent.DOWN)
             return;

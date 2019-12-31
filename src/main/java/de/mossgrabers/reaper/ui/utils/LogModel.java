@@ -15,8 +15,9 @@ import java.io.StringWriter;
  */
 public class LogModel
 {
-    private final Object updateLock = new Object ();
-    private JTextArea    logMessage;
+    private final Object  updateLock = new Object ();
+    private JTextArea     logMessage;
+    private StringBuilder buffer     = new StringBuilder ();
 
 
     /**
@@ -38,6 +39,8 @@ public class LogModel
         synchronized (this.updateLock)
         {
             this.logMessage = loggingTextArea;
+            this.logMessage.append (this.buffer.toString ());
+            this.buffer.setLength (0);
         }
     }
 
@@ -67,7 +70,9 @@ public class LogModel
         SafeRunLater.execute (null, () -> {
             synchronized (this.updateLock)
             {
-                if (this.logMessage != null)
+                if (this.logMessage == null)
+                    this.buffer.append (message).append ("\n");
+                else
                 {
                     this.logMessage.append (message);
                     this.logMessage.append ("\n");
@@ -85,7 +90,9 @@ public class LogModel
     {
         synchronized (this.updateLock)
         {
-            if (this.logMessage != null)
+            if (this.logMessage == null)
+                this.buffer.setLength (0);
+            else
                 this.logMessage.setText ("");
         }
     }

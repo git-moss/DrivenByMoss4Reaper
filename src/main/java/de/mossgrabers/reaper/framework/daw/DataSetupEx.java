@@ -4,8 +4,8 @@
 
 package de.mossgrabers.reaper.framework.daw;
 
-import de.mossgrabers.framework.controller.IValueChanger;
 import de.mossgrabers.framework.controller.color.ColorManager;
+import de.mossgrabers.framework.controller.valuechanger.IValueChanger;
 import de.mossgrabers.framework.daw.DataSetup;
 import de.mossgrabers.framework.daw.IHost;
 import de.mossgrabers.reaper.communication.MessageSender;

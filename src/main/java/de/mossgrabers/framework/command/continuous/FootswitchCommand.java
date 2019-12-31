@@ -4,8 +4,7 @@
 
 package de.mossgrabers.framework.command.continuous;
 
-import de.mossgrabers.framework.command.core.AbstractContinuousCommand;
-import de.mossgrabers.framework.command.core.TriggerCommand;
+import de.mossgrabers.framework.command.core.AbstractTriggerCommand;
 import de.mossgrabers.framework.configuration.AbstractConfiguration;
 import de.mossgrabers.framework.configuration.Configuration;
 import de.mossgrabers.framework.controller.ButtonID;
@@ -27,7 +26,7 @@ import de.mossgrabers.framework.utils.ButtonEvent;
  *
  * @author J&uuml;rgen Mo&szlig;graber
  */
-public class FootswitchCommand<S extends IControlSurface<C>, C extends Configuration> extends AbstractContinuousCommand<S, C> implements TriggerCommand
+public class FootswitchCommand<S extends IControlSurface<C>, C extends Configuration> extends AbstractTriggerCommand<S, C>
 {
     /**
      * Constructor.
@@ -43,15 +42,7 @@ public class FootswitchCommand<S extends IControlSurface<C>, C extends Configura
 
     /** {@inheritDoc} */
     @Override
-    public void execute (final int value)
-    {
-        this.execute (value == 127 ? ButtonEvent.DOWN : ButtonEvent.UP);
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void execute (final ButtonEvent event)
+    public void execute (final ButtonEvent event, final int velocity)
     {
         if (this.handleViewCommand (event))
             return;

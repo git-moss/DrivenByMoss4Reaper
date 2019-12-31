@@ -5,10 +5,11 @@
 package de.mossgrabers.controller.slmkiii.view;
 
 import de.mossgrabers.controller.slmkiii.SLMkIIIConfiguration;
-import de.mossgrabers.controller.slmkiii.controller.SLMkIIIColors;
+import de.mossgrabers.controller.slmkiii.controller.SLMkIIIColorManager;
 import de.mossgrabers.controller.slmkiii.controller.SLMkIIIControlSurface;
-import de.mossgrabers.framework.controller.grid.PadGrid;
-import de.mossgrabers.framework.daw.DAWColors;
+import de.mossgrabers.framework.controller.ButtonID;
+import de.mossgrabers.framework.controller.grid.IPadGrid;
+import de.mossgrabers.framework.daw.DAWColor;
 import de.mossgrabers.framework.daw.ICursorDevice;
 import de.mossgrabers.framework.daw.IModel;
 import de.mossgrabers.framework.daw.INoteClip;
@@ -80,7 +81,7 @@ public class DrumView extends AbstractDrumView<SLMkIIIControlSurface, SLMkIIICon
     @Override
     public void drawGrid ()
     {
-        final PadGrid padGrid = this.surface.getPadGrid ();
+        final IPadGrid padGrid = this.surface.getPadGrid ();
         final ICursorDevice primary = this.model.getInstrumentDevice ();
         if (this.isPlayMode)
         {
@@ -135,50 +136,37 @@ public class DrumView extends AbstractDrumView<SLMkIIIControlSurface, SLMkIIICon
     private int getStepColor (final ICursorDevice primary)
     {
         if (this.selectedPad < 0)
-            return SLMkIIIColors.SLMKIII_BLACK;
+            return SLMkIIIColorManager.SLMKIII_BLACK;
 
         // If we cannot get the color from the drum pads use a default color
         if (!primary.getName ().equals ("Drum Machine"))
-            return SLMkIIIColors.SLMKIII_BLUE;
+            return SLMkIIIColorManager.SLMKIII_BLUE;
 
         // Exists and active?
         final IChannel drumPad = primary.getDrumPadBank ().getItem (this.selectedPad);
         if (!drumPad.doesExist () || !drumPad.isActivated ())
-            return SLMkIIIColors.SLMKIII_BLACK;
+            return SLMkIIIColorManager.SLMKIII_BLACK;
 
-        return this.model.getColorManager ().getColor (DAWColors.getColorIndex (drumPad.getColor ()));
+        return this.model.getColorManager ().getColorIndex (DAWColor.getColorIndex (drumPad.getColor ()));
     }
 
 
     private static int getSequencerPadColor (final int isSet, final boolean hilite, final int stepColor)
     {
         if (isSet > 0)
-            return hilite ? SLMkIIIColors.SLMKIII_GREEN : stepColor;
-        return hilite ? SLMkIIIColors.SLMKIII_GREEN : SLMkIIIColors.SLMKIII_BLACK;
+            return hilite ? SLMkIIIColorManager.SLMKIII_GREEN : stepColor;
+        return hilite ? SLMkIIIColorManager.SLMKIII_GREEN : SLMkIIIColorManager.SLMKIII_BLACK;
     }
 
 
     /** {@inheritDoc} */
     @Override
-    public void updateSceneButton (final int scene)
+    public void onButton (final ButtonID buttonID, final ButtonEvent event)
     {
-        if (scene == 0)
-            this.surface.updateTrigger (SLMkIIIControlSurface.MKIII_SCENE_1, this.isPlayMode ? SLMkIIIColors.SLMKIII_GREEN : SLMkIIIColors.SLMKIII_BLUE);
-        else
-        {
-            final int value = this.surface.getModeManager ().isActiveOrTempMode (Modes.GROOVE) ? SLMkIIIColors.SLMKIII_PINK : SLMkIIIColors.SLMKIII_DARK_GREY;
-            this.surface.updateTrigger (SLMkIIIControlSurface.MKIII_SCENE_2, this.isActive () ? value : SLMkIIIColors.SLMKIII_BLACK);
-        }
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void onScene (final int index, final ButtonEvent event)
-    {
-        if (event != ButtonEvent.DOWN)
+        if (!ButtonID.isSceneButton (buttonID) || event != ButtonEvent.DOWN)
             return;
-        if (index == 0)
+
+        if (buttonID == ButtonID.SCENE1)
         {
             this.isPlayMode = !this.isPlayMode;
             this.updateNoteMapping ();
@@ -205,5 +193,23 @@ public class DrumView extends AbstractDrumView<SLMkIIIControlSurface, SLMkIIICon
     public boolean isPlayMode ()
     {
         return this.isPlayMode;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public int getButtonColor (final ButtonID buttonID)
+    {
+        if (buttonID == ButtonID.SCENE1)
+            return this.isPlayMode ? SLMkIIIColorManager.SLMKIII_GREEN : SLMkIIIColorManager.SLMKIII_BLUE;
+
+        if (buttonID == ButtonID.SCENE2)
+        {
+            if (!this.isActive ())
+                return SLMkIIIColorManager.SLMKIII_BLACK;
+            return this.surface.getModeManager ().isActiveOrTempMode (Modes.GROOVE) ? SLMkIIIColorManager.SLMKIII_PINK : SLMkIIIColorManager.SLMKIII_DARK_GREY;
+        }
+
+        return super.getButtonColor (buttonID);
     }
 }

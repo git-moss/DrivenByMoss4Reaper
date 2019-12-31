@@ -4,9 +4,9 @@
 
 package de.mossgrabers.controller.beatstep.view;
 
-import de.mossgrabers.controller.beatstep.controller.BeatstepColors;
+import de.mossgrabers.controller.beatstep.controller.BeatstepColorManager;
 import de.mossgrabers.controller.beatstep.controller.BeatstepControlSurface;
-import de.mossgrabers.framework.controller.grid.PadGrid;
+import de.mossgrabers.framework.controller.grid.IPadGrid;
 import de.mossgrabers.framework.daw.ICursorDevice;
 import de.mossgrabers.framework.daw.IModel;
 import de.mossgrabers.framework.daw.INoteClip;
@@ -126,7 +126,7 @@ public class DrumView extends BaseSequencerView
     @Override
     public void drawGrid ()
     {
-        final PadGrid padGrid = this.surface.getPadGrid ();
+        final IPadGrid padGrid = this.surface.getPadGrid ();
         if (!this.model.canSelectedTrackHoldNotes ())
         {
             padGrid.turnOff ();
@@ -180,8 +180,8 @@ public class DrumView extends BaseSequencerView
     private static int getSequencerPadColor (final int isSet, final boolean hilite)
     {
         if (isSet > 0)
-            return hilite ? BeatstepColors.BEATSTEP_BUTTON_STATE_PINK : BeatstepColors.BEATSTEP_BUTTON_STATE_BLUE;
-        return hilite ? BeatstepColors.BEATSTEP_BUTTON_STATE_PINK : BeatstepColors.BEATSTEP_BUTTON_STATE_OFF;
+            return hilite ? BeatstepColorManager.BEATSTEP_BUTTON_STATE_PINK : BeatstepColorManager.BEATSTEP_BUTTON_STATE_BLUE;
+        return hilite ? BeatstepColorManager.BEATSTEP_BUTTON_STATE_PINK : BeatstepColorManager.BEATSTEP_BUTTON_STATE_OFF;
     }
 
 
@@ -190,18 +190,18 @@ public class DrumView extends BaseSequencerView
         final int offsetY = this.scales.getDrumOffset ();
         // Playing note?
         if (this.keyManager.isKeyPressed (offsetY + index))
-            return BeatstepColors.BEATSTEP_BUTTON_STATE_PINK;
+            return BeatstepColorManager.BEATSTEP_BUTTON_STATE_PINK;
         // Selected?
         if (this.selectedPad == index)
-            return BeatstepColors.BEATSTEP_BUTTON_STATE_RED;
+            return BeatstepColorManager.BEATSTEP_BUTTON_STATE_RED;
         // Exists and active?
         final IChannel drumPad = primary.getDrumPadBank ().getItem (index);
         if (!drumPad.doesExist () || !drumPad.isActivated ())
-            return BeatstepColors.BEATSTEP_BUTTON_STATE_OFF;
+            return BeatstepColorManager.BEATSTEP_BUTTON_STATE_OFF;
         // Muted or soloed?
         if (drumPad.isMute () || isSoloed && !drumPad.isSolo ())
-            return BeatstepColors.BEATSTEP_BUTTON_STATE_OFF;
-        return BeatstepColors.BEATSTEP_BUTTON_STATE_BLUE;
+            return BeatstepColorManager.BEATSTEP_BUTTON_STATE_OFF;
+        return BeatstepColorManager.BEATSTEP_BUTTON_STATE_BLUE;
     }
 
 

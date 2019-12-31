@@ -116,8 +116,11 @@ public class StepInfoImpl implements IStepInfo
     }
 
 
-    /** {@inheritDoc} */
-    @Override
+    /**
+     * Set that the note is currently edited.
+     *
+     * @param isEditing True if editing is happening
+     */
     public void setEditing (final boolean isEditing)
     {
         this.isEditing = isEditing;

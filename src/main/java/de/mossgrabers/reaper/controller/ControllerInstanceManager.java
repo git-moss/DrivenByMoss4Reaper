@@ -11,7 +11,6 @@ import de.mossgrabers.reaper.controller.apc.APC40mkIIControllerInstance;
 import de.mossgrabers.reaper.controller.apcmini.APCminiControllerInstance;
 import de.mossgrabers.reaper.controller.autocolor.AutoColorInstance;
 import de.mossgrabers.reaper.controller.beatstep.BeatstepControllerInstance;
-import de.mossgrabers.reaper.controller.beatstep.BeatstepProControllerInstance;
 import de.mossgrabers.reaper.controller.generic.GenericFlexiControllerInstance;
 import de.mossgrabers.reaper.controller.hui.HUIControllerInstance;
 import de.mossgrabers.reaper.controller.kontrol.mki.KontrolMkIS25ControllerInstance;
@@ -69,7 +68,6 @@ public class ControllerInstanceManager
         DEF_TO_CLASS.put (APC40mkIIControllerInstance.CONTROLLER_DEFINITION, APC40mkIIControllerInstance.class);
         DEF_TO_CLASS.put (APCminiControllerInstance.CONTROLLER_DEFINITION, APCminiControllerInstance.class);
         DEF_TO_CLASS.put (BeatstepControllerInstance.CONTROLLER_DEFINITION, BeatstepControllerInstance.class);
-        DEF_TO_CLASS.put (BeatstepProControllerInstance.CONTROLLER_DEFINITION, BeatstepProControllerInstance.class);
         DEF_TO_CLASS.put (GenericFlexiControllerInstance.CONTROLLER_DEFINITION, GenericFlexiControllerInstance.class);
         DEF_TO_CLASS.put (HUIControllerInstance.CONTROLLER_DEFINITION, HUIControllerInstance.class);
         DEF_TO_CLASS.put (KontrolMkIS25ControllerInstance.CONTROLLER_DEFINITION, KontrolMkIS25ControllerInstance.class);

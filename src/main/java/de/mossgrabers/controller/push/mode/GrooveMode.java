@@ -87,7 +87,7 @@ public class GrooveMode extends BaseMode
         final IParameter [] parameters = this.model.getGroove ().getParameters ();
         if (isTouched && this.surface.isDeletePressed ())
         {
-            this.surface.setTriggerConsumed (this.surface.getTriggerId (ButtonID.DELETE));
+            this.surface.setTriggerConsumed (ButtonID.DELETE);
             parameters[index - 2].resetValue ();
         }
 
@@ -149,12 +149,16 @@ public class GrooveMode extends BaseMode
 
     /** {@inheritDoc} */
     @Override
-    protected String getSecondRowColorID (final int index)
+    public String getButtonColorID (final ButtonID buttonID)
     {
-        if (index == 0)
-            return AbstractMode.BUTTON_COLOR_ON;
-        if (index == 1)
-            return AbstractMode.BUTTON_COLOR_HI;
+        final int index = this.isButtonRow (1, buttonID);
+        if (index >= 0)
+        {
+            if (index == 0)
+                return AbstractMode.BUTTON_COLOR_ON;
+            if (index == 1)
+                return AbstractMode.BUTTON_COLOR_HI;
+        }
         return AbstractMode.BUTTON_COLOR_OFF;
     }
 

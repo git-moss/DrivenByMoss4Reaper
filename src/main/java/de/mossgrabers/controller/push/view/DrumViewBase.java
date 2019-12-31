@@ -6,8 +6,10 @@ package de.mossgrabers.controller.push.view;
 
 import de.mossgrabers.controller.push.PushConfiguration;
 import de.mossgrabers.controller.push.controller.PushControlSurface;
+import de.mossgrabers.framework.controller.ButtonID;
 import de.mossgrabers.framework.daw.IModel;
 import de.mossgrabers.framework.daw.data.ITrack;
+import de.mossgrabers.framework.mode.AbstractMode;
 import de.mossgrabers.framework.utils.ButtonEvent;
 import de.mossgrabers.framework.view.AbstractDrumView;
 import de.mossgrabers.framework.view.AbstractSequencerView;
@@ -40,23 +42,23 @@ public abstract class DrumViewBase extends AbstractDrumView<PushControlSurface, 
 
     /** {@inheritDoc} */
     @Override
-    public void onScene (final int index, final ButtonEvent event)
+    public void onButton (final ButtonID buttonID, final ButtonEvent event)
     {
-        if (event != ButtonEvent.DOWN)
-            return;
-
-        if (!this.isActive ())
+        if (!ButtonID.isSceneButton (buttonID) || event != ButtonEvent.DOWN || !this.isActive ())
             return;
 
         if (this.surface.isShiftPressed ())
         {
             final ITrack selectedTrack = this.model.getSelectedTrack ();
             if (selectedTrack != null)
+            {
+                final int index = buttonID.ordinal () - ButtonID.SCENE1.ordinal ();
                 this.onLowerScene (index);
+            }
             return;
         }
 
-        super.onScene (index, event);
+        super.onButton (buttonID, event);
     }
 
 
@@ -73,8 +75,12 @@ public abstract class DrumViewBase extends AbstractDrumView<PushControlSurface, 
 
     /** {@inheritDoc} */
     @Override
-    public String getSceneButtonColor (final int scene)
+    public String getButtonColorID (final ButtonID buttonID)
     {
+        final int scene = buttonID.ordinal () - ButtonID.SCENE1.ordinal ();
+        if (scene < 0 || scene >= 8)
+            return AbstractMode.BUTTON_COLOR_OFF;
+
         if (this.surface.isShiftPressed ())
         {
             if (scene >= 4)
@@ -82,7 +88,7 @@ public abstract class DrumViewBase extends AbstractDrumView<PushControlSurface, 
             return this.updateLowerSceneButtons (scene);
         }
 
-        return super.getSceneButtonColor (scene);
+        return super.getButtonColorID (buttonID);
     }
 
 

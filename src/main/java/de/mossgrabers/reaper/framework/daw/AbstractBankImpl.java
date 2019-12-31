@@ -4,7 +4,7 @@
 
 package de.mossgrabers.reaper.framework.daw;
 
-import de.mossgrabers.framework.controller.IValueChanger;
+import de.mossgrabers.framework.controller.valuechanger.IValueChanger;
 import de.mossgrabers.framework.daw.AbstractBank;
 import de.mossgrabers.framework.daw.data.IItem;
 import de.mossgrabers.reaper.communication.MessageSender;

@@ -4,7 +4,7 @@
 
 package de.mossgrabers.reaper.framework.daw;
 
-import de.mossgrabers.framework.controller.hardware.ISurfaceFactory;
+import de.mossgrabers.framework.controller.hardware.IHwSurfaceFactory;
 import de.mossgrabers.framework.daw.IHost;
 import de.mossgrabers.framework.daw.IMemoryBlock;
 import de.mossgrabers.framework.daw.constants.EditCapability;
@@ -19,7 +19,7 @@ import de.mossgrabers.framework.usb.UsbException;
 import de.mossgrabers.framework.usb.UsbMatcher;
 import de.mossgrabers.reaper.framework.graphics.BitmapImpl;
 import de.mossgrabers.reaper.framework.graphics.SVGImage;
-import de.mossgrabers.reaper.framework.hardware.SurfaceFactoryImpl;
+import de.mossgrabers.reaper.framework.hardware.HwSurfaceFactoryImpl;
 import de.mossgrabers.reaper.framework.osc.OpenSoundControlClientImpl;
 import de.mossgrabers.reaper.framework.osc.OpenSoundControlMessageImpl;
 import de.mossgrabers.reaper.framework.osc.OpenSoundControlServerImpl;
@@ -157,6 +157,9 @@ public class HostImpl implements IHost
             case QUANTIZE_INPUT_NOTE_LENGTH:
                 return false;
             case QUANTIZE_AMOUNT:
+                return false;
+
+            case CUE_VOLUME:
                 return false;
         }
         return false;
@@ -315,8 +318,8 @@ public class HostImpl implements IHost
 
     /** {@inheritDoc} */
     @Override
-    public ISurfaceFactory createSurfaceFactory ()
+    public IHwSurfaceFactory createSurfaceFactory (final double width, final double height)
     {
-        return new SurfaceFactoryImpl (this);
+        return new HwSurfaceFactoryImpl (this, width, height);
     }
 }

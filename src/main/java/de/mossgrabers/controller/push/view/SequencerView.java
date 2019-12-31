@@ -7,6 +7,7 @@ package de.mossgrabers.controller.push.view;
 import de.mossgrabers.controller.push.PushConfiguration;
 import de.mossgrabers.controller.push.controller.PushControlSurface;
 import de.mossgrabers.controller.push.mode.NoteMode;
+import de.mossgrabers.framework.controller.ButtonID;
 import de.mossgrabers.framework.daw.IModel;
 import de.mossgrabers.framework.daw.INoteClip;
 import de.mossgrabers.framework.daw.IStepInfo;
@@ -93,9 +94,10 @@ public class SequencerView extends AbstractNoteSequencerView<PushControlSurface,
         if (!this.isActive ())
             return;
 
-        this.surface.setGridNoteConsumed (note);
-
         final int index = note - 36;
+
+        this.surface.getButton (ButtonID.get (ButtonID.PAD1, index)).setConsumed ();
+
         final int y = index / 8;
         if (y >= this.numSequencerRows)
             return;
@@ -130,7 +132,10 @@ public class SequencerView extends AbstractNoteSequencerView<PushControlSurface,
         {
             // Toggle the note on up, so we can intercept the long presses
             if (velocity == 0)
-                this.getClip ().toggleStep (this.surface.getConfiguration ().getMidiEditChannel (), x, this.keyManager.map (y), this.configuration.isAccentActive () ? this.configuration.getFixedAccentValue () : this.surface.getGridNoteVelocity (note));
+            {
+                final int vel = this.configuration.isAccentActive () ? this.configuration.getFixedAccentValue () : this.surface.getButton (ButtonID.get (ButtonID.PAD1, index)).getPressedVelocity ();
+                this.getClip ().toggleStep (this.surface.getConfiguration ().getMidiEditChannel (), x, this.keyManager.map (y), vel);
+            }
             return;
         }
 

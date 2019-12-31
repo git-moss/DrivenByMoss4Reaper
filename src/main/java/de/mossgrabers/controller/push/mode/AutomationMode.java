@@ -6,6 +6,7 @@ package de.mossgrabers.controller.push.mode;
 
 import de.mossgrabers.controller.push.controller.Push1Display;
 import de.mossgrabers.controller.push.controller.PushControlSurface;
+import de.mossgrabers.framework.controller.ButtonID;
 import de.mossgrabers.framework.controller.display.IGraphicDisplay;
 import de.mossgrabers.framework.controller.display.ITextDisplay;
 import de.mossgrabers.framework.daw.IModel;
@@ -67,11 +68,16 @@ public class AutomationMode extends BaseMode
 
     /** {@inheritDoc} */
     @Override
-    public String getFirstRowColorID (final int index)
+    public int getButtonColor (final ButtonID buttonID)
     {
-        final String writeMode = this.model.getTransport ().getAutomationWriteMode ();
-        if (index < TransportConstants.AUTOMATION_MODES_VALUES.length)
-            return TransportConstants.AUTOMATION_MODES_VALUES[index].equals (writeMode) ? AbstractMode.BUTTON_COLOR_HI : AbstractMode.BUTTON_COLOR_ON;
-        return AbstractMode.BUTTON_COLOR_OFF;
+        final int index = this.isButtonRow (0, buttonID);
+        if (index >= 0)
+        {
+            final String writeMode = this.model.getTransport ().getAutomationWriteMode ();
+            if (index < TransportConstants.AUTOMATION_MODES_VALUES.length)
+                return this.colorManager.getColorIndex (TransportConstants.AUTOMATION_MODES_VALUES[index].equals (writeMode) ? AbstractMode.BUTTON_COLOR_HI : AbstractMode.BUTTON_COLOR_ON);
+        }
+
+        return super.getButtonColor (buttonID);
     }
 }

@@ -9,11 +9,11 @@ import de.mossgrabers.framework.configuration.Configuration;
 import de.mossgrabers.framework.controller.ButtonID;
 import de.mossgrabers.framework.controller.IControlSurface;
 import de.mossgrabers.framework.daw.IModel;
-import de.mossgrabers.framework.daw.midi.INoteInput;
-import de.mossgrabers.framework.daw.midi.INoteRepeat;
 import de.mossgrabers.framework.mode.ModeManager;
 import de.mossgrabers.framework.mode.Modes;
 import de.mossgrabers.framework.utils.ButtonEvent;
+import de.mossgrabers.framework.view.ViewManager;
+import de.mossgrabers.framework.view.Views;
 
 
 /**
@@ -26,45 +26,74 @@ import de.mossgrabers.framework.utils.ButtonEvent;
  */
 public class NoteRepeatCommand<S extends IControlSurface<C>, C extends Configuration> extends AbstractTriggerCommand<S, C>
 {
+    private final boolean isMode;
+
+
     /**
      * Constructor.
      *
      * @param model The model
      * @param surface The surface
+     * @param isMode If true there is an edit mode for adjusting the setting (Modes.NOTE_REPEAT)
+     *            otherwise there must be a view (Views.NOTE_REPEAT).
      */
-    public NoteRepeatCommand (final IModel model, final S surface)
+    public NoteRepeatCommand (final IModel model, final S surface, final boolean isMode)
     {
         super (model, surface);
+
+        this.isMode = isMode;
     }
 
 
     /** {@inheritDoc} */
     @Override
-    public void execute (final ButtonEvent event)
+    public void execute (final ButtonEvent event, final int velocity)
     {
-        final ModeManager modeManager = this.surface.getModeManager ();
+        if (!this.handleEditModeActivation (event))
+            this.surface.getConfiguration ().toggleNoteRepeatActive ();
+    }
+
+
+    /**
+     * Handle the de-/activation of the edit mode.
+     *
+     * @param event The event
+     * @return True to cancel further processing
+     */
+    protected boolean handleEditModeActivation (final ButtonEvent event)
+    {
         if (event == ButtonEvent.LONG || event == ButtonEvent.DOWN && this.surface.isShiftPressed ())
         {
-            modeManager.setActiveMode (Modes.REPEAT_NOTE);
+            if (this.isMode)
+                this.surface.getModeManager ().setActiveMode (Modes.REPEAT_NOTE);
+            else
+                this.surface.getViewManager ().setActiveView (Views.REPEAT_NOTE);
             this.surface.setTriggerConsumed (ButtonID.REPEAT);
-            return;
+            return true;
         }
 
         if (event != ButtonEvent.UP)
-            return;
+            return true;
 
-        if (Modes.REPEAT_NOTE.equals (modeManager.getActiveOrTempModeId ()))
+        if (this.isMode)
         {
-            modeManager.restoreMode ();
-            return;
+            final ModeManager modeManager = this.surface.getModeManager ();
+            if (modeManager.isActiveOrTempMode (Modes.REPEAT_NOTE))
+            {
+                modeManager.restoreMode ();
+                return true;
+            }
+        }
+        else
+        {
+            final ViewManager viewManager = this.surface.getViewManager ();
+            if (viewManager.isActiveView (Views.REPEAT_NOTE))
+            {
+                viewManager.restoreView ();
+                return true;
+            }
         }
 
-        final INoteInput defaultNoteInput = this.surface.getInput ().getDefaultNoteInput ();
-        if (defaultNoteInput == null)
-            return;
-
-        final INoteRepeat noteRepeat = defaultNoteInput.getNoteRepeat ();
-        noteRepeat.toggleActive ();
-        this.model.getHost ().scheduleTask ( () -> this.surface.getConfiguration ().setNoteRepeatActive (noteRepeat.isActive ()), 300);
+        return false;
     }
 }

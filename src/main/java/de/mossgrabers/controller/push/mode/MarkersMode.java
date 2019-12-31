@@ -6,6 +6,7 @@ package de.mossgrabers.controller.push.mode;
 
 import de.mossgrabers.controller.push.controller.Push1Display;
 import de.mossgrabers.controller.push.controller.PushControlSurface;
+import de.mossgrabers.framework.controller.ButtonID;
 import de.mossgrabers.framework.controller.display.IGraphicDisplay;
 import de.mossgrabers.framework.controller.display.ITextDisplay;
 import de.mossgrabers.framework.daw.IMarkerBank;
@@ -143,17 +144,17 @@ public class MarkersMode extends BaseMode
 
     /** {@inheritDoc} */
     @Override
-    protected String getFirstRowColorID (final int index)
+    public String getButtonColorID (final ButtonID buttonID)
     {
-        return this.markerBank.getItem (index).doesExist () ? AbstractMode.BUTTON_COLOR_ON : AbstractMode.BUTTON_COLOR_OFF;
-    }
+        int index = this.isButtonRow (0, buttonID);
+        if (index >= 0)
+            return this.markerBank.getItem (index).doesExist () ? AbstractMode.BUTTON_COLOR_ON : AbstractMode.BUTTON_COLOR_OFF;
 
+        index = this.isButtonRow (1, buttonID);
+        if (index >= 0)
+            return this.canEditMarkers && !EDIT_MENU[index].isEmpty () ? AbstractMode.BUTTON_COLOR2_ON : AbstractMode.BUTTON_COLOR_OFF;
 
-    /** {@inheritDoc} */
-    @Override
-    protected String getSecondRowColorID (final int index)
-    {
-        return this.canEditMarkers && !EDIT_MENU[index].isEmpty () ? AbstractMode.BUTTON_COLOR2_ON : AbstractMode.BUTTON_COLOR_OFF;
+        return AbstractMode.BUTTON_COLOR_OFF;
     }
 
 

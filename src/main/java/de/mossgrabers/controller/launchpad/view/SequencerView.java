@@ -5,9 +5,8 @@
 package de.mossgrabers.controller.launchpad.view;
 
 import de.mossgrabers.controller.launchpad.LaunchpadConfiguration;
-import de.mossgrabers.controller.launchpad.controller.LaunchpadColors;
+import de.mossgrabers.controller.launchpad.controller.LaunchpadColorManager;
 import de.mossgrabers.controller.launchpad.controller.LaunchpadControlSurface;
-import de.mossgrabers.controller.launchpad.definition.LaunchpadProControllerDefinition;
 import de.mossgrabers.framework.controller.ButtonID;
 import de.mossgrabers.framework.daw.IModel;
 import de.mossgrabers.framework.view.AbstractNoteSequencerView;
@@ -38,26 +37,21 @@ public class SequencerView extends AbstractNoteSequencerView<LaunchpadControlSur
     {
         super.onActivate ();
         this.surface.setLaunchpadToPrgMode ();
-        this.surface.scheduleTask (this::delayedUpdateArrowButtons, 150);
-    }
-
-
-    private void delayedUpdateArrowButtons ()
-    {
-        this.surface.setTrigger (this.surface.getTriggerId (ButtonID.SESSION), LaunchpadColors.LAUNCHPAD_COLOR_GREY_LO);
-        this.surface.setTrigger (this.surface.getTriggerId (ButtonID.NOTE), LaunchpadColors.LAUNCHPAD_COLOR_BLUE);
-        this.surface.setTrigger (this.surface.getTriggerId (ButtonID.DEVICE), LaunchpadColors.LAUNCHPAD_COLOR_GREY_LO);
-        if (this.surface.isPro ())
-            this.surface.setTrigger (LaunchpadProControllerDefinition.LAUNCHPAD_BUTTON_USER, this.model.getHost ().hasUserParameters () ? LaunchpadColors.LAUNCHPAD_COLOR_GREY_LO : LaunchpadColors.LAUNCHPAD_COLOR_BLACK);
     }
 
 
     /** {@inheritDoc} */
     @Override
-    public void updateSceneButton (final int scene)
+    public int getButtonColor (final ButtonID buttonID)
     {
-        final boolean isActive = this.isActive ();
-        final int color = scene == 7 - this.selectedResolutionIndex ? LaunchpadColors.LAUNCHPAD_COLOR_YELLOW : LaunchpadColors.LAUNCHPAD_COLOR_GREEN;
-        this.surface.setTrigger (this.surface.getSceneTrigger (scene), isActive ? color : LaunchpadColors.LAUNCHPAD_COLOR_BLACK);
+        if (!this.isActive ())
+            return LaunchpadColorManager.LAUNCHPAD_COLOR_BLACK;
+
+        final int ordinal = buttonID.ordinal ();
+        if (ordinal < ButtonID.SCENE1.ordinal () || ordinal > ButtonID.SCENE8.ordinal ())
+            return LaunchpadColorManager.LAUNCHPAD_COLOR_BLACK;
+
+        final int scene = buttonID.ordinal () - ButtonID.SCENE1.ordinal ();
+        return scene == 7 - this.selectedResolutionIndex ? LaunchpadColorManager.LAUNCHPAD_COLOR_YELLOW : LaunchpadColorManager.LAUNCHPAD_COLOR_GREEN;
     }
 }

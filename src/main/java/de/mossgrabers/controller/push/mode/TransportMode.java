@@ -6,6 +6,7 @@ package de.mossgrabers.controller.push.mode;
 
 import de.mossgrabers.controller.push.controller.Push1Display;
 import de.mossgrabers.controller.push.controller.PushControlSurface;
+import de.mossgrabers.framework.controller.ButtonID;
 import de.mossgrabers.framework.controller.display.IGraphicDisplay;
 import de.mossgrabers.framework.controller.display.ITextDisplay;
 import de.mossgrabers.framework.daw.IModel;
@@ -81,28 +82,32 @@ public class TransportMode extends BaseMode
 
     /** {@inheritDoc} */
     @Override
-    protected String getFirstRowColorID (final int index)
+    public String getButtonColorID (final ButtonID buttonID)
     {
-        final String preroll = this.model.getTransport ().getPreroll ();
-        if (index == 0)
-            return TransportConstants.PREROLL_NONE.equals (preroll) ? AbstractMode.BUTTON_COLOR_HI : AbstractMode.BUTTON_COLOR_ON;
-        if (index == 1)
-            return TransportConstants.PREROLL_1_BAR.equals (preroll) ? AbstractMode.BUTTON_COLOR_HI : AbstractMode.BUTTON_COLOR_ON;
-        if (index == 2)
-            return TransportConstants.PREROLL_2_BARS.equals (preroll) ? AbstractMode.BUTTON_COLOR_HI : AbstractMode.BUTTON_COLOR_ON;
-        if (index == 3)
-            return TransportConstants.PREROLL_4_BARS.equals (preroll) ? AbstractMode.BUTTON_COLOR_HI : AbstractMode.BUTTON_COLOR_ON;
-        return AbstractMode.BUTTON_COLOR_OFF;
-    }
+        int index = this.isButtonRow (0, buttonID);
+        if (index >= 0)
+        {
+            final String preroll = this.model.getTransport ().getPreroll ();
+            if (index == 0)
+                return TransportConstants.PREROLL_NONE.equals (preroll) ? AbstractMode.BUTTON_COLOR_HI : AbstractMode.BUTTON_COLOR_ON;
+            if (index == 1)
+                return TransportConstants.PREROLL_1_BAR.equals (preroll) ? AbstractMode.BUTTON_COLOR_HI : AbstractMode.BUTTON_COLOR_ON;
+            if (index == 2)
+                return TransportConstants.PREROLL_2_BARS.equals (preroll) ? AbstractMode.BUTTON_COLOR_HI : AbstractMode.BUTTON_COLOR_ON;
+            if (index == 3)
+                return TransportConstants.PREROLL_4_BARS.equals (preroll) ? AbstractMode.BUTTON_COLOR_HI : AbstractMode.BUTTON_COLOR_ON;
+            return AbstractMode.BUTTON_COLOR_OFF;
+        }
 
+        index = this.isButtonRow (1, buttonID);
+        if (index >= 0)
+        {
+            final ITransport transport = this.model.getTransport ();
+            if (index == 0)
+                return transport.isPrerollMetronomeEnabled () ? AbstractMode.BUTTON_COLOR2_HI : AbstractMode.BUTTON_COLOR_ON;
+            return AbstractMode.BUTTON_COLOR_OFF;
+        }
 
-    /** {@inheritDoc} */
-    @Override
-    protected String getSecondRowColorID (final int index)
-    {
-        final ITransport transport = this.model.getTransport ();
-        if (index == 0)
-            return transport.isPrerollMetronomeEnabled () ? AbstractMode.BUTTON_COLOR2_HI : AbstractMode.BUTTON_COLOR_ON;
         return AbstractMode.BUTTON_COLOR_OFF;
     }
 

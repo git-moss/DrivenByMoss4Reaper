@@ -4,6 +4,7 @@
 
 package de.mossgrabers.framework.mode;
 
+import de.mossgrabers.framework.controller.ButtonID;
 import de.mossgrabers.framework.utils.ButtonEvent;
 
 
@@ -52,35 +53,12 @@ public interface Mode
 
 
     /**
-     * Update the first row buttons.
-     */
-    @Deprecated
-    void updateFirstRow ();
-
-
-    /**
-     * Get the color index of the 1st row button.
+     * Get the color for a button, which is controlled by the mode.
      *
-     * @param index The index of the button in the row
-     * @return The color index
+     * @param buttonID The ID of the button
+     * @return A color index
      */
-    int getFirstRowColor (int index);
-
-
-    /**
-     * Update the second row buttons.
-     */
-    @Deprecated
-    void updateSecondRow ();
-
-
-    /**
-     * Get the color index of the 2nd row button.
-     *
-     * @param index The index of the button in the row
-     * @return The color index
-     */
-    int getSecondRowColor (int index);
+    int getButtonColor (ButtonID buttonID);
 
 
     /**

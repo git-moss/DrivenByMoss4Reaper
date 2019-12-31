@@ -9,6 +9,7 @@ import de.mossgrabers.controller.push.controller.PushControlSurface;
 import de.mossgrabers.framework.command.trigger.clip.TemporaryNewCommand;
 import de.mossgrabers.framework.configuration.AbstractConfiguration;
 import de.mossgrabers.framework.configuration.Configuration;
+import de.mossgrabers.framework.controller.ButtonID;
 import de.mossgrabers.framework.controller.display.IGraphicDisplay;
 import de.mossgrabers.framework.controller.display.ITextDisplay;
 import de.mossgrabers.framework.daw.IModel;
@@ -53,25 +54,23 @@ public class FixedMode extends BaseMode
     {
         if (event != ButtonEvent.UP)
             return;
-        new TemporaryNewCommand<> (index, this.model, this.surface).execute (ButtonEvent.DOWN);
+        new TemporaryNewCommand<> (index, this.model, this.surface).execute (ButtonEvent.DOWN, 127);
         this.surface.getModeManager ().restoreMode ();
     }
 
 
     /** {@inheritDoc} */
     @Override
-    public String getFirstRowColorID (final int index)
+    public int getButtonColor (final ButtonID buttonID)
     {
-        final Configuration configuration = this.surface.getConfiguration ();
-        return configuration.getNewClipLength () == index ? AbstractMode.BUTTON_COLOR_HI : AbstractMode.BUTTON_COLOR_ON;
-    }
+        final int index = this.isButtonRow (0, buttonID);
+        if (index >= 0)
+        {
+            final Configuration configuration = this.surface.getConfiguration ();
+            return this.colorManager.getColorIndex (configuration.getNewClipLength () == index ? AbstractMode.BUTTON_COLOR_HI : AbstractMode.BUTTON_COLOR_ON);
+        }
 
-
-    /** {@inheritDoc} */
-    @Override
-    public String getSecondRowColorID (final int index)
-    {
-        return AbstractMode.BUTTON_COLOR_ON;
+        return this.colorManager.getColorIndex (AbstractMode.BUTTON_COLOR_ON);
     }
 
 

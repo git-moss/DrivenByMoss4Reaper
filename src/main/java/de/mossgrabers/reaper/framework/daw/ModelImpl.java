@@ -4,6 +4,7 @@
 
 package de.mossgrabers.reaper.framework.daw;
 
+import de.mossgrabers.framework.controller.color.ColorEx;
 import de.mossgrabers.framework.daw.AbstractModel;
 import de.mossgrabers.framework.daw.IClip;
 import de.mossgrabers.framework.daw.INoteClip;
@@ -53,7 +54,7 @@ public class ModelImpl extends AbstractModel
         this.application = new ApplicationImpl (dataSetup);
         this.arranger = new ArrangerImpl ();
         this.mixer = new MixerImpl (dataSetup);
-        this.project = new ProjectImpl (dataSetup);
+        this.project = new ProjectImpl (dataSetup, this);
         this.transport = new TransportImpl (dataSetup, this, iniFiles);
         this.groove = new GrooveImpl (dataSetup, iniFiles);
         this.markerBank = new MarkerBankImpl (dataSetup, modelSetup.getNumMarkers ());
@@ -322,7 +323,7 @@ public class ModelImpl extends AbstractModel
                 slot.setSelected (isSelected);
                 slot.setName (name);
                 if (color != null)
-                    slot.setColor (color[0], color[1], color[2]);
+                    slot.setColor (new ColorEx (color));
                 slot.setExists (true);
             }
         }
@@ -376,29 +377,5 @@ public class ModelImpl extends AbstractModel
     public List<ITrackBank> getTrackBanks ()
     {
         return this.trackBanks;
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public boolean hasSolo ()
-    {
-        return ((TrackBankImpl) this.trackBank).hasSolo ();
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void clearSolo ()
-    {
-        ((TrackBankImpl) this.trackBank).clearSolo ();
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void clearMute ()
-    {
-        ((TrackBankImpl) this.trackBank).clearMute ();
     }
 }

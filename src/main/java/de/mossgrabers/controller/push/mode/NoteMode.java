@@ -6,10 +6,10 @@ package de.mossgrabers.controller.push.mode;
 
 import de.mossgrabers.controller.push.controller.PushControlSurface;
 import de.mossgrabers.framework.controller.ButtonID;
-import de.mossgrabers.framework.controller.IValueChanger;
 import de.mossgrabers.framework.controller.display.Format;
 import de.mossgrabers.framework.controller.display.IGraphicDisplay;
 import de.mossgrabers.framework.controller.display.ITextDisplay;
+import de.mossgrabers.framework.controller.valuechanger.IValueChanger;
 import de.mossgrabers.framework.daw.IHost;
 import de.mossgrabers.framework.daw.IModel;
 import de.mossgrabers.framework.daw.INoteClip;
@@ -71,7 +71,7 @@ public class NoteMode extends BaseMode
     {
         if (isTouched && this.surface.isDeletePressed ())
         {
-            this.surface.setTriggerConsumed (this.surface.getTriggerId (ButtonID.DELETE));
+            this.surface.setTriggerConsumed (ButtonID.DELETE);
             switch (index)
             {
                 case 0:
@@ -195,7 +195,6 @@ public class NoteMode extends BaseMode
         {
             final double noteGain = stepInfo.getGain ();
             final int parameterGainValue = Math.min (1023, valueChanger.fromNormalizedValue (noteGain));
-            // TODO Format as dB
             display.setCell (0, 3, "Gain").setCell (1, 3, formatPercentage (noteGain)).setCell (2, 3, parameterGainValue, Format.FORMAT_VALUE);
         }
         if (this.host.canEdit (EditCapability.NOTE_EDIT_PANORAMA))
@@ -254,7 +253,6 @@ public class NoteMode extends BaseMode
         if (this.host.canEdit (EditCapability.NOTE_EDIT_GAIN))
         {
             final double noteGain = stepInfo.getGain ();
-            // TODO Format as dB
             final int parameterGainValue = Math.min (1023, valueChanger.fromNormalizedValue (noteGain));
             display.addParameterElement ("Gain", parameterGainValue, formatPercentage (noteGain), this.isKnobTouched[3], parameterGainValue);
         }

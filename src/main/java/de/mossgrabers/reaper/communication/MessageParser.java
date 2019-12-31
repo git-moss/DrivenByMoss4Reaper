@@ -5,6 +5,7 @@
 package de.mossgrabers.reaper.communication;
 
 import de.mossgrabers.framework.controller.IControllerSetup;
+import de.mossgrabers.framework.controller.color.ColorEx;
 import de.mossgrabers.framework.daw.IBrowser;
 import de.mossgrabers.framework.daw.IDeviceBank;
 import de.mossgrabers.framework.daw.IHost;
@@ -714,7 +715,7 @@ public class MessageParser
             case TAG_COLOR:
                 final double [] color = ((ModelImpl) this.model).parseColor (value);
                 if (color != null)
-                    sceneImpl.setColor (color[0], color[1], color[2]);
+                    sceneImpl.setColor (new ColorEx (color));
                 break;
 
             default:
@@ -773,7 +774,7 @@ public class MessageParser
 
     private void parseNoteRepeat (final Queue<String> parts, final String value)
     {
-        final IMidiInput input = this.controllerSetup.getSurface ().getInput ();
+        final IMidiInput input = this.controllerSetup.getSurface ().getMidiInput ();
         if (input == null)
             return;
         final NoteRepeatImpl noteRepeat = (NoteRepeatImpl) input.getDefaultNoteInput ().getNoteRepeat ();

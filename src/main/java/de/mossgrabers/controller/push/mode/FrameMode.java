@@ -5,6 +5,7 @@
 package de.mossgrabers.controller.push.mode;
 
 import de.mossgrabers.controller.push.controller.PushControlSurface;
+import de.mossgrabers.framework.controller.ButtonID;
 import de.mossgrabers.framework.controller.display.IGraphicDisplay;
 import de.mossgrabers.framework.controller.display.ITextDisplay;
 import de.mossgrabers.framework.daw.IApplication;
@@ -262,18 +263,20 @@ public class FrameMode extends BaseMode
 
     /** {@inheritDoc} */
     @Override
-    public String getFirstRowColorID (final int index)
+    public int getButtonColor (final ButtonID buttonID)
     {
-        return this.getFirstRowButtonState (index) ? AbstractMode.BUTTON_COLOR_HI : AbstractMode.BUTTON_COLOR_ON;
-    }
+        int index = this.isButtonRow (0, buttonID);
+        if (index >= 0)
+            return this.colorManager.getColorIndex (this.getFirstRowButtonState (index) ? AbstractMode.BUTTON_COLOR_HI : AbstractMode.BUTTON_COLOR_ON);
 
+        index = this.isButtonRow (1, buttonID);
+        if (index >= 0)
+        {
+            final int state = this.getSecondRowButtonState (index);
+            return this.colorManager.getColorIndex (state == 1 ? AbstractMode.BUTTON_COLOR2_HI : state == 0 ? AbstractMode.BUTTON_COLOR2_ON : AbstractMode.BUTTON_COLOR_OFF);
+        }
 
-    /** {@inheritDoc} */
-    @Override
-    public String getSecondRowColorID (final int index)
-    {
-        final int state = this.getSecondRowButtonState (index);
-        return state == 1 ? AbstractMode.BUTTON_COLOR2_HI : state == 0 ? AbstractMode.BUTTON_COLOR2_ON : AbstractMode.BUTTON_COLOR_OFF;
+        return super.getButtonColor (buttonID);
     }
 
 

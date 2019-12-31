@@ -28,19 +28,11 @@ public class PlayView extends AbstractPlayView<MaschineMikroMk3ControlSurface, M
      */
     public PlayView (final MaschineMikroMk3ControlSurface surface, final IModel model)
     {
-        super (surface, model, false);
+        super (surface, model, true);
 
         final Configuration configuration = this.surface.getConfiguration ();
         configuration.addSettingObserver (AbstractConfiguration.ACTIVATE_FIXED_ACCENT, this::initMaxVelocity);
         configuration.addSettingObserver (AbstractConfiguration.FIXED_ACCENT_VALUE, this::initMaxVelocity);
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void drawGrid ()
-    {
-        // LEDs cannot be controlled
     }
 
 

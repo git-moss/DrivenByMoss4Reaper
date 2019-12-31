@@ -21,6 +21,6 @@ public class BindException extends RuntimeException
      */
     public BindException (final BindType type)
     {
-        super ("Binding type " + type + " to a button is not supported.");
+        super ("Binding type " + type + " is not supported.");
     }
 }

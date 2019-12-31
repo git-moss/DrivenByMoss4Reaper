@@ -4,7 +4,7 @@
 
 package de.mossgrabers.controller.push.view;
 
-import de.mossgrabers.controller.push.controller.PushColors;
+import de.mossgrabers.controller.push.controller.PushColorManager;
 import de.mossgrabers.controller.push.controller.PushControlSurface;
 import de.mossgrabers.framework.daw.IModel;
 import de.mossgrabers.framework.daw.INoteClip;
@@ -72,10 +72,10 @@ public class DrumView4 extends DrumViewBase
 
         // Paint the sequencer steps
         final boolean isPush2 = this.surface.getConfiguration ().isPush2 ();
-        final int blueHi = isPush2 ? PushColors.PUSH2_COLOR2_BLUE_HI : PushColors.PUSH1_COLOR2_BLUE_HI;
-        final int greenLo = isPush2 ? PushColors.PUSH2_COLOR2_GREEN_LO : PushColors.PUSH1_COLOR2_GREEN_LO;
-        final int greenHi = isPush2 ? PushColors.PUSH2_COLOR2_GREEN_HI : PushColors.PUSH1_COLOR2_GREEN_HI;
-        final int off = isPush2 ? PushColors.PUSH2_COLOR2_BLACK : PushColors.PUSH1_COLOR2_BLACK;
+        final int blueHi = isPush2 ? PushColorManager.PUSH2_COLOR2_BLUE_HI : PushColorManager.PUSH1_COLOR2_BLUE_HI;
+        final int greenLo = isPush2 ? PushColorManager.PUSH2_COLOR2_GREEN_LO : PushColorManager.PUSH1_COLOR2_GREEN_LO;
+        final int greenHi = isPush2 ? PushColorManager.PUSH2_COLOR2_GREEN_HI : PushColorManager.PUSH1_COLOR2_GREEN_HI;
+        final int off = isPush2 ? PushColorManager.PUSH2_COLOR2_BLACK : PushColorManager.PUSH1_COLOR2_BLACK;
         final int hiStep = this.isInXRange (step) ? step % DrumView4.NUM_DISPLAY_COLS : -1;
         final int offsetY = this.scales.getDrumOffset ();
         final int editMidiChannel = this.surface.getConfiguration ().getMidiEditChannel ();
@@ -108,8 +108,11 @@ public class DrumView4 extends DrumViewBase
     @Override
     protected void onLowerScene (final int index)
     {
+        if (index > 3)
+            return;
+
         // 7, 6, 5, 4
-        this.soundOffset = 4 * (7 - index);
+        this.soundOffset = 4 * index;
         this.surface.getDisplay ().notify ("Offset: " + this.soundOffset);
     }
 

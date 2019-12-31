@@ -4,6 +4,7 @@
 
 package de.mossgrabers.reaper.framework.daw;
 
+import de.mossgrabers.framework.controller.color.ColorEx;
 import de.mossgrabers.framework.daw.INoteClip;
 import de.mossgrabers.framework.daw.IStepInfo;
 import de.mossgrabers.framework.daw.constants.TransportConstants;
@@ -25,9 +26,7 @@ public class CursorClipImpl extends BaseImpl implements INoteClip
     private double                   clipStart    = -1;
     private double                   clipEnd      = -1;
     private boolean                  isLooped     = false;
-    private double                   red          = 0;
-    private double                   green        = 0;
-    private double                   blue         = 0;
+    private ColorEx                  color;
     private double                   playPosition = -1;
     private int                      numSteps;
     private int                      numRows;
@@ -91,9 +90,10 @@ public class CursorClipImpl extends BaseImpl implements INoteClip
 
     /** {@inheritDoc} */
     @Override
-    public void setColor (final double red, final double green, final double blue)
+    public void setColor (final ColorEx color)
     {
-        this.sendClipOSC ("color", "RGB(" + Math.round (red * 255) + "," + Math.round (green * 255) + "," + Math.round (blue * 255) + ")");
+        final int [] rgb = color.toIntRGB255 ();
+        this.sendClipOSC ("color", "RGB(" + rgb[0] + "," + rgb[1] + "," + rgb[2] + ")");
     }
 
 
@@ -104,22 +104,15 @@ public class CursorClipImpl extends BaseImpl implements INoteClip
      */
     public void setColorValue (final double [] color)
     {
-        this.red = color[0];
-        this.green = color[1];
-        this.blue = color[2];
+        this.color = new ColorEx (color);
     }
 
 
     /** {@inheritDoc} */
     @Override
-    public double [] getColor ()
+    public ColorEx getColor ()
     {
-        return new double []
-        {
-            this.red,
-            this.green,
-            this.blue
-        };
+        return this.color;
     }
 
 

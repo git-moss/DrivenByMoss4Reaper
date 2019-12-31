@@ -4,7 +4,8 @@
 
 package de.mossgrabers.reaper.framework.daw;
 
-import de.mossgrabers.framework.daw.DAWColors;
+import de.mossgrabers.framework.controller.color.ColorEx;
+import de.mossgrabers.framework.daw.DAWColor;
 import de.mossgrabers.framework.daw.IDrumPadBank;
 import de.mossgrabers.framework.daw.ISceneBank;
 import de.mossgrabers.framework.daw.data.IDrumPad;
@@ -61,9 +62,9 @@ public class DrumPadBankImpl extends AbstractBankImpl<IDrumPad> implements IDrum
     {
         final ILayer sel = this.getSelectedItem ();
         if (sel == null)
-            return DAWColors.COLOR_OFF;
-        final double [] color = sel.getColor ();
-        return DAWColors.getColorIndex (color[0], color[1], color[2]);
+            return DAWColor.COLOR_OFF.name ();
+        final ColorEx color = sel.getColor ();
+        return DAWColor.getColorIndex (color);
     }
 
 

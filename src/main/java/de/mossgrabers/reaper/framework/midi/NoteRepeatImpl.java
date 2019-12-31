@@ -16,22 +16,23 @@ import de.mossgrabers.reaper.communication.MessageSender;
  */
 public class NoteRepeatImpl implements INoteRepeat
 {
-    private static final String             NOTEREPEAT_TAG = "noterepeat";
+    private static final String            NOTEREPEAT_TAG = "noterepeat";
 
-    private static final ArpeggiatorMode [] ARP_MODES      =
+    /** The available arpeggiator modes. */
+    public static final ArpeggiatorMode [] ARP_MODES      =
     {
-        new ArpeggiatorMode (0, "Down", "Down"),
-        new ArpeggiatorMode (1, "Up", "Up"),
-        new ArpeggiatorMode (2, "Down Alt", "Down Alt"),
-        new ArpeggiatorMode (3, "Up Alt", "Up Alt")
+        ArpeggiatorMode.DOWN,
+        ArpeggiatorMode.UP,
+        ArpeggiatorMode.DOWN_UP,
+        ArpeggiatorMode.UP_DOWN
     };
 
-    private final MessageSender             sender;
-    private boolean                         isNoteRepeat;
-    private double                          noteRepeatPeriod;
-    private double                          noteLength;
-    private boolean                         usePressure;
-    private ArpeggiatorMode                 mode;
+    private final MessageSender            sender;
+    private boolean                        isNoteRepeat;
+    private double                         noteRepeatPeriod;
+    private double                         noteLength;
+    private boolean                        usePressure;
+    private ArpeggiatorMode                mode;
 
 
     /**
@@ -161,11 +162,11 @@ public class NoteRepeatImpl implements INoteRepeat
 
     /** {@inheritDoc} */
     @Override
-    public void setMode (final String mode)
+    public void setMode (final ArpeggiatorMode mode)
     {
         for (int i = 0; i < ARP_MODES.length; i++)
         {
-            if (ARP_MODES[i].getValue ().equals (mode))
+            if (ARP_MODES[i] == mode)
             {
                 this.sender.processIntArg (NOTEREPEAT_TAG, "mode", i);
                 return;
@@ -179,24 +180,6 @@ public class NoteRepeatImpl implements INoteRepeat
     public ArpeggiatorMode getMode ()
     {
         return this.mode;
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public ArpeggiatorMode [] getModes ()
-    {
-        return ARP_MODES;
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void changeMode (final boolean increase)
-    {
-        final int index = this.mode.getIndex ();
-        final int newIndex = Math.max (0, Math.min (ARP_MODES.length - 1, index + (increase ? 1 : -1)));
-        this.setMode (ARP_MODES[newIndex].getValue ());
     }
 
 

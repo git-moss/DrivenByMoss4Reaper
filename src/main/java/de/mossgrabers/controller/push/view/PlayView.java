@@ -12,10 +12,10 @@ import de.mossgrabers.framework.controller.ButtonID;
 import de.mossgrabers.framework.daw.IModel;
 import de.mossgrabers.framework.daw.ISceneBank;
 import de.mossgrabers.framework.daw.data.IScene;
+import de.mossgrabers.framework.mode.AbstractMode;
 import de.mossgrabers.framework.utils.ButtonEvent;
 import de.mossgrabers.framework.view.AbstractPlayView;
 import de.mossgrabers.framework.view.AbstractSessionView;
-import de.mossgrabers.framework.view.SceneView;
 import de.mossgrabers.framework.view.Views;
 
 
@@ -24,7 +24,7 @@ import de.mossgrabers.framework.view.Views;
  *
  * @author J&uuml;rgen Mo&szlig;graber
  */
-public class PlayView extends AbstractPlayView<PushControlSurface, PushConfiguration> implements SceneView
+public class PlayView extends AbstractPlayView<PushControlSurface, PushConfiguration>
 {
     /**
      * Constructor.
@@ -57,16 +57,17 @@ public class PlayView extends AbstractPlayView<PushControlSurface, PushConfigura
 
     /** {@inheritDoc} */
     @Override
-    public void onScene (final int sceneIndex, final ButtonEvent event)
+    public void onButton (final ButtonID buttonID, final ButtonEvent event)
     {
-        if (event != ButtonEvent.DOWN)
+        if (!ButtonID.isSceneButton (buttonID) || event != ButtonEvent.DOWN)
             return;
 
-        final IScene scene = this.model.getCurrentTrackBank ().getSceneBank ().getItem (sceneIndex);
+        final int index = buttonID.ordinal () - ButtonID.SCENE1.ordinal ();
+        final IScene scene = this.model.getCurrentTrackBank ().getSceneBank ().getItem (index);
 
         if (this.surface.isDeletePressed ())
         {
-            this.surface.setTriggerConsumed (this.surface.getTriggerId (ButtonID.DELETE));
+            this.surface.setTriggerConsumed (ButtonID.DELETE);
             scene.remove ();
             return;
         }
@@ -78,18 +79,14 @@ public class PlayView extends AbstractPlayView<PushControlSurface, PushConfigura
 
     /** {@inheritDoc} */
     @Override
-    public void updateSceneButton (final int scene)
+    public String getButtonColorID (final ButtonID buttonID)
     {
-        // TODO REmove
-    }
+        final int scene = buttonID.ordinal () - ButtonID.SCENE1.ordinal ();
+        if (scene < 0 || scene >= 8)
+            return AbstractMode.BUTTON_COLOR_OFF;
 
-
-    /** {@inheritDoc} */
-    @Override
-    public String getSceneButtonColor (final int scene)
-    {
         final ISceneBank sceneBank = this.model.getSceneBank ();
-        final IScene s = sceneBank.getItem (7 - scene);
+        final IScene s = sceneBank.getItem (scene);
         if (s.doesExist ())
             return s.isSelected () ? AbstractSessionView.COLOR_SELECTED_SCENE : AbstractSessionView.COLOR_SCENE;
         return AbstractSessionView.COLOR_SCENE_OFF;
@@ -102,7 +99,7 @@ public class PlayView extends AbstractPlayView<PushControlSurface, PushConfigura
     {
         if (this.surface.isDeletePressed ())
         {
-            this.surface.setTriggerConsumed (this.surface.getTriggerId (ButtonID.DELETE));
+            this.surface.setTriggerConsumed (ButtonID.DELETE);
             final int editMidiChannel = this.surface.getConfiguration ().getMidiEditChannel ();
             this.model.getNoteClip (8, 128).clearRow (editMidiChannel, this.keyManager.map (note));
             return;

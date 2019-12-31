@@ -4,7 +4,7 @@
 
 package de.mossgrabers.reaper.framework.daw;
 
-import de.mossgrabers.framework.daw.DAWColors;
+import de.mossgrabers.framework.daw.DAWColor;
 import de.mossgrabers.framework.daw.ISceneBank;
 import de.mossgrabers.framework.daw.ITrackBank;
 import de.mossgrabers.framework.daw.data.ITrack;
@@ -82,9 +82,8 @@ public abstract class AbstractTrackBankImpl extends AbstractPagedBankImpl<TrackI
     {
         final ITrack sel = this.getSelectedItem ();
         if (sel == null)
-            return DAWColors.COLOR_OFF;
-        final double [] color = sel.getColor ();
-        return DAWColors.getColorIndex (color[0], color[1], color[2]);
+            return DAWColor.COLOR_OFF.name ();
+        return DAWColor.getColorIndex (sel.getColor ());
     }
 
 
@@ -197,6 +196,22 @@ public abstract class AbstractTrackBankImpl extends AbstractPagedBankImpl<TrackI
         for (final ITrack element: this.items)
         {
             if (element.isSolo ())
+                return true;
+        }
+        return false;
+    }
+
+
+    /**
+     * Check if any of the tracks is muted.
+     *
+     * @return True if there is at least one muted track
+     */
+    public boolean hasMute ()
+    {
+        for (final ITrack element: this.items)
+        {
+            if (element.isMute ())
                 return true;
         }
         return false;

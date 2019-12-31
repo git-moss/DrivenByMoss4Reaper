@@ -5,13 +5,11 @@
 package de.mossgrabers.controller.launchkey.view;
 
 import de.mossgrabers.controller.launchkey.LaunchkeyMiniMk3Configuration;
-import de.mossgrabers.controller.launchkey.controller.LaunchkeyMiniMk3Colors;
+import de.mossgrabers.controller.launchkey.controller.LaunchkeyMiniMk3ColorManager;
 import de.mossgrabers.controller.launchkey.controller.LaunchkeyMiniMk3ControlSurface;
-import de.mossgrabers.framework.controller.color.ColorManager;
+import de.mossgrabers.framework.controller.ButtonID;
 import de.mossgrabers.framework.daw.IModel;
-import de.mossgrabers.framework.utils.ButtonEvent;
 import de.mossgrabers.framework.view.AbstractView;
-import de.mossgrabers.framework.view.SceneView;
 
 
 /**
@@ -19,7 +17,7 @@ import de.mossgrabers.framework.view.SceneView;
  *
  * @author J&uuml;rgen Mo&szlig;graber
  */
-public class UserPadView extends AbstractView<LaunchkeyMiniMk3ControlSurface, LaunchkeyMiniMk3Configuration> implements SceneView
+public class UserPadView extends AbstractView<LaunchkeyMiniMk3ControlSurface, LaunchkeyMiniMk3Configuration>
 {
     /**
      * Constructor.
@@ -51,27 +49,8 @@ public class UserPadView extends AbstractView<LaunchkeyMiniMk3ControlSurface, La
 
     /** {@inheritDoc} */
     @Override
-    public void onScene (final int sceneIndex, final ButtonEvent event)
+    public int getButtonColor (final ButtonID buttonID)
     {
-        // Intentionally empty
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void updateSceneButton (final int scene)
-    {
-        if (scene == 0)
-            this.surface.updateTrigger (LaunchkeyMiniMk3ControlSurface.LAUNCHKEY_SCENE1, LaunchkeyMiniMk3Colors.LAUNCHKEY_COLOR_BLACK);
-        else
-            this.surface.updateTrigger (LaunchkeyMiniMk3ControlSurface.LAUNCHKEY_SCENE2, LaunchkeyMiniMk3Colors.LAUNCHKEY_COLOR_BLACK);
-    }
-
-
-    @Override
-    public String getSceneButtonColor (final int scene)
-    {
-        // TODO Auto-generated method stub
-        return ColorManager.BUTTON_STATE_OFF;
+        return LaunchkeyMiniMk3ColorManager.LAUNCHKEY_COLOR_BLACK;
     }
 }

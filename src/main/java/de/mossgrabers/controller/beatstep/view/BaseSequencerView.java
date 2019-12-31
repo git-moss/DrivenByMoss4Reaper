@@ -62,12 +62,4 @@ public abstract class BaseSequencerView extends AbstractSequencerView<BeatstepCo
         this.selectedResolutionIndex = Resolution.change (this.selectedResolutionIndex, isInc);
         this.getClip ().setStepLength (Resolution.getValueAt (this.selectedResolutionIndex));
     }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void updateSceneButton (final int scene)
-    {
-        // Intentionally empty
-    }
 }

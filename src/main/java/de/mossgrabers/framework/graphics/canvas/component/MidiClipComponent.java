@@ -84,9 +84,8 @@ public class MidiClipComponent implements IComponent
             }
         }
         // Draw play start in header
-        final double [] clipColor = this.clip.getColor ();
         final double playStart = this.clip.getPlayStart ();
-        final ColorEx noteColor = new ColorEx (clipColor[0], clipColor[1], clipColor[2]);
+        final ColorEx noteColor = this.clip.getColor ();
         final ColorEx lineColor = noteColor;
         if (playStart >= startPos && playStart <= endPos)
         {

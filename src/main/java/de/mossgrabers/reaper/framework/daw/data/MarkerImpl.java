@@ -4,6 +4,7 @@
 
 package de.mossgrabers.reaper.framework.daw.data;
 
+import de.mossgrabers.framework.controller.color.ColorEx;
 import de.mossgrabers.framework.daw.data.IMarker;
 import de.mossgrabers.reaper.framework.daw.DataSetupEx;
 
@@ -15,12 +16,7 @@ import de.mossgrabers.reaper.framework.daw.DataSetupEx;
  */
 public class MarkerImpl extends ItemImpl implements IMarker
 {
-    private double [] color = new double []
-    {
-        0.2,
-        0.2,
-        0.2
-    };
+    private ColorEx color = new ColorEx (0.2, 0.2, 0.2);
 
 
     /**
@@ -37,7 +33,7 @@ public class MarkerImpl extends ItemImpl implements IMarker
 
     /** {@inheritDoc} */
     @Override
-    public double [] getColor ()
+    public ColorEx getColor ()
     {
         return this.color;
     }
@@ -50,9 +46,7 @@ public class MarkerImpl extends ItemImpl implements IMarker
      */
     public void setColorState (final double [] color)
     {
-        this.color[0] = color[0];
-        this.color[1] = color[1];
-        this.color[2] = color[2];
+        this.color = new ColorEx (color);
     }
 
 

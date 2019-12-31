@@ -99,24 +99,4 @@ public class SceneBankImpl extends AbstractPagedBankImpl<SceneImpl, IScene> impl
             this.trackBank.updateSlotBanks (this.bankOffset);
         }
     }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public int getItemCount ()
-    {
-        int maxCount = this.itemCount;
-
-        // Since scenes (Reaper regions) are not related to the number of clips on a track we need
-        // to find the maximum
-
-        final int trackCount = this.trackBank.getItemCount ();
-        for (int position = 0; position < trackCount; position++)
-        {
-            final int size = this.trackBank.getUnpagedItem (position).getSlotBank ().getItemCount ();
-            if (size > maxCount)
-                maxCount = size;
-        }
-        return maxCount;
-    }
 }

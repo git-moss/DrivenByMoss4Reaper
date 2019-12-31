@@ -6,6 +6,7 @@ package de.mossgrabers.controller.apcmini.view;
 
 import de.mossgrabers.controller.apcmini.APCminiConfiguration;
 import de.mossgrabers.controller.apcmini.controller.APCminiControlSurface;
+import de.mossgrabers.framework.controller.ButtonID;
 import de.mossgrabers.framework.controller.color.ColorManager;
 import de.mossgrabers.framework.daw.IModel;
 import de.mossgrabers.framework.daw.INoteClip;
@@ -67,18 +68,12 @@ public class SequencerView extends AbstractNoteSequencerView<APCminiControlSurfa
 
     /** {@inheritDoc} */
     @Override
-    public void updateSceneButton (final int scene)
+    public String getButtonColorID (final ButtonID buttonID)
     {
-        // TODO Remove
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public String getSceneButtonColor (final int scene)
-    {
+        final int index = buttonID.ordinal () - ButtonID.SCENE1.ordinal ();
+        final int res = 7 - index;
         final boolean isKeyboardEnabled = this.model.canSelectedTrackHoldNotes ();
-        return isKeyboardEnabled && scene == 7 - this.selectedResolutionIndex ? ColorManager.BUTTON_STATE_ON : ColorManager.BUTTON_STATE_OFF;
+        return isKeyboardEnabled && res == this.selectedResolutionIndex ? ColorManager.BUTTON_STATE_ON : ColorManager.BUTTON_STATE_OFF;
     }
 
 

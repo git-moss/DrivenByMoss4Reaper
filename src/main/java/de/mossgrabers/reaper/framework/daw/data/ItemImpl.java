@@ -136,9 +136,7 @@ public abstract class ItemImpl extends BaseImpl implements IItem
             return;
 
         this.name = name == null ? "" : name;
-
-        for (final IValueObserver<String> observer: this.nameObservers)
-            observer.update (this.name);
+        this.nameObservers.forEach (observer -> observer.update (this.name));
     }
 
 

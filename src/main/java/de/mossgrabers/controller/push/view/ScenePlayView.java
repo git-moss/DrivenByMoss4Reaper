@@ -5,18 +5,17 @@
 package de.mossgrabers.controller.push.view;
 
 import de.mossgrabers.controller.push.PushConfiguration;
-import de.mossgrabers.controller.push.controller.PushColors;
+import de.mossgrabers.controller.push.controller.PushColorManager;
 import de.mossgrabers.controller.push.controller.PushControlSurface;
 import de.mossgrabers.framework.controller.ButtonID;
-import de.mossgrabers.framework.controller.grid.PadGrid;
-import de.mossgrabers.framework.daw.DAWColors;
+import de.mossgrabers.framework.controller.grid.IPadGrid;
+import de.mossgrabers.framework.daw.DAWColor;
 import de.mossgrabers.framework.daw.IModel;
 import de.mossgrabers.framework.daw.ISceneBank;
 import de.mossgrabers.framework.daw.data.IScene;
-import de.mossgrabers.framework.utils.ButtonEvent;
+import de.mossgrabers.framework.mode.AbstractMode;
 import de.mossgrabers.framework.view.AbstractSequencerView;
 import de.mossgrabers.framework.view.AbstractView;
-import de.mossgrabers.framework.view.SceneView;
 
 
 /**
@@ -24,7 +23,7 @@ import de.mossgrabers.framework.view.SceneView;
  *
  * @author J&uuml;rgen Mo&szlig;graber
  */
-public class ScenePlayView extends AbstractView<PushControlSurface, PushConfiguration> implements SceneView
+public class ScenePlayView extends AbstractView<PushControlSurface, PushConfiguration>
 {
     private ISceneBank sceneBank;
 
@@ -34,12 +33,13 @@ public class ScenePlayView extends AbstractView<PushControlSurface, PushConfigur
      *
      * @param surface The surface
      * @param model The model
+     * @param sceneBank The scene bank to monitor
      */
-    public ScenePlayView (final PushControlSurface surface, final IModel model)
+    public ScenePlayView (final PushControlSurface surface, final IModel model, final ISceneBank sceneBank)
     {
         super ("Scene Play", surface, model);
 
-        this.sceneBank = model.createSceneBank (64);
+        this.sceneBank = sceneBank;
     }
 
 
@@ -47,16 +47,16 @@ public class ScenePlayView extends AbstractView<PushControlSurface, PushConfigur
     @Override
     public void drawGrid ()
     {
-        final PadGrid padGrid = this.surface.getPadGrid ();
+        final IPadGrid padGrid = this.surface.getPadGrid ();
         final boolean isPush2 = this.surface.getConfiguration ().isPush2 ();
         for (int i = 0; i < 64; i++)
         {
             final IScene scene = this.sceneBank.getItem (i);
             if (scene.isSelected ())
-                padGrid.light (36 + i, isPush2 ? PushColors.PUSH2_COLOR2_WHITE : PushColors.PUSH1_COLOR2_WHITE);
+                padGrid.light (36 + i, isPush2 ? PushColorManager.PUSH2_COLOR2_WHITE : PushColorManager.PUSH1_COLOR2_WHITE);
             else
             {
-                final String color = scene.doesExist () ? DAWColors.getColorIndex (scene.getColor ()) : PadGrid.GRID_OFF;
+                final String color = scene.doesExist () ? DAWColor.getColorIndex (scene.getColor ()) : IPadGrid.GRID_OFF;
                 padGrid.light (36 + i, color);
             }
         }
@@ -72,16 +72,16 @@ public class ScenePlayView extends AbstractView<PushControlSurface, PushConfigur
 
         final IScene scene = this.sceneBank.getItem (note - 36);
 
-        if (this.surface.isPressed (PushControlSurface.PUSH_BUTTON_DUPLICATE))
+        if (this.surface.isPressed (ButtonID.DUPLICATE))
         {
-            this.surface.setTriggerConsumed (PushControlSurface.PUSH_BUTTON_DUPLICATE);
+            this.surface.setTriggerConsumed (ButtonID.DUPLICATE);
             scene.duplicate ();
             return;
         }
 
         if (this.surface.isDeletePressed ())
         {
-            this.surface.setTriggerConsumed (this.surface.getTriggerId (ButtonID.DELETE));
+            this.surface.setTriggerConsumed (ButtonID.DELETE);
             scene.remove ();
             return;
         }
@@ -93,24 +93,12 @@ public class ScenePlayView extends AbstractView<PushControlSurface, PushConfigur
 
     /** {@inheritDoc} */
     @Override
-    public void onScene (final int scene, final ButtonEvent event)
+    public String getButtonColorID (final ButtonID buttonID)
     {
-        // Intentionally empty
-    }
+        final int scene = buttonID.ordinal () - ButtonID.SCENE1.ordinal ();
+        if (scene < 0 || scene >= 8)
+            return AbstractMode.BUTTON_COLOR_OFF;
 
-
-    /** {@inheritDoc} */
-    @Override
-    public void updateSceneButton (final int scene)
-    {
-        // TODO Remove
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public String getSceneButtonColor (final int scene)
-    {
         return AbstractSequencerView.COLOR_RESOLUTION_OFF;
     }
 }

@@ -5,8 +5,9 @@
 package de.mossgrabers.framework.view;
 
 import de.mossgrabers.framework.configuration.Configuration;
+import de.mossgrabers.framework.controller.ButtonID;
 import de.mossgrabers.framework.controller.IControlSurface;
-import de.mossgrabers.framework.controller.grid.PadGrid;
+import de.mossgrabers.framework.controller.grid.IPadGrid;
 import de.mossgrabers.framework.daw.IModel;
 import de.mossgrabers.framework.daw.INoteClip;
 import de.mossgrabers.framework.daw.constants.Resolution;
@@ -110,7 +111,7 @@ public abstract class AbstractRaindropsView<S extends IControlSurface<C>, C exte
     @Override
     public void drawGrid ()
     {
-        final PadGrid padGrid = this.surface.getPadGrid ();
+        final IPadGrid padGrid = this.surface.getPadGrid ();
         if (!this.isActive ())
         {
             padGrid.turnOff ();
@@ -136,7 +137,7 @@ public abstract class AbstractRaindropsView<S extends IControlSurface<C>, C exte
 
             for (int y = 0; y < this.numDisplayRows; y++)
             {
-                String colorID = y == 0 ? this.getColor (x, selectedTrack) : AbstractSequencerView.COLOR_NO_CONTENT;
+                String colorID = y == 0 ? this.getPadColor (x, selectedTrack) : AbstractSequencerView.COLOR_NO_CONTENT;
                 if (isOn)
                 {
                     if (y == distance)
@@ -152,16 +153,10 @@ public abstract class AbstractRaindropsView<S extends IControlSurface<C>, C exte
 
     /** {@inheritDoc} */
     @Override
-    public void onScene (final int index, final ButtonEvent event)
+    public void onButton (final ButtonID buttonID, final ButtonEvent event)
     {
-        if (event != ButtonEvent.DOWN)
-            return;
-
-        if (!this.isActive ())
-            return;
-
         this.ongoingResolutionChange = true;
-        super.onScene (index, event);
+        super.onButton (buttonID, event);
         this.ongoingResolutionChange = false;
     }
 

@@ -90,7 +90,7 @@ public class MidiModule extends AbstractModule
             this.writer.sendOSCColor (noteAddress + i + "/color", color[0], color[1], color[2], dump);
         }
 
-        final INoteInput noteInput = this.surface.getInput ().getDefaultNoteInput ();
+        final INoteInput noteInput = this.surface.getMidiInput ().getDefaultNoteInput ();
         if (noteInput == null)
             return;
         final INoteRepeat noteRepeat = noteInput.getNoteRepeat ();
@@ -146,7 +146,7 @@ public class MidiModule extends AbstractModule
         }
 
         final String subCommand = getSubCommand (path);
-        final IMidiInput input = this.surface.getInput ();
+        final IMidiInput input = this.surface.getMidiInput ();
         final Scales scales = this.model.getScales ();
         switch (subCommand)
         {
@@ -267,7 +267,7 @@ public class MidiModule extends AbstractModule
      */
     private void parseNoteRepeat (final LinkedList<String> path, final Object value) throws MissingCommandException, UnknownCommandException, IllegalParameterException
     {
-        final INoteInput noteInput = this.surface.getInput ().getDefaultNoteInput ();
+        final INoteInput noteInput = this.surface.getMidiInput ().getDefaultNoteInput ();
         if (noteInput == null)
             return;
         final INoteRepeat noteRepeat = noteInput.getNoteRepeat ();

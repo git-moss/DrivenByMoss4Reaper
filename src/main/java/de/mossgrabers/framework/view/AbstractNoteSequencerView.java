@@ -6,7 +6,7 @@ package de.mossgrabers.framework.view;
 
 import de.mossgrabers.framework.configuration.Configuration;
 import de.mossgrabers.framework.controller.IControlSurface;
-import de.mossgrabers.framework.controller.grid.PadGrid;
+import de.mossgrabers.framework.controller.grid.IPadGrid;
 import de.mossgrabers.framework.daw.IModel;
 import de.mossgrabers.framework.daw.INoteClip;
 import de.mossgrabers.framework.daw.data.ITrack;
@@ -143,7 +143,7 @@ public abstract class AbstractNoteSequencerView<S extends IControlSurface<C>, C 
     @Override
     public void drawGrid ()
     {
-        final PadGrid gridPad = this.surface.getPadGrid ();
+        final IPadGrid gridPad = this.surface.getPadGrid ();
         if (!this.isActive ())
         {
             gridPad.turnOff ();
@@ -204,7 +204,7 @@ public abstract class AbstractNoteSequencerView<S extends IControlSurface<C>, C 
             default:
                 if (hilite)
                     return COLOR_STEP_HILITE_NO_CONTENT;
-                return this.getColor (note, this.useTrackColor ? track : null);
+                return this.getPadColor (note, this.useTrackColor ? track : null);
         }
     }
 

@@ -7,7 +7,7 @@ package de.mossgrabers.controller.midimonitor;
 import de.mossgrabers.framework.configuration.AbstractConfiguration;
 import de.mossgrabers.framework.configuration.IEnumSetting;
 import de.mossgrabers.framework.configuration.ISettingsUI;
-import de.mossgrabers.framework.controller.IValueChanger;
+import de.mossgrabers.framework.controller.valuechanger.IValueChanger;
 import de.mossgrabers.framework.daw.IHost;
 
 
@@ -32,7 +32,7 @@ public class MidiMonitorConfiguration extends AbstractConfiguration
      */
     public MidiMonitorConfiguration (final IHost host, final IValueChanger valueChanger)
     {
-        super (host, valueChanger);
+        super (host, valueChanger, null);
     }
 
 

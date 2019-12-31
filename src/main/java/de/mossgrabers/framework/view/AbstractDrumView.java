@@ -7,8 +7,8 @@ package de.mossgrabers.framework.view;
 import de.mossgrabers.framework.configuration.Configuration;
 import de.mossgrabers.framework.controller.ButtonID;
 import de.mossgrabers.framework.controller.IControlSurface;
-import de.mossgrabers.framework.controller.grid.PadGrid;
-import de.mossgrabers.framework.daw.DAWColors;
+import de.mossgrabers.framework.controller.grid.IPadGrid;
+import de.mossgrabers.framework.daw.DAWColor;
 import de.mossgrabers.framework.daw.ICursorDevice;
 import de.mossgrabers.framework.daw.IDrumPadBank;
 import de.mossgrabers.framework.daw.IModel;
@@ -190,7 +190,7 @@ public abstract class AbstractDrumView<S extends IControlSurface<C>, C extends C
     @Override
     public void drawGrid ()
     {
-        final PadGrid padGrid = this.surface.getPadGrid ();
+        final IPadGrid padGrid = this.surface.getPadGrid ();
         if (!this.model.canSelectedTrackHoldNotes ())
         {
             padGrid.turnOff ();
@@ -223,7 +223,8 @@ public abstract class AbstractDrumView<S extends IControlSurface<C>, C extends C
             }
         }
 
-        this.drawSequencer ();
+        if (this.sequencerLines > 0)
+            this.drawSequencer ();
     }
 
 
@@ -250,7 +251,7 @@ public abstract class AbstractDrumView<S extends IControlSurface<C>, C extends C
 
     protected String getPadContentColor (final IChannel drumPad)
     {
-        return DAWColors.getColorIndex (drumPad.getColor ());
+        return DAWColor.getColorIndex (drumPad.getColor ());
     }
 
 
@@ -378,7 +379,7 @@ public abstract class AbstractDrumView<S extends IControlSurface<C>, C extends C
 
     protected void handleDeleteButton (final int playedPad)
     {
-        this.surface.setTriggerConsumed (this.surface.getTriggerId (ButtonID.DELETE));
+        this.surface.setTriggerConsumed (ButtonID.DELETE);
         this.updateNoteMapping ();
         final int editMidiChannel = this.surface.getConfiguration ().getMidiEditChannel ();
         this.getClip ().clearRow (editMidiChannel, this.scales.getDrumOffset () + playedPad);
@@ -387,7 +388,7 @@ public abstract class AbstractDrumView<S extends IControlSurface<C>, C extends C
 
     protected void handleMuteButton (final int playedPad)
     {
-        this.surface.setTriggerConsumed (this.surface.getTriggerId (ButtonID.MUTE));
+        this.surface.setTriggerConsumed (ButtonID.MUTE);
         this.updateNoteMapping ();
         this.model.getInstrumentDevice ().getDrumPadBank ().getItem (playedPad).toggleMute ();
     }
@@ -395,7 +396,7 @@ public abstract class AbstractDrumView<S extends IControlSurface<C>, C extends C
 
     protected void handleSoloButton (final int playedPad)
     {
-        this.surface.setTriggerConsumed (this.surface.getTriggerId (ButtonID.SOLO));
+        this.surface.setTriggerConsumed (ButtonID.SOLO);
         this.updateNoteMapping ();
         this.model.getInstrumentDevice ().getDrumPadBank ().getItem (playedPad).toggleSolo ();
     }
@@ -417,16 +418,16 @@ public abstract class AbstractDrumView<S extends IControlSurface<C>, C extends C
         if (!this.model.canSelectedTrackHoldNotes ())
             return false;
 
-        if (this.surface.isSelectPressed () && !this.surface.isTriggerConsumed (this.surface.getTriggerId (ButtonID.SELECT)))
+        if (this.surface.isSelectPressed () && !this.surface.isTriggerConsumed (ButtonID.SELECT))
             return false;
 
-        if (this.surface.isDeletePressed () && !this.surface.isTriggerConsumed (this.surface.getTriggerId (ButtonID.DELETE)))
+        if (this.surface.isDeletePressed () && !this.surface.isTriggerConsumed (ButtonID.DELETE))
             return false;
 
-        if (this.surface.isMutePressed () && !this.surface.isTriggerConsumed (this.surface.getTriggerId (ButtonID.MUTE)))
+        if (this.surface.isMutePressed () && !this.surface.isTriggerConsumed (ButtonID.MUTE))
             return false;
 
-        return !this.surface.isSoloPressed () || this.surface.isTriggerConsumed (this.surface.getTriggerId (ButtonID.SOLO));
+        return !this.surface.isSoloPressed () || this.surface.isTriggerConsumed (ButtonID.SOLO);
     }
 
 
@@ -449,7 +450,7 @@ public abstract class AbstractDrumView<S extends IControlSurface<C>, C extends C
         final int currentPage = step / this.sequencerSteps;
 
         final int numOfPages = this.halfColumns * this.playLines;
-        final PadGrid padGrid = this.surface.getPadGrid ();
+        final IPadGrid padGrid = this.surface.getPadGrid ();
         for (int pad = 0; pad < numOfPages; pad++)
         {
             final int x = this.halfColumns + pad % this.halfColumns;

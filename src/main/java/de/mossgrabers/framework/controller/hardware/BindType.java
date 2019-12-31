@@ -14,5 +14,7 @@ public enum BindType
     /** Bind to a MIDI CC. */
     CC,
     /** Bind to a MIDI note. */
-    NOTE
+    NOTE,
+    /** Bind to MIDI pitchbend. */
+    PITCHBEND
 }
