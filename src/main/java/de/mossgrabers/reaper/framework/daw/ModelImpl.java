@@ -61,24 +61,24 @@ public class ModelImpl extends AbstractModel
 
         dataSetup.setTransport (this.transport);
 
+        final int numDevicesInBank = modelSetup.getNumDevicesInBank ();
+        final int numParams = modelSetup.getNumParams ();
+        final int numDeviceLayers = modelSetup.getNumDeviceLayers ();
+        final int numDrumPadLayers = modelSetup.getNumDrumPadLayers ();
+        final int numSends = modelSetup.getNumSends ();
+        this.instrumentDevice = new CursorDeviceImpl (dataSetup, numSends, numParams, numDevicesInBank, numDeviceLayers, numDrumPadLayers);
+        this.cursorDevice = new CursorDeviceImpl (dataSetup, numSends, numParams, numDevicesInBank, numDeviceLayers, numDrumPadLayers);
+        if (numDrumPadLayers > 0)
+            this.drumDevice64 = new CursorDeviceImpl (dataSetup, 0, 0, 0, 64, 64);
+
         final int numTracks = modelSetup.getNumTracks ();
         final int numScenes = modelSetup.getNumScenes ();
-        final int numSends = modelSetup.getNumSends ();
-        final TrackBankImpl trackBankImpl = new TrackBankImpl (dataSetup, numTracks, numScenes, numSends, modelSetup.hasFlatTrackList (), modelSetup.hasFullFlatTrackList ());
+        final TrackBankImpl trackBankImpl = new TrackBankImpl (this.instrumentDevice, dataSetup, numTracks, numScenes, numSends, modelSetup.hasFlatTrackList (), modelSetup.hasFullFlatTrackList ());
         this.trackBank = trackBankImpl;
         this.masterTrack = new MasterTrackImpl (dataSetup, trackBankImpl, numSends);
         trackBankImpl.setMasterTrack (this.masterTrack);
         this.trackBanks.add (this.trackBank);
         this.effectTrackBank = null;
-
-        final int numDevicesInBank = modelSetup.getNumDevicesInBank ();
-        final int numParams = modelSetup.getNumParams ();
-        final int numDeviceLayers = modelSetup.getNumDeviceLayers ();
-        final int numDrumPadLayers = modelSetup.getNumDrumPadLayers ();
-        this.instrumentDevice = new CursorDeviceImpl (dataSetup, numSends, numParams, numDevicesInBank, numDeviceLayers, numDrumPadLayers);
-        this.cursorDevice = new CursorDeviceImpl (dataSetup, numSends, numParams, numDevicesInBank, numDeviceLayers, numDrumPadLayers);
-        if (numDrumPadLayers > 0)
-            this.drumDevice64 = new CursorDeviceImpl (dataSetup, 0, 0, 0, 64, 64);
 
         final int numResults = modelSetup.getNumResults ();
         if (numResults > 0)

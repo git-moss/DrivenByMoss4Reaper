@@ -4,12 +4,15 @@
 
 package de.mossgrabers.reaper.framework.daw;
 
+import de.mossgrabers.framework.daw.ICursorDevice;
+import de.mossgrabers.framework.daw.IDrumPadBank;
 import de.mossgrabers.framework.daw.ISendBank;
 import de.mossgrabers.framework.daw.data.IMasterTrack;
 import de.mossgrabers.framework.daw.data.ISend;
 import de.mossgrabers.framework.daw.data.ITrack;
 import de.mossgrabers.framework.observer.NoteObserver;
 import de.mossgrabers.reaper.framework.TreeNode;
+import de.mossgrabers.reaper.framework.daw.data.DrumPadImpl;
 import de.mossgrabers.reaper.framework.daw.data.TrackImpl;
 
 import java.util.ArrayList;
@@ -30,6 +33,7 @@ public class TrackBankImpl extends AbstractTrackBankImpl
     protected static final int      NOTE_ON       = 1;
     protected static final int      NOTE_ON_NEW   = 2;
 
+    private final ICursorDevice     instrumentDevice;
     private final boolean           hasFlatTrackList;
     private final boolean           hasFullFlatTrackList;
     private final AtomicBoolean     isDirty       = new AtomicBoolean (false);
@@ -55,7 +59,28 @@ public class TrackBankImpl extends AbstractTrackBankImpl
      */
     public TrackBankImpl (final DataSetupEx dataSetup, final int numTracks, final int numScenes, final int numSends, final boolean hasFlatTrackList, final boolean hasFullFlatTrackList)
     {
+        this (null, dataSetup, numTracks, numScenes, numSends, hasFlatTrackList, hasFullFlatTrackList);
+    }
+
+
+    /**
+     * Constructor.
+     * 
+     * @param instrumentDevice The instrument cursor device to update the drum pads
+     * @param dataSetup Some configuration variables
+     * @param numTracks The number of tracks in a bank page
+     * @param numScenes The number of scenes in a bank page
+     * @param numSends The number of sends in a bank page
+     * @param hasFlatTrackList True if group navigation should not be supported, instead all tracks
+     *            are flat
+     * @param hasFullFlatTrackList True if the track navigation should include effect and master
+     *            tracks if flat
+     */
+    public TrackBankImpl (final ICursorDevice instrumentDevice, DataSetupEx dataSetup, int numTracks, int numScenes, int numSends, boolean hasFlatTrackList, boolean hasFullFlatTrackList)
+    {
         super (dataSetup, numTracks, numScenes, numSends);
+
+        this.instrumentDevice = instrumentDevice;
 
         this.hasFlatTrackList = hasFlatTrackList;
         this.hasFullFlatTrackList = hasFullFlatTrackList;
@@ -175,6 +200,15 @@ public class TrackBankImpl extends AbstractTrackBankImpl
         }
 
         this.notifySelectionObservers (track.getIndex (), isSelected);
+
+        // Update the drum pad color to the track color (since there is no dedicated drum device
+        // which could provide this information in Reaper)
+        if (this.instrumentDevice != null && isSelected)
+        {
+            final IDrumPadBank drumPadBank = this.instrumentDevice.getDrumPadBank ();
+            for (int i = 0; i < drumPadBank.getPageSize (); i++)
+                ((DrumPadImpl) drumPadBank.getItem (i)).setColorSupplier (track::getColor);
+        }
     }
 
 
