@@ -5,12 +5,14 @@
 package de.mossgrabers.reaper.framework.hardware;
 
 import de.mossgrabers.framework.command.core.TriggerCommand;
+import de.mossgrabers.framework.controller.color.ColorEx;
 import de.mossgrabers.framework.controller.hardware.AbstractHwContinuousControl;
 import de.mossgrabers.framework.controller.hardware.BindType;
 import de.mossgrabers.framework.controller.hardware.IHwFader;
 import de.mossgrabers.framework.daw.IHost;
 import de.mossgrabers.framework.daw.data.IParameter;
 import de.mossgrabers.framework.daw.midi.IMidiInput;
+import de.mossgrabers.framework.graphics.IGraphicsContext;
 
 
 /**
@@ -20,8 +22,8 @@ import de.mossgrabers.framework.daw.midi.IMidiInput;
  */
 public class HwFaderImpl extends AbstractHwContinuousControl implements IHwFader, IReaperHwControl
 {
-    private final String id;
-    private Bounds       bounds;
+    private final HwControlLayout layout;
+    private final boolean         isVertical;
 
 
     /**
@@ -36,7 +38,8 @@ public class HwFaderImpl extends AbstractHwContinuousControl implements IHwFader
     {
         super (host, label);
 
-        this.id = id;
+        this.isVertical = isVertical;
+        this.layout = new HwControlLayout (id);
     }
 
 
@@ -85,22 +88,30 @@ public class HwFaderImpl extends AbstractHwContinuousControl implements IHwFader
     @Override
     public void setBounds (final double x, final double y, final double width, final double height)
     {
-        this.bounds = new Bounds (x, y, width, height);
+        this.layout.setBounds (x, y, width, height);
     }
 
 
     /** {@inheritDoc} */
     @Override
-    public String getId ()
+    public void draw (final IGraphicsContext gc, final double scale)
     {
-        return this.id;
-    }
+        final Bounds bounds = this.layout.getBounds ();
+        if (bounds == null)
+            return;
 
+        double left = bounds.getX () * scale;
+        double top = bounds.getY () * scale;
+        double width = bounds.getWidth () * scale;
+        double height = bounds.getHeight () * scale;
 
-    /** {@inheritDoc} */
-    @Override
-    public Bounds getBounds ()
-    {
-        return this.bounds;
+        gc.fillRectangle (left, top, width, height, ColorEx.BLACK);
+
+        if (this.isVertical)
+            gc.fillRectangle (left, top, width, height, ColorEx.WHITE);
+        else
+        {
+
+        }
     }
 }

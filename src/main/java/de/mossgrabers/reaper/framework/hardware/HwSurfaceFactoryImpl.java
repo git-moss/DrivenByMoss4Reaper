@@ -39,10 +39,10 @@ import java.util.function.Supplier;
 public class HwSurfaceFactoryImpl implements IHwSurfaceFactory
 {
     private final IHost                 host;
-    private final double                width;
-    private final double                height;
     private final Set<IReaperHwControl> controls     = new HashSet<> ();
 
+    private double                      width;
+    private double                      height;
     private int                         lightCounter = 0;
 
 
@@ -50,15 +50,10 @@ public class HwSurfaceFactoryImpl implements IHwSurfaceFactory
      * Constructor.
      *
      * @param host The host
-     * @param width The width of the controller device
-     * @param height The height of the controller device
      */
-    public HwSurfaceFactoryImpl (final IHost host, final double width, final double height)
+    public HwSurfaceFactoryImpl (final IHost host)
     {
         this.host = host;
-
-        this.width = width;
-        this.height = height;
     }
 
 
@@ -92,9 +87,10 @@ public class HwSurfaceFactoryImpl implements IHwSurfaceFactory
         this.lightCounter++;
         final String id = createID (surfaceID, outputID == null ? "LIGHT" + this.lightCounter : outputID.name ());
 
-        final HwLightImpl light = new HwLightImpl (id, supplier, sendValueConsumer);
-        this.controls.add (light);
-        if (button != null)
+        final HwLightImpl light = new HwLightImpl (id, supplier, sendValueConsumer, stateToColorFunction);
+        if (button == null)
+            this.controls.add (light);
+        else
             button.addLight (light);
         return light;
     }
@@ -220,8 +216,32 @@ public class HwSurfaceFactoryImpl implements IHwSurfaceFactory
     }
 
 
+    /**
+     * Get the controls.
+     *
+     * @return The controls
+     */
+    public Set<IReaperHwControl> getControls ()
+    {
+        return this.controls;
+    }
+
+
     private static String createID (final int surfaceID, final String name)
     {
         return surfaceID + 1 + "_" + name;
+    }
+
+
+    /**
+     * Set the window dimension.
+     *
+     * @param width The width of the controller device
+     * @param height The height of the controller device
+     */
+    public void setDimension (final double width, final double height)
+    {
+        this.width = width;
+        this.height = height;
     }
 }

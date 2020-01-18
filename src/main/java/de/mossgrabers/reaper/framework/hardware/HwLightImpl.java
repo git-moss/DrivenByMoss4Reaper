@@ -7,9 +7,11 @@ package de.mossgrabers.reaper.framework.hardware;
 import de.mossgrabers.framework.controller.color.ColorEx;
 import de.mossgrabers.framework.controller.hardware.AbstractHwControl;
 import de.mossgrabers.framework.controller.hardware.IHwLight;
+import de.mossgrabers.framework.graphics.IGraphicsContext;
 
 import java.util.function.Consumer;
 import java.util.function.IntConsumer;
+import java.util.function.IntFunction;
 import java.util.function.IntSupplier;
 import java.util.function.Supplier;
 
@@ -21,16 +23,16 @@ import java.util.function.Supplier;
  */
 public class HwLightImpl extends AbstractHwControl implements IHwLight, IReaperHwControl
 {
-    private final String            id;
+    private final HwControlLayout   layout;
+
     private final Supplier<ColorEx> colorSupplier;
     private final Consumer<ColorEx> colorSendValueConsumer;
     private final IntSupplier       intSupplier;
     private final IntConsumer       intSendValueConsumer;
+    private IntFunction<ColorEx>    stateToColorFunction;
 
     private ColorEx                 colorState;
     private int                     intState;
-
-    private Bounds                  bounds;
 
 
     /**
@@ -44,7 +46,8 @@ public class HwLightImpl extends AbstractHwControl implements IHwLight, IReaperH
     {
         super (null, null);
 
-        this.id = id;
+        this.layout = new HwControlLayout (id);
+
         this.colorSupplier = supplier;
         this.colorSendValueConsumer = sendValueConsumer;
         this.intSupplier = null;
@@ -58,16 +61,20 @@ public class HwLightImpl extends AbstractHwControl implements IHwLight, IReaperH
      * @param id The ID o the control
      * @param supplier Callback for getting the state of the light
      * @param sendValueConsumer Callback for sending the state to the controller device
+     * @param stateToColorFunction Convert the state of the light to a color, which can be displayed
+     *            in the simulated GUI
      */
-    public HwLightImpl (final String id, final IntSupplier supplier, final IntConsumer sendValueConsumer)
+    public HwLightImpl (final String id, final IntSupplier supplier, final IntConsumer sendValueConsumer, final IntFunction<ColorEx> stateToColorFunction)
     {
         super (null, null);
 
-        this.id = id;
+        this.layout = new HwControlLayout (id);
+
         this.colorSupplier = null;
         this.colorSendValueConsumer = null;
         this.intSupplier = supplier;
         this.intSendValueConsumer = sendValueConsumer;
+        this.stateToColorFunction = stateToColorFunction;
     }
 
 
@@ -109,6 +116,7 @@ public class HwLightImpl extends AbstractHwControl implements IHwLight, IReaperH
                 return;
             this.intState = newColorState;
             this.intSendValueConsumer.accept (this.intState);
+            this.colorState = this.stateToColorFunction.apply (this.intState);
         }
     }
 
@@ -117,22 +125,27 @@ public class HwLightImpl extends AbstractHwControl implements IHwLight, IReaperH
     @Override
     public void setBounds (final double x, final double y, final double width, final double height)
     {
-        this.bounds = new Bounds (x, y, width, height);
+        this.layout.setBounds (x, y, width, height);
     }
 
 
     /** {@inheritDoc} */
     @Override
-    public String getId ()
+    public void draw (final IGraphicsContext gc, final double scale)
     {
-        return this.id;
+        final Bounds bounds = this.layout.getBounds ();
+        if (bounds != null)
+            gc.fillRectangle (bounds.getX () * scale, bounds.getY () * scale, bounds.getWidth () * scale, bounds.getHeight () * scale, this.colorState == null ? ColorEx.BLACK : this.colorState);
     }
 
 
-    /** {@inheritDoc} */
-    @Override
-    public Bounds getBounds ()
+    /**
+     * Get the current color state.
+     *
+     * @return The color state
+     */
+    public ColorEx getColorState ()
     {
-        return this.bounds;
+        return this.colorState;
     }
 }

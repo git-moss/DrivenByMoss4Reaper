@@ -4,8 +4,10 @@
 
 package de.mossgrabers.reaper.framework.hardware;
 
+import de.mossgrabers.framework.controller.color.ColorEx;
 import de.mossgrabers.framework.controller.hardware.IHwPianoKeyboard;
 import de.mossgrabers.framework.daw.midi.IMidiInput;
+import de.mossgrabers.framework.graphics.IGraphicsContext;
 
 
 /**
@@ -15,9 +17,8 @@ import de.mossgrabers.framework.daw.midi.IMidiInput;
  */
 public class HwPianoKeyboardImpl implements IHwPianoKeyboard, IReaperHwControl
 {
-    private final String id;
-    private Bounds       bounds;
-    private IMidiInput   input;
+    private final HwControlLayout layout;
+    private IMidiInput            input;
 
 
     /**
@@ -30,7 +31,7 @@ public class HwPianoKeyboardImpl implements IHwPianoKeyboard, IReaperHwControl
      */
     public HwPianoKeyboardImpl (final String id, final int numKeys, final int octave, final int startKeyInOctave)
     {
-        this.id = id;
+        this.layout = new HwControlLayout (id);
     }
 
 
@@ -62,23 +63,19 @@ public class HwPianoKeyboardImpl implements IHwPianoKeyboard, IReaperHwControl
     @Override
     public void setBounds (final double x, final double y, final double width, final double height)
     {
-        this.bounds = new Bounds (x, y, width, height);
+        this.layout.setBounds (x, y, width, height);
     }
 
 
     /** {@inheritDoc} */
     @Override
-    public String getId ()
+    public void draw (final IGraphicsContext gc, final double scale)
     {
-        return this.id;
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public Bounds getBounds ()
-    {
-        return this.bounds;
+        final Bounds bounds = this.layout.getBounds ();
+        if (bounds == null)
+            return;
+        // TODO Draw the piano
+        gc.fillRectangle (bounds.getX () * scale, bounds.getY () * scale, bounds.getWidth () * scale, bounds.getHeight () * scale, ColorEx.BLACK);
     }
 
 

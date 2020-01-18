@@ -4,9 +4,11 @@
 
 package de.mossgrabers.reaper.framework.hardware;
 
+import de.mossgrabers.framework.controller.color.ColorEx;
 import de.mossgrabers.framework.controller.hardware.AbstractHwControl;
 import de.mossgrabers.framework.controller.hardware.IHwGraphicsDisplay;
 import de.mossgrabers.framework.graphics.IBitmap;
+import de.mossgrabers.framework.graphics.IGraphicsContext;
 
 
 /**
@@ -16,8 +18,7 @@ import de.mossgrabers.framework.graphics.IBitmap;
  */
 public class HwGraphicsDisplayImpl extends AbstractHwControl implements IHwGraphicsDisplay, IReaperHwControl
 {
-    private final String id;
-    private Bounds       bounds;
+    private final HwControlLayout layout;
 
 
     /**
@@ -30,7 +31,7 @@ public class HwGraphicsDisplayImpl extends AbstractHwControl implements IHwGraph
     {
         super (null, null);
 
-        this.id = id;
+        this.layout = new HwControlLayout (id);
     }
 
 
@@ -38,22 +39,20 @@ public class HwGraphicsDisplayImpl extends AbstractHwControl implements IHwGraph
     @Override
     public void setBounds (final double x, final double y, final double width, final double height)
     {
-        this.bounds = new Bounds (x, y, width, height);
+        this.layout.setBounds (x, y, width, height);
     }
 
 
     /** {@inheritDoc} */
     @Override
-    public String getId ()
+    public void draw (final IGraphicsContext gc, final double scale)
     {
-        return this.id;
-    }
+        final Bounds bounds = this.layout.getBounds ();
+        if (bounds == null)
+            return;
+        gc.fillRectangle (bounds.getX () * scale, bounds.getY () * scale, bounds.getWidth () * scale, bounds.getHeight () * scale, ColorEx.BLACK);
 
+        // TODO Draw the display content
 
-    /** {@inheritDoc} */
-    @Override
-    public Bounds getBounds ()
-    {
-        return this.bounds;
     }
 }

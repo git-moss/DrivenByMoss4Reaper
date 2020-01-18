@@ -5,12 +5,14 @@
 package de.mossgrabers.reaper.framework.hardware;
 
 import de.mossgrabers.framework.command.core.TriggerCommand;
+import de.mossgrabers.framework.controller.color.ColorEx;
 import de.mossgrabers.framework.controller.hardware.AbstractHwContinuousControl;
 import de.mossgrabers.framework.controller.hardware.BindType;
 import de.mossgrabers.framework.controller.hardware.IHwAbsoluteKnob;
 import de.mossgrabers.framework.daw.IHost;
 import de.mossgrabers.framework.daw.data.IParameter;
 import de.mossgrabers.framework.daw.midi.IMidiInput;
+import de.mossgrabers.framework.graphics.IGraphicsContext;
 
 
 /**
@@ -20,8 +22,7 @@ import de.mossgrabers.framework.daw.midi.IMidiInput;
  */
 public class HwAbsoluteKnobImpl extends AbstractHwContinuousControl implements IHwAbsoluteKnob, IReaperHwControl
 {
-    private final String id;
-    private Bounds       bounds;
+    private final HwControlLayout layout;
 
 
     /**
@@ -35,7 +36,7 @@ public class HwAbsoluteKnobImpl extends AbstractHwContinuousControl implements I
     {
         super (host, label);
 
-        this.id = id;
+        this.layout = new HwControlLayout (id);
     }
 
 
@@ -75,22 +76,24 @@ public class HwAbsoluteKnobImpl extends AbstractHwContinuousControl implements I
     @Override
     public void setBounds (final double x, final double y, final double width, final double height)
     {
-        this.bounds = new Bounds (x, y, width, height);
+        this.layout.setBounds (x, y, width, height);
     }
 
 
     /** {@inheritDoc} */
     @Override
-    public String getId ()
+    public void draw (final IGraphicsContext gc, final double scale)
     {
-        return this.id;
-    }
+        final Bounds bounds = this.layout.getBounds ();
+        if (bounds == null)
+            return;
 
+        final double radius = Math.min (bounds.getWidth (), bounds.getHeight ()) / 2.0;
+        final double centerX = (bounds.getX () + radius) * scale;
+        final double centerY = (bounds.getY () + radius) * scale;
 
-    /** {@inheritDoc} */
-    @Override
-    public Bounds getBounds ()
-    {
-        return this.bounds;
+        // TODO Draw according to value
+        gc.fillCircle (centerX, centerY, radius, ColorEx.RED);
+        gc.fillCircle (centerX, centerY, radius * 0.9, ColorEx.BLACK);
     }
 }

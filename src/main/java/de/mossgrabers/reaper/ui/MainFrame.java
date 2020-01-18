@@ -83,9 +83,6 @@ public class MainFrame extends JFrame
 
         // Top pane
 
-        final JButton refreshButton = new JButton ("Refresh");
-        refreshButton.addActionListener (event -> this.callback.sendRefreshCommand ());
-
         // Center pane with device configuration and logging
         this.configButton.addActionListener (event -> this.editController ());
         this.configButton.setBackground (Color.YELLOW);
@@ -104,18 +101,17 @@ public class MainFrame extends JFrame
         enableButton.addActionListener (event -> this.toggleEnableController ());
 
         final JButton debugButton = new JButton ("Debug");
-        debugButton.addActionListener (event -> this.displayDebugDialog ());
+        this.configureDebugButton (debugButton);
 
         final JPanel deviceButtonContainer = new JPanel ();
         deviceButtonContainer.setBorder (new EmptyBorder (0, GAP, 0, 0));
-        deviceButtonContainer.setLayout (new GridLayout (7, 1, 0, GAP));
+        deviceButtonContainer.setLayout (new GridLayout (6, 1, 0, GAP));
 
         deviceButtonContainer.add (detectButton);
         deviceButtonContainer.add (addButton);
         deviceButtonContainer.add (this.removeButton);
         deviceButtonContainer.add (this.configButton);
         deviceButtonContainer.add (enableButton);
-        deviceButtonContainer.add (refreshButton);
         deviceButtonContainer.add (debugButton);
 
         this.controllerList.setMinimumSize (new Dimension (300, 200));
@@ -291,6 +287,40 @@ public class MainFrame extends JFrame
         }
 
         addButton.addActionListener (event -> popup.show (addButton, 0, addButton.getHeight ()));
+    }
+
+
+    private void configureDebugButton (final JButton debugButton)
+    {
+        final JPopupMenu popup = new JPopupMenu ();
+
+        final JMenuItem refreshItem = new JMenuItem ("Data Refresh");
+        refreshItem.addActionListener (event -> this.callback.sendRefreshCommand ());
+        popup.add (refreshItem);
+
+        final JMenuItem dataItem = new JMenuItem ("Data Updates");
+        dataItem.addActionListener (event -> this.displayDebugDialog ());
+        popup.add (dataItem);
+
+        final JMenuItem simItem = new JMenuItem ("Device Simulator");
+        simItem.addActionListener (event -> this.displaySimulatorWindow ());
+        popup.add (simItem);
+
+        debugButton.addActionListener (event -> popup.show (debugButton, 0, debugButton.getHeight ()));
+    }
+
+
+    private void displaySimulatorWindow ()
+    {
+        final int selectedIndex = this.controllerList.getSelectionModel ().getLeadSelectionIndex ();
+        if (selectedIndex < 0)
+            return;
+        final CheckboxListItem checkboxListItem = this.listModel.get (selectedIndex);
+        if (checkboxListItem == null)
+            return;
+        final IControllerInstance controllerInstance = checkboxListItem.getItem ();
+        if (controllerInstance != null)
+            controllerInstance.simulateUI (this);
     }
 
 

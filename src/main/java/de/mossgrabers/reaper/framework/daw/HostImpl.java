@@ -320,6 +320,8 @@ public class HostImpl implements IHost
     @Override
     public IHwSurfaceFactory createSurfaceFactory (final double width, final double height)
     {
-        return new HwSurfaceFactoryImpl (this, width, height);
+        final HwSurfaceFactoryImpl surfaceFactory = new HwSurfaceFactoryImpl (this);
+        surfaceFactory.setDimension (width, height);
+        return surfaceFactory;
     }
 }

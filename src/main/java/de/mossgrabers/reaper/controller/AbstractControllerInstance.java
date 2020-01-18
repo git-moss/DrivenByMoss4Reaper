@@ -4,8 +4,11 @@
 
 package de.mossgrabers.reaper.controller;
 
+import de.mossgrabers.framework.controller.IControlSurface;
 import de.mossgrabers.framework.controller.IControllerDefinition;
 import de.mossgrabers.framework.controller.IControllerSetup;
+import de.mossgrabers.framework.controller.color.ColorEx;
+import de.mossgrabers.framework.graphics.IGraphicsContext;
 import de.mossgrabers.framework.usb.UsbMatcher;
 import de.mossgrabers.framework.utils.OperatingSystem;
 import de.mossgrabers.reaper.communication.MessageParser;
@@ -14,16 +17,32 @@ import de.mossgrabers.reaper.framework.IniFiles;
 import de.mossgrabers.reaper.framework.ReaperSetupFactory;
 import de.mossgrabers.reaper.framework.configuration.SettingsUI;
 import de.mossgrabers.reaper.framework.daw.HostImpl;
+import de.mossgrabers.reaper.framework.graphics.GraphicsContextImpl;
+import de.mossgrabers.reaper.framework.hardware.HwSurfaceFactoryImpl;
 import de.mossgrabers.reaper.ui.WindowManager;
 import de.mossgrabers.reaper.ui.dialog.ConfigurationDialog;
 import de.mossgrabers.reaper.ui.utils.LogModel;
 import de.mossgrabers.reaper.ui.utils.PropertiesEx;
 import de.mossgrabers.reaper.ui.utils.SafeRunLater;
 
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+
+import java.awt.Dimension;
+import java.awt.DisplayMode;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
+import java.awt.Insets;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -49,6 +68,7 @@ public abstract class AbstractControllerInstance implements IControllerInstance
 
     private boolean                       isRunning               = false;
     private final Object                  startSync               = new Object ();
+    private List<JFrame>                  simulators              = new ArrayList<> ();
 
 
     /**
@@ -165,6 +185,17 @@ public abstract class AbstractControllerInstance implements IControllerInstance
     }
 
 
+    /**
+     * Get the host implementation.
+     *
+     * @return The host implementation
+     */
+    public HostImpl getHost ()
+    {
+        return this.host;
+    }
+
+
     /** {@inheritDoc} */
     @Override
     public void flush ()
@@ -176,6 +207,8 @@ public abstract class AbstractControllerInstance implements IControllerInstance
 
             if (this.controllerSetup != null)
                 this.controllerSetup.flush ();
+
+            this.simulators.forEach (JFrame::repaint);
         }
     }
 
@@ -211,6 +244,79 @@ public abstract class AbstractControllerInstance implements IControllerInstance
     public void setEnabled (final boolean isEnabled)
     {
         this.settingsUI.setEnabled (isEnabled);
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public synchronized void simulateUI (final JFrame frame)
+    {
+        final List<IControlSurface<?>> surfaces = this.controllerSetup.getSurfaces ();
+        if (this.simulators.isEmpty ())
+        {
+            for (final IControlSurface<?> surface: surfaces)
+            {
+                final JFrame simulator = new JFrame (this.toString ());
+
+                final JPanel canvas = new JPanel ()
+                {
+                    private static final long serialVersionUID = 6138483938641840923L;
+
+
+                    /** {@inheritDoc} */
+                    @Override
+                    public void paintComponent (final Graphics g)
+                    {
+                        super.paintComponent (g);
+
+                        AbstractControllerInstance.this.render (surface, simulator, new GraphicsContextImpl ((Graphics2D) g));
+                    }
+                };
+
+                simulator.getContentPane ().add (canvas);
+                simulator.pack ();
+
+                final GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment ().getDefaultScreenDevice ();
+                final DisplayMode displayMode = gd.getDisplayMode ();
+                final int screenWidth = displayMode.getWidth ();
+                final int screenHheight = displayMode.getHeight ();
+
+                final HwSurfaceFactoryImpl surfaceFactory = (HwSurfaceFactoryImpl) surface.getSurfaceFactory ();
+                final int width = Math.min ((int) surfaceFactory.getWidth (), screenWidth);
+                final int height = Math.min ((int) surfaceFactory.getHeight (), screenHheight);
+                simulator.setSize (width, height);
+
+                simulator.getRootPane ().addComponentListener (new ComponentAdapter ()
+                {
+                    /** {@inheritDoc} */
+                    @Override
+                    public void componentResized (final ComponentEvent e)
+                    {
+                        simulator.repaint ();
+                    }
+                });
+
+                this.simulators.add (simulator);
+            }
+        }
+        this.simulators.forEach (simulator -> simulator.setVisible (true));
+    }
+
+
+    protected void render (final IControlSurface<?> surface, final JFrame simulator, final IGraphicsContext gc)
+    {
+        final Dimension innerSize = getInnerSize (simulator);
+        gc.fillRectangle (0, 0, innerSize.width, innerSize.height, ColorEx.GRAY);
+
+        final HwSurfaceFactoryImpl surfaceFactory = (HwSurfaceFactoryImpl) surface.getSurfaceFactory ();
+        final double width = surfaceFactory.getWidth ();
+        final double height = surfaceFactory.getHeight ();
+
+        final double factorW = innerSize.width / width;
+        final double factorH = innerSize.height / height;
+        final double factor = Math.min (factorW, factorH);
+
+        surfaceFactory.getControls ().forEach (control -> control.draw (gc, factor));
     }
 
 
@@ -286,5 +392,18 @@ public abstract class AbstractControllerInstance implements IControllerInstance
         {
             this.logModel.error ("Could not load controller configuration file.", ex);
         }
+    }
+
+
+    private static Dimension getInnerSize (final JFrame frame)
+    {
+        final Dimension size = frame.getSize ();
+        final Insets insets = frame.getInsets ();
+        if (insets != null)
+        {
+            size.height -= insets.top + insets.bottom;
+            size.width -= insets.left + insets.right;
+        }
+        return size;
     }
 }

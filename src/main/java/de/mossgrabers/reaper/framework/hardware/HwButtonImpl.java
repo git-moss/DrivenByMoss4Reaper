@@ -5,10 +5,14 @@
 package de.mossgrabers.reaper.framework.hardware;
 
 import de.mossgrabers.framework.command.core.TriggerCommand;
+import de.mossgrabers.framework.controller.color.ColorEx;
 import de.mossgrabers.framework.controller.hardware.AbstractHwButton;
 import de.mossgrabers.framework.controller.hardware.BindType;
 import de.mossgrabers.framework.daw.IHost;
 import de.mossgrabers.framework.daw.midi.IMidiInput;
+import de.mossgrabers.framework.graphics.Align;
+import de.mossgrabers.framework.graphics.IGraphicsContext;
+import de.mossgrabers.reaper.framework.graphics.GraphicsContextImpl;
 
 
 /**
@@ -18,8 +22,7 @@ import de.mossgrabers.framework.daw.midi.IMidiInput;
  */
 public class HwButtonImpl extends AbstractHwButton implements IReaperHwControl
 {
-    private final String id;
-    private Bounds       bounds;
+    private final HwControlLayout layout;
 
 
     /**
@@ -33,7 +36,7 @@ public class HwButtonImpl extends AbstractHwButton implements IReaperHwControl
     {
         super (host, label);
 
-        this.id = id;
+        this.layout = new HwControlLayout (id);
     }
 
 
@@ -65,22 +68,42 @@ public class HwButtonImpl extends AbstractHwButton implements IReaperHwControl
     @Override
     public void setBounds (final double x, final double y, final double width, final double height)
     {
-        this.bounds = new Bounds (x, y, width, height);
+        this.layout.setBounds (x, y, width, height);
+        if (this.light != null)
+            this.light.setBounds (x, y, width, height);
+    }
+
+
+    /** {@index} */
+    @Override
+    public void update ()
+    {
+        if (this.light != null)
+            this.light.update ();
     }
 
 
     /** {@inheritDoc} */
     @Override
-    public String getId ()
+    public void draw (final IGraphicsContext gc, final double scale)
     {
-        return this.id;
-    }
+        ColorEx textColor = ColorEx.WHITE;
+        if (this.light != null)
+        {
+            final HwLightImpl hwLightImpl = (HwLightImpl) this.light;
+            hwLightImpl.draw (gc, scale);
+            final ColorEx colorState = hwLightImpl.getColorState ();
+            if (colorState != null)
+                textColor = ColorEx.calcContrastColor (colorState);
+        }
 
-
-    /** {@inheritDoc} */
-    @Override
-    public Bounds getBounds ()
-    {
-        return this.bounds;
+        if (this.label != null)
+        {
+            final Bounds bounds = this.layout.getBounds ();
+            final double width = bounds.getWidth () * scale;
+            final double height = bounds.getHeight () * scale;
+            final double fontSize = ((GraphicsContextImpl) gc).calculateFontSize (this.label, height, width, 6.0);
+            gc.drawTextInBounds (this.label, bounds.getX () * scale, bounds.getY () * scale, width, height, Align.CENTER, textColor, fontSize);
+        }
     }
 }

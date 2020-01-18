@@ -7,6 +7,8 @@ package de.mossgrabers.reaper.controller;
 import de.mossgrabers.framework.controller.IControllerDefinition;
 import de.mossgrabers.reaper.framework.configuration.SettingsUI;
 
+import javax.swing.JFrame;
+
 
 /**
  * Interface to an controller instance.
@@ -92,4 +94,12 @@ public interface IControllerInstance
      * @return The settings
      */
     SettingsUI getSettingsUI ();
+
+
+    /**
+     * Simulate the user interface of the device in a window.
+     *
+     * @param frame The parent window
+     */
+    void simulateUI (JFrame frame);
 }

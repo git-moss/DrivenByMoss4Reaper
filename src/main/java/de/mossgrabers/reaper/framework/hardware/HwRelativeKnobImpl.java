@@ -5,6 +5,7 @@
 package de.mossgrabers.reaper.framework.hardware;
 
 import de.mossgrabers.framework.command.core.TriggerCommand;
+import de.mossgrabers.framework.controller.color.ColorEx;
 import de.mossgrabers.framework.controller.hardware.AbstractHwContinuousControl;
 import de.mossgrabers.framework.controller.hardware.BindType;
 import de.mossgrabers.framework.controller.hardware.IHwRelativeKnob;
@@ -17,6 +18,7 @@ import de.mossgrabers.framework.controller.valuechanger.RelativeEncoding;
 import de.mossgrabers.framework.daw.IHost;
 import de.mossgrabers.framework.daw.data.IParameter;
 import de.mossgrabers.framework.daw.midi.IMidiInput;
+import de.mossgrabers.framework.graphics.IGraphicsContext;
 
 import java.util.EnumMap;
 import java.util.Map;
@@ -39,8 +41,7 @@ public class HwRelativeKnobImpl extends AbstractHwContinuousControl implements I
         VALUE_CHANGERS.put (RelativeEncoding.SIGNED_BIT2, new Relative4ValueChanger (127, 1, 1));
     }
 
-    private final String           id;
-    private Bounds                 bounds;
+    private final HwControlLayout  layout;
     private final RelativeEncoding encoding;
 
 
@@ -70,7 +71,7 @@ public class HwRelativeKnobImpl extends AbstractHwContinuousControl implements I
     {
         super (host, label);
 
-        this.id = id;
+        this.layout = new HwControlLayout (id);
         this.encoding = encoding;
     }
 
@@ -114,22 +115,21 @@ public class HwRelativeKnobImpl extends AbstractHwContinuousControl implements I
     @Override
     public void setBounds (final double x, final double y, final double width, final double height)
     {
-        this.bounds = new Bounds (x, y, width, height);
+        this.layout.setBounds (x, y, width, height);
     }
 
 
     /** {@inheritDoc} */
     @Override
-    public String getId ()
+    public void draw (final IGraphicsContext gc, final double scale)
     {
-        return this.id;
-    }
+        final Bounds bounds = this.layout.getBounds ();
+        if (bounds == null)
+            return;
 
-
-    /** {@inheritDoc} */
-    @Override
-    public Bounds getBounds ()
-    {
-        return this.bounds;
+        final double radius = Math.min (bounds.getWidth (), bounds.getHeight ()) / 2.0;
+        final double centerX = (bounds.getX () + radius) * scale;
+        final double centerY = (bounds.getY () + radius) * scale;
+        gc.fillCircle (centerX, centerY, radius * scale, ColorEx.BLACK);
     }
 }

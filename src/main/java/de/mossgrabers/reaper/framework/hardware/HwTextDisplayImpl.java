@@ -4,8 +4,12 @@
 
 package de.mossgrabers.reaper.framework.hardware;
 
+import de.mossgrabers.framework.controller.color.ColorEx;
 import de.mossgrabers.framework.controller.hardware.AbstractHwControl;
 import de.mossgrabers.framework.controller.hardware.IHwTextDisplay;
+import de.mossgrabers.framework.graphics.Align;
+import de.mossgrabers.framework.graphics.IGraphicsContext;
+import de.mossgrabers.reaper.framework.graphics.GraphicsContextImpl;
 
 
 /**
@@ -15,9 +19,8 @@ import de.mossgrabers.framework.controller.hardware.IHwTextDisplay;
  */
 public class HwTextDisplayImpl extends AbstractHwControl implements IHwTextDisplay, IReaperHwControl
 {
-    private final String    id;
-    private final String [] lines;
-    private Bounds          bounds;
+    private final HwControlLayout layout;
+    private final String []       lines;
 
 
     /**
@@ -30,7 +33,7 @@ public class HwTextDisplayImpl extends AbstractHwControl implements IHwTextDispl
     {
         super (null, null);
 
-        this.id = id;
+        this.layout = new HwControlLayout (id);
         this.lines = new String [numLines];
     }
 
@@ -47,22 +50,30 @@ public class HwTextDisplayImpl extends AbstractHwControl implements IHwTextDispl
     @Override
     public void setBounds (final double x, final double y, final double width, final double height)
     {
-        this.bounds = new Bounds (x, y, width, height);
+        this.layout.setBounds (x, y, width, height);
     }
 
 
     /** {@inheritDoc} */
     @Override
-    public String getId ()
+    public void draw (final IGraphicsContext gc, final double scale)
     {
-        return this.id;
-    }
+        final Bounds bounds = this.layout.getBounds ();
+        if (bounds == null || this.lines[0] == null)
+            return;
 
+        double x = bounds.getX () * scale;
+        double y = bounds.getY () * scale;
 
-    /** {@inheritDoc} */
-    @Override
-    public Bounds getBounds ()
-    {
-        return this.bounds;
+        double width = bounds.getWidth () * scale;
+        double height = (bounds.getHeight () * scale) / this.lines.length;
+
+        final double fontSize = ((GraphicsContextImpl) gc).calculateFontSize (this.lines[0], height, width, 6.0);
+
+        for (int i = 0; i < this.lines.length; i++)
+        {
+            if (this.lines[i] != null)
+                gc.drawTextInBounds (this.lines[i], x, y + i * height, width, height, Align.CENTER, ColorEx.WHITE, fontSize);
+        }
     }
 }
