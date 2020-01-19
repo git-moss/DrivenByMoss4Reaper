@@ -1,5 +1,5 @@
 // Written by Jürgen Moßgraber - mossgrabers.de
-// (c) 2017-2019
+// (c) 2017-2020
 // Licensed under LGPLv3 - http://www.gnu.org/licenses/lgpl-3.0.txt
 
 package de.mossgrabers.reaper.controller;
@@ -37,6 +37,8 @@ import java.awt.GraphicsEnvironment;
 import java.awt.Insets;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -69,6 +71,7 @@ public abstract class AbstractControllerInstance implements IControllerInstance
     private boolean                       isRunning               = false;
     private final Object                  startSync               = new Object ();
     private List<JFrame>                  simulators              = new ArrayList<> ();
+    private double                        scaleFactor             = -1;
 
 
     /**
@@ -292,9 +295,38 @@ public abstract class AbstractControllerInstance implements IControllerInstance
                     @Override
                     public void componentResized (final ComponentEvent e)
                     {
+                        AbstractControllerInstance.this.scaleFactor = -1;
                         simulator.repaint ();
                     }
                 });
+
+                final MouseAdapter mouseListener = new MouseAdapter ()
+                {
+                    /** {@inheritDoc} */
+                    @Override
+                    public void mousePressed (final MouseEvent e)
+                    {
+                        AbstractControllerInstance.this.handleMouseEvent (surfaceFactory, e);
+                    }
+
+
+                    /** {@inheritDoc} */
+                    @Override
+                    public void mouseReleased (final MouseEvent e)
+                    {
+                        AbstractControllerInstance.this.handleMouseEvent (surfaceFactory, e);
+                    }
+
+
+                    /** {@inheritDoc} */
+                    @Override
+                    public void mouseDragged (final MouseEvent e)
+                    {
+                        AbstractControllerInstance.this.handleMouseEvent (surfaceFactory, e);
+                    }
+                };
+                canvas.addMouseListener (mouseListener);
+                canvas.addMouseMotionListener (mouseListener);
 
                 this.simulators.add (simulator);
             }
@@ -303,20 +335,22 @@ public abstract class AbstractControllerInstance implements IControllerInstance
     }
 
 
+    private void handleMouseEvent (final HwSurfaceFactoryImpl surfaceFactory, final MouseEvent event)
+    {
+        surfaceFactory.getControls ().forEach (control -> control.mouse (event.getID (), event.getX () / this.scaleFactor, event.getY () / this.scaleFactor));
+    }
+
+
     protected void render (final IControlSurface<?> surface, final JFrame simulator, final IGraphicsContext gc)
     {
+        final HwSurfaceFactoryImpl surfaceFactory = (HwSurfaceFactoryImpl) surface.getSurfaceFactory ();
+
         final Dimension innerSize = getInnerSize (simulator);
+        if (this.scaleFactor < 0)
+            this.scaleFactor = Math.min (innerSize.width / surfaceFactory.getWidth (), innerSize.height / surfaceFactory.getHeight ());
         gc.fillRectangle (0, 0, innerSize.width, innerSize.height, ColorEx.GRAY);
 
-        final HwSurfaceFactoryImpl surfaceFactory = (HwSurfaceFactoryImpl) surface.getSurfaceFactory ();
-        final double width = surfaceFactory.getWidth ();
-        final double height = surfaceFactory.getHeight ();
-
-        final double factorW = innerSize.width / width;
-        final double factorH = innerSize.height / height;
-        final double factor = Math.min (factorW, factorH);
-
-        surfaceFactory.getControls ().forEach (control -> control.draw (gc, factor));
+        surfaceFactory.getControls ().forEach (control -> control.draw (gc, this.scaleFactor));
     }
 
 

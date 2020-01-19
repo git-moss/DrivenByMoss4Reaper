@@ -1,5 +1,5 @@
 // Written by Jürgen Moßgraber - mossgrabers.de
-// (c) 2017-2019
+// (c) 2017-2020
 // Licensed under LGPLv3 - http://www.gnu.org/licenses/lgpl-3.0.txt
 
 package de.mossgrabers.reaper.framework.hardware;
@@ -131,5 +131,13 @@ public class HwRelativeKnobImpl extends AbstractHwContinuousControl implements I
         final double centerX = (bounds.getX () + radius) * scale;
         final double centerY = (bounds.getY () + radius) * scale;
         gc.fillCircle (centerX, centerY, radius * scale, ColorEx.BLACK);
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void mouse (final int mouseEvent, final double x, final double y)
+    {
+        // TODO
     }
 }

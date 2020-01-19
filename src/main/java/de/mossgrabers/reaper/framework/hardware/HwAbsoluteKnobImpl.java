@@ -1,5 +1,5 @@
 // Written by Jürgen Moßgraber - mossgrabers.de
-// (c) 2017-2019
+// (c) 2017-2020
 // Licensed under LGPLv3 - http://www.gnu.org/licenses/lgpl-3.0.txt
 
 package de.mossgrabers.reaper.framework.hardware;
@@ -95,5 +95,13 @@ public class HwAbsoluteKnobImpl extends AbstractHwContinuousControl implements I
         // TODO Draw according to value
         gc.fillCircle (centerX, centerY, radius, ColorEx.RED);
         gc.fillCircle (centerX, centerY, radius * 0.9, ColorEx.BLACK);
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void mouse (final int mouseEvent, final double x, final double y)
+    {
+        // TODO
     }
 }

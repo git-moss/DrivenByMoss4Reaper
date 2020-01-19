@@ -1,5 +1,5 @@
 // Written by Jürgen Moßgraber - mossgrabers.de
-// (c) 2017-2019
+// (c) 2017-2020
 // Licensed under LGPLv3 - http://www.gnu.org/licenses/lgpl-3.0.txt
 
 package de.mossgrabers.reaper.framework.daw.data;
@@ -139,7 +139,8 @@ public class SlotImpl extends ItemImpl implements ISlot
     @Override
     public void duplicate ()
     {
-        this.sender.processNoArg ("clip", "duplicate");
+        if (this.getIndex () >= 0)
+            this.sendTrackClipOSC ("duplicate");
     }
 
 

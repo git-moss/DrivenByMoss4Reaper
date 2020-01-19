@@ -1,5 +1,5 @@
 // Written by Jürgen Moßgraber - mossgrabers.de
-// (c) 2017-2019
+// (c) 2017-2020
 // Licensed under LGPLv3 - http://www.gnu.org/licenses/lgpl-3.0.txt
 
 package de.mossgrabers.reaper.framework.hardware;
@@ -62,11 +62,11 @@ public class HwTextDisplayImpl extends AbstractHwControl implements IHwTextDispl
         if (bounds == null || this.lines[0] == null)
             return;
 
-        double x = bounds.getX () * scale;
-        double y = bounds.getY () * scale;
+        final double x = bounds.getX () * scale;
+        final double y = bounds.getY () * scale;
 
-        double width = bounds.getWidth () * scale;
-        double height = (bounds.getHeight () * scale) / this.lines.length;
+        final double width = bounds.getWidth () * scale;
+        final double height = bounds.getHeight () * scale / this.lines.length;
 
         final double fontSize = ((GraphicsContextImpl) gc).calculateFontSize (this.lines[0], height, width, 6.0);
 
@@ -75,5 +75,13 @@ public class HwTextDisplayImpl extends AbstractHwControl implements IHwTextDispl
             if (this.lines[i] != null)
                 gc.drawTextInBounds (this.lines[i], x, y + i * height, width, height, Align.CENTER, ColorEx.WHITE, fontSize);
         }
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void mouse (final int mouseEvent, final double x, final double y)
+    {
+        // No interaction with displays
     }
 }

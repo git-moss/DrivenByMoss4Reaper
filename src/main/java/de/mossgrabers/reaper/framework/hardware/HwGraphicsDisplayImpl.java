@@ -1,14 +1,15 @@
 // Written by Jürgen Moßgraber - mossgrabers.de
-// (c) 2017-2019
+// (c) 2017-2020
 // Licensed under LGPLv3 - http://www.gnu.org/licenses/lgpl-3.0.txt
 
 package de.mossgrabers.reaper.framework.hardware;
 
-import de.mossgrabers.framework.controller.color.ColorEx;
 import de.mossgrabers.framework.controller.hardware.AbstractHwControl;
 import de.mossgrabers.framework.controller.hardware.IHwGraphicsDisplay;
 import de.mossgrabers.framework.graphics.IBitmap;
 import de.mossgrabers.framework.graphics.IGraphicsContext;
+import de.mossgrabers.reaper.framework.graphics.BitmapImpl;
+import de.mossgrabers.reaper.framework.graphics.GraphicsContextImpl;
 
 
 /**
@@ -19,6 +20,7 @@ import de.mossgrabers.framework.graphics.IGraphicsContext;
 public class HwGraphicsDisplayImpl extends AbstractHwControl implements IHwGraphicsDisplay, IReaperHwControl
 {
     private final HwControlLayout layout;
+    private final IBitmap         bitmap;
 
 
     /**
@@ -31,6 +33,7 @@ public class HwGraphicsDisplayImpl extends AbstractHwControl implements IHwGraph
     {
         super (null, null);
 
+        this.bitmap = bitmap;
         this.layout = new HwControlLayout (id);
     }
 
@@ -50,9 +53,14 @@ public class HwGraphicsDisplayImpl extends AbstractHwControl implements IHwGraph
         final Bounds bounds = this.layout.getBounds ();
         if (bounds == null)
             return;
-        gc.fillRectangle (bounds.getX () * scale, bounds.getY () * scale, bounds.getWidth () * scale, bounds.getHeight () * scale, ColorEx.BLACK);
+        ((BitmapImpl) this.bitmap).drawScaledImage (((GraphicsContextImpl) gc).getGraphics (), (int) (bounds.getX () * scale), (int) (bounds.getY () * scale), (int) (bounds.getWidth () * scale), (int) (bounds.getHeight () * scale));
+    }
 
-        // TODO Draw the display content
 
+    /** {@inheritDoc} */
+    @Override
+    public void mouse (final int mouseEvent, final double x, final double y)
+    {
+        // No interaction with diplays
     }
 }

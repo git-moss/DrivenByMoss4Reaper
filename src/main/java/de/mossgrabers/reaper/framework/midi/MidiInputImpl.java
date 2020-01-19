@@ -1,5 +1,5 @@
 // Written by Jürgen Moßgraber - mossgrabers.de
-// (c) 2017-2019
+// (c) 2017-2020
 // Licensed under LGPLv3 - http://www.gnu.org/licenses/lgpl-3.0.txt
 
 package de.mossgrabers.reaper.framework.midi;
@@ -37,7 +37,7 @@ import java.util.Map;
  *
  * @author J&uuml;rgen Mo&szlig;graber
  */
-class MidiInputImpl implements IMidiInput
+public class MidiInputImpl implements IMidiInput
 {
     private final IHost                                                host;
     private final MessageSender                                        sender;
@@ -230,7 +230,7 @@ class MidiInputImpl implements IMidiInput
      *
      * @param message The message to handle
      */
-    private void handleMidiMessage (final MidiMessage message)
+    public void handleMidiMessage (final MidiMessage message)
     {
         try
         {

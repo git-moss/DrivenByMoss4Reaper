@@ -1,5 +1,5 @@
 // Written by Jürgen Moßgraber - mossgrabers.de
-// (c) 2017-2019
+// (c) 2017-2020
 // Licensed under LGPLv3 - http://www.gnu.org/licenses/lgpl-3.0.txt
 
 package de.mossgrabers.framework.graphics;
@@ -198,7 +198,7 @@ public interface IGraphicsContext
 
     /**
      * Calculates the maximum height of a text which needs to fit into a width.
-     * 
+     *
      * @param text The text
      * @param maxHeight The maximum height of the text
      * @param maxWidth The maximum width

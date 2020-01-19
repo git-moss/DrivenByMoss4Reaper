@@ -1,5 +1,5 @@
 // Written by Jürgen Moßgraber - mossgrabers.de
-// (c) 2017-2019
+// (c) 2017-2020
 // Licensed under LGPLv3 - http://www.gnu.org/licenses/lgpl-3.0.txt
 
 package de.mossgrabers.reaper.framework.hardware;
@@ -82,7 +82,8 @@ public class HwLightImpl extends AbstractHwControl implements IHwLight, IReaperH
     @Override
     public void clearCache ()
     {
-        this.turnOff ();
+        this.colorState = null;
+        this.intState = -1;
     }
 
 
@@ -147,5 +148,13 @@ public class HwLightImpl extends AbstractHwControl implements IHwLight, IReaperH
     public ColorEx getColorState ()
     {
         return this.colorState;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void mouse (final int mouseEvent, final double x, final double y)
+    {
+        // No interaction with a light
     }
 }

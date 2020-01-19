@@ -1,5 +1,5 @@
 // Written by Jürgen Moßgraber - mossgrabers.de
-// (c) 2017-2019
+// (c) 2017-2020
 // Licensed under LGPLv3 - http://www.gnu.org/licenses/lgpl-3.0.txt
 
 package de.mossgrabers.reaper.framework.graphics;
@@ -222,7 +222,6 @@ public class GraphicsContextImpl implements IGraphicsContext
     public void drawImage (final IImage image, final double x, final double y)
     {
         this.gc.drawImage (((SVGImage) image).getImage (), (int) x, (int) y, null);
-
     }
 
 
@@ -303,6 +302,17 @@ public class GraphicsContextImpl implements IGraphicsContext
     public int getTextDescent (final String text)
     {
         return Math.round (this.gc.getFont ().getLineMetrics (text, this.gc.getFontRenderContext ()).getDescent ());
+    }
+
+
+    /**
+     * Get the internal graphics object.
+     *
+     * @return The GC
+     */
+    public Graphics2D getGraphics ()
+    {
+        return this.gc;
     }
 
 
