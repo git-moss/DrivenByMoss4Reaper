@@ -453,6 +453,31 @@ networkaddress.cache.negative.ttl=10
 krb5.kdc.bad.policy = tryLast
 
 #
+# Kerberos cross-realm referrals (RFC 6806)
+#
+# OpenJDK's Kerberos client supports cross-realm referrals as defined in
+# RFC 6806. This allows to setup more dynamic environments in which clients
+# do not need to know in advance how to reach the realm of a target principal
+# (either a user or service).
+#
+# When a client issues an AS or a TGS request, the "canonicalize" option
+# is set to announce support of this feature. A KDC server may fulfill the
+# request or reply referring the client to a different one. If referred,
+# the client will issue a new request and the cycle repeats.
+#
+# In addition to referrals, the "canonicalize" option allows the KDC server
+# to change the client name in response to an AS request. For security reasons,
+# RFC 6806 (section 11) FAST scheme is enforced.
+#
+# Disable Kerberos cross-realm referrals. Value may be overwritten with a
+# System property (-Dsun.security.krb5.disableReferrals).
+sun.security.krb5.disableReferrals=false
+
+# Maximum number of AS or TGS referrals to avoid infinite loops. Value may
+# be overwritten with a System property (-Dsun.security.krb5.maxReferrals).
+sun.security.krb5.maxReferrals=5
+
+#
 # Algorithm restrictions for certification path (CertPath) processing
 #
 # In some environments, certain algorithms or key lengths may be undesirable
@@ -898,7 +923,7 @@ jdk.xml.dsig.secureValidationPolicy=\
     noRetrievalMethodLoops
 
 #
-# Serialization process-wide filter
+# Serialization system-wide filter
 #
 # A filter, if configured, is used by java.io.ObjectInputStream during
 # deserialization to check the contents of the stream.
@@ -907,8 +932,8 @@ jdk.xml.dsig.secureValidationPolicy=\
 # Patterns are separated by ";" (semicolon).
 # Whitespace is significant and is considered part of the pattern.
 #
-# If the system property jdk.serialFilter is also specified, it supersedes
-# the security property value defined here.
+# If the system property jdk.serialFilter is also specified on the command
+# line, it supersedes the security property value defined here.
 #
 # If a pattern includes a "=", it sets a limit.
 # If a limit appears more than once the last value is used.
@@ -1000,27 +1025,6 @@ jdk.xml.dsig.secureValidationPolicy=\
 #    java.rmi.dgc.Lease;\
 #    maxdepth=5;maxarray=10000
 
-# CORBA ORBIorTypeCheckRegistryFilter
-# Type check enhancement for ORB::string_to_object processing
-#
-# An IOR type check filter, if configured, is used by an ORB during
-# an ORB::string_to_object invocation to check the veracity of the type encoded
-# in the ior string.
-#
-# The filter pattern consists of a semi-colon separated list of class names.
-# The configured list contains the binary class names of the IDL interface types
-# corresponding to the IDL stub class to be instantiated.
-# As such, a filter specifies a list of IDL stub classes that will be
-# allowed by an ORB when an ORB::string_to_object is invoked.
-# It is used to specify a white list configuration of acceptable
-# IDL stub types which may be contained in a stringified IOR
-# parameter passed as input to an ORB::string_to_object method.
-#
-# Note: This property is currently used by the JDK Reference implementation.
-# It is not guaranteed to be examined and used by other implementations.
-#
-#com.sun.CORBA.ORBIorTypeCheckRegistryFilter=binary_class_name;binary_class_name
-
 #
 # JCEKS Encrypted Key Serial Filter
 #
@@ -1037,6 +1041,77 @@ jdk.xml.dsig.secureValidationPolicy=\
 # and javax.crypto.spec.SecretKeySpec and rejects all the others.
 jceks.key.serialFilter = java.base/java.lang.Enum;java.base/java.security.KeyRep;\
   java.base/java.security.KeyRep$Type;java.base/javax.crypto.spec.SecretKeySpec;!*
+
+#
+# PKCS12 KeyStore properties
+#
+# The following properties, if configured, are used by the PKCS12 KeyStore
+# implementation during the creation of a new keystore. Several of the
+# properties may also be used when modifying an existing keystore. The
+# properties can be overridden by a KeyStore API that specifies its own
+# algorithms and parameters.
+#
+# If an existing PKCS12 keystore is loaded and then stored, the algorithm and
+# parameter used to generate the existing Mac will be reused. If the existing
+# keystore does not have a Mac, no Mac will be created while storing. If there
+# is at least one certificate in the existing keystore, the algorithm and
+# parameters used to encrypt the last certificate in the existing keystore will
+# be reused to encrypt all certificates while storing. If the last certificate
+# in the existing keystore is not encrypted, all certificates will be stored
+# unencrypted. If there is no certificate in the existing keystore, any newly
+# added certificate will be encrypted (or stored unencrypted if algorithm
+# value is "NONE") using the "keystore.pkcs12.certProtectionAlgorithm" and
+# "keystore.pkcs12.certPbeIterationCount" values defined here. Existing private
+# and secret key(s) are not changed. Newly set private and secret key(s) will
+# be encrypted using the "keystore.pkcs12.keyProtectionAlgorithm" and
+# "keystore.pkcs12.keyPbeIterationCount" values defined here.
+#
+# In order to apply new algorithms and parameters to all entries in an
+# existing keystore, one can create a new keystore and add entries in the
+# existing keystore into the new keystore. This can be achieved by calling the
+# "keytool -importkeystore" command.
+#
+# If a system property of the same name is also specified, it supersedes the
+# security property value defined here.
+#
+# If the property is set to an illegal value,
+# an iteration count that is not a positive integer, or an unknown algorithm
+# name, an exception will be thrown when the property is used.
+# If the property is not set or empty, a default value will be used.
+#
+# Note: These properties are currently used by the JDK Reference implementation.
+# They are not guaranteed to be examined and used by other implementations.
+
+# The algorithm used to encrypt a certificate. This can be any non-Hmac PBE
+# algorithm defined in the Cipher section of the Java Security Standard
+# Algorithm Names Specification. When set to "NONE", the certificate
+# is not encrypted. The default value is "PBEWithSHA1AndRC2_40".
+#keystore.pkcs12.certProtectionAlgorithm = PBEWithSHA1AndRC2_40
+
+# The iteration count used by the PBE algorithm when encrypting a certificate.
+# This value must be a positive integer. The default value is 50000.
+#keystore.pkcs12.certPbeIterationCount = 50000
+
+# The algorithm used to encrypt a private key or secret key. This can be
+# any non-Hmac PBE algorithm defined in the Cipher section of the Java
+# Security Standard Algorithm Names Specification. The value must not be "NONE".
+# The default value is "PBEWithSHA1AndDESede".
+#keystore.pkcs12.keyProtectionAlgorithm = PBEWithSHA1AndDESede
+
+# The iteration count used by the PBE algorithm when encrypting a private key
+# or a secret key. This value must be a positive integer. The default value
+# is 50000.
+#keystore.pkcs12.keyPbeIterationCount = 50000
+
+# The algorithm used to calculate the optional MacData at the end of a PKCS12
+# file. This can be any HmacPBE algorithm defined in the Mac section of the
+# Java Security Standard Algorithm Names Specification. When set to "NONE",
+# no Mac is generated. The default value is "HmacPBESHA1".
+#keystore.pkcs12.macAlgorithm = HmacPBESHA1
+
+# The iteration count used by the MacData algorithm. This value must be a
+# positive integer. The default value is 100000.
+#keystore.pkcs12.macIterationCount = 100000
 
 #
 # Enhanced exception message information
@@ -1059,18 +1134,20 @@ jceks.key.serialFilter = java.base/java.lang.Enum;java.base/java.security.KeyRep
 #             java.nio.channels package will contain enhanced exception
 #             message information
 #
+#  jar      - enables more detailed information in the IOExceptions thrown
+#             by classes in the java.util.jar package
+#
 # The property setting in this file can be overridden by a system property of
 # the same name, with the same syntax and possible values.
 #
-#jdk.includeInExceptions=hostInfo
+#jdk.includeInExceptions=hostInfo,jar
 
 #
 # Disabled mechanisms for the Simple Authentication and Security Layer (SASL)
 #
 # Disabled mechanisms will not be negotiated by both SASL clients and servers.
-# These mechanisms will be ignored if they are specified in the "mechanisms"
-# argument of "Sasl.createSaslClient" or the "mechanism" argument of
-# "Sasl.createSaslServer".
+# These mechanisms will be ignored if they are specified in the mechanisms argument
+# of `Sasl.createClient` or the mechanism argument of `Sasl.createServer`.
 #
 # The value of this property is a comma-separated list of SASL mechanisms.
 # The mechanisms are case-sensitive. Whitespaces around the commas are ignored.
@@ -1159,4 +1236,3 @@ jdk.io.permissionsUseCanonicalPath=false
 # security property value defined here.
 #
 #jdk.security.krb5.default.initiate.credential=always-impersonate
-

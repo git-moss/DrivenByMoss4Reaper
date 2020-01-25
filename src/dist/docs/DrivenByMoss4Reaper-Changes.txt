@@ -16,7 +16,7 @@
   * Fixed: Push 1: Frame mode showed an empty display
 - Launchpad:
   * New: Non-Pro models: Pressing the Delete and Duplicate pads in shift mode activates the related mode. Leaving the shift mode and entering session mode allows then to delete/duplicate clips and tracks. After deleting/duplicating an item the delete/duplicate mode is turned off.
-  * New: Turn of panaroama lights for non-existing tracks, instead of showing them centered
+  * New: Turn of panorama lights for non-existing tracks, instead of showing them centered
   * Fixed: Launchpad X was not correctly using the velocity faders
   * Fixed: Fader scaling was wrong (except Launchpad Pro)
 - Komplete Kontrol A-Series / S-Series Mk2 / M32

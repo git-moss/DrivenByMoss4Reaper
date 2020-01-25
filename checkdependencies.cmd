@@ -1,2 +1,2 @@
-set JAVA_HOME=%JAVA_HOME11%
+set JAVA_HOME=%JAVA_HOME13%
 gradlew dependencyUpdates
