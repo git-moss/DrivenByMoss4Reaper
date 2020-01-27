@@ -1,4 +1,4 @@
-8.70 (unreleased)
+8.70
 - All devices
   * New: Stop (or toggle playback) also disables record
   * New: Improved autodetect: Do not add a device if one of the midi ins/outs is already in use. Refresh midi devices before executing the autodetect.
