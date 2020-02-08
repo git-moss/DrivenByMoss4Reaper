@@ -61,6 +61,24 @@ public class SceneBankImpl extends AbstractPagedBankImpl<SceneImpl, IScene> impl
 
     /** {@inheritDoc} */
     @Override
+    public boolean canScrollBackwards ()
+    {
+        // There is no selected scene, therefore use the bank offset
+        return this.bankOffset > 0;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean canScrollForwards ()
+    {
+        // There is no selected scene, therefore use the bank offset
+        return this.bankOffset + 1 < this.getItemCount ();
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
     public void scrollBackwards ()
     {
         this.bankOffset = Math.max (0, this.bankOffset - 1);
@@ -96,6 +114,18 @@ public class SceneBankImpl extends AbstractPagedBankImpl<SceneImpl, IScene> impl
         if (this.bankOffset + this.pageSize < this.getItemCount ())
         {
             this.bankOffset += this.pageSize;
+            this.trackBank.updateSlotBanks (this.bankOffset);
+        }
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void scrollTo (final int position, final boolean adjustPage)
+    {
+        if (position < this.getItemCount ())
+        {
+            this.bankOffset = position;
             this.trackBank.updateSlotBanks (this.bankOffset);
         }
     }

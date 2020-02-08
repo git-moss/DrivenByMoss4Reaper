@@ -2,6 +2,10 @@
 - All devices
   * Fixed: Blinking pads in simulator UI did not work
   * Fixed: Mapping of CC commands to specific values was broken. Mainly affected Kontrol keyboards.
+  * Fixed: Scene/clip scrolling LEDs not indicated correctly. Session birds eye view navigation did not work.
+- Akai APC40 / APC40mkII
+  * New: Improved scrolling of browser columns
+  * Fixed: Browser crashed when activated
 - Generic Flexi
   * Fixed: Configured knob speed settings were not set on startup
 - Komplete Kontrol A-Series / M32
