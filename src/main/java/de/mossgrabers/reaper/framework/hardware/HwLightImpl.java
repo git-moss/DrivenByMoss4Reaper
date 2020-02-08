@@ -33,6 +33,8 @@ public class HwLightImpl extends AbstractHwControl implements IHwLight, IReaperH
 
     private ColorEx                 colorState;
     private int                     intState;
+    private ColorEx                 blinkColorEx;
+    private double                  blinkTimeInSec;
 
 
     /**
@@ -109,15 +111,36 @@ public class HwLightImpl extends AbstractHwControl implements IHwLight, IReaperH
                 return;
             this.colorState = newColorState;
             this.colorSendValueConsumer.accept (this.colorState);
+            return;
         }
+
+        final int newColorState = this.intSupplier.getAsInt ();
+        if (this.intState == newColorState)
+            return;
+        this.intState = newColorState;
+
+        // Update controller
+        this.intSendValueConsumer.accept (this.intState);
+
+        // Update simulator UI
+        if (this.intState == -1)
+        {
+            this.colorState = null;
+            return;
+        }
+
+        final int colorIndex = this.intState & 0xFF;
+        final int blinkColorIndex = this.intState >> 8 & 0xFF;
+        final boolean blinkFast = (this.intState >> 16 & 1) > 0;
+
+        this.colorState = this.stateToColorFunction.apply (colorIndex);
+
+        if (blinkColorIndex <= 0 || blinkColorIndex >= 128)
+            this.blinkColorEx = null;
         else
         {
-            final int newColorState = this.intSupplier.getAsInt ();
-            if (this.intState == newColorState)
-                return;
-            this.intState = newColorState;
-            this.intSendValueConsumer.accept (this.intState);
-            this.colorState = this.stateToColorFunction.apply (this.intState);
+            this.blinkColorEx = this.stateToColorFunction.apply (blinkColorIndex);
+            this.blinkTimeInSec = blinkFast ? 0.5 : 1;
         }
     }
 
@@ -135,8 +158,20 @@ public class HwLightImpl extends AbstractHwControl implements IHwLight, IReaperH
     public void draw (final IGraphicsContext gc, final double scale)
     {
         final Bounds bounds = this.layout.getBounds ();
-        if (bounds != null)
-            gc.fillRectangle (bounds.getX () * scale, bounds.getY () * scale, bounds.getWidth () * scale, bounds.getHeight () * scale, this.colorState == null ? ColorEx.BLACK : this.colorState);
+        if (bounds == null)
+            return;
+
+        ColorEx color = this.colorState == null ? ColorEx.BLACK : this.colorState;
+
+        if (this.colorState != null && this.blinkColorEx != null)
+        {
+            final long rate = Math.round (this.blinkTimeInSec * 2.0);
+            long seconds = System.currentTimeMillis () / 1000;
+            if (seconds % (rate + 1) == rate)
+                color = this.blinkColorEx;
+        }
+
+        gc.fillRectangle (bounds.getX () * scale, bounds.getY () * scale, bounds.getWidth () * scale, bounds.getHeight () * scale, color);
     }
 
 

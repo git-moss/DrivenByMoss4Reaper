@@ -1,3 +1,14 @@
+8.80 (unreleased)
+- All devices
+  * Fixed: Blinking pads in simulator UI did not work
+  * Fixed: Mapping of CC commands to specific values was broken. Mainly affected Kontrol keyboards.
+- Generic Flexi
+  * Fixed: Configured knob speed settings were not set on startup
+- Komplete Kontrol A-Series / M32
+  * Fixed: Configured knob speed settings were not set on startup
+- Push 1/2
+  * Fixed: Configured knob speed settings were not set on startup
+
 8.70
 - All devices
   * New: Stop (or toggle playback) also disables record

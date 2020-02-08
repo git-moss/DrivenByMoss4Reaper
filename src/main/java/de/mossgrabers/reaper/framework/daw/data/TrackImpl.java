@@ -10,6 +10,7 @@ import de.mossgrabers.framework.daw.data.ITrack;
 import de.mossgrabers.framework.daw.resource.ChannelType;
 import de.mossgrabers.reaper.framework.daw.AbstractTrackBankImpl;
 import de.mossgrabers.reaper.framework.daw.DataSetupEx;
+import de.mossgrabers.reaper.framework.daw.SceneBankImpl;
 import de.mossgrabers.reaper.framework.daw.SlotBankImpl;
 import de.mossgrabers.reaper.framework.daw.TrackBankImpl;
 
@@ -79,7 +80,7 @@ public class TrackImpl extends ChannelImpl implements ITrack
         super (dataSetup, index, numSends);
 
         this.trackBank = trackBank;
-        this.slotBank = new SlotBankImpl (dataSetup, index, numScenes);
+        this.slotBank = new SlotBankImpl (dataSetup, (SceneBankImpl) trackBank.getSceneBank (), index, numScenes);
     }
 
 

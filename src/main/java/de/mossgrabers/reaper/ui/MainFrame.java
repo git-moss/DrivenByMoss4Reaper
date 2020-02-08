@@ -77,7 +77,7 @@ public class MainFrame extends JFrame
 
         logModel.setTextArea (this.loggingTextArea);
 
-        final URL resource = getClass ().getResource ("/images/AppIcon.gif");
+        final URL resource = this.getClass ().getResource ("/images/AppIcon.gif");
         final Image image = Toolkit.getDefaultToolkit ().getImage (resource);
         if (image != null)
             this.setIconImage (image);

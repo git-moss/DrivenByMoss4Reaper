@@ -158,7 +158,7 @@ public class HwAbsoluteKnobImpl extends AbstractHwContinuousControl implements I
 
             if (mouseEvent == MouseEvent.MOUSE_DRAGGED)
             {
-                final double offset = Math.min (3, Math.max (-3, (this.pressedX - scaleX) + (this.pressedY - scaleY)));
+                final double offset = Math.min (3, Math.max (-3, this.pressedX - scaleX + (this.pressedY - scaleY)));
                 this.pressedX = scaleX;
                 this.pressedY = scaleY;
 

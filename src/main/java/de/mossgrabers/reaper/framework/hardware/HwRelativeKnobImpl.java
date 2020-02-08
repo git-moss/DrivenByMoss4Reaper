@@ -187,7 +187,7 @@ public class HwRelativeKnobImpl extends AbstractHwContinuousControl implements I
 
             if (mouseEvent == MouseEvent.MOUSE_DRAGGED)
             {
-                final int speed = (int) Math.min (3, Math.max (-3, Math.round ((this.pressedX - scaleX) + (this.pressedY - scaleY))));
+                final int speed = (int) Math.min (3, Math.max (-3, Math.round (this.pressedX - scaleX + (this.pressedY - scaleY))));
                 if (speed == 0)
                     return;
                 this.pressedX = scaleX;

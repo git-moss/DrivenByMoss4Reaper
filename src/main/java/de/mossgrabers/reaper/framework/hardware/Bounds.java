@@ -87,7 +87,7 @@ public class Bounds
      */
     public boolean contains (final double x, final double y)
     {
-        return containsX (x) && containsY (y);
+        return this.containsX (x) && this.containsY (y);
     }
 
 

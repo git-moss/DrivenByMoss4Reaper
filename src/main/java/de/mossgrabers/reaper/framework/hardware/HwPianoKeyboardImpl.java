@@ -213,7 +213,7 @@ public class HwPianoKeyboardImpl implements IHwPianoKeyboard, IReaperHwControl
 
         if (mouseEvent == MouseEvent.MOUSE_DRAGGED)
         {
-            final double change = Math.min (3, Math.max (-3, (this.pressedX - scaleX) + (this.pressedY - scaleY)));
+            final double change = Math.min (3, Math.max (-3, this.pressedX - scaleX + (this.pressedY - scaleY)));
             this.pressedX = scaleX;
             this.pressedY = scaleY;
 
@@ -240,7 +240,7 @@ public class HwPianoKeyboardImpl implements IHwPianoKeyboard, IReaperHwControl
 
     /**
      * Calc the key from the mouse position.
-     * 
+     *
      * @param x The x position relative to the widget
      * @param y The y position relative to the widget
      * @param scale The scale factor

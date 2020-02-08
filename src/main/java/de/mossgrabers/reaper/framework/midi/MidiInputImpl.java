@@ -18,7 +18,6 @@ import de.mossgrabers.framework.daw.midi.INoteInput;
 import de.mossgrabers.framework.daw.midi.MidiShortCallback;
 import de.mossgrabers.framework.daw.midi.MidiSysExCallback;
 import de.mossgrabers.framework.utils.ButtonEvent;
-import de.mossgrabers.framework.utils.Pair;
 import de.mossgrabers.reaper.communication.MessageSender;
 
 import javax.sound.midi.MidiDevice;
@@ -30,6 +29,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 
 /**
@@ -39,22 +39,22 @@ import java.util.Map;
  */
 public class MidiInputImpl implements IMidiInput
 {
-    private final IHost                                                host;
-    private final MessageSender                                        sender;
-    private final MidiConnection                                       midiConnection;
-    private final MidiDevice                                           device;
-    private final NoteInputImpl                                        defaultNoteInput;
-    private final List<NoteInputImpl>                                  noteInputs                  = new ArrayList<> ();
+    private final IHost                                               host;
+    private final MessageSender                                       sender;
+    private final MidiConnection                                      midiConnection;
+    private final MidiDevice                                          device;
+    private final NoteInputImpl                                       defaultNoteInput;
+    private final List<NoteInputImpl>                                 noteInputs                  = new ArrayList<> ();
 
-    private MidiShortCallback                                          shortCallback;
-    private MidiSysExCallback                                          sysexCallback;
+    private MidiShortCallback                                         shortCallback;
+    private MidiSysExCallback                                         sysexCallback;
 
-    private final Map<Integer, Map<Integer, Pair<IHwButton, Integer>>> ccButtonMatchers            = new HashMap<> ();
-    private final Map<Integer, Map<Integer, Pair<IHwButton, Integer>>> noteButtonMatchers          = new HashMap<> ();
-    private final Map<Integer, Map<Integer, IHwContinuousControl>>     ccContinuousMatchers        = new HashMap<> ();
-    private final Map<Integer, IHwContinuousControl>                   pitchbendContinuousMatchers = new HashMap<> ();
-    private final Map<Integer, Map<Integer, IHwContinuousControl>>     ccTouchMatchers             = new HashMap<> ();
-    private final Map<Integer, Map<Integer, IHwContinuousControl>>     noteTouchMatchers           = new HashMap<> ();
+    private final Map<Integer, Map<Integer, Map<Integer, IHwButton>>> ccButtonMatchers            = new HashMap<> ();
+    private final Map<Integer, Map<Integer, Map<Integer, IHwButton>>> noteButtonMatchers          = new HashMap<> ();
+    private final Map<Integer, Map<Integer, IHwContinuousControl>>    ccContinuousMatchers        = new HashMap<> ();
+    private final Map<Integer, IHwContinuousControl>                  pitchbendContinuousMatchers = new HashMap<> ();
+    private final Map<Integer, Map<Integer, IHwContinuousControl>>    ccTouchMatchers             = new HashMap<> ();
+    private final Map<Integer, Map<Integer, IHwContinuousControl>>    noteTouchMatchers           = new HashMap<> ();
 
 
     /**
@@ -126,29 +126,25 @@ public class MidiInputImpl implements IMidiInput
 
     /** {@inheritDoc} */
     @Override
-    public void bind (final IHwButton button, final BindType type, final int channel, final int control, final int value)
+    public void bind (final IHwButton button, final BindType type, final int channel, final int control)
     {
-        final Pair<IHwButton, Integer> v = new Pair<> (button, Integer.valueOf (value));
-        if (type == BindType.CC)
-            this.ccButtonMatchers.computeIfAbsent (Integer.valueOf (channel), key -> new HashMap<> ()).put (Integer.valueOf (control), v);
-        else if (type == BindType.NOTE)
-            this.noteButtonMatchers.computeIfAbsent (Integer.valueOf (channel), key -> new HashMap<> ()).put (Integer.valueOf (control), v);
-        else
-            throw new BindException (type);
+        this.bind (button, type, channel, control, -1);
     }
 
 
     /** {@inheritDoc} */
     @Override
-    public void bind (final IHwButton button, final BindType type, final int channel, final int control)
+    public void bind (final IHwButton button, final BindType type, final int channel, final int control, final int value)
     {
-        final Pair<IHwButton, Integer> v = new Pair<> (button, null);
+        final Map<Integer, Map<Integer, IHwButton>> controlMap;
         if (type == BindType.CC)
-            this.ccButtonMatchers.computeIfAbsent (Integer.valueOf (channel), key -> new HashMap<> ()).put (Integer.valueOf (control), v);
+            controlMap = this.ccButtonMatchers.computeIfAbsent (Integer.valueOf (channel), key -> new HashMap<> ());
         else if (type == BindType.NOTE)
-            this.noteButtonMatchers.computeIfAbsent (Integer.valueOf (channel), key -> new HashMap<> ()).put (Integer.valueOf (control), v);
+            controlMap = this.noteButtonMatchers.computeIfAbsent (Integer.valueOf (channel), key -> new HashMap<> ());
         else
             throw new BindException (type);
+
+        controlMap.computeIfAbsent (Integer.valueOf (control), key -> new HashMap<> ()).put (Integer.valueOf (value), button);
     }
 
 
@@ -332,17 +328,20 @@ public class MidiInputImpl implements IMidiInput
      */
     protected boolean handleControlsNote (final int channel, final int data1, final int data2, final boolean isNoteOff)
     {
-        final Map<Integer, Pair<IHwButton, Integer>> noteMap = this.noteButtonMatchers.get (Integer.valueOf (channel));
+        final Map<Integer, Map<Integer, IHwButton>> noteMap = this.noteButtonMatchers.get (Integer.valueOf (channel));
         if (noteMap != null)
         {
-            final Pair<IHwButton, Integer> pair = noteMap.get (Integer.valueOf (data1));
-            if (pair != null)
+            final Map<Integer, IHwButton> valueMap = noteMap.get (Integer.valueOf (data1));
+            if (valueMap != null)
             {
-                final Integer value = pair.getValue ();
-                if (value == null || value.intValue () == data2)
+                for (Entry<Integer, IHwButton> valueButtonPair: valueMap.entrySet ())
                 {
-                    pair.getKey ().trigger (isNoteOff ? ButtonEvent.UP : ButtonEvent.DOWN, data2 / 127.0);
-                    return true;
+                    final int value = valueButtonPair.getKey ().intValue ();
+                    if (value == -1 || value == data2)
+                    {
+                        valueButtonPair.getValue ().trigger (isNoteOff ? ButtonEvent.UP : ButtonEvent.DOWN, data2 / 127.0);
+                        return true;
+                    }
                 }
             }
         }
@@ -364,17 +363,20 @@ public class MidiInputImpl implements IMidiInput
 
     protected boolean handleControlsCC (final int channel, final int data1, final int data2)
     {
-        final Map<Integer, Pair<IHwButton, Integer>> ccButtonMap = this.ccButtonMatchers.get (Integer.valueOf (channel));
+        final Map<Integer, Map<Integer, IHwButton>> ccButtonMap = this.ccButtonMatchers.get (Integer.valueOf (channel));
         if (ccButtonMap != null)
         {
-            final Pair<IHwButton, Integer> pair = ccButtonMap.get (Integer.valueOf (data1));
-            if (pair != null)
+            final Map<Integer, IHwButton> valueMap = ccButtonMap.get (Integer.valueOf (data1));
+            if (valueMap != null)
             {
-                final Integer value = pair.getValue ();
-                if (value == null || value.intValue () == data2)
+                for (Entry<Integer, IHwButton> valueButtonPair: valueMap.entrySet ())
                 {
-                    pair.getKey ().trigger (data2 > 0 ? ButtonEvent.DOWN : ButtonEvent.UP);
-                    return true;
+                    final int value = valueButtonPair.getKey ().intValue ();
+                    if (value == -1 || value == data2)
+                    {
+                        valueButtonPair.getValue ().trigger (data2 > 0 ? ButtonEvent.DOWN : ButtonEvent.UP);
+                        return true;
+                    }
                 }
             }
 

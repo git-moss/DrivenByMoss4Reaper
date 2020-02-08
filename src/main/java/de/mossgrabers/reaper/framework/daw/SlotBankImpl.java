@@ -20,19 +20,23 @@ import java.util.List;
  */
 public class SlotBankImpl extends AbstractPagedBankImpl<SlotImpl, ISlot> implements ISlotBank
 {
-    private int trackIndex;
+    private final SceneBankImpl sceneBank;
+    private int                 trackIndex;
 
 
     /**
      * Constructor.
      *
      * @param dataSetup Some configuration variables
+     * @param sceneBank The scene bank for scrolling the clip pages on all tracks
      * @param trackIndex The track index to which the slot bank belongs
      * @param numSlots The number of slots in the page of the bank
      */
-    public SlotBankImpl (final DataSetupEx dataSetup, final int trackIndex, final int numSlots)
+    public SlotBankImpl (final DataSetupEx dataSetup, final SceneBankImpl sceneBank, final int trackIndex, final int numSlots)
     {
         super (dataSetup, numSlots, EmptySlot.INSTANCE);
+
+        this.sceneBank = sceneBank;
     }
 
 
@@ -83,7 +87,11 @@ public class SlotBankImpl extends AbstractPagedBankImpl<SlotImpl, ISlot> impleme
     @Override
     public void selectPreviousPage ()
     {
-        throw new RuntimeException ("Clips must be scrolled via SceneBank!");
+        if (this.pageSize == 0)
+            return;
+
+        // Clips must be scrolled via SceneBank!
+        this.sceneBank.scrollPageBackwards ();
     }
 
 
@@ -91,7 +99,11 @@ public class SlotBankImpl extends AbstractPagedBankImpl<SlotImpl, ISlot> impleme
     @Override
     public void selectNextPage ()
     {
-        throw new RuntimeException ("Clips must be scrolled via SceneBank!");
+        if (this.pageSize == 0)
+            return;
+
+        // Clips must be scrolled via SceneBank!
+        this.sceneBank.scrollPageForwards ();
     }
 
 

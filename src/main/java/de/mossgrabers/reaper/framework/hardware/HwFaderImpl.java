@@ -182,12 +182,12 @@ public class HwFaderImpl extends AbstractHwContinuousControl implements IHwFader
 
                 if (this.midiType == BindType.CC)
                 {
-                    this.currentValue = (int) (Math.max (0, Math.round (value * 127.0)));
+                    this.currentValue = (int) Math.max (0, Math.round (value * 127.0));
                     this.midiInput.handleMidiMessage (new ShortMessage (0xB0, this.midiChannel, this.midiControl, this.currentValue));
                 }
                 else if (this.midiType == BindType.PITCHBEND)
                 {
-                    this.currentValue = (int) (Math.max (0, Math.round (value * 16383.0)));
+                    this.currentValue = (int) Math.max (0, Math.round (value * 16383.0));
                     final int data1 = (int) Math.min (127, Math.round (this.currentValue % 128.0));
                     final int data2 = (int) Math.min (127, Math.round (this.currentValue / 128.0));
                     this.midiInput.handleMidiMessage (new ShortMessage (0xE0, this.midiChannel, data1, data2));

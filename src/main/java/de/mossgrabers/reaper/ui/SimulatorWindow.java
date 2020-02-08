@@ -54,7 +54,7 @@ public class SimulatorWindow extends JFrame
     {
         super (title);
 
-        final URL resource = getClass ().getResource ("/images/AppIcon.gif");
+        final URL resource = this.getClass ().getResource ("/images/AppIcon.gif");
         final Image image = Toolkit.getDefaultToolkit ().getImage (resource);
         if (image != null)
             this.setIconImage (image);
@@ -72,7 +72,7 @@ public class SimulatorWindow extends JFrame
             public void paintComponent (final Graphics g)
             {
                 super.paintComponent (g);
-                render (new GraphicsContextImpl ((Graphics2D) g, FontCache.MONOSPACED));
+                SimulatorWindow.this.render (new GraphicsContextImpl ((Graphics2D) g, FontCache.MONOSPACED));
             }
         };
 
@@ -88,7 +88,7 @@ public class SimulatorWindow extends JFrame
             public void componentResized (final ComponentEvent e)
             {
                 SimulatorWindow.this.scaleFactor = -1;
-                repaint ();
+                SimulatorWindow.this.repaint ();
             }
         });
 
@@ -98,7 +98,7 @@ public class SimulatorWindow extends JFrame
             @Override
             public void mousePressed (final MouseEvent e)
             {
-                handleMouseEvent (e);
+                SimulatorWindow.this.handleMouseEvent (e);
             }
 
 
@@ -106,7 +106,7 @@ public class SimulatorWindow extends JFrame
             @Override
             public void mouseReleased (final MouseEvent e)
             {
-                handleMouseEvent (e);
+                SimulatorWindow.this.handleMouseEvent (e);
             }
 
 
@@ -114,7 +114,7 @@ public class SimulatorWindow extends JFrame
             @Override
             public void mouseDragged (final MouseEvent e)
             {
-                handleMouseEvent (e);
+                SimulatorWindow.this.handleMouseEvent (e);
             }
         };
         canvas.addMouseListener (mouseListener);
@@ -140,7 +140,7 @@ public class SimulatorWindow extends JFrame
      */
     private void render (final IGraphicsContext gc)
     {
-        final Dimension innerSize = getInnerSize ();
+        final Dimension innerSize = this.getInnerSize ();
         if (this.scaleFactor < 0)
             this.scaleFactor = Math.min (innerSize.width / this.surfaceFactory.getWidth (), innerSize.height / this.surfaceFactory.getHeight ());
         gc.fillRectangle (0, 0, innerSize.width, innerSize.height, ColorEx.GRAY);
