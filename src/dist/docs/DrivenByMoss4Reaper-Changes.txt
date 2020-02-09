@@ -11,6 +11,10 @@
 - Komplete Kontrol A-Series / M32
   * Fixed: Configured knob speed settings were not set on startup
   * Fixed: Crashes when scrolling clip page
+- Launchpad
+  * New: Virtual faders support 4 velocity steps (on all models)
+  * New: Activates hardware play mode again when extension is stopped
+  * Fixed: Color of front LED was wrong when mode was changed
 - Push 1/2
   * Fixed: Master mode only showed up shortly when Master volume knob was touched
   * Fixed: Configured knob speed settings were not set on startup
