@@ -12,6 +12,7 @@
   * Fixed: Configured knob speed settings were not set on startup
   * Fixed: Crashes when scrolling clip page
 - Push 1/2
+  * Fixed: Master mode only showed up shortly when Master volume knob was touched
   * Fixed: Configured knob speed settings were not set on startup
 
 8.70
