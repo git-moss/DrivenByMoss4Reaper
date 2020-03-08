@@ -26,16 +26,16 @@ public class BooleanSettingImpl extends BaseSetting<JCheckBox, Boolean> implemen
      * Constructor.
      *
      * @param logModel The log model
+     * @param properties Where to load from
      * @param label The name of the setting, must not be null
      * @param category The name of the category, may not be null
      * @param initialValue The initial value
      */
-    public BooleanSettingImpl (final LogModel logModel, final String label, final String category, final boolean initialValue)
+    public BooleanSettingImpl (final LogModel logModel, final PropertiesEx properties, final String label, final String category, final boolean initialValue)
     {
         super (logModel, label, category, new JCheckBox ());
 
-        this.value = initialValue;
-
+        this.value = properties.getBoolean (this.getID (), initialValue);
         this.field.addActionListener (event -> SafeRunLater.execute (BooleanSettingImpl.this.logModel, () -> this.set (BooleanSettingImpl.this.field.isSelected ())));
     }
 
@@ -65,6 +65,14 @@ public class BooleanSettingImpl extends BaseSetting<JCheckBox, Boolean> implemen
 
     /** {@inheritDoc} */
     @Override
+    public Boolean get ()
+    {
+        return Boolean.valueOf (this.value);
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
     public void flush ()
     {
         this.notifyObservers (Boolean.valueOf (this.value));
@@ -76,13 +84,5 @@ public class BooleanSettingImpl extends BaseSetting<JCheckBox, Boolean> implemen
     public void store (final PropertiesEx properties)
     {
         properties.put (this.getID (), Boolean.toString (this.value));
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void load (final PropertiesEx properties)
-    {
-        this.set (properties.getBoolean (this.getID (), this.value));
     }
 }

@@ -105,10 +105,10 @@ public abstract class AbstractControllerInstance implements IControllerInstance
                 return;
 
             this.host = new HostImpl (this.logModel, this.windowManager);
-            this.settingsUI = new SettingsUI (this.logModel, this.controllerDefinition.getNumMidiInPorts (), this.controllerDefinition.getNumMidiOutPorts (), this.controllerDefinition.getMidiDiscoveryPairs (OperatingSystem.get ()));
 
             this.loadConfiguration ();
-            this.settingsUI.load (this.controllerConfiguration);
+            this.settingsUI = new SettingsUI (this.logModel, this.controllerConfiguration, this.controllerDefinition.getNumMidiInPorts (), this.controllerDefinition.getNumMidiOutPorts (), this.controllerDefinition.getMidiDiscoveryPairs (OperatingSystem.get ()));
+            this.settingsUI.initMIDI ();
 
             if (!this.isEnabled ())
             {
@@ -266,7 +266,7 @@ public abstract class AbstractControllerInstance implements IControllerInstance
         this.controllerSetup.init ();
 
         // 2nd load to also load the settings
-        this.settingsUI.load (this.controllerConfiguration);
+        this.settingsUI.init ();
 
         this.oscParser = new MessageParser (this.controllerSetup);
 

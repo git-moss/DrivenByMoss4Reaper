@@ -21,6 +21,12 @@ import javax.swing.JLabel;
 public interface IfxSetting<T> extends ISetting<T>
 {
     /**
+     * Set and fire the initial or loaded value, if present.
+     */
+    void init ();
+
+
+    /**
      * Flushing out the value of the control to all observers.
      */
     void flush ();
@@ -72,12 +78,4 @@ public interface IfxSetting<T> extends ISetting<T>
      * @param properties Where to store to
      */
     void store (PropertiesEx properties);
-
-
-    /**
-     * Load the setting.
-     *
-     * @param properties Where to load from
-     */
-    void load (PropertiesEx properties);
 }

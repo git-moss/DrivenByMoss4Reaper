@@ -29,14 +29,16 @@ public class StringSettingImpl extends BaseSetting<JTextField, String> implement
      * Constructor.
      *
      * @param logModel The log model
+     * @param properties Where to load from
      * @param label The name of the setting, must not be null
      * @param category The name of the category, may not be null
      * @param initialValue The initial value
      */
-    public StringSettingImpl (final LogModel logModel, final String label, final String category, final String initialValue)
+    public StringSettingImpl (final LogModel logModel, final PropertiesEx properties, final String label, final String category, final String initialValue)
     {
         super (logModel, label, category, new JTextField (initialValue));
-        this.value = initialValue;
+
+        this.value = properties.getString (this.getID (), initialValue);
 
         this.field.addKeyListener (new KeyAdapter ()
         {
@@ -67,6 +69,14 @@ public class StringSettingImpl extends BaseSetting<JTextField, String> implement
 
     /** {@inheritDoc} */
     @Override
+    public String get ()
+    {
+        return this.value;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
     public void flush ()
     {
         this.notifyObservers (this.value == null ? "" : this.value);
@@ -78,13 +88,5 @@ public class StringSettingImpl extends BaseSetting<JTextField, String> implement
     public void store (final PropertiesEx properties)
     {
         properties.put (this.getID (), this.value);
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void load (final PropertiesEx properties)
-    {
-        this.set (properties.getString (this.getID (), this.value));
     }
 }

@@ -30,21 +30,30 @@ public class ColorSettingImpl extends BaseSetting<ColoredButton, ColorEx> implem
      * Constructor.
      *
      * @param logModel The log model
+     * @param properties Where to load from
      * @param label The name of the setting, must not be null
      * @param category The name of the category, may not be null
      * @param initialValue The value
      */
-    public ColorSettingImpl (final LogModel logModel, final String label, final String category, final ColorEx initialValue)
+    public ColorSettingImpl (final LogModel logModel, final PropertiesEx properties, final String label, final String category, final ColorEx initialValue)
     {
         super (logModel, label, category, new ColoredButton ());
+
         this.value = initialValue;
+        final String color = properties.getString (this.getID ());
+        if (color != null)
+        {
+            final String [] parts = color.split (",");
+            if (parts.length == 3)
+                this.value = new ColorEx (Double.parseDouble (parts[0]), Double.parseDouble (parts[1]), Double.parseDouble (parts[2]));
+        }
 
         this.field.setBackground (new Color ((float) initialValue.getRed (), (float) initialValue.getGreen (), (float) initialValue.getBlue ()));
 
         this.field.addActionListener (event -> {
-            final Color color = JColorChooser.showDialog (this.field, "Pick color", this.field.getBackground ());
-            if (color != null)
-                this.set (color.getRed () / 255.0, color.getGreen () / 255.0, color.getBlue () / 255.0);
+            final Color c = JColorChooser.showDialog (this.field, "Pick color", this.field.getBackground ());
+            if (c != null)
+                this.set (c.getRed () / 255.0, c.getGreen () / 255.0, c.getBlue () / 255.0);
         });
     }
 
@@ -78,6 +87,14 @@ public class ColorSettingImpl extends BaseSetting<ColoredButton, ColorEx> implem
 
     /** {@inheritDoc} */
     @Override
+    public ColorEx get ()
+    {
+        return this.value;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
     public void flush ()
     {
         this.notifyObservers (this.value);
@@ -89,18 +106,5 @@ public class ColorSettingImpl extends BaseSetting<ColoredButton, ColorEx> implem
     public void store (final PropertiesEx properties)
     {
         properties.put (this.getID (), this.value.getRed () + "," + this.value.getGreen () + "," + this.value.getBlue ());
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void load (final PropertiesEx properties)
-    {
-        final String color = properties.getString (this.getID ());
-        if (color == null)
-            return;
-        final String [] parts = color.split (",");
-        if (parts.length == 3)
-            this.set (Double.parseDouble (parts[0]), Double.parseDouble (parts[1]), Double.parseDouble (parts[2]));
     }
 }

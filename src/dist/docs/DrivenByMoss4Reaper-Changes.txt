@@ -1,3 +1,26 @@
+8.91 (unreleased)
+
+- All devices
+  * Fixed: Pitchbend and Modulation Wheels did not work.
+- Generic Flexi
+  * New: Improved handling of Program Change as source. For trigger commands also a *button up* is executed; for continuous commands the value of the PC is sent (and not always replaced with 127).
+  * New: Patch Bank Selection, see Generic Flexi documentation for more info. But this is currently not that helpful with Reaper since all settings are global.
+- Launchpad
+  * New: Easier selection of note modes. Pressing the note button brings up a menu where you can directly select the note/sequencer mode. First row (from top) selects play modes, 3rd row drum modes and 5th row sequencer modes.
+  * New: Changing note length does now also work in Poly Sequencer
+  * New: Inverted back the clip/scene scroll direction (was also not conform with the LED lighting)
+  * Fixed: Displaying longer notes did not work in Poly Sequencer
+- Maschine Mikro 3
+  * Fixed: Removed restriction that drum octave could only be changed if a clip was active.
+- MCU
+  * New: Group/Write Automation changed to trigger Latch automation
+  * New: Support for Read/Trim automation mode
+- Push 1/2
+  * New: Support for *Read/Trim* and *Latch Preview* automation modes
+  * New: Inverted back the clip/scene scroll direction
+  * New: Changing note length does now also work in Poly Sequencer
+  * Fixed: Displaying longer notes did not work in Poly Sequencer
+
 8.80
 - All devices
   * New: The project start time, which can be configured in the project settings, is now added to the displayed time.

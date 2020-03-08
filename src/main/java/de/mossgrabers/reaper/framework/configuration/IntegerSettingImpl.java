@@ -32,17 +32,18 @@ public class IntegerSettingImpl extends BaseSetting<JFormattedTextField, Integer
      * Constructor.
      *
      * @param logModel The log model
+     * @param properties Where to load from
      * @param label The name of the setting, must not be null
      * @param category The name of the category, may not be null
      * @param initialValue The value
      * @param minValue The minimum accepted value
      * @param maxValue The maximum accepted value
      */
-    public IntegerSettingImpl (final LogModel logModel, final String label, final String category, final int initialValue, final int minValue, final int maxValue)
+    public IntegerSettingImpl (final LogModel logModel, final PropertiesEx properties, final String label, final String category, final int initialValue, final int minValue, final int maxValue)
     {
         super (logModel, label, category, new JFormattedTextField (NumberFormat.getIntegerInstance ()));
 
-        this.value = initialValue;
+        this.value = properties.getInt (this.getID (), initialValue);
         this.minValue = minValue;
         this.maxValue = maxValue;
 
@@ -95,6 +96,14 @@ public class IntegerSettingImpl extends BaseSetting<JFormattedTextField, Integer
 
     /** {@inheritDoc} */
     @Override
+    public Integer get ()
+    {
+        return Integer.valueOf (this.value);
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
     public void flush ()
     {
         this.notifyObservers (Integer.valueOf (this.value));
@@ -106,13 +115,5 @@ public class IntegerSettingImpl extends BaseSetting<JFormattedTextField, Integer
     public void store (final PropertiesEx properties)
     {
         properties.put (this.getID (), Integer.toString (this.value));
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void load (final PropertiesEx properties)
-    {
-        this.set (properties.getInt (this.getID (), this.value));
     }
 }

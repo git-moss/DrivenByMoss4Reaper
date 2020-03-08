@@ -39,6 +39,7 @@ public class SettingsUI implements ISettingsUI
     private static final String                    TAG_MIDI_OUTPUT = "MIDI_OUTPUT";
 
     private final LogModel                         logModel;
+    private final PropertiesEx                     properties;
     private final List<IfxSetting<?>>              settings        = new ArrayList<> ();
 
     private final int                              numMidiInPorts;
@@ -55,13 +56,15 @@ public class SettingsUI implements ISettingsUI
      * Constructor.
      *
      * @param logModel The log model
+     * @param properties Where to store to
      * @param numMidiInPorts The number of required midi input ports
      * @param numMidiOutPorts The number of required midi output ports
      * @param discoveryPairs Suggestions for automatically selecting the required in-/outputs
      */
-    public SettingsUI (final LogModel logModel, final int numMidiInPorts, final int numMidiOutPorts, final List<Pair<String [], String []>> discoveryPairs)
+    public SettingsUI (final LogModel logModel, final PropertiesEx properties, final int numMidiInPorts, final int numMidiOutPorts, final List<Pair<String [], String []>> discoveryPairs)
     {
         this.logModel = logModel;
+        this.properties = properties;
 
         this.numMidiInPorts = numMidiInPorts;
         this.numMidiOutPorts = numMidiOutPorts;
@@ -207,17 +210,15 @@ public class SettingsUI implements ISettingsUI
 
 
     /**
-     * Load all settings.
-     *
-     * @param properties Where to store to
+     * Load MIDI settings.
      */
-    public void load (final PropertiesEx properties)
+    public void initMIDI ()
     {
-        this.isEnabled = properties.getBoolean (TAG_IS_ENABLED, true);
+        this.isEnabled = this.properties.getBoolean (TAG_IS_ENABLED, true);
 
         for (int i = 0; i < this.numMidiInPorts; i++)
         {
-            this.selectedMidiInputs[i] = Midi.getInputDevice (properties.getString (TAG_MIDI_INPUT + i));
+            this.selectedMidiInputs[i] = Midi.getInputDevice (this.properties.getString (TAG_MIDI_INPUT + i));
             if (this.selectedMidiInputs[i] != null)
                 continue;
             for (final Pair<String [], String []> pair: this.discoveryPairs)
@@ -230,7 +231,7 @@ public class SettingsUI implements ISettingsUI
 
         for (int i = 0; i < this.numMidiOutPorts; i++)
         {
-            this.selectedMidiOutputs[i] = Midi.getOutputDevice (properties.getString (TAG_MIDI_OUTPUT + i));
+            this.selectedMidiOutputs[i] = Midi.getOutputDevice (this.properties.getString (TAG_MIDI_OUTPUT + i));
             if (this.selectedMidiOutputs[i] != null)
                 continue;
             for (final Pair<String [], String []> pair: this.discoveryPairs)
@@ -240,8 +241,15 @@ public class SettingsUI implements ISettingsUI
                     break;
             }
         }
+    }
 
-        this.settings.forEach (s -> s.load (properties));
+
+    /**
+     * Init all settings.
+     */
+    public void init ()
+    {
+        this.settings.forEach (IfxSetting::init);
     }
 
 
@@ -291,7 +299,7 @@ public class SettingsUI implements ISettingsUI
     @Override
     public IEnumSetting getEnumSetting (final String label, final String category, final String [] options, final String initialValue)
     {
-        final EnumSettingImpl setting = new EnumSettingImpl (this.logModel, label, category, options, initialValue);
+        final EnumSettingImpl setting = new EnumSettingImpl (this.logModel, this.properties, label, category, options, initialValue);
         this.settings.add (setting);
         return setting;
     }
@@ -301,7 +309,7 @@ public class SettingsUI implements ISettingsUI
     @Override
     public IStringSetting getStringSetting (final String label, final String category, final int numChars, final String initialText)
     {
-        final StringSettingImpl setting = new StringSettingImpl (this.logModel, label, category, initialText);
+        final StringSettingImpl setting = new StringSettingImpl (this.logModel, this.properties, label, category, initialText);
         this.settings.add (setting);
         return setting;
     }
@@ -311,7 +319,7 @@ public class SettingsUI implements ISettingsUI
     @Override
     public IDoubleSetting getNumberSetting (final String label, final String category, final double minValue, final double maxValue, final double stepResolution, final String unit, final double initialValue)
     {
-        final DoubleSettingImpl setting = new DoubleSettingImpl (this.logModel, label, category, initialValue);
+        final DoubleSettingImpl setting = new DoubleSettingImpl (this.logModel, this.properties, label, category, initialValue);
         this.settings.add (setting);
         return setting;
     }
@@ -321,7 +329,7 @@ public class SettingsUI implements ISettingsUI
     @Override
     public IIntegerSetting getRangeSetting (final String label, final String category, final int minValue, final int maxValue, final int stepResolution, final String unit, final int initialValue)
     {
-        final IntegerSettingImpl setting = new IntegerSettingImpl (this.logModel, label, category, initialValue, minValue, maxValue);
+        final IntegerSettingImpl setting = new IntegerSettingImpl (this.logModel, this.properties, label, category, initialValue, minValue, maxValue);
         this.settings.add (setting);
         return setting;
     }
@@ -331,7 +339,7 @@ public class SettingsUI implements ISettingsUI
     @Override
     public ISignalSetting getSignalSetting (final String label, final String category, final String title)
     {
-        final SignalSettingImpl setting = new SignalSettingImpl (this.logModel, label, category, title);
+        final SignalSettingImpl setting = new SignalSettingImpl (this.logModel, this.properties, label, category, title);
         this.settings.add (setting);
         return setting;
     }
@@ -341,7 +349,7 @@ public class SettingsUI implements ISettingsUI
     @Override
     public IColorSetting getColorSetting (final String label, final String category, final ColorEx defaultColor)
     {
-        final ColorSettingImpl setting = new ColorSettingImpl (this.logModel, label, category, defaultColor);
+        final ColorSettingImpl setting = new ColorSettingImpl (this.logModel, this.properties, label, category, defaultColor);
         this.settings.add (setting);
         return setting;
     }
@@ -351,7 +359,7 @@ public class SettingsUI implements ISettingsUI
     @Override
     public IBooleanSetting getBooleanSetting (final String label, final String category, final boolean initialValue)
     {
-        final BooleanSettingImpl setting = new BooleanSettingImpl (this.logModel, label, category, initialValue);
+        final BooleanSettingImpl setting = new BooleanSettingImpl (this.logModel, this.properties, label, category, initialValue);
         this.settings.add (setting);
         return setting;
     }

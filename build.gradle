@@ -9,7 +9,7 @@ plugins {
 sourceCompatibility = 13
 targetCompatibility = 13
 
-version = '8.80'
+version = '8.91'
 
 jar {
     manifest {

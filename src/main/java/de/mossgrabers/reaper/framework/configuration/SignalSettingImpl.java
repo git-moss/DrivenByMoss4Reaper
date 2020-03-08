@@ -22,11 +22,12 @@ public class SignalSettingImpl extends BaseSetting<JButton, Void> implements ISi
      * Constructor.
      *
      * @param logModel The log model
+     * @param properties Where to load from
      * @param label The name of the setting, must not be null
      * @param category The name of the category, may not be null
      * @param title The title of the button
      */
-    public SignalSettingImpl (final LogModel logModel, final String label, final String category, final String title)
+    public SignalSettingImpl (final LogModel logModel, final PropertiesEx properties, final String label, final String category, final String title)
     {
         super (logModel, label, category, new JButton (title));
 
@@ -44,6 +45,14 @@ public class SignalSettingImpl extends BaseSetting<JButton, Void> implements ISi
 
     /** {@inheritDoc} */
     @Override
+    public Void get ()
+    {
+        return null;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
     public void flush ()
     {
         // Intentionally empty
@@ -53,14 +62,6 @@ public class SignalSettingImpl extends BaseSetting<JButton, Void> implements ISi
     /** {@inheritDoc} */
     @Override
     public void store (final PropertiesEx properties)
-    {
-        // Intentionally empty
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void load (final PropertiesEx properties)
     {
         // Intentionally empty
     }

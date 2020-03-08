@@ -54,6 +54,14 @@ public abstract class BaseSetting<C extends JComponent, T> implements IfxSetting
 
     /** {@inheritDoc} */
     @Override
+    public void init ()
+    {
+        this.set (this.get ());
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
     public String getLabel ()
     {
         return this.label;

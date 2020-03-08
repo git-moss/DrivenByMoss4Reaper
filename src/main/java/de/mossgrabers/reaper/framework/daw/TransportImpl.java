@@ -6,6 +6,7 @@ package de.mossgrabers.reaper.framework.daw;
 
 import de.mossgrabers.framework.daw.IModel;
 import de.mossgrabers.framework.daw.ITransport;
+import de.mossgrabers.framework.daw.constants.AutomationMode;
 import de.mossgrabers.framework.daw.constants.TransportConstants;
 import de.mossgrabers.reaper.framework.Actions;
 import de.mossgrabers.reaper.framework.IniFiles;
@@ -385,14 +386,22 @@ public class TransportImpl extends BaseImpl implements ITransport
     @Override
     public boolean isWritingArrangerAutomation ()
     {
-        final String automationWriteMode = this.getAutomationWriteMode ();
-        return automationWriteMode.length () != 0 && !TrackImpl.AUTOMATION_READ.equals (automationWriteMode) && !TrackImpl.AUTOMATION_TRIM.equals (automationWriteMode);
+        final AutomationMode automationWriteMode = this.getAutomationWriteMode ();
+        return automationWriteMode != AutomationMode.READ && automationWriteMode != AutomationMode.TRIM_READ;
     }
 
 
     /** {@inheritDoc} */
     @Override
-    public String getAutomationWriteMode ()
+    public AutomationMode [] getAutomationWriteModes ()
+    {
+        return AutomationMode.values ();
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public AutomationMode getAutomationWriteMode ()
     {
         // Get from selected track
         TrackImpl selectedTrack = (TrackImpl) this.model.getCurrentTrackBank ().getSelectedItem ();
@@ -404,13 +413,14 @@ public class TransportImpl extends BaseImpl implements ITransport
 
     /** {@inheritDoc} */
     @Override
-    public void setAutomationWriteMode (final String mode)
+    public void setAutomationWriteMode (final AutomationMode mode)
     {
         final TrackImpl selectedTrack = (TrackImpl) this.model.getCurrentTrackBank ().getSelectedItem ();
+        final String modeName = "auto" + mode.getIdentifier ();
         if (selectedTrack == null)
-            this.sender.processIntArg ("master", "auto" + mode, 1);
+            this.sender.processIntArg ("master", modeName, 1);
         else
-            this.sender.processIntArg ("track", selectedTrack.getPosition () + "/auto" + mode, 1);
+            this.sender.processIntArg ("track", selectedTrack.getPosition () + "/" + modeName, 1);
     }
 
 
@@ -419,9 +429,9 @@ public class TransportImpl extends BaseImpl implements ITransport
     public void toggleWriteArrangerAutomation ()
     {
         if (this.isWritingArrangerAutomation ())
-            this.setAutomationWriteMode (TrackImpl.AUTOMATION_READ);
+            this.setAutomationWriteMode (AutomationMode.READ);
         else
-            this.setAutomationWriteMode (TrackImpl.AUTOMATION_WRITE);
+            this.setAutomationWriteMode (AutomationMode.WRITE);
     }
 
 

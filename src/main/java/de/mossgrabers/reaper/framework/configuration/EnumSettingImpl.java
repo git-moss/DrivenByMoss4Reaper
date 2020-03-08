@@ -27,16 +27,18 @@ public class EnumSettingImpl extends BaseSetting<JComboBox<String>, String> impl
      * Constructor.
      *
      * @param logModel The log model
+     * @param properties Where to load from
      * @param label The name of the setting, must not be null
      * @param category The name of the category, may not be null
      * @param options The string array that defines the allowed options for the button group or
      *            chooser
      * @param initialValue The initial value
      */
-    public EnumSettingImpl (final LogModel logModel, final String label, final String category, final String [] options, final String initialValue)
+    public EnumSettingImpl (final LogModel logModel, final PropertiesEx properties, final String label, final String category, final String [] options, final String initialValue)
     {
         super (logModel, label, category, new JComboBox<> (new DefaultComboBoxModel<> (options)));
-        this.value = initialValue;
+
+        this.value = properties.getString (this.getID (), initialValue);
 
         this.field.setSelectedItem (this.value);
         this.field.addItemListener (event -> SafeRunLater.execute (EnumSettingImpl.this.logModel, () -> this.set ((String) this.field.getSelectedItem ())));
@@ -65,6 +67,14 @@ public class EnumSettingImpl extends BaseSetting<JComboBox<String>, String> impl
 
     /** {@inheritDoc} */
     @Override
+    public String get ()
+    {
+        return this.value;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
     public void flush ()
     {
         this.notifyObservers (this.value);
@@ -76,14 +86,6 @@ public class EnumSettingImpl extends BaseSetting<JComboBox<String>, String> impl
     public void store (final PropertiesEx properties)
     {
         properties.put (this.getID (), this.value);
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void load (final PropertiesEx properties)
-    {
-        this.set (properties.getString (this.getID (), this.value));
     }
 
 

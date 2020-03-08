@@ -350,7 +350,7 @@ public class MidiInputImpl implements IMidiInput
         if (noteTouchMap != null)
         {
             final IHwContinuousControl ccButton = noteTouchMap.get (Integer.valueOf (data1));
-            if (ccButton != null)
+            if (ccButton != null && ccButton.isBound ())
             {
                 ccButton.triggerTouch (!isNoteOff);
                 return true;
@@ -386,7 +386,7 @@ public class MidiInputImpl implements IMidiInput
         if (ccTouchMap != null)
         {
             final IHwContinuousControl ccButton = ccTouchMap.get (Integer.valueOf (data1));
-            if (ccButton != null)
+            if (ccButton != null && ccButton.isBound ())
             {
                 ccButton.triggerTouch (data2 > 0);
                 return true;
@@ -397,7 +397,7 @@ public class MidiInputImpl implements IMidiInput
         if (ccContinuousMap != null)
         {
             final IHwContinuousControl ccContinuous = ccContinuousMap.get (Integer.valueOf (data1));
-            if (ccContinuous != null)
+            if (ccContinuous != null && ccContinuous.isBound ())
             {
                 ccContinuous.handleValue (data2 / 127.0);
                 return true;
@@ -411,7 +411,7 @@ public class MidiInputImpl implements IMidiInput
     protected boolean handleControlsPitchbend (final int channel, final int data1, final int data2)
     {
         final IHwContinuousControl ccContinuous = this.pitchbendContinuousMatchers.get (Integer.valueOf (channel));
-        if (ccContinuous != null)
+        if (ccContinuous != null && ccContinuous.isBound ())
         {
             final int pitchbendValue = data2 * 128 + data1;
             ccContinuous.handleValue (pitchbendValue / 16383.0);

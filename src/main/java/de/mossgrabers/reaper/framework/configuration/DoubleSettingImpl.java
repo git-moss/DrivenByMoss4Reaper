@@ -30,15 +30,16 @@ public class DoubleSettingImpl extends BaseSetting<JFormattedTextField, Double> 
      * Constructor.
      *
      * @param logModel The log model
+     * @param properties Where to load from
      * @param label The name of the setting, must not be null
      * @param category The name of the category, may not be null
      * @param initialValue The value
      */
-    public DoubleSettingImpl (final LogModel logModel, final String label, final String category, final double initialValue)
+    public DoubleSettingImpl (final LogModel logModel, final PropertiesEx properties, final String label, final String category, final double initialValue)
     {
         super (logModel, label, category, new JFormattedTextField (NumberFormat.getNumberInstance ()));
 
-        this.value = initialValue;
+        this.value = properties.getDouble (this.getID (), initialValue);
 
         this.field.setValue (Double.valueOf (initialValue));
         this.field.addKeyListener (new KeyAdapter ()
@@ -88,6 +89,14 @@ public class DoubleSettingImpl extends BaseSetting<JFormattedTextField, Double> 
 
     /** {@inheritDoc} */
     @Override
+    public Double get ()
+    {
+        return Double.valueOf (this.value);
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
     public void flush ()
     {
         this.notifyObservers (Double.valueOf (this.value));
@@ -99,13 +108,5 @@ public class DoubleSettingImpl extends BaseSetting<JFormattedTextField, Double> 
     public void store (final PropertiesEx properties)
     {
         properties.put (this.getID (), Double.toString (this.value));
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void load (final PropertiesEx properties)
-    {
-        this.set (properties.getDouble (this.getID (), this.value));
     }
 }

@@ -5,6 +5,7 @@
 package de.mossgrabers.reaper.framework.daw.data;
 
 import de.mossgrabers.framework.daw.ISlotBank;
+import de.mossgrabers.framework.daw.constants.AutomationMode;
 import de.mossgrabers.framework.daw.constants.RecordQuantization;
 import de.mossgrabers.framework.daw.data.ITrack;
 import de.mossgrabers.framework.daw.resource.ChannelType;
@@ -58,7 +59,7 @@ public class TrackImpl extends ChannelImpl implements ITrack
     private boolean                       isRecArm;
     private boolean                       monitor;
     private boolean                       autoMonitor;
-    private String                        automation = AUTOMATION_TRIM;
+    private AutomationMode                automationMode = AutomationMode.TRIM_READ;
     private final ISlotBank               slotBank;
     private int                           depth;
     private boolean                       recordQuantizationNoteLength;
@@ -280,11 +281,11 @@ public class TrackImpl extends ChannelImpl implements ITrack
     /**
      * Set the automation write type.
      *
-     * @param automation The type
+     * @param automationMode The type
      */
-    public void setAutomation (final String automation)
+    public void setAutomation (final AutomationMode automationMode)
     {
-        this.automation = automation;
+        this.automationMode = automationMode;
     }
 
 
@@ -293,9 +294,9 @@ public class TrackImpl extends ChannelImpl implements ITrack
      *
      * @return The automation type
      */
-    public String getAutomation ()
+    public AutomationMode getAutomation ()
     {
-        return this.automation;
+        return this.automationMode;
     }
 
 

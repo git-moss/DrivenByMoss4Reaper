@@ -12,6 +12,7 @@ import de.mossgrabers.framework.daw.IHost;
 import de.mossgrabers.framework.daw.IModel;
 import de.mossgrabers.framework.daw.IProject;
 import de.mossgrabers.framework.daw.ITrackBank;
+import de.mossgrabers.framework.daw.constants.AutomationMode;
 import de.mossgrabers.framework.daw.data.IMarker;
 import de.mossgrabers.framework.daw.data.IParameter;
 import de.mossgrabers.framework.daw.data.IScene;
@@ -361,23 +362,25 @@ public class MessageParser
                 break;
 
             case "automode":
-                // (0=trim/off, 1=read, 2=touch, 3=write, 4=latch)
                 switch ((int) Double.parseDouble (value))
                 {
                     case 0:
-                        track.setAutomation (TrackImpl.AUTOMATION_TRIM);
+                        track.setAutomation (AutomationMode.TRIM_READ);
                         break;
                     case 1:
-                        track.setAutomation (TrackImpl.AUTOMATION_READ);
+                        track.setAutomation (AutomationMode.READ);
                         break;
                     case 2:
-                        track.setAutomation (TrackImpl.AUTOMATION_TOUCH);
+                        track.setAutomation (AutomationMode.TOUCH);
                         break;
                     case 3:
-                        track.setAutomation (TrackImpl.AUTOMATION_WRITE);
+                        track.setAutomation (AutomationMode.WRITE);
                         break;
                     case 4:
-                        track.setAutomation (TrackImpl.AUTOMATION_LATCH);
+                        track.setAutomation (AutomationMode.LATCH);
+                        break;
+                    case 5:
+                        track.setAutomation (AutomationMode.LATCH_PREVIEW);
                         break;
                     default:
                         // Not used
