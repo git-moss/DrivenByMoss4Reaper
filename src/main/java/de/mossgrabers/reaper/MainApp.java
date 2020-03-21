@@ -149,8 +149,6 @@ public class MainApp implements MessageSender, AppCallback, WindowManager
         // anyway
         if (OperatingSystem.get () != OperatingSystem.MAC)
             LibUsb.exit (null);
-
-        System.exit (0);
     }
 
 

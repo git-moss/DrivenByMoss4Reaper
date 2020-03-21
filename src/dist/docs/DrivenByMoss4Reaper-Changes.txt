@@ -1,5 +1,11 @@
-8.91
+8.92 (unreleased)
+- All devices
+  * New: Added version information to Windows DLL
+  * Fixed: Shutdown was not fully completed after JVM was stopped.
+- Launchpad
+  * Fixed: Note selection was activated when coming from a non-note mode but should not.
 
+8.91
 - All devices
   * Fixed: Pitchbend and Modulation Wheels did not work.
 - Generic Flexi
