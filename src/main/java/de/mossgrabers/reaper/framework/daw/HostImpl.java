@@ -115,7 +115,7 @@ public class HostImpl implements IHost
     @Override
     public boolean hasUserParameters ()
     {
-        return false;
+        return true;
     }
 
 

@@ -1,3 +1,15 @@
+8.94 (unreleased)
+- All devices
+  * Fixed: Creating sequencer notes was broken
+- Generic Flexi
+  * New: Commands to edit 64 user parameters (controls track fx parameters). See commands in new category User.
+- Launchpad Pro
+  * New: Added user mode (controls track fx parameters). Press USER button to enter. Scene buttons switch between the 8 pages of 8 parameters.
+- OSC
+  * New: Added user parameters (controls track fx parameters).
+- Push 1/2
+  * New: Added User mode (controls track fx parameters). Allows to map 64 parameters. Press USER button to enter. Setup on Push 1 is now Shift+USER.
+
 8.93
 - All devices
   * Fixed: Pressing OK button in configuration dialog removed the extension.

@@ -31,6 +31,7 @@ import de.mossgrabers.reaper.framework.daw.SceneBankImpl;
 import de.mossgrabers.reaper.framework.daw.SendBankImpl;
 import de.mossgrabers.reaper.framework.daw.TrackBankImpl;
 import de.mossgrabers.reaper.framework.daw.TransportImpl;
+import de.mossgrabers.reaper.framework.daw.UserParameterBankImpl;
 import de.mossgrabers.reaper.framework.daw.data.ItemImpl;
 import de.mossgrabers.reaper.framework.daw.data.MarkerImpl;
 import de.mossgrabers.reaper.framework.daw.data.MasterTrackImpl;
@@ -38,6 +39,7 @@ import de.mossgrabers.reaper.framework.daw.data.ParameterImpl;
 import de.mossgrabers.reaper.framework.daw.data.SceneImpl;
 import de.mossgrabers.reaper.framework.daw.data.SendImpl;
 import de.mossgrabers.reaper.framework.daw.data.TrackImpl;
+import de.mossgrabers.reaper.framework.daw.data.UserParameterImpl;
 import de.mossgrabers.reaper.framework.midi.NoteRepeatImpl;
 
 import java.util.Collections;
@@ -160,6 +162,10 @@ public class MessageParser
 
             case "primary":
                 this.parseDevice (this.instrumentDevice, value, parts);
+                break;
+
+            case "user":
+                this.parseUserParameter (value, parts);
                 break;
 
             case "clip":
@@ -534,6 +540,32 @@ public class MessageParser
     }
 
 
+    private void parseUserParameter (final String value, final Queue<String> parts)
+    {
+        final String type = parts.poll ();
+        if (!type.equals ("param"))
+        {
+            this.host.error ("Unhandled User parameter: " + type);
+            return;
+        }
+
+        final String cmd = parts.poll ();
+        final UserParameterBankImpl parameterBank = (UserParameterBankImpl) this.model.getUserParameterBank ();
+        try
+        {
+            final int paramNo = Integer.parseInt (cmd);
+            this.parseUserParamValue (paramNo, parameterBank.getUnpagedItem (paramNo), parts, value);
+        }
+        catch (final NumberFormatException ex)
+        {
+            if (TAG_COUNT.equals (cmd))
+                parameterBank.setItemCount (Integer.parseInt (value));
+            else
+                this.host.error ("Unhandled User Param parameter: " + cmd);
+        }
+    }
+
+
     private void parseSibling (final CursorDeviceImpl device, final String command, final Queue<String> parts, final String value)
     {
         final String siblingCmd = parts.poll ();
@@ -564,6 +596,32 @@ public class MessageParser
     {
         final String command = parts.poll ();
         final ParameterImpl p = (ParameterImpl) param;
+        switch (command)
+        {
+            case TAG_NAME:
+                p.setName (value);
+                p.setPosition (paramNo);
+                p.setExists (value != null && !value.isEmpty ());
+                break;
+
+            case "value":
+                if (parts.isEmpty ())
+                    p.setInternalValue (Double.parseDouble (value));
+                else if ("str".equals (parts.poll ()))
+                    p.setValueStr (value);
+                break;
+
+            default:
+                this.host.error ("Unhandled FX Param Value: " + command);
+                break;
+        }
+    }
+
+
+    private void parseUserParamValue (final int paramNo, final IParameter param, final Queue<String> parts, final String value)
+    {
+        final String command = parts.poll ();
+        final UserParameterImpl p = (UserParameterImpl) param;
         switch (command)
         {
             case TAG_NAME:

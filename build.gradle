@@ -1,6 +1,6 @@
 plugins {
     id 'com.github.jk1.dependency-license-report' version '1.13'
-    id 'com.github.ben-manes.versions' version '0.27.0'
+    id 'com.github.ben-manes.versions' version '0.28.0'
     id 'java'
     id 'application'
     id 'eclipse'
@@ -9,7 +9,7 @@ plugins {
 sourceCompatibility = 13
 targetCompatibility = 13
 
-version = '8.93'
+version = '8.94'
 
 jar {
     manifest {
