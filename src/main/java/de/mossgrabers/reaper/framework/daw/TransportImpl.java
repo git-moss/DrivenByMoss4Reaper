@@ -482,7 +482,17 @@ public class TransportImpl extends BaseImpl implements ITransport
      */
     public void setPositionText (final String positionStr)
     {
-        this.positionStr = positionStr.replace ('.', ':');
+        final String [] split = positionStr.split ("\\.");
+        if (split.length == 0)
+        {
+            this.positionStr = "0:000";
+            return;
+        }
+        final String replace = split[0].replace (':', '.');
+        if (split.length == 1)
+            this.positionStr = replace;
+        else
+            this.positionStr = replace + ":" + split[1];
     }
 
 
@@ -493,7 +503,14 @@ public class TransportImpl extends BaseImpl implements ITransport
      */
     public void setBeats (final String beats)
     {
-        this.beatsStr = beats;
+        final int pos = beats.lastIndexOf ('.');
+        if (pos < 1)
+        {
+            this.beatsStr = "0:00";
+            return;
+        }
+
+        this.beatsStr = beats.substring (0, pos) + ":" + beats.substring (pos + 1);
     }
 
 
