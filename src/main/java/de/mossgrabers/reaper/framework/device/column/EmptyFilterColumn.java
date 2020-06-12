@@ -65,5 +65,21 @@ public class EmptyFilterColumn extends BaseColumn
         {
             return false;
         }
+
+
+        /** {@inheritDoc} */
+        @Override
+        protected String getCachedName ()
+        {
+            return "";
+        }
+
+
+        /** {@inheritDoc} */
+        @Override
+        protected int getCachedHitCount ()
+        {
+            return 0;
+        }
     }
 }

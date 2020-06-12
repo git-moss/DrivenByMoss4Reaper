@@ -48,10 +48,15 @@ public class DeviceTypeFilterColumn extends BaseColumn
          */
         public DeviceTypeBrowserColumnItem (final int index)
         {
-            super (index - 1);
+            super (index);
+        }
 
-            this.name = this.getCachedName ();
-            this.hits = this.getCachedHitCount ();
+
+        /** {@inheritDoc} */
+        @Override
+        public int getIndex ()
+        {
+            return calcPosition (this.index);
         }
 
 
@@ -59,25 +64,31 @@ public class DeviceTypeFilterColumn extends BaseColumn
         @Override
         public boolean isSelected ()
         {
-            return this.index + 1 == DeviceTypeFilterColumn.this.selectedRow;
+            return this.getIndex () == DeviceTypeFilterColumn.this.selectedRow;
         }
 
 
-        private String getCachedName ()
+        /** {@inheritDoc} */
+        @Override
+        protected String getCachedName ()
         {
-            if (this.index < 0)
+            if (this.position == 0)
                 return WILDCARD;
             final DeviceType [] values = DeviceType.values ();
-            return this.index < values.length ? values[this.index].getName () : "";
+            final int pos = this.position - 1;
+            return pos < values.length ? values[pos].getName () : "";
         }
 
 
-        private int getCachedHitCount ()
+        /** {@inheritDoc} */
+        @Override
+        protected int getCachedHitCount ()
         {
-            if (this.index < 0)
+            if (this.position == 0)
                 return DeviceManager.get ().getNumDevices ();
             final DeviceType [] values = DeviceType.values ();
-            return this.index < values.length ? DeviceManager.get ().filterByType (values[this.index]).size () : 0;
+            final int pos = this.position - 1;
+            return pos < values.length ? DeviceManager.get ().filterByType (values[pos]).size () : 0;
         }
     }
 }

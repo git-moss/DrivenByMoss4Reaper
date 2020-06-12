@@ -47,10 +47,15 @@ public class DeviceTagsFilterColumn extends BaseColumn
          */
         public DeviceTagsBrowserColumnItem (final int index)
         {
-            super (index - 1);
+            super (index);
+        }
 
-            this.name = this.getCachedName ();
-            this.hits = this.getCachedHitCount ();
+
+        /** {@inheritDoc} */
+        @Override
+        public int getIndex ()
+        {
+            return calcPosition (this.index);
         }
 
 
@@ -58,21 +63,25 @@ public class DeviceTagsFilterColumn extends BaseColumn
         @Override
         public boolean isSelected ()
         {
-            return this.index + 1 == DeviceTagsFilterColumn.this.selectedRow;
+            return this.getIndex () == DeviceTagsFilterColumn.this.selectedRow;
         }
 
 
-        private String getCachedName ()
+        /** {@inheritDoc} */
+        @Override
+        protected String getCachedName ()
         {
-            if (this.index < 0)
+            if (this.position == 0)
                 return WILDCARD;
             return "";
         }
 
 
-        private int getCachedHitCount ()
+        /** {@inheritDoc} */
+        @Override
+        protected int getCachedHitCount ()
         {
-            if (this.index < 0)
+            if (this.position == 0)
                 return DeviceManager.get ().getNumDevices ();
             return 0;
         }

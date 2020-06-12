@@ -47,10 +47,15 @@ public class DeviceCollectionFilterColumn extends BaseColumn
          */
         public DeviceFolderBrowserColumnItem (final int index)
         {
-            super (index - 1);
+            super (index);
+        }
 
-            this.name = this.getCachedName ();
-            this.hits = this.getCachedHitCount ();
+
+        /** {@inheritDoc} */
+        @Override
+        public int getIndex ()
+        {
+            return calcPosition (this.index);
         }
 
 
@@ -58,24 +63,30 @@ public class DeviceCollectionFilterColumn extends BaseColumn
         @Override
         public boolean isSelected ()
         {
-            return this.index + 1 == DeviceCollectionFilterColumn.this.selectedRow;
+            return this.getIndex () == DeviceCollectionFilterColumn.this.selectedRow;
         }
 
 
-        private String getCachedName ()
+        /** {@inheritDoc} */
+        @Override
+        protected String getCachedName ()
         {
-            if (this.index < 0)
+            if (this.position == 0)
                 return WILDCARD;
-            return this.index < DeviceCollectionFilterColumn.this.getMaxNumItems () ? DeviceManager.get ().getCollections ().get (this.index).getName () : "";
+            final int pos = this.position - 1;
+            return pos < DeviceCollectionFilterColumn.this.getMaxNumItems () ? DeviceManager.get ().getCollections ().get (pos).getName () : "";
         }
 
 
-        private int getCachedHitCount ()
+        /** {@inheritDoc} */
+        @Override
+        protected int getCachedHitCount ()
         {
             final DeviceManager deviceManager = DeviceManager.get ();
-            if (this.index < 0)
+            if (this.position == 0)
                 return deviceManager.getNumDevices ();
-            return this.index < DeviceCollectionFilterColumn.this.getMaxNumItems () ? deviceManager.filterByCollection (deviceManager.getCollections ().get (this.index)).size () : 0;
+            final int pos = this.position - 1;
+            return pos < DeviceCollectionFilterColumn.this.getMaxNumItems () ? deviceManager.filterByCollection (deviceManager.getCollections ().get (pos)).size () : 0;
         }
     }
 }

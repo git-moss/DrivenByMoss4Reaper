@@ -27,7 +27,7 @@ public abstract class BaseColumn extends ItemImpl implements IBrowserColumn
     private final Set<FilterListener>     listeners   = new HashSet<> (1);
 
     private final String                  name;
-    private final int                     numItemsPerPage;
+    final int                             numItemsPerPage;
 
     int                                   selectedRow = 0;
 
@@ -187,6 +187,19 @@ public abstract class BaseColumn extends ItemImpl implements IBrowserColumn
     public void addSelectionListener (final FilterListener listener)
     {
         this.listeners.add (listener);
+    }
+
+
+    /**
+     * Calculate the position of a paged item over all items of the column depending on the
+     * currently selected row.
+     *
+     * @param pageIndex The index in the current page
+     * @return The overall index
+     */
+    protected int calcPosition (final int pageIndex)
+    {
+        return this.selectedRow / this.numItemsPerPage * this.numItemsPerPage + pageIndex;
     }
 
 

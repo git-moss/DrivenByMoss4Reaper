@@ -16,8 +16,9 @@ import de.mossgrabers.reaper.framework.daw.data.ItemImpl;
  */
 public abstract class BaseColumnItem extends ItemImpl implements IBrowserColumnItem
 {
-    protected String name = "";
-    protected int    hits = 0;
+    protected int    position = -1;
+    protected String name     = "";
+    protected int    hits     = 0;
 
 
     /**
@@ -28,14 +29,6 @@ public abstract class BaseColumnItem extends ItemImpl implements IBrowserColumnI
     protected BaseColumnItem (final int index)
     {
         super (null, index);
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public int getIndex ()
-    {
-        return super.getIndex () + 1;
     }
 
 
@@ -59,6 +52,9 @@ public abstract class BaseColumnItem extends ItemImpl implements IBrowserColumnI
     @Override
     public String getName ()
     {
+        final int idx = this.getIndex ();
+        if (idx != this.position)
+            this.updateCache (idx);
         return this.name;
     }
 
@@ -67,6 +63,23 @@ public abstract class BaseColumnItem extends ItemImpl implements IBrowserColumnI
     @Override
     public int getHitCount ()
     {
+        final int idx = this.getIndex ();
+        if (idx != this.position)
+            this.updateCache (idx);
         return this.hits;
+    }
+
+
+    protected abstract String getCachedName ();
+
+
+    protected abstract int getCachedHitCount ();
+
+
+    private void updateCache (final int idx)
+    {
+        this.position = idx;
+        this.name = this.getCachedName ();
+        this.hits = this.getCachedHitCount ();
     }
 }

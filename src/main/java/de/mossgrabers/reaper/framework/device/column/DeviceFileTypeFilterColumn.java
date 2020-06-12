@@ -44,14 +44,19 @@ public class DeviceFileTypeFilterColumn extends BaseColumn
         /**
          * Constructor.
          *
-         * @param index The index of the item
+         * @param index The index of the item (in the page)
          */
         public DeviceTypeBrowserColumnItem (final int index)
         {
-            super (index - 1);
+            super (index);
+        }
 
-            this.name = this.getCachedName ();
-            this.hits = this.getCachedHitCount ();
+
+        /** {@inheritDoc} */
+        @Override
+        public int getIndex ()
+        {
+            return calcPosition (this.index);
         }
 
 
@@ -59,25 +64,31 @@ public class DeviceFileTypeFilterColumn extends BaseColumn
         @Override
         public boolean isSelected ()
         {
-            return this.index + 1 == DeviceFileTypeFilterColumn.this.selectedRow;
+            return this.getIndex () == DeviceFileTypeFilterColumn.this.selectedRow;
         }
 
 
-        private String getCachedName ()
+        /** {@inheritDoc} */
+        @Override
+        protected String getCachedName ()
         {
-            if (this.index < 0)
+            if (this.position == 0)
                 return WILDCARD;
             final DeviceFileType [] values = DeviceFileType.values ();
-            return this.index < values.length ? values[this.index].getName () : "";
+            final int pos = this.position - 1;
+            return pos < values.length ? values[pos].getName () : "";
         }
 
 
-        private int getCachedHitCount ()
+        /** {@inheritDoc} */
+        @Override
+        protected int getCachedHitCount ()
         {
-            if (this.index < 0)
+            if (this.position == 0)
                 return DeviceManager.get ().getNumDevices ();
             final DeviceFileType [] values = DeviceFileType.values ();
-            return this.index < values.length ? DeviceManager.get ().filterByFileType (values[this.index]).size () : 0;
+            final int pos = this.position - 1;
+            return pos < values.length ? DeviceManager.get ().filterByFileType (values[pos]).size () : 0;
         }
     }
 }

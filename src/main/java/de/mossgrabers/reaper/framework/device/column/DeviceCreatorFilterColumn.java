@@ -47,10 +47,15 @@ public class DeviceCreatorFilterColumn extends BaseColumn
          */
         public DeviceVendorBrowserColumnItem (final int index)
         {
-            super (index - 1);
+            super (index);
+        }
 
-            this.name = this.getCachedName ();
-            this.hits = this.getCachedHitCount ();
+
+        /** {@inheritDoc} */
+        @Override
+        public int getIndex ()
+        {
+            return calcPosition (this.index);
         }
 
 
@@ -58,24 +63,30 @@ public class DeviceCreatorFilterColumn extends BaseColumn
         @Override
         public boolean isSelected ()
         {
-            return this.index + 1 == DeviceCreatorFilterColumn.this.selectedRow;
+            return this.getIndex () == DeviceCreatorFilterColumn.this.selectedRow;
         }
 
 
-        private String getCachedName ()
+        /** {@inheritDoc} */
+        @Override
+        protected String getCachedName ()
         {
-            if (this.index < 0)
+            if (this.position == 0)
                 return WILDCARD;
-            return this.index < DeviceCreatorFilterColumn.this.getMaxNumItems () ? DeviceManager.get ().getVendors ().get (this.index) : "";
+            final int pos = this.position - 1;
+            return pos < DeviceCreatorFilterColumn.this.getMaxNumItems () ? DeviceManager.get ().getVendors ().get (pos) : "";
         }
 
 
-        private int getCachedHitCount ()
+        /** {@inheritDoc} */
+        @Override
+        protected int getCachedHitCount ()
         {
             final DeviceManager deviceManager = DeviceManager.get ();
-            if (this.index < 0)
+            if (this.position == 0)
                 return deviceManager.getNumDevices ();
-            return this.index < DeviceCreatorFilterColumn.this.getMaxNumItems () ? deviceManager.filterByVendor (deviceManager.getVendors ().get (this.index)).size () : 0;
+            final int pos = this.position - 1;
+            return pos < DeviceCreatorFilterColumn.this.getMaxNumItems () ? deviceManager.filterByVendor (deviceManager.getVendors ().get (pos)).size () : 0;
         }
     }
 }
