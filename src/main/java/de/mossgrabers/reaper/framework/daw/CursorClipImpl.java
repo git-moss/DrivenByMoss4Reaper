@@ -20,22 +20,22 @@ import java.util.List;
  */
 public class CursorClipImpl extends BaseImpl implements INoteClip
 {
-    private static final String      PATH_NOTE    = "note/";
+    private static final String       PATH_NOTE    = "note/";
+    private static final StepInfoImpl EMPTY_STEP   = new StepInfoImpl ();
 
-    private boolean                  exists       = false;
-    private double                   clipStart    = -1;
-    private double                   clipEnd      = -1;
-    private boolean                  isLooped     = false;
-    private ColorEx                  color;
-    private double                   playPosition = -1;
-    private int                      numSteps;
-    private int                      numRows;
-    private double                   stepLength;
-    private List<Note>               notes        = new ArrayList<> ();
-    private final StepInfoImpl [] [] data;
-    private int                      editPage     = 0;
-    private int                      maxPage      = 1;
-
+    private boolean                   exists       = false;
+    private double                    clipStart    = -1;
+    private double                    clipEnd      = -1;
+    private boolean                   isLooped     = false;
+    private ColorEx                   color;
+    private double                    playPosition = -1;
+    private int                       numSteps;
+    private int                       numRows;
+    private double                    stepLength;
+    private List<Note>                notes        = new ArrayList<> ();
+    private final StepInfoImpl [] []  data;
+    private int                       editPage     = 0;
+    private int                       maxPage      = 1;
 
     /**
      * Constructor.
@@ -358,6 +358,8 @@ public class CursorClipImpl extends BaseImpl implements INoteClip
     {
         synchronized (this.notes)
         {
+            if (step < 0 || row < 0 || step >= this.data.length || row >= this.data[step].length)
+                return EMPTY_STEP;
             return this.data[step][row];
         }
     }

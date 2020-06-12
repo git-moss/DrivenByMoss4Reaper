@@ -31,7 +31,6 @@ public abstract class BaseColumn extends ItemImpl implements IBrowserColumn
 
     int                                   selectedRow = 0;
 
-
     /**
      * Constructor.
      *
@@ -94,7 +93,7 @@ public abstract class BaseColumn extends ItemImpl implements IBrowserColumn
     @Override
     public String getCursorName ()
     {
-        return this.items[this.selectedRow].getName ();
+        return this.items[this.selectedRow % this.numItemsPerPage].getName ();
     }
 
 
