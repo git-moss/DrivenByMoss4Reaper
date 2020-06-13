@@ -30,6 +30,10 @@ jar {
                 String destDir = '/Users/' + System.properties['user.name'] + '/Library/Application Support/REAPER/UserPlugins/drivenbymoss-libs'
                 ant.copy (file: archivePath.getAbsolutePath(), todir: destDir)
                 break;
+            case OperatingSystem.LINUX:
+                String destDir = '/home/' + System.properties['user.name'] + '/.config/REAPER/UserPlugins/drivenbymoss-libs'
+                ant.copy (file: archivePath.getAbsolutePath(), todir: destDir)
+                break;
         }
     }
 }
