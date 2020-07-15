@@ -5,6 +5,7 @@
 package de.mossgrabers.reaper.framework.configuration;
 
 import de.mossgrabers.framework.utils.Pair;
+import de.mossgrabers.reaper.communication.MessageSender;
 import de.mossgrabers.reaper.framework.midi.Midi;
 import de.mossgrabers.reaper.framework.midi.MidiDeviceConverter;
 import de.mossgrabers.reaper.ui.utils.LogModel;
@@ -42,15 +43,16 @@ public class GlobalSettingsUI extends AbstractSettingsUI
     /**
      * Constructor.
      *
+     * @param sender The sender
      * @param logModel The log model
      * @param properties Where to store to
      * @param numMidiInPorts The number of required midi input ports
      * @param numMidiOutPorts The number of required midi output ports
      * @param discoveryPairs Suggestions for automatically selecting the required in-/outputs
      */
-    public GlobalSettingsUI (final LogModel logModel, final PropertiesEx properties, final int numMidiInPorts, final int numMidiOutPorts, final List<Pair<String [], String []>> discoveryPairs)
+    public GlobalSettingsUI (final MessageSender sender, final LogModel logModel, final PropertiesEx properties, final int numMidiInPorts, final int numMidiOutPorts, final List<Pair<String [], String []>> discoveryPairs)
     {
-        super (logModel, properties);
+        super (logModel, properties, sender);
 
         this.numMidiInPorts = numMidiInPorts;
         this.numMidiOutPorts = numMidiOutPorts;

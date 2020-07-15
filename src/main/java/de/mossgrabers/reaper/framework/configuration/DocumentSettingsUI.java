@@ -28,7 +28,7 @@ public class DocumentSettingsUI extends AbstractSettingsUI
      */
     public DocumentSettingsUI (final LogModel logModel)
     {
-        super (logModel, new PropertiesEx ());
+        super (logModel, new PropertiesEx (), null);
     }
 
 

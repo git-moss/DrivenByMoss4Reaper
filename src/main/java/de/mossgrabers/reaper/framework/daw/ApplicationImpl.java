@@ -380,6 +380,14 @@ public class ApplicationImpl extends BaseImpl implements IApplication
     }
 
 
+    /** {@inheritDoc} */
+    @Override
+    public void invokeAction (final String id)
+    {
+        this.sender.processStringArg ("action", "", id);
+    }
+
+
     /**
      * Set the audio engine state.
      *

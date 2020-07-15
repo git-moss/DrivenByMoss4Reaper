@@ -4,6 +4,7 @@
 
 package de.mossgrabers.reaper.framework.configuration;
 
+import de.mossgrabers.framework.configuration.IActionSetting;
 import de.mossgrabers.framework.configuration.IBooleanSetting;
 import de.mossgrabers.framework.configuration.IColorSetting;
 import de.mossgrabers.framework.configuration.IDoubleSetting;
@@ -13,6 +14,7 @@ import de.mossgrabers.framework.configuration.ISettingsUI;
 import de.mossgrabers.framework.configuration.ISignalSetting;
 import de.mossgrabers.framework.configuration.IStringSetting;
 import de.mossgrabers.framework.controller.color.ColorEx;
+import de.mossgrabers.reaper.communication.MessageSender;
 import de.mossgrabers.reaper.ui.utils.LogModel;
 import de.mossgrabers.reaper.ui.utils.PropertiesEx;
 
@@ -27,6 +29,7 @@ import java.util.List;
  */
 public abstract class AbstractSettingsUI implements ISettingsUI
 {
+    protected final MessageSender       sender;
     protected final PropertiesEx        properties;
     protected final LogModel            logModel;
     protected final List<IfxSetting<?>> settings = new ArrayList<> ();
@@ -37,11 +40,13 @@ public abstract class AbstractSettingsUI implements ISettingsUI
      *
      * @param logModel The log model
      * @param properties Where to store to
+     * @param sender The sender
      */
-    public AbstractSettingsUI (final LogModel logModel, final PropertiesEx properties)
+    public AbstractSettingsUI (final LogModel logModel, final PropertiesEx properties, final MessageSender sender)
     {
         this.logModel = logModel;
         this.properties = properties;
+        this.sender = sender;
     }
 
 
@@ -148,6 +153,16 @@ public abstract class AbstractSettingsUI implements ISettingsUI
     public IBooleanSetting getBooleanSetting (final String label, final String category, final boolean initialValue)
     {
         final BooleanSettingImpl setting = new BooleanSettingImpl (this.logModel, this.properties, label, category, initialValue);
+        this.settings.add (setting);
+        return setting;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public IActionSetting getActionSetting (final String label, final String category)
+    {
+        final ActionSettingImpl setting = new ActionSettingImpl (this.sender, this.logModel, this.properties, label, category);
         this.settings.add (setting);
         return setting;
     }

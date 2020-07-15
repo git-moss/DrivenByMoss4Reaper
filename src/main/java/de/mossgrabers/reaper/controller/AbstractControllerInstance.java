@@ -57,6 +57,7 @@ public abstract class AbstractControllerInstance implements IControllerInstance
     private boolean                       isRunning               = false;
     private final Object                  startSync               = new Object ();
     private List<JFrame>                  simulators              = new ArrayList<> ();
+    private ConfigurationDialog           configurationDialog;
 
 
     /**
@@ -111,7 +112,7 @@ public abstract class AbstractControllerInstance implements IControllerInstance
             this.host = new HostImpl (this.logModel, this.windowManager);
 
             this.loadConfiguration ();
-            this.globalSettingsUI = new GlobalSettingsUI (this.logModel, this.controllerConfiguration, this.controllerDefinition.getNumMidiInPorts (), this.controllerDefinition.getNumMidiOutPorts (), this.controllerDefinition.getMidiDiscoveryPairs (OperatingSystem.get ()));
+            this.globalSettingsUI = new GlobalSettingsUI (this.sender, this.logModel, this.controllerConfiguration, this.controllerDefinition.getNumMidiInPorts (), this.controllerDefinition.getNumMidiOutPorts (), this.controllerDefinition.getMidiDiscoveryPairs (OperatingSystem.get ()));
             this.globalSettingsUI.initMIDI ();
 
             if (!this.isEnabled ())
@@ -215,7 +216,15 @@ public abstract class AbstractControllerInstance implements IControllerInstance
     @Override
     public void parse (final String address, final String argument)
     {
-        if (this.oscParser != null)
+        if (this.oscParser == null)
+            return;
+
+        if ("/action/select".equals (address))
+        {
+            if (this.configurationDialog != null)
+                this.configurationDialog.setAction (argument);
+        }
+        else
             this.oscParser.parseOSC (address, argument);
     }
 
@@ -224,7 +233,9 @@ public abstract class AbstractControllerInstance implements IControllerInstance
     @Override
     public void edit ()
     {
-        new ConfigurationDialog (this.logModel, this.windowManager.getMainFrame (), this.globalSettingsUI).showDialog ();
+        this.configurationDialog = new ConfigurationDialog (this.logModel, this.windowManager.getMainFrame (), this.globalSettingsUI);
+        this.configurationDialog.showDialog ();
+        this.configurationDialog = null;
         this.storeConfiguration ();
     }
 

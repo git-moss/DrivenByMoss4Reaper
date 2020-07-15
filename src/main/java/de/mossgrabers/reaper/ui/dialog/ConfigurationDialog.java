@@ -4,6 +4,7 @@
 
 package de.mossgrabers.reaper.ui.dialog;
 
+import de.mossgrabers.reaper.framework.configuration.ActionSettingImpl;
 import de.mossgrabers.reaper.framework.configuration.GlobalSettingsUI;
 import de.mossgrabers.reaper.framework.configuration.IfxSetting;
 import de.mossgrabers.reaper.framework.midi.Midi;
@@ -68,6 +69,24 @@ public class ConfigurationDialog extends BasicDialog
         this.settings = settings;
 
         this.basicInit ();
+    }
+
+
+    /**
+     * Set an action ID. Looks for an action setting waiting for input.
+     *
+     * @param actionID The action ID to set
+     */
+    public void setAction (final String actionID)
+    {
+        for (final IfxSetting<?> s: this.settings.getSettings ())
+        {
+            if (s instanceof ActionSettingImpl && ((ActionSettingImpl) s).isSelectionActive ())
+            {
+                ((ActionSettingImpl) s).set (actionID);
+                this.toFront ();
+            }
+        }
     }
 
 
