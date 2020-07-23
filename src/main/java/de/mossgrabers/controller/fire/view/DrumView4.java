@@ -11,13 +11,13 @@ import de.mossgrabers.framework.controller.ButtonID;
 import de.mossgrabers.framework.controller.color.ColorEx;
 import de.mossgrabers.framework.controller.grid.IPadGrid;
 import de.mossgrabers.framework.controller.hardware.IHwButton;
-import de.mossgrabers.framework.daw.ICursorDevice;
-import de.mossgrabers.framework.daw.IDrumPadBank;
 import de.mossgrabers.framework.daw.IModel;
 import de.mossgrabers.framework.daw.INoteClip;
 import de.mossgrabers.framework.daw.IStepInfo;
 import de.mossgrabers.framework.daw.constants.Resolution;
+import de.mossgrabers.framework.daw.data.IDrumDevice;
 import de.mossgrabers.framework.daw.data.IDrumPad;
+import de.mossgrabers.framework.daw.data.bank.IDrumPadBank;
 import de.mossgrabers.framework.mode.ModeManager;
 import de.mossgrabers.framework.mode.Modes;
 import de.mossgrabers.framework.utils.ButtonEvent;
@@ -31,10 +31,10 @@ import de.mossgrabers.framework.view.AbstractDrumView;
  */
 public class DrumView4 extends AbstractDrumView<FireControlSurface, FireConfiguration> implements IFireView
 {
-    private static final int    NUM_DISPLAY_COLS = 16;
+    private static final int  NUM_DISPLAY_COLS = 16;
 
-    private final int           columns;
-    private final ICursorDevice primary;
+    private final int         columns;
+    private final IDrumDevice primary;
 
 
     /**
@@ -48,7 +48,7 @@ public class DrumView4 extends AbstractDrumView<FireControlSurface, FireConfigur
         super ("Drum 4", surface, model, 2, 0, false);
 
         this.columns = 16;
-        this.primary = this.model.getInstrumentDevice ();
+        this.primary = this.model.getDrumDevice ();
     }
 
 

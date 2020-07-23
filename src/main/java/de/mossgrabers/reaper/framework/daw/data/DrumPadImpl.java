@@ -38,6 +38,14 @@ public class DrumPadImpl extends ChannelImpl implements IDrumPad
 
     /** {@inheritDoc} */
     @Override
+    public void select ()
+    {
+        // Intentionally empty
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
     public boolean hasDevices ()
     {
         // Drum pads are not supported

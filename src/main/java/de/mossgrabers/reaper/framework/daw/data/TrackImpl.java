@@ -4,16 +4,16 @@
 
 package de.mossgrabers.reaper.framework.daw.data;
 
-import de.mossgrabers.framework.daw.ISlotBank;
 import de.mossgrabers.framework.daw.constants.AutomationMode;
 import de.mossgrabers.framework.daw.constants.RecordQuantization;
 import de.mossgrabers.framework.daw.data.ITrack;
+import de.mossgrabers.framework.daw.data.bank.ISlotBank;
 import de.mossgrabers.framework.daw.resource.ChannelType;
-import de.mossgrabers.reaper.framework.daw.AbstractTrackBankImpl;
 import de.mossgrabers.reaper.framework.daw.DataSetupEx;
-import de.mossgrabers.reaper.framework.daw.SceneBankImpl;
-import de.mossgrabers.reaper.framework.daw.SlotBankImpl;
-import de.mossgrabers.reaper.framework.daw.TrackBankImpl;
+import de.mossgrabers.reaper.framework.daw.data.bank.AbstractTrackBankImpl;
+import de.mossgrabers.reaper.framework.daw.data.bank.SceneBankImpl;
+import de.mossgrabers.reaper.framework.daw.data.bank.SlotBankImpl;
+import de.mossgrabers.reaper.framework.daw.data.bank.TrackBankImpl;
 
 import java.util.EnumMap;
 import java.util.Map;

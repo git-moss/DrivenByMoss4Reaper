@@ -8,16 +8,23 @@ import de.mossgrabers.framework.controller.color.ColorEx;
 import de.mossgrabers.framework.daw.AbstractModel;
 import de.mossgrabers.framework.daw.IClip;
 import de.mossgrabers.framework.daw.INoteClip;
-import de.mossgrabers.framework.daw.ISceneBank;
-import de.mossgrabers.framework.daw.ITrackBank;
 import de.mossgrabers.framework.daw.ModelSetup;
+import de.mossgrabers.framework.daw.data.IDrumDevice;
 import de.mossgrabers.framework.daw.data.ISlot;
 import de.mossgrabers.framework.daw.data.ITrack;
+import de.mossgrabers.framework.daw.data.bank.ISceneBank;
+import de.mossgrabers.framework.daw.data.bank.ITrackBank;
 import de.mossgrabers.framework.scale.Scales;
 import de.mossgrabers.reaper.framework.IniFiles;
+import de.mossgrabers.reaper.framework.daw.data.CursorDeviceImpl;
+import de.mossgrabers.reaper.framework.daw.data.DrumDeviceImpl;
 import de.mossgrabers.reaper.framework.daw.data.MasterTrackImpl;
 import de.mossgrabers.reaper.framework.daw.data.SlotImpl;
 import de.mossgrabers.reaper.framework.daw.data.TrackImpl;
+import de.mossgrabers.reaper.framework.daw.data.bank.MarkerBankImpl;
+import de.mossgrabers.reaper.framework.daw.data.bank.SlotBankImpl;
+import de.mossgrabers.reaper.framework.daw.data.bank.TrackBankImpl;
+import de.mossgrabers.reaper.framework.daw.data.bank.UserParameterBankImpl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -66,14 +73,20 @@ public class ModelImpl extends AbstractModel
         final int numDeviceLayers = modelSetup.getNumDeviceLayers ();
         final int numDrumPadLayers = modelSetup.getNumDrumPadLayers ();
         final int numSends = modelSetup.getNumSends ();
+        this.drumDevice = new DrumDeviceImpl (dataSetup, numSends, numParams, numDevicesInBank, numDeviceLayers, numDrumPadLayers);
         this.instrumentDevice = new CursorDeviceImpl (dataSetup, numSends, numParams, numDevicesInBank, numDeviceLayers, numDrumPadLayers);
         this.cursorDevice = new CursorDeviceImpl (dataSetup, numSends, numParams, numDevicesInBank, numDeviceLayers, numDrumPadLayers);
         if (numDrumPadLayers > 0)
-            this.drumDevice64 = new CursorDeviceImpl (dataSetup, 0, 0, 0, 64, 64);
+            this.drumDevice64 = new DrumDeviceImpl (dataSetup, 0, 0, 0, 64, 64);
 
         final int numTracks = modelSetup.getNumTracks ();
         final int numScenes = modelSetup.getNumScenes ();
-        final TrackBankImpl trackBankImpl = new TrackBankImpl (this.instrumentDevice, dataSetup, numTracks, numScenes, numSends, modelSetup.hasFlatTrackList (), modelSetup.hasFullFlatTrackList ());
+        final List<IDrumDevice> drumDevices = new ArrayList<> ();
+        drumDevices.add (this.drumDevice);
+        if (this.drumDevice64 != null)
+            drumDevices.add (this.drumDevice64);
+
+        final TrackBankImpl trackBankImpl = new TrackBankImpl (drumDevices, dataSetup, numTracks, numScenes, numSends, modelSetup.hasFlatTrackList (), modelSetup.hasFullFlatTrackList ());
         this.trackBank = trackBankImpl;
         this.masterTrack = new MasterTrackImpl (dataSetup, trackBankImpl, numSends);
         trackBankImpl.setMasterTrack ((TrackImpl) this.masterTrack);

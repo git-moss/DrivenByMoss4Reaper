@@ -8,7 +8,7 @@ import de.mossgrabers.framework.daw.data.IMasterTrack;
 import de.mossgrabers.framework.daw.resource.ChannelType;
 import de.mossgrabers.framework.observer.ItemSelectionObserver;
 import de.mossgrabers.reaper.framework.daw.DataSetupEx;
-import de.mossgrabers.reaper.framework.daw.TrackBankImpl;
+import de.mossgrabers.reaper.framework.daw.data.bank.TrackBankImpl;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -6,9 +6,16 @@ package de.mossgrabers.framework.daw;
 
 import de.mossgrabers.framework.controller.color.ColorManager;
 import de.mossgrabers.framework.controller.valuechanger.IValueChanger;
+import de.mossgrabers.framework.daw.data.ICursorDevice;
+import de.mossgrabers.framework.daw.data.IDrumDevice;
 import de.mossgrabers.framework.daw.data.IMasterTrack;
 import de.mossgrabers.framework.daw.data.ISlot;
+import de.mossgrabers.framework.daw.data.ISpecificDevice;
 import de.mossgrabers.framework.daw.data.ITrack;
+import de.mossgrabers.framework.daw.data.bank.IMarkerBank;
+import de.mossgrabers.framework.daw.data.bank.IParameterBank;
+import de.mossgrabers.framework.daw.data.bank.ISceneBank;
+import de.mossgrabers.framework.daw.data.bank.ITrackBank;
 import de.mossgrabers.framework.observer.IValueObserver;
 import de.mossgrabers.framework.scale.Scales;
 
@@ -127,9 +134,17 @@ public interface IModel
     /**
      * Get the first instrument device of the track.
      *
-     * @return The device
+     * @return The device, never null but needs to checked fore existance
      */
-    ICursorDevice getInstrumentDevice ();
+    ISpecificDevice getInstrumentDevice ();
+
+
+    /**
+     * Get the first drum device of the track.
+     *
+     * @return The device, never null but needs to checked fore existance
+     */
+    IDrumDevice getDrumDevice ();
 
 
     /**
@@ -137,7 +152,7 @@ public interface IModel
      *
      * @return The device
      */
-    ICursorDevice getDrumDevice64 ();
+    IDrumDevice getDrumDevice64 ();
 
 
     /**
