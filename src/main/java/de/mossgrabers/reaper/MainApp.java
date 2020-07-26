@@ -10,6 +10,7 @@ import de.mossgrabers.framework.utils.Pair;
 import de.mossgrabers.reaper.communication.MessageSender;
 import de.mossgrabers.reaper.controller.ControllerInstanceManager;
 import de.mossgrabers.reaper.controller.IControllerInstance;
+import de.mossgrabers.reaper.framework.Actions;
 import de.mossgrabers.reaper.framework.IniFiles;
 import de.mossgrabers.reaper.framework.configuration.DocumentSettingsUI;
 import de.mossgrabers.reaper.framework.configuration.IfxSetting;
@@ -298,6 +299,17 @@ public class MainApp implements MessageSender, AppCallback, WindowManager
     private void handleReceiveOSC (final String address, final String argument)
     {
         this.instanceManager.parseAll (address, argument);
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void invokeAction (final int actionID)
+    {
+        if (Actions.isBlocked (actionID))
+            return;
+
+        this.processIntArg ("action", "", actionID);
     }
 
 

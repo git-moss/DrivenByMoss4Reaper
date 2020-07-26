@@ -131,8 +131,5 @@ public interface MessageSender
      *
      * @param id The action identifier, must not be null
      */
-    default void invokeAction (final int id)
-    {
-        this.processIntArg ("action", "", id);
-    }
+    void invokeAction (final int id);
 }

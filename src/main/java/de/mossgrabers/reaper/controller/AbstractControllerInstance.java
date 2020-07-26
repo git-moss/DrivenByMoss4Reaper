@@ -8,8 +8,10 @@ import de.mossgrabers.framework.controller.IControllerDefinition;
 import de.mossgrabers.framework.controller.IControllerSetup;
 import de.mossgrabers.framework.usb.UsbMatcher;
 import de.mossgrabers.framework.utils.OperatingSystem;
+import de.mossgrabers.framework.utils.TestCallback;
 import de.mossgrabers.reaper.communication.MessageParser;
 import de.mossgrabers.reaper.communication.MessageSender;
+import de.mossgrabers.reaper.framework.Actions;
 import de.mossgrabers.reaper.framework.IniFiles;
 import de.mossgrabers.reaper.framework.ReaperSetupFactory;
 import de.mossgrabers.reaper.framework.configuration.DocumentSettingsUI;
@@ -37,7 +39,7 @@ import java.util.List;
  *
  * @author J&uuml;rgen Mo&szlig;graber
  */
-public abstract class AbstractControllerInstance implements IControllerInstance
+public abstract class AbstractControllerInstance implements IControllerInstance, TestCallback
 {
     protected final IControllerDefinition controllerDefinition;
     protected final LogModel              logModel;
@@ -274,8 +276,28 @@ public abstract class AbstractControllerInstance implements IControllerInstance
     @Override
     public synchronized void testUI ()
     {
-        if (this.controllerSetup != null)
-            this.controllerSetup.test ();
+        if (this.controllerSetup == null)
+            return;
+
+        this.controllerSetup.test (this);
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void startTesting ()
+    {
+        this.logModel.info ("Enable testing.");
+        Actions.setTesting (true);
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void endTesting ()
+    {
+        this.logModel.info ("Testing finished.");
+        Actions.setTesting (false);
     }
 
 

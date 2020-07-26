@@ -30,6 +30,7 @@ import de.mossgrabers.framework.scale.Scales;
 import de.mossgrabers.framework.utils.ButtonEvent;
 import de.mossgrabers.framework.utils.ConsoleLogger;
 import de.mossgrabers.framework.utils.IntConsumerSupplier;
+import de.mossgrabers.framework.utils.TestCallback;
 import de.mossgrabers.framework.utils.TestFramework;
 import de.mossgrabers.framework.view.View;
 import de.mossgrabers.framework.view.ViewManager;
@@ -165,7 +166,7 @@ public abstract class AbstractControllerSetup<S extends IControlSurface<C>, C ex
 
     /** {@inheritDoc} */
     @Override
-    public void test ()
+    public void test (final TestCallback callback)
     {
         final TestFramework framework = new TestFramework (this.host);
 
@@ -210,7 +211,8 @@ public abstract class AbstractControllerSetup<S extends IControlSurface<C>, C ex
 
         });
 
-        framework.executeScheduler ();
+        callback.startTesting ();
+        framework.executeScheduler (callback);
     }
 
 
