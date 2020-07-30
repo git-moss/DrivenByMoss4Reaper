@@ -68,23 +68,62 @@ public class ModelImpl extends AbstractModel
 
         dataSetup.setTransport (this.transport);
 
+        final int numTracks = modelSetup.getNumTracks ();
+        final int numSends = modelSetup.getNumSends ();
+        final int numScenes = modelSetup.getNumScenes ();
+
+        //////////////////////////////////////////////////////////////////////////////
+        // Create devices
+
         final int numDevicesInBank = modelSetup.getNumDevicesInBank ();
         final int numParams = modelSetup.getNumParams ();
         final int numDeviceLayers = modelSetup.getNumDeviceLayers ();
         final int numDrumPadLayers = modelSetup.getNumDrumPadLayers ();
-        final int numSends = modelSetup.getNumSends ();
-        this.drumDevice = new DrumDeviceImpl (dataSetup, numSends, numParams, numDevicesInBank, numDeviceLayers, numDrumPadLayers);
-        this.instrumentDevice = new CursorDeviceImpl (dataSetup, numSends, numParams, numDevicesInBank, numDeviceLayers, numDrumPadLayers);
-        this.cursorDevice = new CursorDeviceImpl (dataSetup, numSends, numParams, numDevicesInBank, numDeviceLayers, numDrumPadLayers);
-        if (numDrumPadLayers > 0)
-            this.drumDevice64 = new DrumDeviceImpl (dataSetup, 0, 0, 0, 64, 64);
 
-        final int numTracks = modelSetup.getNumTracks ();
-        final int numScenes = modelSetup.getNumScenes ();
+        // Cursor device
+        this.cursorDevice = new CursorDeviceImpl (dataSetup, numSends, numParams, numDevicesInBank, numDeviceLayers, numDrumPadLayers);
+
+        // Drum Machine
         final List<IDrumDevice> drumDevices = new ArrayList<> ();
-        drumDevices.add (this.drumDevice);
-        if (this.drumDevice64 != null)
-            drumDevices.add (this.drumDevice64);
+        if (modelSetup.wantsDrumDevice ())
+        {
+            this.drumDevice = new DrumDeviceImpl (dataSetup, numSends, numParams, numDevicesInBank, numDeviceLayers, numDrumPadLayers);
+            drumDevices.add (this.drumDevice);
+
+            // Drum Machine 64 pads
+            if (modelSetup.wantsDrum64Device ())
+            {
+                this.drumDevice64 = new DrumDeviceImpl (dataSetup, 0, 0, 0, 64, 64);
+                drumDevices.add (this.drumDevice64);
+            }
+        }
+
+        // TODO
+        // for (final DeviceID deviceID: modelSetup.getDeviceIDs ())
+        // {
+        // switch (deviceID)
+        // {
+        // case FIRST_INSTRUMENT:
+        // deviceMatcher = controllerHost.createInstrumentMatcher ();
+        // break;
+        //
+        // case NI_KOMPLETE:
+        // deviceMatcher = controllerHost.createVST2DeviceMatcher (1315523403);
+        // break;
+        //
+        // default:
+        // // Impossible to reach
+        // throw new FrameworkException ("Unknown device ID.");
+        // }
+        // // TODO this.specificDevices.put (deviceID, new SpecificDeviceImpl (this.host,
+        // // this.valueChanger, device, numSends, numParams, numDevicesInBank, numDeviceLayers,
+        // // numDrumPadLayers));
+        // this.specificDevices.put (deviceID, new CursorDeviceImpl (dataSetup, numSends, numParams,
+        // numDevicesInBank, numDeviceLayers, numDrumPadLayers));
+        // }
+
+        //////////////////////////////////////////////////////////////////////////////
+        // Create track banks
 
         final TrackBankImpl trackBankImpl = new TrackBankImpl (drumDevices, dataSetup, numTracks, numScenes, numSends, modelSetup.hasFlatTrackList (), modelSetup.hasFullFlatTrackList ());
         this.trackBank = trackBankImpl;

@@ -14,6 +14,7 @@ import de.mossgrabers.framework.controller.color.ColorManager;
 import de.mossgrabers.framework.controller.hardware.BindType;
 import de.mossgrabers.framework.controller.hardware.IHwAbsoluteKnob;
 import de.mossgrabers.framework.controller.hardware.IHwButton;
+import de.mossgrabers.framework.controller.hardware.IHwContinuousControl;
 import de.mossgrabers.framework.controller.hardware.IHwFader;
 import de.mossgrabers.framework.controller.hardware.IHwRelativeKnob;
 import de.mossgrabers.framework.controller.valuechanger.IValueChanger;
@@ -176,6 +177,7 @@ public abstract class AbstractControllerSetup<S extends IControlSurface<C>, C ex
 
             final ViewManager viewManager = surface.getViewManager ();
             final ModeManager modeManager = surface.getModeManager ();
+            final int max = this.model.getValueChanger ().getUpperBound () - 1;
 
             for (final Views viewID: Views.values ())
             {
@@ -203,6 +205,35 @@ public abstract class AbstractControllerSetup<S extends IControlSurface<C>, C ex
                             button.trigger (ButtonEvent.DOWN);
                             button.trigger (ButtonEvent.LONG);
                             button.trigger (ButtonEvent.UP);
+                        }
+
+                        for (final ContinuousID continuousID: ContinuousID.values ())
+                        {
+                            final IHwContinuousControl continuous = surface.getContinuous (continuousID);
+                            if (continuous == null)
+                                continue;
+
+                            final TriggerCommand touchCommand = continuous.getTouchCommand ();
+                            if (touchCommand != null)
+                            {
+                                touchCommand.execute (ButtonEvent.DOWN, 127);
+                                touchCommand.execute (ButtonEvent.LONG, 127);
+                                touchCommand.execute (ButtonEvent.UP, 0);
+                            }
+                            final ContinuousCommand command = continuous.getCommand ();
+                            if (command != null)
+                            {
+                                command.execute (0);
+                                command.execute (max);
+                                command.execute (max / 2);
+                            }
+                            final PitchbendCommand pitchbendCommand = continuous.getPitchbendCommand ();
+                            if (pitchbendCommand != null)
+                            {
+                                pitchbendCommand.onPitchbend (0, 0);
+                                pitchbendCommand.onPitchbend (0, 127);
+                                pitchbendCommand.onPitchbend (0, 64);
+                            }
                         }
 
                     });

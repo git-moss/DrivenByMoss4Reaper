@@ -12,6 +12,7 @@ import de.mossgrabers.framework.daw.IHost;
 import de.mossgrabers.framework.daw.IModel;
 import de.mossgrabers.framework.daw.IProject;
 import de.mossgrabers.framework.daw.constants.AutomationMode;
+import de.mossgrabers.framework.daw.constants.DeviceID;
 import de.mossgrabers.framework.daw.data.IMarker;
 import de.mossgrabers.framework.daw.data.IParameter;
 import de.mossgrabers.framework.daw.data.IScene;
@@ -104,7 +105,7 @@ public class MessageParser
             this.transport = (TransportImpl) this.model.getTransport ();
             this.masterTrack = (MasterTrackImpl) this.model.getMasterTrack ();
             this.cursorDevice = (CursorDeviceImpl) this.model.getCursorDevice ();
-            this.instrumentDevice = (CursorDeviceImpl) this.model.getInstrumentDevice ();
+            this.instrumentDevice = (CursorDeviceImpl) this.model.getSpecificDevice (DeviceID.FIRST_INSTRUMENT);
             this.browser = this.model.getBrowser ();
         }
     }
@@ -162,7 +163,8 @@ public class MessageParser
                 break;
 
             case "primary":
-                this.parseDevice (this.instrumentDevice, value, parts);
+                if (this.instrumentDevice != null)
+                    this.parseDevice (this.instrumentDevice, value, parts);
                 break;
 
             case "user":
