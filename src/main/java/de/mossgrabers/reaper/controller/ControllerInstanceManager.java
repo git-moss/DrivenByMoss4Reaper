@@ -205,7 +205,8 @@ public class ControllerInstanceManager
         this.instances.forEach (inst -> {
             try
             {
-                inst.parse (address, argument);
+                if (inst.isEnabled ())
+                    inst.parse (address, argument);
             }
             catch (final RuntimeException ex)
             {

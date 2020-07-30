@@ -9,8 +9,10 @@ import de.mossgrabers.framework.daw.AbstractModel;
 import de.mossgrabers.framework.daw.IClip;
 import de.mossgrabers.framework.daw.INoteClip;
 import de.mossgrabers.framework.daw.ModelSetup;
+import de.mossgrabers.framework.daw.constants.DeviceID;
 import de.mossgrabers.framework.daw.data.IDrumDevice;
 import de.mossgrabers.framework.daw.data.ISlot;
+import de.mossgrabers.framework.daw.data.ISpecificDevice;
 import de.mossgrabers.framework.daw.data.ITrack;
 import de.mossgrabers.framework.daw.data.bank.ISceneBank;
 import de.mossgrabers.framework.daw.data.bank.ITrackBank;
@@ -98,29 +100,16 @@ public class ModelImpl extends AbstractModel
             }
         }
 
-        // TODO
-        // for (final DeviceID deviceID: modelSetup.getDeviceIDs ())
-        // {
-        // switch (deviceID)
-        // {
-        // case FIRST_INSTRUMENT:
-        // deviceMatcher = controllerHost.createInstrumentMatcher ();
-        // break;
-        //
-        // case NI_KOMPLETE:
-        // deviceMatcher = controllerHost.createVST2DeviceMatcher (1315523403);
-        // break;
-        //
-        // default:
-        // // Impossible to reach
-        // throw new FrameworkException ("Unknown device ID.");
-        // }
-        // // TODO this.specificDevices.put (deviceID, new SpecificDeviceImpl (this.host,
-        // // this.valueChanger, device, numSends, numParams, numDevicesInBank, numDeviceLayers,
-        // // numDrumPadLayers));
-        // this.specificDevices.put (deviceID, new CursorDeviceImpl (dataSetup, numSends, numParams,
-        // numDevicesInBank, numDeviceLayers, numDrumPadLayers));
-        // }
+        for (final DeviceID deviceID: modelSetup.getDeviceIDs ())
+        {
+            ISpecificDevice specificDevice = new CursorDeviceImpl (dataSetup, numSends, numParams, numDevicesInBank, numDeviceLayers, numDrumPadLayers);
+            this.specificDevices.put (DeviceID.FIRST_INSTRUMENT, specificDevice);
+            if (deviceID == DeviceID.NI_KOMPLETE)
+            {
+                specificDevice = new KompleteDevice (specificDevice);
+                this.specificDevices.put (deviceID, specificDevice);
+            }
+        }
 
         //////////////////////////////////////////////////////////////////////////////
         // Create track banks
