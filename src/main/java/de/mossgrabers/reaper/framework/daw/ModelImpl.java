@@ -17,9 +17,11 @@ import de.mossgrabers.framework.daw.data.ITrack;
 import de.mossgrabers.framework.daw.data.bank.ISceneBank;
 import de.mossgrabers.framework.daw.data.bank.ITrackBank;
 import de.mossgrabers.framework.scale.Scales;
+import de.mossgrabers.framework.utils.FrameworkException;
 import de.mossgrabers.reaper.framework.IniFiles;
 import de.mossgrabers.reaper.framework.daw.data.CursorDeviceImpl;
 import de.mossgrabers.reaper.framework.daw.data.DrumDeviceImpl;
+import de.mossgrabers.reaper.framework.daw.data.EqualizerDeviceImpl;
 import de.mossgrabers.reaper.framework.daw.data.MasterTrackImpl;
 import de.mossgrabers.reaper.framework.daw.data.SlotImpl;
 import de.mossgrabers.reaper.framework.daw.data.TrackImpl;
@@ -102,12 +104,19 @@ public class ModelImpl extends AbstractModel
 
         for (final DeviceID deviceID: modelSetup.getDeviceIDs ())
         {
-            ISpecificDevice specificDevice = new CursorDeviceImpl (dataSetup, numSends, numParams, numDevicesInBank, numDeviceLayers, numDrumPadLayers);
-            this.specificDevices.put (DeviceID.FIRST_INSTRUMENT, specificDevice);
-            if (deviceID == DeviceID.NI_KOMPLETE)
+            switch (deviceID)
             {
-                specificDevice = new KompleteDevice (specificDevice);
-                this.specificDevices.put (deviceID, specificDevice);
+                case FIRST_INSTRUMENT:
+                case NI_KOMPLETE:
+                    final ISpecificDevice specificDevice = new CursorDeviceImpl (dataSetup, numSends, numParams, numDevicesInBank, numDeviceLayers, numDrumPadLayers);
+                    this.specificDevices.put (DeviceID.FIRST_INSTRUMENT, specificDevice);
+                    if (deviceID == DeviceID.NI_KOMPLETE)
+                        this.specificDevices.put (deviceID, new KompleteDevice (specificDevice));
+                    break;
+
+                case EQ:
+                    this.specificDevices.put (deviceID, new EqualizerDeviceImpl (dataSetup));
+                    break;
             }
         }
 
@@ -178,7 +187,7 @@ public class ModelImpl extends AbstractModel
     public IClip getClip ()
     {
         if (this.cursorClips.isEmpty ())
-            throw new RuntimeException ("No cursor clip created!");
+            throw new FrameworkException ("No cursor clip created!");
         return this.cursorClips.values ().iterator ().next ();
     }
 

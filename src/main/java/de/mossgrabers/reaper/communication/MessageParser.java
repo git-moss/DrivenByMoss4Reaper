@@ -28,12 +28,14 @@ import de.mossgrabers.reaper.framework.daw.Note;
 import de.mossgrabers.reaper.framework.daw.ProjectImpl;
 import de.mossgrabers.reaper.framework.daw.TransportImpl;
 import de.mossgrabers.reaper.framework.daw.data.CursorDeviceImpl;
+import de.mossgrabers.reaper.framework.daw.data.EqualizerDeviceImpl;
 import de.mossgrabers.reaper.framework.daw.data.ItemImpl;
 import de.mossgrabers.reaper.framework.daw.data.MarkerImpl;
 import de.mossgrabers.reaper.framework.daw.data.MasterTrackImpl;
 import de.mossgrabers.reaper.framework.daw.data.ParameterImpl;
 import de.mossgrabers.reaper.framework.daw.data.SceneImpl;
 import de.mossgrabers.reaper.framework.daw.data.SendImpl;
+import de.mossgrabers.reaper.framework.daw.data.SpecificDeviceImpl;
 import de.mossgrabers.reaper.framework.daw.data.TrackImpl;
 import de.mossgrabers.reaper.framework.daw.data.UserParameterImpl;
 import de.mossgrabers.reaper.framework.daw.data.bank.MarkerBankImpl;
@@ -73,6 +75,7 @@ public class MessageParser
     private final TransportImpl          transport;
     private final CursorDeviceImpl       cursorDevice;
     private final CursorDeviceImpl       instrumentDevice;
+    private final EqualizerDeviceImpl    eqDevice;
     private final IBrowser               browser;
     private final IModel                 model;
 
@@ -95,6 +98,7 @@ public class MessageParser
             this.masterTrack = null;
             this.cursorDevice = null;
             this.instrumentDevice = null;
+            this.eqDevice = null;
             this.browser = null;
         }
         else
@@ -106,6 +110,7 @@ public class MessageParser
             this.masterTrack = (MasterTrackImpl) this.model.getMasterTrack ();
             this.cursorDevice = (CursorDeviceImpl) this.model.getCursorDevice ();
             this.instrumentDevice = (CursorDeviceImpl) this.model.getSpecificDevice (DeviceID.FIRST_INSTRUMENT);
+            this.eqDevice = (EqualizerDeviceImpl) this.model.getSpecificDevice (DeviceID.EQ);
             this.browser = this.model.getBrowser ();
         }
     }
@@ -165,6 +170,11 @@ public class MessageParser
             case "primary":
                 if (this.instrumentDevice != null)
                     this.parseDevice (this.instrumentDevice, value, parts);
+                break;
+
+            case "eq":
+                if (this.eqDevice != null)
+                    this.parseDevice (this.eqDevice, value, parts);
                 break;
 
             case "user":
@@ -476,13 +486,14 @@ public class MessageParser
     }
 
 
-    private void parseDevice (final CursorDeviceImpl device, final String value, final Queue<String> parts)
+    private void parseDevice (final SpecificDeviceImpl device, final String value, final Queue<String> parts)
     {
         final String command = parts.poll ();
         switch (command)
         {
             case TAG_COUNT:
-                device.setDeviceCount (Integer.parseInt (value));
+                if (device instanceof CursorDeviceImpl)
+                    ((CursorDeviceImpl) device).setDeviceCount (Integer.parseInt (value));
                 break;
 
             case TAG_EXISTS:
@@ -510,11 +521,28 @@ public class MessageParser
                 break;
 
             case "sibling":
-                this.parseSibling (device, command, parts, value);
+                if (device instanceof CursorDeviceImpl)
+                    this.parseSibling ((CursorDeviceImpl) device, command, parts, value);
                 break;
 
             case "param":
                 this.parseParameter (device, value, parts);
+                break;
+
+            case "band":
+                if (device instanceof EqualizerDeviceImpl)
+                {
+                    final String bandIndex = parts.poll ();
+                    try
+                    {
+                        final int position = Integer.parseInt (bandIndex);
+                        ((EqualizerDeviceImpl) device).setTypeInternal (position, value);
+                    }
+                    catch (final NumberFormatException ex)
+                    {
+                        this.host.error ("Unhandled equalizer command: " + bandIndex);
+                    }
+                }
                 break;
 
             default:
@@ -524,7 +552,7 @@ public class MessageParser
     }
 
 
-    private void parseParameter (final CursorDeviceImpl device, final String value, final Queue<String> parts)
+    private void parseParameter (final SpecificDeviceImpl device, final String value, final Queue<String> parts)
     {
         final String cmd = parts.poll ();
         try

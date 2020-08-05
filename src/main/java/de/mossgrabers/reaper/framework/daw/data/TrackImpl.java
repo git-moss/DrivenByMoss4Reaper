@@ -460,6 +460,14 @@ public class TrackImpl extends ChannelImpl implements ITrack
     }
 
 
+    /** {@inheritDoc} */
+    @Override
+    public void addEqualizerDevice ()
+    {
+        this.sender.processNoArg ("device", "eq-add");
+    }
+
+
     /**
      * Start recording a clip on the track at the current play position.
      */
