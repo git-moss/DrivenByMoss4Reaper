@@ -22,6 +22,7 @@ import java.util.List;
 public class MasterTrackImpl extends TrackImpl implements IMasterTrack
 {
     private final List<ItemSelectionObserver> observers = new ArrayList<> ();
+    private UserParameterImpl                 crossfaderParameter;
 
 
     /**
@@ -34,6 +35,15 @@ public class MasterTrackImpl extends TrackImpl implements IMasterTrack
     public MasterTrackImpl (final DataSetupEx dataSetup, final TrackBankImpl trackBank, final int numSends)
     {
         super (dataSetup, trackBank, 0, 1, numSends, 0);
+
+        this.crossfaderParameter = new UserParameterImpl (dataSetup, 0, null)
+        {
+            @Override
+            protected void sendUpdate ()
+            {
+                MasterTrackImpl.this.sendTrackOSC ("user/param/0/value", this.value);
+            }
+        };
 
         // Master channel does always exist
         this.setExists (true);
@@ -154,5 +164,16 @@ public class MasterTrackImpl extends TrackImpl implements IMasterTrack
     protected String createCommand (final String command)
     {
         return command;
+    }
+
+
+    /**
+     * Get the first track FX parameter acting as the crossfader parameter.
+     *
+     * @return The parameter
+     */
+    public ParameterImpl getCrossfaderParameter ()
+    {
+        return this.crossfaderParameter;
     }
 }

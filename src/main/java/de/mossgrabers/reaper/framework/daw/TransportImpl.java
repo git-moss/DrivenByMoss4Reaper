@@ -10,6 +10,8 @@ import de.mossgrabers.framework.daw.constants.AutomationMode;
 import de.mossgrabers.framework.daw.constants.TransportConstants;
 import de.mossgrabers.reaper.framework.Actions;
 import de.mossgrabers.reaper.framework.IniFiles;
+import de.mossgrabers.reaper.framework.daw.data.MasterTrackImpl;
+import de.mossgrabers.reaper.framework.daw.data.ParameterImpl;
 import de.mossgrabers.reaper.framework.daw.data.TrackImpl;
 
 import java.text.NumberFormat;
@@ -706,7 +708,7 @@ public class TransportImpl extends BaseImpl implements ITransport
     @Override
     public void setCrossfade (final int value)
     {
-        // Not supported
+        ((MasterTrackImpl) this.model.getMasterTrack ()).getCrossfaderParameter ().setValue (value);
     }
 
 
@@ -714,7 +716,9 @@ public class TransportImpl extends BaseImpl implements ITransport
     @Override
     public int getCrossfade ()
     {
-        // Not supported
+        final ParameterImpl crossfaderParameter = ((MasterTrackImpl) this.model.getMasterTrack ()).getCrossfaderParameter ();
+        if (crossfaderParameter.doesExist ())
+            return crossfaderParameter.getValue ();
         return this.valueChanger.getUpperBound () / 2;
     }
 
@@ -723,7 +727,7 @@ public class TransportImpl extends BaseImpl implements ITransport
     @Override
     public void changeCrossfade (final int control)
     {
-        // Not supported
+        ((MasterTrackImpl) this.model.getMasterTrack ()).getCrossfaderParameter ().changeValue (control);
     }
 
 

@@ -37,7 +37,6 @@ import de.mossgrabers.reaper.framework.daw.data.SceneImpl;
 import de.mossgrabers.reaper.framework.daw.data.SendImpl;
 import de.mossgrabers.reaper.framework.daw.data.SpecificDeviceImpl;
 import de.mossgrabers.reaper.framework.daw.data.TrackImpl;
-import de.mossgrabers.reaper.framework.daw.data.UserParameterImpl;
 import de.mossgrabers.reaper.framework.daw.data.bank.MarkerBankImpl;
 import de.mossgrabers.reaper.framework.daw.data.bank.ParameterBankImpl;
 import de.mossgrabers.reaper.framework.daw.data.bank.SceneBankImpl;
@@ -59,6 +58,7 @@ import java.util.concurrent.LinkedBlockingDeque;
  */
 public class MessageParser
 {
+    private static final String          TAG_PARAM  = "param";
     private static final String          TAG_COLOR  = "color";
     private static final String          TAG_SELECT = "select";
     private static final String          TAG_NUMBER = "number";
@@ -160,7 +160,7 @@ public class MessageParser
                 break;
 
             case "master":
-                this.parseTrackValue (null, this.masterTrack, parts, value);
+                this.parseMasterTrackValue (this.masterTrack, parts, value);
                 break;
 
             case "device":
@@ -296,6 +296,29 @@ public class MessageParser
             else
                 this.host.error ("Unhandled Track command: " + part);
         }
+    }
+
+
+    private void parseMasterTrackValue (final MasterTrackImpl masterTrack, final Queue<String> parts, final String value)
+    {
+        final String type = parts.peek ();
+
+        if ("user".equals (type))
+        {
+            // Drop user
+            parts.poll ();
+            final String cmd = parts.poll ();
+            if (TAG_PARAM.equals (cmd))
+            {
+                // Drop index
+                parts.poll ();
+                final IParameter crossfaderParam = masterTrack.getCrossfaderParameter ();
+                this.parseUserParamValue (0, crossfaderParam, parts, value);
+                return;
+            }
+        }
+
+        this.parseTrackValue (null, masterTrack, parts, value);
     }
 
 
@@ -525,7 +548,7 @@ public class MessageParser
                     this.parseSibling ((CursorDeviceImpl) device, command, parts, value);
                 break;
 
-            case "param":
+            case TAG_PARAM:
                 this.parseParameter (device, value, parts);
                 break;
 
@@ -575,7 +598,7 @@ public class MessageParser
     private void parseUserParameter (final String value, final Queue<String> parts)
     {
         final String type = parts.poll ();
-        if (!type.equals ("param"))
+        if (!type.equals (TAG_PARAM))
         {
             this.host.error ("Unhandled User parameter: " + type);
             return;
@@ -653,7 +676,7 @@ public class MessageParser
     private void parseUserParamValue (final int paramNo, final IParameter param, final Queue<String> parts, final String value)
     {
         final String command = parts.poll ();
-        final UserParameterImpl p = (UserParameterImpl) param;
+        final ParameterImpl p = (ParameterImpl) param;
         switch (command)
         {
             case TAG_NAME:
