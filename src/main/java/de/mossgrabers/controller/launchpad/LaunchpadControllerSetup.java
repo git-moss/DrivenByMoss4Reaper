@@ -35,10 +35,10 @@ import de.mossgrabers.controller.launchpad.mode.StopClipMode;
 import de.mossgrabers.controller.launchpad.mode.TrackMode;
 import de.mossgrabers.controller.launchpad.view.BrowserView;
 import de.mossgrabers.controller.launchpad.view.DeviceView;
+import de.mossgrabers.controller.launchpad.view.Drum4View;
+import de.mossgrabers.controller.launchpad.view.Drum64View;
+import de.mossgrabers.controller.launchpad.view.Drum8View;
 import de.mossgrabers.controller.launchpad.view.DrumView;
-import de.mossgrabers.controller.launchpad.view.DrumView4;
-import de.mossgrabers.controller.launchpad.view.DrumView64;
-import de.mossgrabers.controller.launchpad.view.DrumView8;
 import de.mossgrabers.controller.launchpad.view.MixView;
 import de.mossgrabers.controller.launchpad.view.NoteViewSelectView;
 import de.mossgrabers.controller.launchpad.view.PanView;
@@ -167,8 +167,6 @@ public class LaunchpadControllerSetup extends AbstractControllerSetup<LaunchpadC
         ms.enableDrum64Device (true);
         ms.setHasFullFlatTrackList (this.configuration.areMasterTracksIncluded ());
         this.model = this.factory.createModel (this.colorManager, this.valueChanger, this.scales, ms);
-        final ITrackBank trackBank = this.model.getTrackBank ();
-        trackBank.addSelectionObserver ( (index, isSelected) -> this.handleTrackChange (isSelected));
     }
 
 
@@ -214,17 +212,17 @@ public class LaunchpadControllerSetup extends AbstractControllerSetup<LaunchpadC
         viewManager.registerView (Views.BROWSER, new BrowserView (surface, this.model));
         viewManager.registerView (Views.DEVICE, new DeviceView (surface, this.model));
         viewManager.registerView (Views.DRUM, new DrumView (surface, this.model));
-        viewManager.registerView (Views.DRUM4, new DrumView4 (surface, this.model));
-        viewManager.registerView (Views.DRUM8, new DrumView8 (surface, this.model));
+        viewManager.registerView (Views.DRUM4, new Drum4View (surface, this.model));
+        viewManager.registerView (Views.DRUM8, new Drum8View (surface, this.model));
         viewManager.registerView (Views.TRACK_PAN, new PanView (surface, this.model));
-        viewManager.registerView (Views.DRUM64, new DrumView64 (surface, this.model));
+        viewManager.registerView (Views.DRUM64, new Drum64View (surface, this.model));
         viewManager.registerView (Views.PLAY, new PlayView (surface, this.model));
         viewManager.registerView (Views.PIANO, new PianoView (surface, this.model));
         viewManager.registerView (Views.RAINDROPS, new RaindropsView (surface, this.model));
         viewManager.registerView (Views.TRACK_SENDS, new SendsView (surface, this.model));
         viewManager.registerView (Views.SEQUENCER, new SequencerView (surface, this.model));
         viewManager.registerView (Views.POLY_SEQUENCER, new PolySequencerView (surface, this.model, true));
-        viewManager.registerView (Views.SESSION, new SessionView (surface, this.model));
+        viewManager.registerView (Views.SESSION, new SessionView ("Session", surface, this.model));
         viewManager.registerView (Views.TRACK_VOLUME, new VolumeView (surface, this.model));
         viewManager.registerView (Views.SHIFT, new ShiftView (surface, this.model));
         viewManager.registerView (Views.MIX, new MixView (surface, this.model));
@@ -251,6 +249,9 @@ public class LaunchpadControllerSetup extends AbstractControllerSetup<LaunchpadC
             this.updateIndication (null);
 
         });
+
+        final ITrackBank trackBank = this.model.getTrackBank ();
+        trackBank.addSelectionObserver ( (index, isSelected) -> this.handleTrackChange (isSelected));
 
         this.configuration.registerDeactivatedItemsHandler (this.model);
         this.createScaleObservers (this.configuration);
@@ -563,7 +564,7 @@ public class LaunchpadControllerSetup extends AbstractControllerSetup<LaunchpadC
         for (final Views viewID: views)
         {
             final AbstractView view = (AbstractView) viewManager.getView (viewID);
-            view.registerAftertouchCommand (new AftertouchAbstractViewCommand (view, this.model, surface));
+            view.registerAftertouchCommand (new AftertouchAbstractViewCommand<> (view, this.model, surface));
         }
     }
 
@@ -809,6 +810,10 @@ public class LaunchpadControllerSetup extends AbstractControllerSetup<LaunchpadC
             return;
 
         final ViewManager viewManager = this.getSurface ().getViewManager ();
+
+        // Do not leave Mix view if track selection changes
+        if (viewManager.isActiveView (Views.MIX))
+            return;
 
         // Recall last used view (if we are not in session mode)
         if (!viewManager.isActiveView (Views.SESSION))
