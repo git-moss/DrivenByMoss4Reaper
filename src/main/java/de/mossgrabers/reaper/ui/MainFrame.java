@@ -90,23 +90,30 @@ public class MainFrame extends JFrame
 
         // Center pane with device configuration and logging
         this.configButton.addActionListener (event -> this.editController ());
+        this.configButton.setToolTipText ("Open the configuration dialog of the selected controller.");
         this.configButton.setBackground (Color.YELLOW);
         final JButton addButton = new JButton ("Add");
+        addButton.setToolTipText ("Not all controllers can be detected automatically. Use the Add button and select the controller to add from the appearing menu.");
+
         addButton.setBackground (Color.GREEN);
         this.configureAddButton (addButton, instanceManager.getDefinitions ());
 
         final JButton detectButton = new JButton ("Detect");
+        detectButton.setToolTipText ("Automatically adds connected controllers.");
         detectButton.setBackground (Color.GREEN);
         detectButton.addActionListener (event -> this.detectControllers ());
 
         this.removeButton.addActionListener (event -> this.removeController ());
+        this.removeButton.setToolTipText ("Removes the controller which is selected in the list.");
         this.removeButton.setBackground (Color.RED);
 
         final JButton projectButton = new JButton ("Project");
+        projectButton.setToolTipText ("Open the dialog with controller settings which are stored individually with each Reaper project, e.g. Scale settings.");
         projectButton.setBackground (Color.YELLOW);
         projectButton.addActionListener (event -> this.projectSettings ());
 
         final JButton enableButton = new JButton ("Dis-/enable");
+        enableButton.setToolTipText ("Disable a controller to save performance if you do not use it (or it is not connected).");
         enableButton.addActionListener (event -> this.toggleEnableController ());
 
         final JButton debugButton = new JButton ("Debug");

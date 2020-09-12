@@ -21,7 +21,7 @@ public class QFactorInvertedParameter implements IParameter
 
     /**
      * Constructor.
-     * 
+     *
      * @param parameter The parameter to wrap
      * @param maxValue The maximum possible value for inversion
      */

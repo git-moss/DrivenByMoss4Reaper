@@ -26,7 +26,7 @@ public class ParameterImpl extends ItemImpl implements IParameter
      * Constructor.
      *
      * @param dataSetup Some configuration variables
-     * @param index The index of the parameters
+     * @param index The index of the parameter
      */
     public ParameterImpl (final DataSetupEx dataSetup, final int index)
     {

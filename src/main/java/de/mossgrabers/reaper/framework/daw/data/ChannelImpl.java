@@ -6,6 +6,7 @@ package de.mossgrabers.reaper.framework.daw.data;
 
 import de.mossgrabers.framework.controller.color.ColorEx;
 import de.mossgrabers.framework.daw.data.IChannel;
+import de.mossgrabers.framework.daw.data.IParameter;
 import de.mossgrabers.framework.daw.data.bank.ISendBank;
 import de.mossgrabers.framework.daw.resource.ChannelType;
 import de.mossgrabers.framework.observer.IValueObserver;
@@ -31,17 +32,15 @@ public class ChannelImpl extends ItemImpl implements IChannel
     private final Set<IValueObserver<ColorEx>> colorObservers     = new HashSet<> ();
 
     private ChannelType                        type;
-    protected double                           volume;
-    private String                             volumeStr          = "";
     private double                             vuLeft;
     private double                             vuRight;
-    private String                             panStr             = "";
-    protected double                           pan;
     private boolean                            isMute;
     private boolean                            isSolo;
     private boolean                            isActivated        = true;
     private ColorEx                            color;
 
+    private final ParameterImpl                volumeParameter;
+    private final ParameterImpl                panParameter;
     private final ISendBank                    sendBank;
 
     private boolean                            isVolumeBeingTouched;
@@ -63,6 +62,8 @@ public class ChannelImpl extends ItemImpl implements IChannel
 
         this.setName ("Track");
 
+        this.volumeParameter = new ParameterImpl (dataSetup, index);
+        this.panParameter = new ParameterImpl (dataSetup, index);
         this.sendBank = new SendBankImpl (dataSetup, this, numSends);
     }
 
@@ -93,9 +94,17 @@ public class ChannelImpl extends ItemImpl implements IChannel
 
     /** {@inheritDoc} */
     @Override
+    public IParameter getVolumeParameter ()
+    {
+        return this.volumeParameter;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
     public String getVolumeStr ()
     {
-        return this.doesExist () ? this.volumeStr : "";
+        return this.doesExist () ? this.volumeParameter.getDisplayedValue () : "";
     }
 
 
@@ -112,7 +121,7 @@ public class ChannelImpl extends ItemImpl implements IChannel
     @Override
     public int getVolume ()
     {
-        return this.valueChanger.fromNormalizedValue (this.volume);
+        return this.volumeParameter.getValue ();
     }
 
 
@@ -132,8 +141,10 @@ public class ChannelImpl extends ItemImpl implements IChannel
         {
             if (this.isAutomationRecActive ())
                 this.sender.delayUpdates (PATH_TRACK);
-            this.volume = this.valueChanger.toNormalizedValue (value);
-            this.sendTrackOSC ("volume", this.volume);
+
+            final double v = this.valueChanger.toNormalizedValue (value);
+            this.volumeParameter.setInternalValue (v);
+            this.sendTrackOSC ("volume", v);
         }
     }
 
@@ -168,7 +179,7 @@ public class ChannelImpl extends ItemImpl implements IChannel
         if (this.isVolumeBeingTouched || this.lastReceivedVolume < 0)
             return;
 
-        this.volume = this.lastReceivedVolume;
+        this.volumeParameter.setInternalValue (this.lastReceivedVolume);
         this.lastReceivedVolume = -1;
     }
 
@@ -191,9 +202,17 @@ public class ChannelImpl extends ItemImpl implements IChannel
 
     /** {@inheritDoc} */
     @Override
+    public IParameter getPanParameter ()
+    {
+        return this.panParameter;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
     public String getPanStr ()
     {
-        return this.doesExist () ? this.panStr : "";
+        return this.doesExist () ? this.panParameter.getDisplayedValue () : "";
     }
 
 
@@ -210,7 +229,7 @@ public class ChannelImpl extends ItemImpl implements IChannel
     @Override
     public int getPan ()
     {
-        return this.valueChanger.fromNormalizedValue (this.pan);
+        return this.panParameter.getValue ();
     }
 
 
@@ -230,8 +249,10 @@ public class ChannelImpl extends ItemImpl implements IChannel
         {
             if (this.isAutomationRecActive ())
                 this.sender.delayUpdates (PATH_TRACK);
-            this.pan = this.valueChanger.toNormalizedValue (value);
-            this.sendTrackOSC ("pan", this.pan);
+
+            final double v = this.valueChanger.toNormalizedValue (value);
+            this.panParameter.setInternalValue (v);
+            this.sendTrackOSC ("pan", v);
         }
     }
 
@@ -266,7 +287,7 @@ public class ChannelImpl extends ItemImpl implements IChannel
         if (this.isPanBeingTouched || this.lastReceivedPan == -1)
             return;
 
-        this.pan = this.lastReceivedPan;
+        this.panParameter.setInternalValue (this.lastReceivedVolume);
         this.lastReceivedPan = -1;
     }
 
@@ -429,7 +450,7 @@ public class ChannelImpl extends ItemImpl implements IChannel
         if (this.isVolumeBeingTouched)
             this.lastReceivedVolume = volume;
         else
-            this.volume = volume;
+            this.volumeParameter.setInternalValue (volume);
     }
 
 
@@ -440,7 +461,7 @@ public class ChannelImpl extends ItemImpl implements IChannel
      */
     public void setVolumeStr (final String volumeStr)
     {
-        this.volumeStr = volumeStr;
+        this.volumeParameter.setValueStr (volumeStr);
     }
 
 
@@ -454,7 +475,7 @@ public class ChannelImpl extends ItemImpl implements IChannel
         if (this.isPanBeingTouched)
             this.lastReceivedPan = pan;
         else
-            this.pan = pan;
+            this.panParameter.setInternalValue (pan);
     }
 
 
@@ -465,7 +486,7 @@ public class ChannelImpl extends ItemImpl implements IChannel
      */
     public void setPanStr (final String panStr)
     {
-        this.panStr = panStr;
+        this.panParameter.setValueStr (panStr);
     }
 
 
