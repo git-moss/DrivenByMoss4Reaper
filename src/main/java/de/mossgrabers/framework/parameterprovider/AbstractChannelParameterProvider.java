@@ -17,7 +17,7 @@ import de.mossgrabers.framework.daw.data.bank.IChannelBank;
  */
 public abstract class AbstractChannelParameterProvider implements IParameterProvider
 {
-    private final IModel                           model;
+    protected final IModel                         model;
     private final IChannelBank<? extends IChannel> bank;
 
 

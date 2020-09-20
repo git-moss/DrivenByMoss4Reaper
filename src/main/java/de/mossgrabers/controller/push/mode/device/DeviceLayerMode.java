@@ -276,7 +276,7 @@ public class DeviceLayerMode extends BaseMode implements IParameterProvider
                         return;
                 }
                 config.setSendsAreToggled (!config.isSendsAreToggled ());
-                this.bindKnobs ();
+                this.bindControls ();
 
                 if (!modeManager.isActiveOrTempMode (Modes.DEVICE_LAYER))
                     this.setMode (Modes.get (Modes.DEVICE_LAYER_SEND1, config.isSendsAreToggled () ? 4 : 0));

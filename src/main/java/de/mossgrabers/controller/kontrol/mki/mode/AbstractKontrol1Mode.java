@@ -46,7 +46,7 @@ public abstract class AbstractKontrol1Mode extends AbstractMode<Kontrol1ControlS
      */
     public AbstractKontrol1Mode (final String name, final Kontrol1ControlSurface surface, final IModel model, final IBank<? extends IItem> bank)
     {
-        super (name, surface, model, false, bank, null);
+        super (name, surface, model, false, bank, DEFAULT_KNOB_IDS);
 
         this.isTemporary = false;
     }

@@ -11,6 +11,7 @@ import de.mossgrabers.framework.controller.IControlSurface;
 import de.mossgrabers.framework.daw.IModel;
 import de.mossgrabers.framework.daw.data.ISend;
 import de.mossgrabers.framework.daw.data.ITrack;
+import de.mossgrabers.framework.parameterprovider.SendParameterProvider;
 
 import java.util.List;
 
@@ -52,13 +53,16 @@ public class SendMode<S extends IControlSurface<C>, C extends Configuration> ext
      * @param model The model
      * @param isAbsolute If true the value change is happending with a setter otherwise relative
      *            change method is used
-     * @param knobs The IDs of the knob to control this mode
+     * @param controls The IDs of the knobs or faders to control this mode
      */
-    public SendMode (final int sendIndex, final S surface, final IModel model, final boolean isAbsolute, final List<ContinuousID> knobs)
+    public SendMode (final int sendIndex, final S surface, final IModel model, final boolean isAbsolute, final List<ContinuousID> controls)
     {
-        super ("Send", surface, model, isAbsolute, knobs);
+        super ("Send", surface, model, isAbsolute, controls);
 
         this.sendIndex = sendIndex;
+
+        if (controls != null)
+            this.setParameters (new SendParameterProvider (model, sendIndex));
     }
 
 

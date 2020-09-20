@@ -35,7 +35,7 @@ public class MasterTrackImpl extends TrackImpl implements IMasterTrack
      */
     public MasterTrackImpl (final DataSetupEx dataSetup, final TrackBankImpl trackBank, final int numSends)
     {
-        super (dataSetup, trackBank, 0, 1, numSends, 0);
+        super (dataSetup, trackBank, 0, 1, numSends, 0, new MasterTrackParameterImpl (dataSetup, "volume"), new MasterTrackParameterImpl (dataSetup, "pan"));
 
         this.crossfaderParameter = new UserParameterImpl (dataSetup, 0, null)
         {

@@ -13,6 +13,7 @@ import de.mossgrabers.framework.daw.data.ICursorDevice;
 import de.mossgrabers.framework.daw.data.IParameter;
 import de.mossgrabers.framework.daw.data.bank.IParameterPageBank;
 import de.mossgrabers.framework.mode.AbstractMode;
+import de.mossgrabers.framework.parameterprovider.BankParameterProvider;
 
 import java.util.List;
 
@@ -52,11 +53,14 @@ public class ParameterMode<S extends IControlSurface<C>, C extends Configuration
      * @param model The model
      * @param isAbsolute If true the value change is happending with a setter otherwise relative
      *            change method is used
-     * @param knobs The IDs of the knob to control this mode
+     * @param controls The IDs of the knobs or faders to control this mode
      */
-    public ParameterMode (final S surface, final IModel model, final boolean isAbsolute, final List<ContinuousID> knobs)
+    public ParameterMode (final S surface, final IModel model, final boolean isAbsolute, final List<ContinuousID> controls)
     {
-        super ("Parameters", surface, model, isAbsolute, model.getCursorDevice ().getParameterBank (), knobs);
+        super ("Parameters", surface, model, isAbsolute, model.getCursorDevice ().getParameterBank (), controls);
+
+        if (controls != null)
+            this.setParameters (new BankParameterProvider (this.bank));
 
         this.isTemporary = false;
         this.cursorDevice = this.model.getCursorDevice ();

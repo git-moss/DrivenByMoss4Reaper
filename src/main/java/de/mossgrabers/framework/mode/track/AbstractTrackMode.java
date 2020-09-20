@@ -52,11 +52,11 @@ public class AbstractTrackMode<S extends IControlSurface<C>, C extends Configura
      * @param model The model
      * @param isAbsolute If true the value change is happending with a setter otherwise relative
      *            change method is used
-     * @param knobs The IDs of the knob to control this mode
+     * @param controls The IDs of the knobs or faders to control this mode
      */
-    public AbstractTrackMode (final String name, final S surface, final IModel model, final boolean isAbsolute, final List<ContinuousID> knobs)
+    public AbstractTrackMode (final String name, final S surface, final IModel model, final boolean isAbsolute, final List<ContinuousID> controls)
     {
-        super (name, surface, model, isAbsolute, model.getCurrentTrackBank (), knobs);
+        super (name, surface, model, isAbsolute, model.getCurrentTrackBank (), controls);
 
         model.addTrackBankObserver (this::switchBanks);
 

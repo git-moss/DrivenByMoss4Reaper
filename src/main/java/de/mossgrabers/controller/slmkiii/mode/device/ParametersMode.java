@@ -129,7 +129,7 @@ public class ParametersMode extends AbstractParametersMode
             else
             {
                 parameterPageBank.selectPage (index);
-                this.bindKnobs ();
+                this.bindControls ();
             }
             return;
         }

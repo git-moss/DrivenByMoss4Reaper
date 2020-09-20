@@ -135,7 +135,7 @@ public class DeviceParamsMode extends BaseMode
             if (!this.showDevices)
             {
                 cd.getParameterPageBank ().selectPage (index);
-                this.bindKnobs ();
+                this.bindControls ();
                 return;
             }
 

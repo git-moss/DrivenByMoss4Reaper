@@ -1227,9 +1227,8 @@ public abstract class AbstractConfiguration implements Configuration
      * Activate the knob speed settings.
      *
      * @param settingsUI The settings
-     * @param defaultFastSpeed The default value for the fast speed (1-100)
      */
-    protected void activateKnobSpeedSetting (final ISettingsUI settingsUI, final int defaultFastSpeed)
+    protected void activateKnobSpeedSetting (final ISettingsUI settingsUI)
     {
         final IEnumSetting knobSpeedNormalSetting = settingsUI.getEnumSetting ("Knob Sensitivity Default", CATEGORY_WORKFLOW, KNOB_SENSITIVITY, KNOB_SENSITIVITY[100]);
         knobSpeedNormalSetting.addValueObserver (value -> {

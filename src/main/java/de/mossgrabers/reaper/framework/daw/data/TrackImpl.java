@@ -86,6 +86,27 @@ public class TrackImpl extends ChannelImpl implements ITrack
     }
 
 
+    /**
+     * Constructor.
+     *
+     * @param dataSetup Some configuration variables
+     * @param trackBank The track bank for folder navigation
+     * @param index The index of the track in the page
+     * @param numTracks The number of tracks of a bank
+     * @param numSends The number of sends of a bank
+     * @param numScenes The number of scenes of a bank
+     * @param volumeParameter The volume parameter
+     * @param panParameter The panorama parameter
+     */
+    public TrackImpl (final DataSetupEx dataSetup, final AbstractTrackBankImpl trackBank, final int index, final int numTracks, final int numSends, final int numScenes, final ParameterImpl volumeParameter, final ParameterImpl panParameter)
+    {
+        super (dataSetup, index, numSends, volumeParameter, panParameter);
+
+        this.trackBank = trackBank;
+        this.slotBank = new SlotBankImpl (dataSetup, (SceneBankImpl) trackBank.getSceneBank (), index, numScenes);
+    }
+
+
     /** {@inheritDoc} */
     @Override
     public void enableObservers (final boolean enable)

@@ -35,32 +35,33 @@ import java.util.List;
 public abstract class AbstractMode<S extends IControlSurface<C>, C extends Configuration> implements Mode
 {
     /** Color identifier for a mode button which is off. */
-    public static final String                BUTTON_COLOR_OFF = "BUTTON_COLOR_OFF";
+    public static final String             BUTTON_COLOR_OFF = "BUTTON_COLOR_OFF";
     /** Color identifier for a mode button which is on. */
-    public static final String                BUTTON_COLOR_ON  = "BUTTON_COLOR_ON";
+    public static final String             BUTTON_COLOR_ON  = "BUTTON_COLOR_ON";
     /** Color identifier for a mode button which is hilighted. */
-    public static final String                BUTTON_COLOR_HI  = "BUTTON_COLOR_HI";
+    public static final String             BUTTON_COLOR_HI  = "BUTTON_COLOR_HI";
     /** Color identifier for a mode button which is on (second row). */
-    public static final String                BUTTON_COLOR2_ON = "BUTTON_COLOR2_ON";
+    public static final String             BUTTON_COLOR2_ON = "BUTTON_COLOR2_ON";
     /** Color identifier for a mode button which is hilighted (second row). */
-    public static final String                BUTTON_COLOR2_HI = "BUTTON_COLOR2_HI";
+    public static final String             BUTTON_COLOR2_HI = "BUTTON_COLOR2_HI";
 
-    protected static final List<ContinuousID> DEFAULT_KNOB_IDS = ContinuousID.createSequentialList (ContinuousID.KNOB1, 8);
+    /** Default knobs 1 to 8. **/
+    public static final List<ContinuousID> DEFAULT_KNOB_IDS = ContinuousID.createSequentialList (ContinuousID.KNOB1, 8);
 
-    protected final String                    name;
-    protected final S                         surface;
-    protected final IModel                    model;
-    protected final ColorManager              colorManager;
-    protected boolean []                      isKnobTouched;
+    protected final String                 name;
+    protected final S                      surface;
+    protected final IModel                 model;
+    protected final ColorManager           colorManager;
+    protected boolean []                   isKnobTouched;
 
-    protected IParameterProvider              parameterProvider;
+    protected IParameterProvider           parameterProvider;
 
-    protected IBank<? extends IItem>          bank;
-    protected final List<ContinuousID>        knobs;
-    protected final MVHelper<S, C>            mvHelper;
-    protected boolean                         isTemporary;
-    protected boolean                         isAbsolute;
-    protected boolean                         isActive;
+    protected IBank<? extends IItem>       bank;
+    protected final List<ContinuousID>     controls;
+    protected final MVHelper<S, C>         mvHelper;
+    protected boolean                      isTemporary;
+    protected boolean                      isAbsolute;
+    protected boolean                      isActive;
 
 
     /**
@@ -116,9 +117,9 @@ public abstract class AbstractMode<S extends IControlSurface<C>, C extends Confi
      * @param isAbsolute If true the value change is happending with a setter otherwise relative
      *            change method is used
      * @param bank The parameter bank to control with this mode, might be null
-     * @param knobs The IDs of the knob to control this mode
+     * @param controls The IDs of the knobs or faders to control this mode
      */
-    public AbstractMode (final String name, final S surface, final IModel model, final boolean isAbsolute, final IBank<? extends IItem> bank, final List<ContinuousID> knobs)
+    public AbstractMode (final String name, final S surface, final IModel model, final boolean isAbsolute, final IBank<? extends IItem> bank, final List<ContinuousID> controls)
     {
         this.name = name;
         this.surface = surface;
@@ -126,13 +127,13 @@ public abstract class AbstractMode<S extends IControlSurface<C>, C extends Confi
         this.colorManager = this.model.getColorManager ();
         this.isAbsolute = isAbsolute;
         this.bank = bank;
-        this.knobs = knobs == null ? Collections.emptyList () : knobs;
+        this.controls = controls == null ? Collections.emptyList () : controls;
 
         this.isTemporary = true;
 
         this.mvHelper = new MVHelper<> (model, surface);
 
-        this.isKnobTouched = new boolean [this.knobs.size ()];
+        this.isKnobTouched = new boolean [this.controls.size ()];
         Arrays.fill (this.isKnobTouched, false);
     }
 
@@ -144,7 +145,7 @@ public abstract class AbstractMode<S extends IControlSurface<C>, C extends Confi
      */
     protected void setParameters (final IParameterProvider parameterProvider)
     {
-        if (this.knobs.size () != parameterProvider.size ())
+        if (this.controls.size () != parameterProvider.size ())
             throw new FrameworkException ("Number of knobs must match the number of parameters!");
 
         this.parameterProvider = parameterProvider;
@@ -184,7 +185,7 @@ public abstract class AbstractMode<S extends IControlSurface<C>, C extends Confi
     public void onActivate ()
     {
         this.isActive = true;
-        this.bindKnobs ();
+        this.bindControls ();
     }
 
 
@@ -193,7 +194,7 @@ public abstract class AbstractMode<S extends IControlSurface<C>, C extends Confi
     public void onDeactivate ()
     {
         this.isActive = false;
-        this.unbindKnobs ();
+        this.unbindControls ();
     }
 
 
@@ -332,7 +333,7 @@ public abstract class AbstractMode<S extends IControlSurface<C>, C extends Confi
         if (this.bank == null)
             return;
         this.bank.selectPreviousItem ();
-        this.bindKnobs ();
+        this.bindControls ();
     }
 
 
@@ -349,7 +350,7 @@ public abstract class AbstractMode<S extends IControlSurface<C>, C extends Confi
         if (this.bank == null)
             return;
         this.bank.selectNextItem ();
-        this.bindKnobs ();
+        this.bindControls ();
     }
 
 
@@ -360,7 +361,7 @@ public abstract class AbstractMode<S extends IControlSurface<C>, C extends Confi
         if (this.bank == null)
             return;
         this.bank.selectPreviousPage ();
-        this.bindKnobs ();
+        this.bindControls ();
     }
 
 
@@ -371,7 +372,7 @@ public abstract class AbstractMode<S extends IControlSurface<C>, C extends Confi
         if (this.bank == null)
             return;
         this.bank.selectNextPage ();
-        this.bindKnobs ();
+        this.bindControls ();
     }
 
 
@@ -383,7 +384,7 @@ public abstract class AbstractMode<S extends IControlSurface<C>, C extends Confi
             return;
         final int position = page * this.bank.getPageSize ();
         this.bank.scrollTo (position);
-        this.bindKnobs ();
+        this.bindControls ();
     }
 
 
@@ -428,7 +429,7 @@ public abstract class AbstractMode<S extends IControlSurface<C>, C extends Confi
     {
         this.bank = bank;
 
-        this.bindKnobs ();
+        this.bindControls ();
     }
 
 
@@ -472,25 +473,25 @@ public abstract class AbstractMode<S extends IControlSurface<C>, C extends Confi
     /**
      * Update the binding to the parameter bank controlled by this mode.
      */
-    protected void bindKnobs ()
+    protected void bindControls ()
     {
         if (!this.isActive || this.parameterProvider == null)
             return;
 
         for (int i = 0; i < this.parameterProvider.size (); i++)
-            this.surface.getContinuous (this.knobs.get (i)).bind (this.parameterProvider.get (i));
+            this.surface.getContinuous (this.controls.get (i)).bind (this.parameterProvider.get (i));
     }
 
 
     /**
      * Set the binding to default handler for the parameter bank controlled by this mode.
      */
-    private void unbindKnobs ()
+    private void unbindControls ()
     {
         if (this.parameterProvider == null)
             return;
 
         for (int i = 0; i < this.parameterProvider.size (); i++)
-            this.surface.getContinuous (this.knobs.get (i)).bind ((IParameter) null);
+            this.surface.getContinuous (this.controls.get (i)).bind ((IParameter) null);
     }
 }

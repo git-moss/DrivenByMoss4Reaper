@@ -53,12 +53,27 @@ public class ChannelImpl extends ItemImpl implements IChannel
      */
     public ChannelImpl (final DataSetupEx dataSetup, final int index, final int numSends)
     {
+        this (dataSetup, index, numSends, new TrackParameterImpl (dataSetup, index, "volume"), new TrackParameterImpl (dataSetup, index, "pan"));
+    }
+
+
+    /**
+     * Constructor.
+     *
+     * @param dataSetup Some configuration variables
+     * @param index The index of the channel in the page
+     * @param numSends The number of sends of a bank
+     * @param volumeParameter The volume parameter
+     * @param panParameter The panorama parameter
+     */
+    public ChannelImpl (final DataSetupEx dataSetup, final int index, final int numSends, final ParameterImpl volumeParameter, final ParameterImpl panParameter)
+    {
         super (dataSetup, index);
 
         this.setName ("Track");
 
-        this.volumeParameter = new TrackParameterImpl (dataSetup, index, "volume");
-        this.panParameter = new TrackParameterImpl (dataSetup, index, "pan");
+        this.volumeParameter = volumeParameter;
+        this.panParameter = panParameter;
         this.sendBank = new SendBankImpl (dataSetup, this, numSends);
     }
 
