@@ -180,6 +180,14 @@ public class SpecificDeviceImpl extends DeviceImpl implements ISpecificDevice
 
     /** {@inheritDoc} */
     @Override
+    public void removeHasDrumPadsObserver (final IValueObserver<Boolean> observer)
+    {
+        // No drum devices, therefore never fires
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
     public boolean hasLayers ()
     {
         // Not supported

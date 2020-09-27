@@ -27,14 +27,7 @@ public class DeviceBankImpl extends AbstractBankImpl<IDevice> implements IDevice
     public DeviceBankImpl (final DataSetupEx dataSetup, final int numDevices)
     {
         super (dataSetup, numDevices);
-        this.initItems ();
-    }
 
-
-    /** {@inheritDoc} */
-    @Override
-    protected void initItems ()
-    {
         for (int i = 0; i < this.pageSize; i++)
             this.items.add (new DeviceImpl (this.dataSetup, i));
     }

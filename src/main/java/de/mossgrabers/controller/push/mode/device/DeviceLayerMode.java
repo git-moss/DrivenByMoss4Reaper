@@ -30,13 +30,17 @@ import de.mossgrabers.framework.daw.resource.ChannelType;
 import de.mossgrabers.framework.graphics.canvas.utils.SendData;
 import de.mossgrabers.framework.mode.ModeManager;
 import de.mossgrabers.framework.mode.Modes;
+import de.mossgrabers.framework.observer.IParametersAdjustObserver;
+import de.mossgrabers.framework.observer.IValueObserver;
 import de.mossgrabers.framework.parameterprovider.IParameterProvider;
 import de.mossgrabers.framework.utils.ButtonEvent;
 import de.mossgrabers.framework.utils.Pair;
 import de.mossgrabers.framework.utils.StringUtils;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 
 /**
@@ -44,9 +48,10 @@ import java.util.List;
  *
  * @author J&uuml;rgen Mo&szlig;graber
  */
-public class DeviceLayerMode extends BaseMode implements IParameterProvider
+public class DeviceLayerMode extends BaseMode implements IParameterProvider, IValueObserver<Boolean>
 {
-    protected final List<Pair<String, Boolean>> menu = new ArrayList<> ();
+    protected final List<Pair<String, Boolean>>  menu      = new ArrayList<> ();
+    private final Set<IParametersAdjustObserver> observers = new HashSet<> ();
 
 
     /**
@@ -66,8 +71,6 @@ public class DeviceLayerMode extends BaseMode implements IParameterProvider
 
         for (int i = 0; i < 8; i++)
             this.menu.add (new Pair<> (" ", Boolean.FALSE));
-
-        model.getCursorDevice ().addHasDrumPadsObserver (hasDrumPads -> this.switchBanks (model.getCursorDevice ().getLayerOrDrumPadBank ()));
     }
 
 
@@ -103,6 +106,47 @@ public class DeviceLayerMode extends BaseMode implements IParameterProvider
                 final int sendIndex = index - (this.isPush2 ? this.surface.getConfiguration ().isSendsAreToggled () ? 0 : 4 : 2);
                 return channel.getSendBank ().getItem (sendIndex);
         }
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void addParametersObserver (final IParametersAdjustObserver observer)
+    {
+        this.observers.add (observer);
+
+        this.model.getCursorDevice ().addHasDrumPadsObserver (this);
+
+        // Also update straight away to current state
+        this.update (null);
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void removeParametersObserver (final IParametersAdjustObserver observer)
+    {
+        this.observers.remove (observer);
+
+        this.model.getCursorDevice ().removeHasDrumPadsObserver (this);
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void notifyParametersObservers ()
+    {
+        this.observers.forEach (IParametersAdjustObserver::parametersAdjusted);
+    }
+
+
+    /**
+     * Callback from drum bank monitor. Update the bank.
+     */
+    @Override
+    public void update (final Boolean hasDrumPads)
+    {
+        this.switchBanks (this.model.getCursorDevice ().getLayerOrDrumPadBank ());
     }
 
 

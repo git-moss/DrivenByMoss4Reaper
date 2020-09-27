@@ -55,14 +55,6 @@ public abstract class AbstractPagedBankImpl<S extends T, T extends IItem> extend
 
     /** {@inheritDoc} */
     @Override
-    protected void initItems ()
-    {
-        // Items are added on the fly in getItem
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
     public T getItem (final int index)
     {
         final int id = this.bankOffset + index;
@@ -79,7 +71,7 @@ public abstract class AbstractPagedBankImpl<S extends T, T extends IItem> extend
     {
         this.itemCount = itemCount;
         if (this.pageSize > 0)
-            this.bankOffset = Math.min (this.bankOffset, this.itemCount / this.pageSize * this.pageSize);
+            this.setBankOffset (Math.min (this.bankOffset, this.itemCount / this.pageSize * this.pageSize));
     }
 
 
@@ -173,14 +165,13 @@ public abstract class AbstractPagedBankImpl<S extends T, T extends IItem> extend
 
     protected void scrollPageBackwards ()
     {
-        this.bankOffset = Math.max (0, this.bankOffset - this.pageSize);
+        this.setBankOffset (this.bankOffset - this.pageSize);
     }
 
 
     protected void scrollPageForwards ()
     {
-        if (this.bankOffset + this.pageSize < this.getItemCount ())
-            this.bankOffset += this.pageSize;
+        this.setBankOffset (this.bankOffset + this.pageSize);
     }
 
 
@@ -188,7 +179,7 @@ public abstract class AbstractPagedBankImpl<S extends T, T extends IItem> extend
     @Override
     public void scrollBackwards ()
     {
-        this.bankOffset = Math.max (0, this.bankOffset - 1);
+        this.setBankOffset (this.bankOffset - 1);
     }
 
 
@@ -196,8 +187,7 @@ public abstract class AbstractPagedBankImpl<S extends T, T extends IItem> extend
     @Override
     public void scrollForwards ()
     {
-        if (this.bankOffset + 1 < this.getItemCount ())
-            this.bankOffset += 1;
+        this.setBankOffset (this.bankOffset + 1);
     }
 
 
@@ -208,7 +198,8 @@ public abstract class AbstractPagedBankImpl<S extends T, T extends IItem> extend
      */
     protected void setBankOffset (final int bankOffset)
     {
-        this.bankOffset = bankOffset;
+        this.bankOffset = Math.max (0, Math.min (bankOffset, this.getItemCount () - 1));
+        this.firePageObserver ();
     }
 
 

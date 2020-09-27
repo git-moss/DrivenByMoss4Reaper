@@ -10,7 +10,7 @@ import de.mossgrabers.framework.daw.data.ISend;
 import de.mossgrabers.framework.daw.data.ITrack;
 import de.mossgrabers.framework.daw.data.bank.IDrumPadBank;
 import de.mossgrabers.framework.daw.data.bank.ISendBank;
-import de.mossgrabers.framework.observer.NoteObserver;
+import de.mossgrabers.framework.observer.INoteObserver;
 import de.mossgrabers.reaper.communication.Processor;
 import de.mossgrabers.reaper.framework.TreeNode;
 import de.mossgrabers.reaper.framework.daw.DataSetupEx;
@@ -32,22 +32,22 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class TrackBankImpl extends AbstractTrackBankImpl
 {
-    protected static final int      NOTE_OFF      = 0;
-    protected static final int      NOTE_ON       = 1;
-    protected static final int      NOTE_ON_NEW   = 2;
+    protected static final int       NOTE_OFF      = 0;
+    protected static final int       NOTE_ON       = 1;
+    protected static final int       NOTE_ON_NEW   = 2;
 
-    private final List<IDrumDevice> drumDevices;
-    private final boolean           hasFlatTrackList;
-    private final boolean           hasFullFlatTrackList;
-    private boolean                 skipDisabledItems;
-    private final AtomicBoolean     isDirty       = new AtomicBoolean (false);
-    private final Set<NoteObserver> noteObservers = new HashSet<> ();
-    private final int []            noteCache     = new int [128];
+    private final List<IDrumDevice>  drumDevices;
+    private final boolean            hasFlatTrackList;
+    private final boolean            hasFullFlatTrackList;
+    private boolean                  skipDisabledItems;
+    private final AtomicBoolean      isDirty       = new AtomicBoolean (false);
+    private final Set<INoteObserver> noteObservers = new HashSet<> ();
+    private final int []             noteCache     = new int [128];
 
-    private TrackImpl               master;
-    private List<TrackImpl>         flatTracks    = new ArrayList<> ();
-    private TreeNode<TrackImpl>     rootTrack     = new TreeNode<> ();
-    private TreeNode<TrackImpl>     currentFolder = this.rootTrack;
+    private TrackImpl                master;
+    private List<TrackImpl>          flatTracks    = new ArrayList<> ();
+    private TreeNode<TrackImpl>      rootTrack     = new TreeNode<> ();
+    private TreeNode<TrackImpl>      currentFolder = this.rootTrack;
 
 
     /**
@@ -315,7 +315,7 @@ public class TrackBankImpl extends AbstractTrackBankImpl
 
     /** {@inheritDoc} */
     @Override
-    public void addNoteObserver (final NoteObserver observer)
+    public void addNoteObserver (final INoteObserver observer)
     {
         this.noteObservers.add (observer);
     }
@@ -334,7 +334,7 @@ public class TrackBankImpl extends AbstractTrackBankImpl
             return;
 
         final int trackIndex = this.getUnpagedItem (trackPosition).getIndex ();
-        for (final NoteObserver noteObserver: this.noteObservers)
+        for (final INoteObserver noteObserver: this.noteObservers)
             noteObserver.call (trackIndex, note, velocity);
     }
 
@@ -422,6 +422,7 @@ public class TrackBankImpl extends AbstractTrackBankImpl
             }
 
             this.isDirty.set (false);
+            this.firePageObserver ();
         }
     }
 

@@ -26,15 +26,6 @@ public class LayerBankImpl extends AbstractBankImpl<ILayer> implements ILayerBan
     public LayerBankImpl (final int numDeviceLayers)
     {
         super (null, 0);
-        this.initItems ();
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    protected void initItems ()
-    {
-        // Intentionally empty
     }
 
 

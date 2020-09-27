@@ -4,9 +4,10 @@
 
 package de.mossgrabers.reaper.framework.daw.data.bank;
 
+import de.mossgrabers.framework.daw.data.bank.AbstractBank;
 import de.mossgrabers.framework.daw.data.bank.IParameterBank;
 import de.mossgrabers.framework.daw.data.bank.IParameterPageBank;
-import de.mossgrabers.framework.observer.ItemSelectionObserver;
+import de.mossgrabers.framework.observer.IItemSelectionObserver;
 
 import java.util.Collections;
 import java.util.List;
@@ -17,10 +18,9 @@ import java.util.List;
  *
  * @author J&uuml;rgen Mo&szlig;graber
  */
-public class ParameterPageBankImpl implements IParameterPageBank
+public class ParameterPageBankImpl extends AbstractBank<String> implements IParameterPageBank
 {
     private IParameterBank parameterBank;
-    private int            pageSize;
 
 
     /**
@@ -31,7 +31,8 @@ public class ParameterPageBankImpl implements IParameterPageBank
      */
     public ParameterPageBankImpl (final int numParameterPages, final IParameterBank parameterBank)
     {
-        this.pageSize = numParameterPages;
+        super (null, numParameterPages);
+
         this.parameterBank = parameterBank;
     }
 
@@ -91,6 +92,7 @@ public class ParameterPageBankImpl implements IParameterPageBank
     public void scrollBackwards ()
     {
         this.parameterBank.scrollBackwards ();
+        ((ParameterBankImpl) this.parameterBank).firePageObserver ();
     }
 
 
@@ -99,6 +101,7 @@ public class ParameterPageBankImpl implements IParameterPageBank
     public void scrollForwards ()
     {
         this.parameterBank.scrollForwards ();
+        ((ParameterBankImpl) this.parameterBank).firePageObserver ();
     }
 
 
@@ -107,6 +110,7 @@ public class ParameterPageBankImpl implements IParameterPageBank
     public void scrollTo (final int position)
     {
         this.parameterBank.scrollTo (position * this.parameterBank.getPageSize ());
+        ((ParameterBankImpl) this.parameterBank).firePageObserver ();
     }
 
 
@@ -179,7 +183,7 @@ public class ParameterPageBankImpl implements IParameterPageBank
 
     /** {@inheritDoc} */
     @Override
-    public void addSelectionObserver (final ItemSelectionObserver observer)
+    public void addSelectionObserver (final IItemSelectionObserver observer)
     {
         // Not selected
     }
@@ -215,6 +219,7 @@ public class ParameterPageBankImpl implements IParameterPageBank
     public void selectPreviousPage ()
     {
         this.parameterBank.selectPreviousPage ();
+        ((ParameterBankImpl) this.parameterBank).firePageObserver ();
     }
 
 
@@ -223,6 +228,7 @@ public class ParameterPageBankImpl implements IParameterPageBank
     public void selectNextPage ()
     {
         this.parameterBank.selectNextPage ();
+        ((ParameterBankImpl) this.parameterBank).firePageObserver ();
     }
 
 
@@ -239,13 +245,5 @@ public class ParameterPageBankImpl implements IParameterPageBank
     public int getPositionOfLastItem ()
     {
         return Math.min (this.getScrollPosition () + this.pageSize, this.getItemCount ()) - 1;
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void setSkipDisabledItems (final boolean shouldSkip)
-    {
-        // Not supported
     }
 }

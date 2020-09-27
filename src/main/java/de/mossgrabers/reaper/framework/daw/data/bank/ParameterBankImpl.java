@@ -102,5 +102,6 @@ public class ParameterBankImpl extends AbstractPagedBankImpl<ParameterImpl, IPar
             return;
         final int pageSize = this.getPageSize ();
         this.bankOffset = Math.min (Math.max (0, adjustPage ? position / pageSize * pageSize : position), this.getItemCount () - 1);
+        this.firePageObserver ();
     }
 }

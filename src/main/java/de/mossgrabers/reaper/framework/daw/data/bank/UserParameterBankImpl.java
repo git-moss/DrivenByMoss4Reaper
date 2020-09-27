@@ -106,9 +106,8 @@ public class UserParameterBankImpl extends AbstractPagedBankImpl<ParameterImpl, 
     @Override
     public void scrollTo (final int position, final boolean adjustPage)
     {
-        if (position < 0 || position >= this.getItemCount ())
-            return;
         final int pageSize = this.getPageSize ();
-        this.bankOffset = Math.min (Math.max (0, adjustPage ? position / pageSize * pageSize : position), this.getItemCount () - 1);
+        this.bankOffset = Math.min (Math.max (0, adjustPage ? position / pageSize * pageSize : position), (this.getItemCount () - 1) / pageSize * pageSize);
+        this.firePageObserver ();
     }
 }

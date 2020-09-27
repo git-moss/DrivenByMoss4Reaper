@@ -36,14 +36,7 @@ public class DrumPadBankImpl extends AbstractBankImpl<IDrumPad> implements IDrum
         super (dataSetup, numLayers);
 
         this.numSends = numSends;
-        this.initItems ();
-    }
 
-
-    /** {@inheritDoc} */
-    @Override
-    protected void initItems ()
-    {
         for (int i = 0; i < this.pageSize; i++)
             this.items.add (new DrumPadImpl (this.dataSetup, i, this.numSends));
     }

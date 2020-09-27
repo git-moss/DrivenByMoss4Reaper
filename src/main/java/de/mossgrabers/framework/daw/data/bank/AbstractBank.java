@@ -5,8 +5,8 @@
 package de.mossgrabers.framework.daw.data.bank;
 
 import de.mossgrabers.framework.daw.IHost;
-import de.mossgrabers.framework.daw.data.IItem;
-import de.mossgrabers.framework.observer.ItemSelectionObserver;
+import de.mossgrabers.framework.observer.IBankPageObserver;
+import de.mossgrabers.framework.observer.IItemSelectionObserver;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -17,20 +17,21 @@ import java.util.Set;
 /**
  * An abstract bank.
  *
- * @param <T> The specific item type of the bank item
+ * @param <T> The specific item type of the bank content
  *
  * @author J&uuml;rgen Mo&szlig;graber
  */
-public abstract class AbstractBank<T extends IItem> implements IBank<T>
+public abstract class AbstractBank<T> implements IBank<T>
 {
-    protected final IHost                      host;
-    protected final List<T>                    items;
-    protected final Set<ItemSelectionObserver> observers = new HashSet<> ();
-    protected int                              pageSize;
+    protected final IHost                       host;
+    protected final Set<IItemSelectionObserver> selectionObservers = new HashSet<> ();
+    protected final Set<IBankPageObserver>      pageObservers      = new HashSet<> ();
+    protected final List<T>                     items;
+    protected final int                         pageSize;
 
 
     /**
-     * Constructor.
+     * Constructor. The size of the elements to store/cache is identical to the page size.
      *
      * @param host The DAW host
      * @param pageSize The number of elements in a page of the bank
@@ -39,28 +40,7 @@ public abstract class AbstractBank<T extends IItem> implements IBank<T>
     {
         this.host = host;
         this.pageSize = pageSize;
-        this.items = new ArrayList<> (this.pageSize);
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void addSelectionObserver (final ItemSelectionObserver observer)
-    {
-        this.observers.add (observer);
-    }
-
-
-    /**
-     * Notify all registered selection observers.
-     *
-     * @param itemIndex The index of the item which selection state has changed
-     * @param isSelected True if selected otherwise false
-     */
-    protected void notifySelectionObservers (final int itemIndex, final boolean isSelected)
-    {
-        for (final ItemSelectionObserver observer: this.observers)
-            observer.call (itemIndex, isSelected);
+        this.items = new ArrayList<> (pageSize);
     }
 
 
@@ -74,42 +54,9 @@ public abstract class AbstractBank<T extends IItem> implements IBank<T>
 
     /** {@inheritDoc} */
     @Override
-    public T getSelectedItem ()
+    public int getItemCount ()
     {
-        for (int i = 0; i < this.getPageSize (); i++)
-        {
-            final T item = this.getItem (i);
-            if (item.isSelected ())
-                return item;
-        }
-        return null;
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public List<T> getSelectedItems ()
-    {
-        final List<T> selection = new ArrayList<> ();
-        for (int i = 0; i < this.getPageSize (); i++)
-        {
-            final T item = this.getItem (i);
-            if (item.isSelected ())
-                selection.add (item);
-        }
-        return selection;
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void selectItemAtPosition (final int position)
-    {
-        if (position < 0 || position >= this.getItemCount ())
-            return;
-        final int ps = this.getPageSize ();
-        this.scrollTo (position / ps * ps);
-        this.host.scheduleTask ( () -> this.getItem (position % ps).select (), 75);
+        return this.items.size ();
     }
 
 
@@ -123,34 +70,47 @@ public abstract class AbstractBank<T extends IItem> implements IBank<T>
 
     /** {@inheritDoc} */
     @Override
-    public int getScrollPosition ()
+    public void addSelectionObserver (final IItemSelectionObserver observer)
     {
-        return this.getItem (0).getPosition ();
+        this.selectionObservers.add (observer);
     }
 
 
     /** {@inheritDoc} */
     @Override
-    public int getPositionOfLastItem ()
+    public void removeSelectionObserver (final IItemSelectionObserver observer)
     {
-        for (int i = this.getPageSize () - 1; i >= 0; i--)
-        {
-            final T item = this.getItem (i);
-            if (item.doesExist ())
-            {
-                final int pos = item.getPosition ();
-                if (pos >= 0)
-                    return pos;
-            }
-        }
-        return -1;
+        this.selectionObservers.remove (observer);
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void addPageObserver (final IBankPageObserver observer)
+    {
+        this.pageObservers.add (observer);
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void removePageObserver (final IBankPageObserver observer)
+    {
+        this.pageObservers.remove (observer);
     }
 
 
     /**
-     * Initialise the internal items.
+     * Notify all registered selection observers.
+     *
+     * @param itemIndex The index of the item which selection state has changed
+     * @param isSelected True if selected otherwise false
      */
-    protected abstract void initItems ();
+    protected void notifySelectionObservers (final int itemIndex, final boolean isSelected)
+    {
+        for (final IItemSelectionObserver observer: this.selectionObservers)
+            observer.call (itemIndex, isSelected);
+    }
 
 
     /** {@inheritDoc} */
@@ -187,28 +147,17 @@ public abstract class AbstractBank<T extends IItem> implements IBank<T>
 
     /** {@inheritDoc} */
     @Override
-    public boolean canScrollBackwards ()
-    {
-        final IItem sel = this.getSelectedItem ();
-        final int selIndex = sel != null ? sel.getIndex () : -1;
-        return selIndex > 0 || this.canScrollPageBackwards ();
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public boolean canScrollForwards ()
-    {
-        final IItem sel = this.getSelectedItem ();
-        final int selIndex = sel != null ? sel.getIndex () : -1;
-        return selIndex >= 0 && selIndex < this.pageSize - 1 && this.getItem (selIndex + 1).doesExist () || this.canScrollPageForwards ();
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
     public void setSkipDisabledItems (final boolean shouldSkip)
     {
         // Not used, overwrite to support
+    }
+
+
+    /**
+     * Notify all parameters adjusted observers.
+     */
+    public void firePageObserver ()
+    {
+        this.pageObservers.forEach (IBankPageObserver::pageAdjusted);
     }
 }

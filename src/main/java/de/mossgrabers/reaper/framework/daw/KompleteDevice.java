@@ -237,6 +237,14 @@ public class KompleteDevice implements ISpecificDevice
 
     /** {@inheritDoc} */
     @Override
+    public void removeHasDrumPadsObserver (final IValueObserver<Boolean> observer)
+    {
+        this.instrumentDevice.removeHasDrumPadsObserver (observer);
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
     public boolean hasLayers ()
     {
         return this.instrumentDevice.hasLayers ();

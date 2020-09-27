@@ -4,7 +4,7 @@
 
 package de.mossgrabers.reaper.framework.daw.data.bank;
 
-import de.mossgrabers.framework.observer.NoteObserver;
+import de.mossgrabers.framework.observer.INoteObserver;
 import de.mossgrabers.reaper.framework.daw.DataSetupEx;
 
 
@@ -46,7 +46,7 @@ public class EffectTrackBankImpl extends AbstractTrackBankImpl
 
     /** {@inheritDoc} */
     @Override
-    public void addNoteObserver (final NoteObserver observer)
+    public void addNoteObserver (final INoteObserver observer)
     {
         // No notes on FX tracks
     }

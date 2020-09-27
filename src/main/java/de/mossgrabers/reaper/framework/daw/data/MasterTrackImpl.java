@@ -6,7 +6,7 @@ package de.mossgrabers.reaper.framework.daw.data;
 
 import de.mossgrabers.framework.daw.data.IMasterTrack;
 import de.mossgrabers.framework.daw.resource.ChannelType;
-import de.mossgrabers.framework.observer.ItemSelectionObserver;
+import de.mossgrabers.framework.observer.IItemSelectionObserver;
 import de.mossgrabers.reaper.communication.Processor;
 import de.mossgrabers.reaper.framework.daw.DataSetupEx;
 import de.mossgrabers.reaper.framework.daw.data.bank.TrackBankImpl;
@@ -22,8 +22,8 @@ import java.util.List;
  */
 public class MasterTrackImpl extends TrackImpl implements IMasterTrack
 {
-    private final List<ItemSelectionObserver> observers = new ArrayList<> ();
-    private UserParameterImpl                 crossfaderParameter;
+    private final List<IItemSelectionObserver> observers = new ArrayList<> ();
+    private UserParameterImpl                  crossfaderParameter;
 
 
     /**
@@ -80,7 +80,7 @@ public class MasterTrackImpl extends TrackImpl implements IMasterTrack
 
     /** {@inheritDoc} */
     @Override
-    public void addSelectionObserver (final ItemSelectionObserver observer)
+    public void addSelectionObserver (final IItemSelectionObserver observer)
     {
         this.observers.add (observer);
     }
@@ -91,7 +91,7 @@ public class MasterTrackImpl extends TrackImpl implements IMasterTrack
     public void setSelected (final boolean isSelected)
     {
         super.setSelected (isSelected);
-        for (final ItemSelectionObserver observer: this.observers)
+        for (final IItemSelectionObserver observer: this.observers)
             observer.call (-1, isSelected);
     }
 

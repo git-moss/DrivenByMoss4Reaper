@@ -7,7 +7,7 @@ package de.mossgrabers.reaper.framework.daw;
 import de.mossgrabers.framework.controller.valuechanger.IValueChanger;
 import de.mossgrabers.framework.daw.IHost;
 import de.mossgrabers.framework.daw.ITransport;
-import de.mossgrabers.framework.observer.ObserverManagement;
+import de.mossgrabers.framework.observer.IObserverManagement;
 import de.mossgrabers.reaper.communication.MessageSender;
 import de.mossgrabers.reaper.communication.Processor;
 
@@ -17,7 +17,7 @@ import de.mossgrabers.reaper.communication.Processor;
  *
  * @author J&uuml;rgen Mo&szlig;graber
  */
-public abstract class BaseImpl implements ObserverManagement
+public abstract class BaseImpl implements IObserverManagement
 {
     protected final DataSetupEx   dataSetup;
     protected final IHost         host;
