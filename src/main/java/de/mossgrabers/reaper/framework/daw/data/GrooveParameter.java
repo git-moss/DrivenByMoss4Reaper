@@ -16,7 +16,7 @@ import de.mossgrabers.reaper.framework.daw.DataSetupEx;
  */
 public class GrooveParameter extends ParameterImpl
 {
-    private static final String TAG_FINGERS = "fingers";
+    private static final String    TAG_FINGERS        = "fingers";
 
     private static final String [] PARAMETER_NAMES    = new String []
     {

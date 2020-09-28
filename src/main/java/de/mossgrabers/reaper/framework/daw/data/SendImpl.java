@@ -56,7 +56,7 @@ public class SendImpl extends ParameterImpl implements ISend
             if (this.isAutomationRecActive ())
                 this.sender.delayUpdates (Processor.TRACK);
             this.value = this.valueChanger.toNormalizedValue (value);
-            sendValue ();
+            this.sendValue ();
         }
     }
 
