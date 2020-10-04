@@ -19,6 +19,8 @@ import de.mossgrabers.framework.daw.IHost;
 import de.mossgrabers.framework.daw.data.IParameter;
 import de.mossgrabers.framework.daw.midi.IMidiInput;
 import de.mossgrabers.framework.graphics.IGraphicsContext;
+import de.mossgrabers.reaper.framework.daw.data.ParameterImpl;
+import de.mossgrabers.reaper.framework.graphics.GraphicsContextImpl;
 import de.mossgrabers.reaper.framework.midi.MidiInputImpl;
 
 import javax.sound.midi.InvalidMidiDataException;
@@ -170,6 +172,13 @@ public class HwRelativeKnobImpl extends AbstractHwContinuousControl implements I
         final double centerX = (bounds.getX () + radius) * scale;
         final double centerY = (bounds.getY () + radius) * scale;
         gc.fillCircle (centerX, centerY, radius * scale, ColorEx.BLACK);
+
+        if (this.parameter instanceof ParameterImpl)
+        {
+            final double paramValue = ((ParameterImpl) this.parameter).getInternalValue ();
+            final int l = (int) Math.round (paramValue * 360.0);
+            ((GraphicsContextImpl) gc).fillArc (centerX, centerY, radius * scale, ColorEx.RED, 270 - l - 4, 4);
+        }
     }
 
 

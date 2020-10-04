@@ -69,6 +69,17 @@ public class ParameterImpl extends ItemImpl implements IParameter
     }
 
 
+    /**
+     * Get the normalized internal value.
+     *
+     * @return The value in the range of [0..1]
+     */
+    public double getInternalValue ()
+    {
+        return Math.max (this.value, 0);
+    }
+
+
     /** {@inheritDoc} */
     @Override
     public void changeValue (final int value)

@@ -13,6 +13,7 @@ import de.mossgrabers.framework.daw.IHost;
 import de.mossgrabers.framework.daw.data.IParameter;
 import de.mossgrabers.framework.daw.midi.IMidiInput;
 import de.mossgrabers.framework.graphics.IGraphicsContext;
+import de.mossgrabers.reaper.framework.daw.data.ParameterImpl;
 import de.mossgrabers.reaper.framework.midi.MidiInputImpl;
 
 import javax.sound.midi.InvalidMidiDataException;
@@ -144,11 +145,25 @@ public class HwFaderImpl extends AbstractHwContinuousControl implements IHwFader
         {
             final double scaledHeight = height / factor * this.currentValue;
             gc.fillRectangle (left, top + height - scaledHeight, width, scaledHeight, ColorEx.WHITE);
+
+            if (this.parameter instanceof ParameterImpl)
+            {
+                final double paramValue = ((ParameterImpl) this.parameter).getInternalValue ();
+                final double valueHeight = height * paramValue;
+                gc.fillRectangle (left + 1, top + height - valueHeight, width - 2, 2, ColorEx.RED);
+            }
         }
         else
         {
             final double scaledWidth = width / factor * this.currentValue;
             gc.fillRectangle (left, top, scaledWidth, height, ColorEx.WHITE);
+
+            if (this.parameter instanceof ParameterImpl)
+            {
+                final double paramValue = ((ParameterImpl) this.parameter).getInternalValue ();
+                final double valueWidth = width * paramValue;
+                gc.fillRectangle (left + width - valueWidth, top + 1, 2, height - 2, ColorEx.RED);
+            }
         }
     }
 

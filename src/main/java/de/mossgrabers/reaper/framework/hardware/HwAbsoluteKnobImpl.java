@@ -13,6 +13,7 @@ import de.mossgrabers.framework.daw.IHost;
 import de.mossgrabers.framework.daw.data.IParameter;
 import de.mossgrabers.framework.daw.midi.IMidiInput;
 import de.mossgrabers.framework.graphics.IGraphicsContext;
+import de.mossgrabers.reaper.framework.daw.data.ParameterImpl;
 import de.mossgrabers.reaper.framework.graphics.GraphicsContextImpl;
 import de.mossgrabers.reaper.framework.midi.MidiInputImpl;
 
@@ -131,9 +132,15 @@ public class HwAbsoluteKnobImpl extends AbstractHwContinuousControl implements I
         gc.fillCircle (centerX, centerY, radius, ColorEx.BLACK);
 
         final int length = (int) Math.round (this.currentValue * 360.0 / 127.0);
-        ((GraphicsContextImpl) gc).fillArc (centerX, centerY, radius, ColorEx.RED, 270 - length, length);
-
+        ((GraphicsContextImpl) gc).fillArc (centerX, centerY, radius, ColorEx.WHITE, 270 - length, length);
         gc.fillCircle (centerX, centerY, radius * 0.8, ColorEx.BLACK);
+
+        if (this.parameter instanceof ParameterImpl)
+        {
+            final double paramValue = ((ParameterImpl) this.parameter).getInternalValue ();
+            final int l = (int) Math.round (paramValue * 360.0);
+            ((GraphicsContextImpl) gc).fillArc (centerX, centerY, radius, ColorEx.RED, 270 - l - 5, 10);
+        }
     }
 
 

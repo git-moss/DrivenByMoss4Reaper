@@ -145,6 +145,14 @@ public class SlotImpl extends ItemImpl implements ISlot
     }
 
 
+    /** {@inheritDoc} */
+    @Override
+    public void paste (final ISlot slot)
+    {
+        slot.duplicate ();
+    }
+
+
     private void sendTrackClipOSC (final String command)
     {
         this.sendOSC (this.trackIndex + "/clip/" + this.getPosition () + "/" + command);
