@@ -8,6 +8,7 @@ import de.mossgrabers.framework.daw.data.IEqualizerDevice;
 import de.mossgrabers.framework.daw.data.IParameter;
 import de.mossgrabers.reaper.communication.Processor;
 import de.mossgrabers.reaper.framework.daw.DataSetupEx;
+import de.mossgrabers.reaper.framework.daw.data.parameter.QFactorInvertedParameter;
 
 import java.util.Arrays;
 import java.util.HashMap;

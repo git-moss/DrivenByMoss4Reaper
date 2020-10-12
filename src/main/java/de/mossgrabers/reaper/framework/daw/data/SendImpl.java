@@ -8,6 +8,7 @@ import de.mossgrabers.framework.daw.data.IChannel;
 import de.mossgrabers.framework.daw.data.ISend;
 import de.mossgrabers.reaper.communication.Processor;
 import de.mossgrabers.reaper.framework.daw.DataSetupEx;
+import de.mossgrabers.reaper.framework.daw.data.parameter.ParameterImpl;
 
 
 /**

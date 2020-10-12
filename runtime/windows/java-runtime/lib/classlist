@@ -1090,6 +1090,10 @@ sun/util/calendar/ZoneInfoFile
 sun/util/calendar/ZoneInfoFile$1
 java/io/DataInputStream
 sun/util/calendar/ZoneInfoFile$ZoneOffsetTransitionRule
+java/util/zip/Checksum
+java/util/zip/CRC32
+sun/util/calendar/ZoneInfoFile$Checksum
+java/util/zip/Checksum$1
 sun/util/spi/CalendarProvider
 sun/util/locale/provider/CalendarProviderImpl
 java/util/Calendar$Builder

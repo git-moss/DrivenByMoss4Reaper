@@ -10,6 +10,9 @@ import de.mossgrabers.framework.observer.IItemSelectionObserver;
 import de.mossgrabers.reaper.communication.Processor;
 import de.mossgrabers.reaper.framework.daw.DataSetupEx;
 import de.mossgrabers.reaper.framework.daw.data.bank.TrackBankImpl;
+import de.mossgrabers.reaper.framework.daw.data.parameter.MasterTrackParameterImpl;
+import de.mossgrabers.reaper.framework.daw.data.parameter.ParameterImpl;
+import de.mossgrabers.reaper.framework.daw.data.parameter.UserParameterImpl;
 
 import java.util.ArrayList;
 import java.util.List;

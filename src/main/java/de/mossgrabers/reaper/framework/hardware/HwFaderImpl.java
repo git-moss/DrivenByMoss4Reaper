@@ -6,15 +6,12 @@ package de.mossgrabers.reaper.framework.hardware;
 
 import de.mossgrabers.framework.command.core.TriggerCommand;
 import de.mossgrabers.framework.controller.color.ColorEx;
-import de.mossgrabers.framework.controller.hardware.AbstractHwContinuousControl;
 import de.mossgrabers.framework.controller.hardware.BindType;
 import de.mossgrabers.framework.controller.hardware.IHwFader;
 import de.mossgrabers.framework.daw.IHost;
-import de.mossgrabers.framework.daw.data.IParameter;
 import de.mossgrabers.framework.daw.midi.IMidiInput;
 import de.mossgrabers.framework.graphics.IGraphicsContext;
-import de.mossgrabers.reaper.framework.daw.data.ParameterImpl;
-import de.mossgrabers.reaper.framework.midi.MidiInputImpl;
+import de.mossgrabers.reaper.framework.daw.data.parameter.ParameterImpl;
 
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.ShortMessage;
@@ -27,20 +24,9 @@ import java.awt.event.MouseEvent;
  *
  * @author J&uuml;rgen Mo&szlig;graber
  */
-public class HwFaderImpl extends AbstractHwContinuousControl implements IHwFader, IReaperHwControl
+public class HwFaderImpl extends AbstractHwAbsoluteControl implements IHwFader
 {
-    private final HwControlLayout layout;
-    private final boolean         isVertical;
-
-    private MidiInputImpl         midiInput;
-    private BindType              midiType;
-    private int                   midiChannel;
-    private int                   midiControl;
-    // Alternative binding to the command
-    private IParameter            parameter;
-
-    private boolean               isPressed;
-    private int                   currentValue = 0;
+    private final boolean isVertical;
 
 
     /**
@@ -53,39 +39,9 @@ public class HwFaderImpl extends AbstractHwContinuousControl implements IHwFader
      */
     public HwFaderImpl (final String id, final IHost host, final String label, final boolean isVertical)
     {
-        super (host, label);
+        super (id, host, label);
 
         this.isVertical = isVertical;
-        this.layout = new HwControlLayout (id);
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public boolean isBound ()
-    {
-        return this.parameter != null || super.isBound ();
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void bind (final IMidiInput input, final BindType type, final int channel, final int control)
-    {
-        this.midiInput = (MidiInputImpl) input;
-        this.midiType = type;
-        this.midiChannel = channel;
-        this.midiControl = control;
-
-        input.bind (this, type, channel, control);
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void bind (final IParameter parameter)
-    {
-        this.parameter = parameter;
     }
 
 
@@ -95,32 +51,6 @@ public class HwFaderImpl extends AbstractHwContinuousControl implements IHwFader
     {
         this.touchCommand = command;
         input.bindTouch (this, type, channel, control);
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void handleValue (final double value)
-    {
-        if (this.parameter != null)
-            this.parameter.setValue ((int) Math.round (value * 127.0));
-        else if (this.command != null)
-            this.command.execute ((int) Math.round (value * 127.0));
-        else if (this.pitchbendCommand != null)
-        {
-            final double v = value * 16383.0;
-            final int data1 = (int) Math.min (127, Math.round (v % 128.0));
-            final int data2 = (int) Math.min (127, Math.round (v / 128.0));
-            this.pitchbendCommand.onPitchbend (data1, data2);
-        }
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void setBounds (final double x, final double y, final double width, final double height)
-    {
-        this.layout.setBounds (x, y, width, height);
     }
 
 

@@ -33,7 +33,6 @@ import de.mossgrabers.reaper.framework.daw.data.EqualizerDeviceImpl;
 import de.mossgrabers.reaper.framework.daw.data.ItemImpl;
 import de.mossgrabers.reaper.framework.daw.data.MarkerImpl;
 import de.mossgrabers.reaper.framework.daw.data.MasterTrackImpl;
-import de.mossgrabers.reaper.framework.daw.data.ParameterImpl;
 import de.mossgrabers.reaper.framework.daw.data.SceneImpl;
 import de.mossgrabers.reaper.framework.daw.data.SendImpl;
 import de.mossgrabers.reaper.framework.daw.data.SpecificDeviceImpl;
@@ -44,6 +43,8 @@ import de.mossgrabers.reaper.framework.daw.data.bank.SceneBankImpl;
 import de.mossgrabers.reaper.framework.daw.data.bank.SendBankImpl;
 import de.mossgrabers.reaper.framework.daw.data.bank.TrackBankImpl;
 import de.mossgrabers.reaper.framework.daw.data.bank.UserParameterBankImpl;
+import de.mossgrabers.reaper.framework.daw.data.parameter.MetronomeVolumeParameterImpl;
+import de.mossgrabers.reaper.framework.daw.data.parameter.ParameterImpl;
 import de.mossgrabers.reaper.framework.midi.NoteRepeatImpl;
 
 import java.util.Collections;
@@ -66,6 +67,7 @@ public class MessageParser
     private static final String          TAG_COUNT  = "count";
     private static final String          TAG_EXISTS = "exists";
     private static final String          TAG_NAME   = "name";
+    private static final String          TAG_VOLUME = "volume";
 
     private final IControllerSetup<?, ?> controllerSetup;
 
@@ -156,6 +158,10 @@ public class MessageParser
                 }
                 break;
 
+            case "click":
+                this.parseClick (parts, value);
+                break;
+
             case "track":
                 this.parseTrack (parts, value);
                 break;
@@ -214,18 +220,40 @@ public class MessageParser
     }
 
 
+    private void parseClick (final Queue<String> parts, final String value)
+    {
+        if (parts.isEmpty ())
+        {
+            this.transport.setMetronomeState (Double.parseDouble (value) > 0);
+            return;
+        }
+
+        final String clickCommand = parts.poll ();
+        switch (clickCommand)
+        {
+            case "preroll":
+                this.transport.setPrerollClick (Integer.parseInt (value) > 0);
+                break;
+
+            case TAG_VOLUME:
+                this.transport.setInternalMetronomeVolume (Double.parseDouble (value));
+                break;
+
+            case "volumeStr":
+                ((MetronomeVolumeParameterImpl) this.transport.getMetronomeVolumeParameter ()).setMetronomeVolumeStr (value);
+                break;
+
+            default:
+                this.host.error ("Unhandled Click Parameter: " + clickCommand);
+                break;
+        }
+    }
+
+
     private boolean parseTransport (final String command, final Queue<String> parts, final String value)
     {
         switch (command)
         {
-            case "click":
-                this.transport.setMetronomeState (Double.parseDouble (value) > 0);
-                break;
-
-            case "prerollClick":
-                this.transport.setPrerollClick (Integer.parseInt (value) > 0);
-                break;
-
             case "play":
                 this.transport.setPlayState (Double.parseDouble (value) > 0);
                 break;
@@ -364,7 +392,7 @@ public class MessageParser
                 track.setName (value);
                 break;
 
-            case "volume":
+            case TAG_VOLUME:
                 if (parts.isEmpty ())
                     track.setInternalVolume (Double.parseDouble (value));
                 else if ("str".equals (parts.poll ()))
@@ -500,7 +528,7 @@ public class MessageParser
                 sendImpl.setExists (value != null && !value.isEmpty ());
                 break;
 
-            case "volume":
+            case TAG_VOLUME:
                 if (parts.isEmpty ())
                     sendImpl.setInternalValue (Double.parseDouble (value));
                 else if ("str".equals (parts.poll ()))

@@ -6,6 +6,7 @@ package de.mossgrabers.reaper.framework.midi;
 
 import de.mossgrabers.framework.controller.hardware.BindException;
 import de.mossgrabers.framework.controller.hardware.BindType;
+import de.mossgrabers.framework.controller.hardware.IHwAbsoluteControl;
 import de.mossgrabers.framework.controller.hardware.IHwAbsoluteKnob;
 import de.mossgrabers.framework.controller.hardware.IHwButton;
 import de.mossgrabers.framework.controller.hardware.IHwContinuousControl;
@@ -202,6 +203,14 @@ public class MidiInputImpl implements IMidiInput
     public void bind (final IHwAbsoluteKnob knob, final BindType type, final int channel, final int control)
     {
         this.bindContinuous (knob, type, channel, control);
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void bind (final IHwAbsoluteControl absoluteControl, final BindType type, final int channel, final int control)
+    {
+        this.bindContinuous (absoluteControl, type, channel, control);
     }
 
 

@@ -14,6 +14,8 @@ import de.mossgrabers.reaper.communication.Processor;
 import de.mossgrabers.reaper.framework.Actions;
 import de.mossgrabers.reaper.framework.daw.DataSetupEx;
 import de.mossgrabers.reaper.framework.daw.data.bank.SendBankImpl;
+import de.mossgrabers.reaper.framework.daw.data.parameter.ParameterImpl;
+import de.mossgrabers.reaper.framework.daw.data.parameter.TrackParameterImpl;
 
 import java.util.HashSet;
 import java.util.Set;

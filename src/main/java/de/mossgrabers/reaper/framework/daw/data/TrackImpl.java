@@ -15,6 +15,7 @@ import de.mossgrabers.reaper.framework.daw.data.bank.AbstractTrackBankImpl;
 import de.mossgrabers.reaper.framework.daw.data.bank.SceneBankImpl;
 import de.mossgrabers.reaper.framework.daw.data.bank.SlotBankImpl;
 import de.mossgrabers.reaper.framework.daw.data.bank.TrackBankImpl;
+import de.mossgrabers.reaper.framework.daw.data.parameter.ParameterImpl;
 
 import java.util.EnumMap;
 import java.util.Map;

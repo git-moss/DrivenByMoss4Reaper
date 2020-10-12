@@ -6,16 +6,13 @@ package de.mossgrabers.reaper.framework.hardware;
 
 import de.mossgrabers.framework.command.core.TriggerCommand;
 import de.mossgrabers.framework.controller.color.ColorEx;
-import de.mossgrabers.framework.controller.hardware.AbstractHwContinuousControl;
 import de.mossgrabers.framework.controller.hardware.BindType;
 import de.mossgrabers.framework.controller.hardware.IHwAbsoluteKnob;
 import de.mossgrabers.framework.daw.IHost;
-import de.mossgrabers.framework.daw.data.IParameter;
 import de.mossgrabers.framework.daw.midi.IMidiInput;
 import de.mossgrabers.framework.graphics.IGraphicsContext;
-import de.mossgrabers.reaper.framework.daw.data.ParameterImpl;
+import de.mossgrabers.reaper.framework.daw.data.parameter.ParameterImpl;
 import de.mossgrabers.reaper.framework.graphics.GraphicsContextImpl;
-import de.mossgrabers.reaper.framework.midi.MidiInputImpl;
 
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.ShortMessage;
@@ -28,21 +25,10 @@ import java.awt.event.MouseEvent;
  *
  * @author J&uuml;rgen Mo&szlig;graber
  */
-public class HwAbsoluteKnobImpl extends AbstractHwContinuousControl implements IHwAbsoluteKnob, IReaperHwControl
+public class HwAbsoluteKnobImpl extends AbstractHwAbsoluteControl implements IHwAbsoluteKnob
 {
-    private final HwControlLayout layout;
-
-    private MidiInputImpl         midiInput;
-    private BindType              midiType;
-    private int                   midiChannel;
-    private int                   midiControl;
-    // Alternative binding to the command
-    private IParameter            parameter;
-
-    private boolean               isPressed;
-    private double                pressedX;
-    private double                pressedY;
-    private int                   currentValue = 0;
+    private double pressedX;
+    private double pressedY;
 
 
     /**
@@ -54,38 +40,7 @@ public class HwAbsoluteKnobImpl extends AbstractHwContinuousControl implements I
      */
     public HwAbsoluteKnobImpl (final String id, final IHost host, final String label)
     {
-        super (host, label);
-
-        this.layout = new HwControlLayout (id);
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public boolean isBound ()
-    {
-        return this.parameter != null || super.isBound ();
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void bind (final IMidiInput input, final BindType type, final int channel, final int control)
-    {
-        this.midiInput = (MidiInputImpl) input;
-        this.midiType = type;
-        this.midiChannel = channel;
-        this.midiControl = control;
-
-        input.bind (this, type, channel, control);
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void bind (final IParameter parameter)
-    {
-        this.parameter = parameter;
+        super (id, host, label);
     }
 
 
@@ -94,26 +49,6 @@ public class HwAbsoluteKnobImpl extends AbstractHwContinuousControl implements I
     public void bindTouch (final TriggerCommand command, final IMidiInput input, final BindType type, final int channel, final int control)
     {
         // No touch on absolute knob
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void handleValue (final double value)
-    {
-        final int v = (int) Math.round (value * 127.0);
-        if (this.parameter != null)
-            this.parameter.setValue (v);
-        else if (this.command != null)
-            this.command.execute (v);
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void setBounds (final double x, final double y, final double width, final double height)
-    {
-        this.layout.setBounds (x, y, width, height);
     }
 
 

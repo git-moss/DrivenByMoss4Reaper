@@ -19,7 +19,7 @@ import de.mossgrabers.framework.daw.IHost;
 import de.mossgrabers.framework.daw.data.IParameter;
 import de.mossgrabers.framework.daw.midi.IMidiInput;
 import de.mossgrabers.framework.graphics.IGraphicsContext;
-import de.mossgrabers.reaper.framework.daw.data.ParameterImpl;
+import de.mossgrabers.reaper.framework.daw.data.parameter.ParameterImpl;
 import de.mossgrabers.reaper.framework.graphics.GraphicsContextImpl;
 import de.mossgrabers.reaper.framework.midi.MidiInputImpl;
 

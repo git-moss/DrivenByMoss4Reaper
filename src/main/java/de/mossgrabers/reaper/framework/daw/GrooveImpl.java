@@ -8,7 +8,7 @@ import de.mossgrabers.framework.daw.IGroove;
 import de.mossgrabers.framework.daw.data.IParameter;
 import de.mossgrabers.reaper.communication.Processor;
 import de.mossgrabers.reaper.framework.IniFiles;
-import de.mossgrabers.reaper.framework.daw.data.GrooveParameter;
+import de.mossgrabers.reaper.framework.daw.data.parameter.GrooveParameter;
 
 
 /**

@@ -182,7 +182,13 @@ public abstract class ItemImpl extends BaseImpl implements IItem
     }
 
 
-    protected void sendPositionedItemOSC (final String command, final double value)
+    /**
+     * Send an item command with a position.
+     *
+     * @param command The command
+     * @param value The value
+     */
+    public void sendPositionedItemOSC (final String command, final double value)
     {
         this.sender.processDoubleArg (this.getProcessor (), this.createCommand (command), value);
     }

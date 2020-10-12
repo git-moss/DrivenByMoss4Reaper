@@ -8,7 +8,7 @@ import de.mossgrabers.framework.daw.data.IParameter;
 import de.mossgrabers.framework.daw.data.bank.IParameterBank;
 import de.mossgrabers.framework.daw.data.empty.EmptyParameter;
 import de.mossgrabers.reaper.framework.daw.DataSetupEx;
-import de.mossgrabers.reaper.framework.daw.data.ParameterImpl;
+import de.mossgrabers.reaper.framework.daw.data.parameter.ParameterImpl;
 
 
 /**

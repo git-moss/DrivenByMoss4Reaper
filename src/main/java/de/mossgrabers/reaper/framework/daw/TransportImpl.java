@@ -8,12 +8,14 @@ import de.mossgrabers.framework.daw.IModel;
 import de.mossgrabers.framework.daw.ITransport;
 import de.mossgrabers.framework.daw.constants.AutomationMode;
 import de.mossgrabers.framework.daw.constants.TransportConstants;
+import de.mossgrabers.framework.daw.data.IParameter;
+import de.mossgrabers.framework.daw.data.empty.EmptyParameter;
 import de.mossgrabers.reaper.communication.Processor;
 import de.mossgrabers.reaper.framework.Actions;
 import de.mossgrabers.reaper.framework.IniFiles;
 import de.mossgrabers.reaper.framework.daw.data.MasterTrackImpl;
-import de.mossgrabers.reaper.framework.daw.data.ParameterImpl;
 import de.mossgrabers.reaper.framework.daw.data.TrackImpl;
+import de.mossgrabers.reaper.framework.daw.data.parameter.MetronomeVolumeParameterImpl;
 
 import java.text.NumberFormat;
 import java.util.Locale;
@@ -26,31 +28,32 @@ import java.util.Locale;
  */
 public class TransportImpl extends BaseImpl implements ITransport
 {
-    private static final int    PUNCH_OFF     = 0;
-    private static final int    PUNCH_ITEMS   = 1;
-    private static final int    PUNCH_LOOP    = 2;
+    private static final int             PUNCH_OFF     = 0;
+    private static final int             PUNCH_ITEMS   = 1;
+    private static final int             PUNCH_LOOP    = 2;
 
-    private static final Object UPDATE_LOCK   = new Object ();
+    private static final Object          UPDATE_LOCK   = new Object ();
 
-    private final IModel        model;
-    private IniFiles            iniFiles;
+    private final IModel                 model;
+    private IniFiles                     iniFiles;
 
-    private double              position      = 0;            // Time
-    private String              positionStr   = "";
-    private double              tempo         = 120.0;
-    private String              beatsStr      = "";
+    private double                       position      = 0;            // Time
+    private String                       positionStr   = "";
+    private double                       tempo         = 120.0;
+    private String                       beatsStr      = "";
 
-    private boolean             isMetronomeOn = false;
-    private boolean             isPlaying     = false;
-    private boolean             isRecording   = false;
-    private boolean             isLooping     = false;
+    private boolean                      isMetronomeOn = false;
+    private boolean                      isPlaying     = false;
+    private boolean                      isRecording   = false;
+    private boolean                      isLooping     = false;
 
-    private int                 numerator     = 4;
-    private int                 denominator   = 4;
-    private boolean             prerollClick  = false;
-    private int                 preroll       = 2;
+    private int                          numerator     = 4;
+    private int                          denominator   = 4;
+    private boolean                      prerollClick  = false;
+    private int                          preroll       = 2;
 
-    private int                 punchMode     = PUNCH_OFF;
+    private int                          punchMode     = PUNCH_OFF;
+    private MetronomeVolumeParameterImpl metronomeVolumeParameter;
 
 
     /**
@@ -66,6 +69,8 @@ public class TransportImpl extends BaseImpl implements ITransport
 
         this.iniFiles = iniFiles;
         this.model = model;
+
+        this.metronomeVolumeParameter = new MetronomeVolumeParameterImpl (dataSetup);
     }
 
 
@@ -244,10 +249,17 @@ public class TransportImpl extends BaseImpl implements ITransport
 
     /** {@inheritDoc} */
     @Override
+    public IParameter getMetronomeVolumeParameter ()
+    {
+        return this.metronomeVolumeParameter;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
     public String getMetronomeVolumeStr ()
     {
-        // Not supported
-        return Double.toString (this.valueChanger.getUpperBound () / 2.0);
+        return this.metronomeVolumeParameter.getDisplayedValue ();
     }
 
 
@@ -255,7 +267,7 @@ public class TransportImpl extends BaseImpl implements ITransport
     @Override
     public void changeMetronomeVolume (final int control)
     {
-        this.sender.processNoArg (Processor.METRO_VOL, this.valueChanger.isIncrease (control) ? "+" : "-");
+        this.metronomeVolumeParameter.inc (this.valueChanger.isIncrease (control) ? 1 : -1);
     }
 
 
@@ -263,7 +275,18 @@ public class TransportImpl extends BaseImpl implements ITransport
     @Override
     public void setMetronomeVolume (final int value)
     {
-        // Not supported
+        this.metronomeVolumeParameter.setValue (value);
+    }
+
+
+    /**
+     * Set the value.
+     *
+     * @param metronomeVolume The value normalized to 0..1
+     */
+    public void setInternalMetronomeVolume (final double metronomeVolume)
+    {
+        this.metronomeVolumeParameter.setInternalMetronomeVolume (metronomeVolume);
     }
 
 
@@ -271,8 +294,7 @@ public class TransportImpl extends BaseImpl implements ITransport
     @Override
     public int getMetronomeVolume ()
     {
-        // Not supported
-        return this.valueChanger.getUpperBound () / 2;
+        return this.metronomeVolumeParameter.getValue ();
     }
 
 
@@ -654,6 +676,15 @@ public class TransportImpl extends BaseImpl implements ITransport
 
     /** {@inheritDoc} */
     @Override
+    public IParameter getTempoParameter ()
+    {
+        // Not supported since not used
+        return EmptyParameter.INSTANCE;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
     public void setTempo (final double tempo)
     {
         this.sender.processDoubleArg (Processor.TEMPO, tempo);
@@ -698,9 +729,17 @@ public class TransportImpl extends BaseImpl implements ITransport
 
     /** {@inheritDoc} */
     @Override
+    public IParameter getCrossfadeParameter ()
+    {
+        return ((MasterTrackImpl) this.model.getMasterTrack ()).getCrossfaderParameter ();
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
     public void setCrossfade (final int value)
     {
-        ((MasterTrackImpl) this.model.getMasterTrack ()).getCrossfaderParameter ().setValue (value);
+        this.getCrossfadeParameter ().setValue (value);
     }
 
 
@@ -708,7 +747,7 @@ public class TransportImpl extends BaseImpl implements ITransport
     @Override
     public int getCrossfade ()
     {
-        final ParameterImpl crossfaderParameter = ((MasterTrackImpl) this.model.getMasterTrack ()).getCrossfaderParameter ();
+        final IParameter crossfaderParameter = this.getCrossfadeParameter ();
         if (crossfaderParameter.doesExist ())
             return crossfaderParameter.getValue ();
         return this.valueChanger.getUpperBound () / 2;
