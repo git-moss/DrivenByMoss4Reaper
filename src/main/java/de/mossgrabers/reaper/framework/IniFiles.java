@@ -4,12 +4,15 @@
 
 package de.mossgrabers.reaper.framework;
 
+import de.mossgrabers.framework.utils.OperatingSystem;
 import de.mossgrabers.reaper.ui.utils.LogModel;
 
 import com.nikhaldimann.inieditor.IniEditor;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
 
 
 /**
@@ -23,6 +26,7 @@ public class IniFiles
     private static final String REAPER_MAIN             = "REAPER.ini";
     private static final String REAPER_MAIN2            = "reaper.ini";
     private static final String VST_PLUGINS_64          = "reaper-vstplugins64.ini";
+    private static final String AU_PLUGINS_64           = "reaper-auplugins64.ini";
     private static final String FX_TAGS                 = "reaper-fxtags.ini";
     private static final String FX_FOLDERS              = "reaper-fxfolders.ini";
 
@@ -30,13 +34,14 @@ public class IniFiles
     private final IniEditor     iniVstPlugins64         = new IniEditor ();
     private final IniEditor     iniFxTags               = new IniEditor ();
     private final IniEditor     iniFxFolders            = new IniEditor ();
+    private String              iniAuPlugins64Content;
 
     private String              iniPath;
 
     private boolean             isVstPresent;
+    private boolean             isAuPresent             = false;
     private boolean             isFxTagsPresent;
     private boolean             isFxFoldersPresent;
-
 
     /**
      * Constructor.
@@ -81,6 +86,24 @@ public class IniFiles
         }
 
         this.isVstPresent = loadINIFile (iniPath + File.separator + VST_PLUGINS_64, this.iniVstPlugins64, logModel);
+
+        if (OperatingSystem.get () == OperatingSystem.MAC)
+        {
+            final File iniAuPlugins64 = new File (iniPath + File.separator + AU_PLUGINS_64);
+            if (iniAuPlugins64.exists ())
+            {
+                try
+                {
+                    this.iniAuPlugins64Content = Files.readString (iniAuPlugins64.toPath (), Charset.defaultCharset ());
+                    this.isAuPresent = true;
+                }
+                catch (final IOException ex)
+                {
+                    logModel.error ("Could not load AU configuration file.", ex);
+                }
+            }
+        }
+
         this.isFxTagsPresent = loadINIFile (iniPath + File.separator + FX_TAGS, this.iniFxTags, logModel);
         this.isFxFoldersPresent = loadINIFile (iniPath + File.separator + FX_FOLDERS, this.iniFxFolders, logModel);
     }
@@ -94,6 +117,17 @@ public class IniFiles
     public IniEditor getIniVstPlugins64 ()
     {
         return this.iniVstPlugins64;
+    }
+
+
+    /**
+     * Get the content of the AU plugins config file.
+     *
+     * @return The file content
+     */
+    public String getIniAuPlugins64 ()
+    {
+        return this.iniAuPlugins64Content;
     }
 
 
@@ -127,6 +161,17 @@ public class IniFiles
     public boolean isVstPresent ()
     {
         return this.isVstPresent;
+    }
+
+
+    /**
+     * Is the AU plugins config file present?
+     *
+     * @return True if successfully loaded
+     */
+    public boolean isAuPresent ()
+    {
+        return this.isAuPresent;
     }
 
 

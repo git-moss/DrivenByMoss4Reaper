@@ -35,20 +35,21 @@ import java.util.regex.Pattern;
  */
 public class DeviceManager
 {
-    private static final String          SECTION_FOLDERS = "Folders";
-    private static final Pattern         PATTERN_VST     = Pattern.compile (".+?,.+?,(.+?)(\\!\\!\\!VSTi)?");
-    private static final Pattern         PATTERN_COMPANY = Pattern.compile ("(.*?)\\s*\\((.*?)\\)");
-    private static final Pattern         PATTERN_JSFX    = Pattern.compile ("NAME\\s?((\")?.+?(\")?)\\s?\"(.+?)\"");
+    private static final String          SECTION_FOLDERS                = "Folders";
+    private static final Pattern         PATTERN_VST                    = Pattern.compile (".+?,.+?,(.+?)(\\!\\!\\!VSTi)?");
+    private static final Pattern         PATTERN_COMPANY                = Pattern.compile ("(.*?)\\s*\\((.*?)\\)");
+    private static final Pattern         PATTERN_AU_COMPANY_DEVICE_NAME = Pattern.compile ("(.+?):\\s*(.+?)");
+    private static final Pattern         PATTERN_JSFX                   = Pattern.compile ("NAME\\s?((\")?.+?(\")?)\\s?\"(.+?)\"");
+    private static final String          IS_INSTRUMENT_TAG              = "<inst>";
 
-    private static final Set<String>     NON_CATEGORIES  = Set.of ("ix", "till", "loser", "liteon", "sstillwell", "teej", "schwa", "u-he", "remaincalm_org");
+    private static final Set<String>     NON_CATEGORIES                 = Set.of ("ix", "till", "loser", "liteon", "sstillwell", "teej", "schwa", "u-he", "remaincalm_org");
 
-    private final List<Device>           devices         = new ArrayList<> ();
-    private final List<String>           categories      = new ArrayList<> ();
-    private final List<String>           vendors         = new ArrayList<> ();
-    private final List<DeviceCollection> collections     = new ArrayList<> ();
+    private final List<Device>           devices                        = new ArrayList<> ();
+    private final List<String>           categories                     = new ArrayList<> ();
+    private final List<String>           vendors                        = new ArrayList<> ();
+    private final List<DeviceCollection> collections                    = new ArrayList<> ();
 
-    private static final DeviceManager   INSTANCE        = new DeviceManager ();
-
+    private static final DeviceManager   INSTANCE                       = new DeviceManager ();
 
     /**
      * Private due to singleton.
@@ -225,7 +226,9 @@ public class DeviceManager
 
             // Load all 64 bit devices
             if (iniFiles.isVstPresent ())
-                this.parseDevicesFile (iniFiles.getIniVstPlugins64 ());
+                this.parseVstDevicesFile (iniFiles.getIniVstPlugins64 ());
+            if (iniFiles.isAuPresent ())
+                this.parseAuDevicesFile (iniFiles.getIniAuPlugins64 ());
 
             final Set<String> categoriesSet = new TreeSet<> ();
             final Set<String> vendorsSet = new TreeSet<> ();
@@ -312,19 +315,43 @@ public class DeviceManager
 
 
     /**
-     * Parses the devices file.
+     * Parses the VST 64 devices file.
      *
      * @param iniFile The ini file from which to parse
      */
-    private void parseDevicesFile (final IniEditor iniFile)
+    private void parseVstDevicesFile (final IniEditor iniFile)
     {
-        final Map<String, String> vstcacheSection = iniFile.getSectionMap ("vstcache");
-        for (final Entry<String, String> entry: vstcacheSection.entrySet ())
+        final Map<String, String> section = iniFile.getSectionMap ("vstcache");
+        for (final Entry<String, String> entry: section.entrySet ())
         {
-            final Device device = parseDevice (entry.getKey (), entry.getValue ());
+            final Device device = parseVstDevice (entry.getKey (), entry.getValue ());
             if (device != null)
                 this.devices.add (device);
         }
+    }
+
+
+    /**
+     * Parses the AU 64 devices file content.
+     *
+     * @param iniFileContent The content of the INI file from which to parse
+     */
+    private void parseAuDevicesFile (final String iniFileContent)
+    {
+        iniFileContent.lines ().forEach (line -> {
+
+            if ("[auplugins]".equals (line))
+                return;
+
+            final String [] split = line.split ("=");
+            if (split.length != 2)
+                return;
+
+            final Device device = parseAuDevice (split[0], split[1]);
+            if (device != null)
+                this.devices.add (device);
+
+        });
     }
 
 
@@ -412,13 +439,13 @@ public class DeviceManager
 
 
     /**
-     * Parse the information of a device.
+     * Parse the information of a VST device.
      *
      * @param module The module name
      * @param nameAndCompany The name and company
      * @return The created device or null if the information cannot be parsed
      */
-    private static Device parseDevice (final String module, final String nameAndCompany)
+    private static Device parseVstDevice (final String module, final String nameAndCompany)
     {
         final Matcher matcher = PATTERN_VST.matcher (nameAndCompany);
         if (!matcher.matches ())
@@ -442,6 +469,29 @@ public class DeviceManager
             dt = module.endsWith ("vst3") ? DeviceFileType.VST3 : DeviceFileType.VST;
 
         return new Device (creationName, name, module, dt);
+    }
+
+
+    /**
+     * Parse the information of a AU device.
+     *
+     * @param module The module name
+     * @param isInstrument The encoded instrument tag (&lt;!inst&gt; or &lt;!inst&gt;)
+     * @return The created device or null if the information cannot be parsed
+     */
+    private static Device parseAuDevice (final String module, final String isInstrument)
+    {
+        final Matcher matcher = PATTERN_AU_COMPANY_DEVICE_NAME.matcher (module);
+        if (!matcher.matches ())
+            return null;
+
+        final String company = matcher.group (1);
+        final String deviceName = matcher.group (2);
+
+        final DeviceFileType dt = IS_INSTRUMENT_TAG.equals (isInstrument) ? DeviceFileType.AUI : DeviceFileType.AU;
+        final Device device = new Device (module, deviceName, module, dt);
+        device.setVendor (company);
+        return device;
     }
 
 

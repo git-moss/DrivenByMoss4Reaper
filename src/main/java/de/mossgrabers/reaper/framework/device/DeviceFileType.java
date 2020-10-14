@@ -19,12 +19,14 @@ public enum DeviceFileType
     VST("VST"),
     /** A VST 3 effect. */
     VST3("VST3"),
-    /** Jesusonic effects. */
+    /** AU effects. */
+    AU("AU"),
+    /** AU instruments. */
+    AUI("AUi"),
+    /** JS devices. */
     JS("JS");
 
-
     private String name;
-
 
     /**
      * Constructor.
