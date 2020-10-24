@@ -7,7 +7,7 @@ package de.mossgrabers.reaper.framework.daw;
 import de.mossgrabers.framework.controller.hardware.IHwSurfaceFactory;
 import de.mossgrabers.framework.daw.IHost;
 import de.mossgrabers.framework.daw.IMemoryBlock;
-import de.mossgrabers.framework.daw.constants.EditCapability;
+import de.mossgrabers.framework.daw.constants.Capability;
 import de.mossgrabers.framework.graphics.IBitmap;
 import de.mossgrabers.framework.graphics.IImage;
 import de.mossgrabers.framework.osc.IOpenSoundControlCallback;
@@ -89,39 +89,7 @@ public class HostImpl implements IHost
 
     /** {@inheritDoc} */
     @Override
-    public boolean hasPinning ()
-    {
-        return false;
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public boolean hasCrossfader ()
-    {
-        return false;
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public boolean hasDrumDevice ()
-    {
-        return false;
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public boolean hasSlotChains ()
-    {
-        return false;
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public boolean canEdit (final EditCapability capability)
+    public boolean supports (final Capability capability)
     {
         switch (capability)
         {
@@ -152,6 +120,13 @@ public class HostImpl implements IHost
                 return false;
 
             case CUE_VOLUME:
+                return false;
+
+            case HAS_CROSSFADER:
+            case HAS_DRUM_DEVICE:
+            case HAS_EFFECT_BANK:
+            case HAS_PINNING:
+            case HAS_SLOT_CHAINS:
                 return false;
         }
         return false;

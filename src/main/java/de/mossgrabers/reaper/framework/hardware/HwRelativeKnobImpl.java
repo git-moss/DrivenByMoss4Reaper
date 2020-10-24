@@ -245,4 +245,12 @@ public class HwRelativeKnobImpl extends AbstractHwContinuousControl implements I
     {
         VALUE_CHANGERS.forEach ( (encoding, valueChanger) -> valueChanger.setSensitivity (sensitivity));
     }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void setIndexInGroup (final int index)
+    {
+        // Not suported
+    }
 }

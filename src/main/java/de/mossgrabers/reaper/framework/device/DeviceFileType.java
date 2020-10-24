@@ -26,7 +26,9 @@ public enum DeviceFileType
     /** JS devices. */
     JS("JS");
 
+
     private String name;
+
 
     /**
      * Constructor.

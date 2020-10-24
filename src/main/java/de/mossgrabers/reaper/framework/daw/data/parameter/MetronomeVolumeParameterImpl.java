@@ -43,9 +43,17 @@ public class MetronomeVolumeParameterImpl extends EmptyParameter
 
     /** {@inheritDoc} */
     @Override
-    public void setValue (int value)
+    public void setValue (final int value)
     {
         this.dataSetup.getSender ().processIntArg (Processor.METRO_VOL, this.dataSetup.getValueChanger ().toMidiValue (value));
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void setNormalizedValue (final double value)
+    {
+        this.setValue (this.dataSetup.getValueChanger ().fromNormalizedValue (value));
     }
 
 

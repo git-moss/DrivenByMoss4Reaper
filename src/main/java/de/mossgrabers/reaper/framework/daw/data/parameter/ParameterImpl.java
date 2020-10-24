@@ -97,9 +97,17 @@ public class ParameterImpl extends ItemImpl implements IParameter
     @Override
     public void setValue (final int value)
     {
+        this.setNormalizedValue (this.valueChanger.toNormalizedValue (value));
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void setNormalizedValue (final double value)
+    {
         if (!this.doesExist ())
             return;
-        this.value = this.valueChanger.toNormalizedValue (value);
+        this.value = value;
         this.sendValue ();
     }
 

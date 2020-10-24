@@ -51,6 +51,7 @@ public class DeviceManager
 
     private static final DeviceManager   INSTANCE                       = new DeviceManager ();
 
+
     /**
      * Private due to singleton.
      */

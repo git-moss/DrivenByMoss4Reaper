@@ -82,9 +82,14 @@ public abstract class AbstractHwAbsoluteControl extends AbstractHwContinuousCont
     public void handleValue (final double value)
     {
         if (this.parameter != null)
-            this.parameter.setValue ((int) Math.round (value * 127.0));
+        {
+            final double v = this.midiType == BindType.PITCHBEND ? value * 16383.0 : value * 127.0;
+            this.parameter.setValue ((int) Math.round (v));
+        }
         else if (this.command != null)
+        {
             this.command.execute ((int) Math.round (value * 127.0));
+        }
         else if (this.pitchbendCommand != null)
         {
             final double v = value * 16383.0;
@@ -108,5 +113,13 @@ public abstract class AbstractHwAbsoluteControl extends AbstractHwContinuousCont
     public void disableTakeOver ()
     {
         // Takeover is currently not supported with Reaper
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void setIndexInGroup (final int index)
+    {
+        // Not suported
     }
 }
