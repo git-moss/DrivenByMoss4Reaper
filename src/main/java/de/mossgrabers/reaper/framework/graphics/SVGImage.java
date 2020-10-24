@@ -1,31 +1,46 @@
 package de.mossgrabers.reaper.framework.graphics;
 
+import static java.awt.RenderingHints.KEY_ALPHA_INTERPOLATION;
+import static java.awt.RenderingHints.KEY_ANTIALIASING;
+import static java.awt.RenderingHints.KEY_COLOR_RENDERING;
+import static java.awt.RenderingHints.KEY_DITHERING;
+import static java.awt.RenderingHints.KEY_FRACTIONALMETRICS;
+import static java.awt.RenderingHints.KEY_INTERPOLATION;
+import static java.awt.RenderingHints.KEY_RENDERING;
+import static java.awt.RenderingHints.KEY_STROKE_CONTROL;
+import static java.awt.RenderingHints.KEY_TEXT_ANTIALIASING;
+import static java.awt.RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY;
+import static java.awt.RenderingHints.VALUE_ANTIALIAS_ON;
+import static java.awt.RenderingHints.VALUE_COLOR_RENDER_QUALITY;
+import static java.awt.RenderingHints.VALUE_DITHER_DISABLE;
+import static java.awt.RenderingHints.VALUE_FRACTIONALMETRICS_ON;
+import static java.awt.RenderingHints.VALUE_INTERPOLATION_BICUBIC;
+import static java.awt.RenderingHints.VALUE_RENDER_QUALITY;
+import static java.awt.RenderingHints.VALUE_STROKE_PURE;
+import static java.awt.RenderingHints.VALUE_TEXT_ANTIALIAS_ON;
+
 import de.mossgrabers.framework.graphics.IImage;
 
-import org.apache.batik.anim.dom.SAXSVGDocumentFactory;
-import org.apache.batik.transcoder.TranscoderException;
-import org.apache.batik.transcoder.TranscoderInput;
-import org.apache.batik.transcoder.TranscoderOutput;
-import org.apache.batik.transcoder.image.ImageTranscoder;
-import org.apache.batik.util.XMLResourceDescriptor;
-import org.w3c.dom.Document;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.svg.SVGDocument;
-import org.w3c.dom.svg.SVGElement;
-import org.xml.sax.SAXException;
-
-import javax.xml.parsers.ParserConfigurationException;
+import com.kitfox.svg.SVGDiagram;
+import com.kitfox.svg.SVGElement;
+import com.kitfox.svg.SVGElementException;
+import com.kitfox.svg.SVGException;
+import com.kitfox.svg.SVGUniverse;
+import com.kitfox.svg.animation.AnimationElement;
 
 import java.awt.Color;
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.io.InputStream;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 
 /**
- * A Scalable Vector Graphic (SVG) image file.
+ * A Scalable Vector Graphic (SVG) image file. xxxxxxx
  *
  * Licensed under LGPLv3 - http://www.gnu.org/licenses/lgpl-3.0.txt
  *
@@ -33,11 +48,20 @@ import java.util.Map;
  */
 public class SVGImage implements IImage
 {
-    private static final Map<String, Map<Color, SVGImage>> CACHE      = new HashMap<> ();
-    private static final Object                            CACHE_LOCK = new Object ();
+    private static final Map<Object, Object>               RENDERING_HINTS = Map.of (KEY_ANTIALIASING, VALUE_ANTIALIAS_ON, KEY_ALPHA_INTERPOLATION, VALUE_ALPHA_INTERPOLATION_QUALITY, KEY_COLOR_RENDERING, VALUE_COLOR_RENDER_QUALITY, KEY_DITHERING, VALUE_DITHER_DISABLE, KEY_FRACTIONALMETRICS, VALUE_FRACTIONALMETRICS_ON, KEY_INTERPOLATION, VALUE_INTERPOLATION_BICUBIC, KEY_RENDERING, VALUE_RENDER_QUALITY, KEY_STROKE_CONTROL, VALUE_STROKE_PURE, KEY_TEXT_ANTIALIASING, VALUE_TEXT_ANTIALIAS_ON);
+    private static final SVGUniverse                       RENDERER        = new SVGUniverse ();
+
+    private static final Map<String, Map<Color, SVGImage>> CACHE           = new HashMap<> ();
+    private static final Object                            CACHE_LOCK      = new Object ();
+    private static final Set<String>                       STROKE_ELEMENTS = new HashSet<> (4);
 
     private final BufferedImage                            bufferedImage;
     private final String                                   imageName;
+
+    static
+    {
+        Collections.addAll (STROKE_ELEMENTS, "polygon", "circle", "path", "rect");
+    }
 
 
     /**
@@ -90,14 +114,17 @@ public class SVGImage implements IImage
     {
         this.imageName = imageName;
 
-        final BufferedImageTranscoder trans = new BufferedImageTranscoder ();
-        try (InputStream file = this.getClass ().getResourceAsStream (imageName))
+        try
         {
-            final Document doc = this.loadDocument (file, color);
-            trans.transcode (new TranscoderInput (doc), null);
-            this.bufferedImage = trans.getBufferedImage ();
+            final SVGDiagram diagram = RENDERER.getDiagram (RENDERER.loadSVG (this.getClass ().getResource (imageName)));
+            changeColorOfElement (toText (color), diagram.getRoot ());
+
+            this.bufferedImage = new BufferedImage ((int) diagram.getWidth (), (int) diagram.getHeight (), BufferedImage.TYPE_INT_ARGB);
+            final Graphics2D graphics = (Graphics2D) this.bufferedImage.getGraphics ();
+            graphics.setRenderingHints (RENDERING_HINTS);
+            diagram.render (graphics);
         }
-        catch (final TranscoderException | SAXException | ParserConfigurationException ex)
+        catch (final SVGException ex)
         {
             throw new IOException (ex);
         }
@@ -127,50 +154,24 @@ public class SVGImage implements IImage
 
 
     /**
-     * Load the SVG image from an input stream and replaces its color. The SVG format is a XML
-     * format.
-     *
-     * @param inputStream From which to load the image
-     * @param color The replacement color
-     * @return The loaded SVG image document
-     * @throws SAXException Parsing error
-     * @throws IOException Could not load the image
-     * @throws ParserConfigurationException Problem with XML parser
-     */
-    public Document loadDocument (final InputStream inputStream, final Color color) throws SAXException, IOException, ParserConfigurationException
-    {
-        final String parser = XMLResourceDescriptor.getXMLParserClassName ();
-        final SAXSVGDocumentFactory f = new SAXSVGDocumentFactory (parser);
-
-        final SVGDocument document = f.createSVGDocument ("xxx", inputStream);
-
-        changeColorOfElement (color, document, "polygon");
-        changeColorOfElement (color, document, "circle");
-        changeColorOfElement (color, document, "path");
-        changeColorOfElement (color, document, "rect");
-
-        return document;
-    }
-
-
-    /**
      * Adds a new fill color to all given elements.
      *
      * @param color The replacement color
-     * @param document The document in which to replace the color
-     * @param elementName The name of an XML element for which to replace the color
+     * @param node The node in which to replace the color
+     * @throws SVGElementException
      */
-    private static void changeColorOfElement (final Color color, final SVGDocument document, final String elementName)
+    private static void changeColorOfElement (final String color, final SVGElement node) throws SVGElementException
     {
-        final NodeList nodes = document.getElementsByTagName (elementName);
-        for (int i = 0; i < nodes.getLength (); i++)
+        if (STROKE_ELEMENTS.contains (node.getTagName ()))
         {
-            if (nodes.item (i) instanceof SVGElement)
-            {
-                final SVGElement element = (SVGElement) nodes.item (i);
-                element.setAttribute ("fill", toText (color));
-            }
+            if (node.hasAttribute ("fill", AnimationElement.AT_XML))
+                node.setAttribute ("fill", AnimationElement.AT_XML, color);
+            else
+                node.addAttribute ("fill", AnimationElement.AT_XML, color);
         }
+
+        for (int i = 0; i < node.getNumChildren (); i++)
+            changeColorOfElement (color, node.getChild (i));
     }
 
 
@@ -183,41 +184,6 @@ public class SVGImage implements IImage
     private static final String toText (final Color color)
     {
         return new StringBuilder (20).append ("rgb(").append (color.getRed ()).append (',').append (color.getGreen ()).append (',').append (color.getBlue ()).append (')').toString ();
-    }
-
-    /**
-     * Stores the SVG image in a buffered image during the transcoding process.
-     */
-    public class BufferedImageTranscoder extends ImageTranscoder
-    {
-        private BufferedImage img;
-
-
-        /** {@inheritDoc} */
-        @Override
-        public BufferedImage createImage (final int width, final int height)
-        {
-            return new BufferedImage (width, height, BufferedImage.TYPE_INT_ARGB);
-        }
-
-
-        /** {@inheritDoc} */
-        @Override
-        public void writeImage (final BufferedImage img, final TranscoderOutput to) throws TranscoderException
-        {
-            this.img = img;
-        }
-
-
-        /**
-         * Get the buffered image.
-         *
-         * @return The image
-         */
-        public BufferedImage getBufferedImage ()
-        {
-            return this.img;
-        }
     }
 
 
