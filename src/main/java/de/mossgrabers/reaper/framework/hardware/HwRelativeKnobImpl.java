@@ -62,6 +62,7 @@ public class HwRelativeKnobImpl extends AbstractHwContinuousControl implements I
     private boolean                isPressed;
     private double                 pressedX;
     private double                 pressedY;
+    private boolean                shouldAdaptSensitivity = true;
 
 
     /**
@@ -252,5 +253,21 @@ public class HwRelativeKnobImpl extends AbstractHwContinuousControl implements I
     public void setIndexInGroup (final int index)
     {
         // Not suported
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean shouldAdaptSensitivity ()
+    {
+        return this.shouldAdaptSensitivity;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void setShouldAdaptSensitivity (final boolean shouldAdaptSensitivity)
+    {
+        this.shouldAdaptSensitivity = shouldAdaptSensitivity;
     }
 }
