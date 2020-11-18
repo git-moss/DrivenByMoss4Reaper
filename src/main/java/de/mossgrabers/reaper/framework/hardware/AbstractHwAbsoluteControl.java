@@ -83,8 +83,7 @@ public abstract class AbstractHwAbsoluteControl extends AbstractHwContinuousCont
     {
         if (this.parameter != null)
         {
-            final double v = this.midiType == BindType.PITCHBEND ? value * 16383.0 : value * 127.0;
-            this.parameter.setValue ((int) Math.round (v));
+            this.parameter.setNormalizedValue (value);
         }
         else if (this.command != null)
         {

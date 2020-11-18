@@ -8,7 +8,9 @@ import de.mossgrabers.framework.daw.midi.INoteInput;
 import de.mossgrabers.framework.daw.midi.INoteRepeat;
 import de.mossgrabers.reaper.communication.MessageSender;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 
@@ -52,7 +54,26 @@ public class NoteInputImpl implements INoteInput
         {
             // Remove questionmarks for faster comparison
             for (final String filter: filters)
-                this.filters.add (filter.replace ('?', ' ').trim ());
+            {
+                // Remove questionmarks at the end, which are not necessary
+                final String trim = filter.replace ('?', ' ').trim ();
+
+                // Fix questionmarks in the string (which are now spaces)
+                List<String> replaced = new ArrayList<> (1);
+                replaced.add (trim);
+                while (replaced.get (0).contains (" "))
+                {
+                    List<String> replaced2 = new ArrayList<> ();
+                    for (final String f: replaced)
+                    {
+                        for (int i = 0; i <= 0xF; i++)
+                            replaced2.add (f.replaceFirst (" ", Integer.toHexString (i).toUpperCase ()));
+                    }
+                    replaced = replaced2;
+                }
+
+                this.filters.addAll (replaced);
+            }
         }
 
         this.noteRepeat = new NoteRepeatImpl (sender);

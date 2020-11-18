@@ -173,7 +173,7 @@ public class ChannelImpl extends ItemImpl implements IChannel
     @Override
     public void resetVolume ()
     {
-        this.setVolume ((int) (0.6 * this.valueChanger.getUpperBound ()));
+        this.setVolume ((int) (0.716 * this.valueChanger.getUpperBound ()));
     }
 
 
