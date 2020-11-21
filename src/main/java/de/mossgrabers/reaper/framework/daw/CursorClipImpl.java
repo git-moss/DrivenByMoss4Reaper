@@ -901,4 +901,21 @@ public class CursorClipImpl extends BaseImpl implements INoteClip
     {
         return Processor.CLIP;
     }
+
+
+    /** {@inheritDoc}} */
+    @Override
+    public boolean isPinned ()
+    {
+        // Not supported
+        return false;
+    }
+
+
+    /** {@inheritDoc}} */
+    @Override
+    public void togglePinned ()
+    {
+        // Not supported
+    }
 }
