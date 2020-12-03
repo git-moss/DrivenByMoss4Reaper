@@ -28,11 +28,8 @@ import javax.swing.ScrollPaneConstants;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
-import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.Window;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 import java.util.List;
 
 
@@ -45,11 +42,12 @@ public class ConfigurationDialog extends BasicDialog
 {
     private static final long                serialVersionUID = -495747813993365661L;
 
+    private static final int                 MIN_HEIGHT       = 600;
+
     private List<JComboBoxX<MidiDevice>>     midiInputs;
     private List<JComboBoxX<MidiDevice>>     midiOutputs;
     private final transient LogModel         model;
     private final transient GlobalSettingsUI settings;
-
 
     /**
      * Constructor.
@@ -62,8 +60,8 @@ public class ConfigurationDialog extends BasicDialog
     {
         super ((JFrame) owner, "Configuration", true, true);
 
-        this.setMinimumSize (new Dimension (400, 600));
-        this.setSize (400, 600);
+        this.setMinimumSize (new Dimension (400, MIN_HEIGHT));
+        this.setSize (400, MIN_HEIGHT);
 
         this.model = model;
         this.settings = settings;
@@ -166,24 +164,19 @@ public class ConfigurationDialog extends BasicDialog
         this.setButtons (null, buttons.createButton ("Close", null, BoxPanel.NONE));
         contentPane.add (buttons, BorderLayout.SOUTH);
 
-        this.addComponentListener (new ComponentAdapter ()
-        {
-            @Override
-            public void componentResized (final ComponentEvent event)
-            {
-                final Rectangle b = ConfigurationDialog.this.getBounds ();
-                final Dimension screenSize = Toolkit.getDefaultToolkit ().getScreenSize ();
-                final int maxHeight = (int) screenSize.getHeight () - 200;
-                if (b.height > maxHeight)
-                {
-                    b.height = maxHeight;
-                    ConfigurationDialog.this.setBounds (b);
-                }
-                super.componentResized (event);
-            }
-        });
-
         return contentPane;
+    }
+
+
+    /** {@inheritDoc}} */
+    @Override
+    public Dimension getPreferredSize ()
+    {
+        final Dimension dim = super.getPreferredSize ();
+        final double maxHeight = Toolkit.getDefaultToolkit ().getScreenSize ().getHeight () - 200;
+        if (dim.height > maxHeight)
+            dim.height = (int) maxHeight;
+        return dim;
     }
 
 
