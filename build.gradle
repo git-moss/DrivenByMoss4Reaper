@@ -87,15 +87,26 @@ installDist {
         }
 
         // Mac
-        ant.zip (destfile: name + '-Macos.zip') {
-            fileset(dir: destinationDir) {
+        String macosTar = name + '-Macos.tar'
+        ant.zip (destfile: macosTar) {
+            tarfileset(dir: destinationDir) {
                 exclude(name: '**/libusb4java-1.3.0-darwin-x86-64.jar')
             }
-            fileset(dir: new File ('runtime', 'macos'))
-            fileset(dir: new File ('libs', 'macos-fix')) {
+            tarfileset(dir: new File ('libs', 'macos-fix')) {
                 include(name: '**/libusb4java-1.3.0-darwin-x86-64-FIXED.jar')
             }
+            tarfileset(dir: new File ('runtime', 'macos'), filemode: 664) {
+                exclude(name: '**/bin/java')
+                exclude(name: '**/bin/keytool')
+                exclude(name: '**/lib/jspawnhelper')
+            }
+            tarfileset(dir: new File ('runtime', 'macos'), filemode: 775) {
+                include(name: '**/bin/java')
+                include(name: '**/bin/keytool')
+                include(name: '**/lib/jspawnhelper')
+            }
         }
+        ant.gzip (src: macosTar, destfile: macosTar + '.gz')
 
         // Linux
         String linuxTar = name + '-Linux.tar'
