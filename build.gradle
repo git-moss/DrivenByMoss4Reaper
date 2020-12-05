@@ -26,15 +26,15 @@ jar {
             case OperatingSystem.WINDOWS:
                 String destDir = 'C:\\Users\\' + System.properties['user.name'] + '\\AppData\\Roaming\\Reaper\\UserPlugins\\drivenbymoss-libs'
                 ant.copy (file: archivePath.getAbsolutePath(), todir: destDir)
-                break;
+                break
             case OperatingSystem.MAC:
                 String destDir = '/Users/' + System.properties['user.name'] + '/Library/Application Support/REAPER/UserPlugins/drivenbymoss-libs'
                 ant.copy (file: archivePath.getAbsolutePath(), todir: destDir)
-                break;
+                break
             case OperatingSystem.LINUX:
                 String destDir = '/home/' + System.properties['user.name'] + '/.config/REAPER/UserPlugins/drivenbymoss-libs'
                 ant.copy (file: archivePath.getAbsolutePath(), todir: destDir)
-                break;
+                break
         }
     }
 }
@@ -43,7 +43,7 @@ distTar.enabled = false
 startScripts.enabled = false
 
 applicationDistribution.from('build/reports/dependency-license') {
-    into "docs/license/dependency"
+    into 'docs/license/dependency'
 }
 
 installDist {
@@ -78,14 +78,16 @@ installDist {
             }
         }
 
+        String name = 'build/DrivenByMoss4Reaper-' + version
+
         // Windows
-        ant.zip (destfile: 'build/DrivenByMoss4Reaper-' + version + '-Windows.zip') {
+        ant.zip (destfile: name + '-Windows.zip') {
             fileset(dir: destinationDir)
             fileset(dir: new File ('runtime', 'windows'))
         }
 
         // Mac
-        ant.zip (destfile: 'build/DrivenByMoss4Reaper-' + version + '-Macos.zip') {
+        ant.zip (destfile: name + '-Macos.zip') {
             fileset(dir: destinationDir) {
                 exclude(name: '**/libusb4java-1.3.0-darwin-x86-64.jar')
             }
@@ -96,17 +98,30 @@ installDist {
         }
 
         // Linux
-        ant.zip (destfile: 'build/DrivenByMoss4Reaper-' + version + '-Linux.zip') {
-            fileset(dir: destinationDir)
-            fileset(dir: new File ('runtime', 'linux'))
+        String linuxTar = name + '-Linux.tar'
+        ant.tar (destfile: linuxTar) {
+            tarfileset(dir: destinationDir)
+            tarfileset(dir: new File ('runtime', 'linux'), filemode: 664) {
+                exclude(name: '**/bin/java')
+                exclude(name: '**/bin/keytool')
+                exclude(name: '**/lib/jexec')
+                exclude(name: '**/lib/jspawnhelper')
+            }
+            tarfileset(dir: new File ('runtime', 'linux'), filemode: 775) {
+                include(name: '**/bin/java')
+                include(name: '**/bin/keytool')
+                include(name: '**/lib/jexec')
+                include(name: '**/lib/jspawnhelper')
+            }
         }
+        ant.gzip (src: linuxTar, destfile: linuxTar + '.gz')
     }
 }
 
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
-    options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
-    options.headerOutputDirectory = file("build/headers/java/main")
+    options.compilerArgs << '-Xlint:unchecked' << '-Xlint:deprecation'
+    options.headerOutputDirectory = file('build/headers/java/main')
 }
 
 repositories {
@@ -131,32 +146,34 @@ eclipse.classpath.file {
     }
 }
 
-enum OperatingSystem
-{
+enum OperatingSystem {
+
     WINDOWS,
     LINUX,
     MAC,
-    OTHER;
+    OTHER
 
-    private static OperatingSystem os = OTHER;
+    private static OperatingSystem os = OTHER
 
     static
     {
-        String osName = System.getProperty ("os.name");
-        if (osName != null)
-        {
-            osName = osName.toLowerCase (Locale.ENGLISH);
-            if (osName.contains ("windows"))
-                os = WINDOWS;
-            else if (osName.contains ("linux"))
-                os = LINUX;
-            else if (osName.contains ("mac os x"))
-                os = MAC;
+        String osName = System.getProperty ('os.name')
+        if (osName != null) {
+            osName = osName.toLowerCase (Locale.ENGLISH)
+            if (osName.contains ('windows')) {
+                os = WINDOWS
+            }
+            else if (osName.contains ('linux')) {
+                os = LINUX
+            }
+            else if (osName.contains ('mac os x')) {
+                os = MAC
+            }
         }
     }
 
-    public static OperatingSystem get ()
-    {
-        return os;
+    static OperatingSystem get () {
+        return os
     }
+
 }
