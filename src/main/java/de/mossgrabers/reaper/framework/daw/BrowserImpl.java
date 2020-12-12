@@ -33,6 +33,7 @@ import de.mossgrabers.reaper.framework.device.column.EmptyFilterColumn;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 
 /**
@@ -446,11 +447,11 @@ public class BrowserImpl extends AbstractBrowser
         final DeviceManager deviceManager = DeviceManager.get ();
         final DeviceCollection folder = this.deviceCollectionFilterColumn.getCursorIndex () == 0 ? null : deviceManager.getCollection (this.deviceCollectionFilterColumn.getCursorName ());
         final String category = this.deviceCategoryFilterColumn.getCursorIndex () == 0 ? null : this.deviceCategoryFilterColumn.getCursorName ();
-        final DeviceFileType fileType = this.deviceFileTypeFilterColumn.getCursorIndex () == 0 ? null : DeviceFileType.valueOf (this.deviceFileTypeFilterColumn.getCursorName ().toUpperCase ());
-        final DeviceLocation location = this.deviceLocationFilterColumn.getCursorIndex () == 0 ? null : DeviceLocation.valueOf (this.deviceLocationFilterColumn.getCursorName ().toUpperCase ());
+        final DeviceFileType fileType = this.deviceFileTypeFilterColumn.getCursorIndex () == 0 ? null : DeviceFileType.valueOf (this.deviceFileTypeFilterColumn.getCursorName ().toUpperCase (Locale.US));
+        final DeviceLocation location = this.deviceLocationFilterColumn.getCursorIndex () == 0 ? null : DeviceLocation.valueOf (this.deviceLocationFilterColumn.getCursorName ().toUpperCase (Locale.US));
         // Note: this.deviceTagsFilterColumn currently does nothing
         final String vendor = this.deviceCreatorFilterColumn.getCursorIndex () == 0 ? null : this.deviceCreatorFilterColumn.getCursorName ();
-        final DeviceType type = this.deviceTypeFilterColumn.getCursorIndex () == 0 ? null : DeviceType.valueOf (this.deviceTypeFilterColumn.getCursorName ().toUpperCase ().replace (' ', '_'));
+        final DeviceType type = this.deviceTypeFilterColumn.getCursorIndex () == 0 ? null : DeviceType.valueOf (this.deviceTypeFilterColumn.getCursorName ().toUpperCase (Locale.US).replace (' ', '_'));
 
         this.filteredDevices = deviceManager.filterBy (fileType, category, vendor, folder, location, type);
 

@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -485,6 +486,6 @@ public class MidiInputImpl implements IMidiInput
         final StringBuilder dataString = new StringBuilder ("F0");
         for (final byte data: sysexMessage.getData ())
             dataString.append (String.format ("%02x", Integer.valueOf (data & 0xFF)));
-        this.sysexCallback.handleMidi (dataString.toString ().toUpperCase ());
+        this.sysexCallback.handleMidi (dataString.toString ().toUpperCase (Locale.US));
     }
 }

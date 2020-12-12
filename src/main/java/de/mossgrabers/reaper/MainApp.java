@@ -45,6 +45,7 @@ import java.util.Base64.Decoder;
 import java.util.Base64.Encoder;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -70,6 +71,7 @@ public class MainApp implements MessageSender, AppCallback, WindowManager
     private final Timer               animationTimer;
     private String                    iniPath;
     private final IniFiles            iniFiles           = new IniFiles ();
+
 
     /**
      * Constructor.
@@ -317,7 +319,7 @@ public class MainApp implements MessageSender, AppCallback, WindowManager
     @Override
     public void processNoArg (final Processor processor, final String command)
     {
-        this.processNoArg (processor.name ().toLowerCase (), command);
+        this.processNoArg (processor.name ().toLowerCase (Locale.US), command);
     }
 
 
@@ -334,7 +336,7 @@ public class MainApp implements MessageSender, AppCallback, WindowManager
     @Override
     public void processStringArg (final Processor processor, final String command, final String value)
     {
-        this.processStringArg (processor.name ().toLowerCase (), command, value);
+        this.processStringArg (processor.name ().toLowerCase (Locale.US), command, value);
     }
 
 
@@ -352,7 +354,7 @@ public class MainApp implements MessageSender, AppCallback, WindowManager
     @Override
     public void processIntArg (final Processor processor, final String command, final int value)
     {
-        this.processIntArg (processor.name ().toLowerCase (), command, value);
+        this.processIntArg (processor.name ().toLowerCase (Locale.US), command, value);
     }
 
 
@@ -370,7 +372,7 @@ public class MainApp implements MessageSender, AppCallback, WindowManager
     @Override
     public void processDoubleArg (final Processor processor, final String command, final double value)
     {
-        this.processDoubleArg (processor.name ().toLowerCase (), command, value);
+        this.processDoubleArg (processor.name ().toLowerCase (Locale.US), command, value);
     }
 
 
@@ -388,7 +390,7 @@ public class MainApp implements MessageSender, AppCallback, WindowManager
     @Override
     public void delayUpdates (final Processor processor)
     {
-        this.delayUpdates (processor.name ().toLowerCase ());
+        this.delayUpdates (processor.name ().toLowerCase (Locale.US));
     }
 
 
@@ -405,7 +407,7 @@ public class MainApp implements MessageSender, AppCallback, WindowManager
     @Override
     public void enableUpdates (final Processor processor, final boolean enable)
     {
-        this.enableUpdates (processor.name ().toLowerCase (), enable);
+        this.enableUpdates (processor.name ().toLowerCase (Locale.US), enable);
     }
 
 
@@ -639,7 +641,7 @@ public class MainApp implements MessageSender, AppCallback, WindowManager
                 properties.store (writer, "");
                 final String str = writer.toString ();
                 final String encodedString = encoder.encodeToString (str.getBytes (StandardCharsets.UTF_8));
-                final String tag = definition.getHardwareModel ().replace (' ', '_').replace ('/', '_').toUpperCase ();
+                final String tag = definition.getHardwareModel ().replace (' ', '_').replace ('/', '_').toUpperCase (Locale.US);
                 data.append (tag).append ("=\"").append (encodedString).append ("\"\n");
             }
             catch (final IOException ex)
@@ -677,7 +679,7 @@ public class MainApp implements MessageSender, AppCallback, WindowManager
         for (final IControllerInstance instance: this.instanceManager.getInstances ())
         {
             final IControllerDefinition definition = instance.getDefinition ();
-            final String tag = definition.getHardwareModel ().replace (' ', '_').replace ('/', '_').toUpperCase ();
+            final String tag = definition.getHardwareModel ().replace (' ', '_').replace ('/', '_').toUpperCase (Locale.US);
 
             final String propertiesText = found.get (tag);
             if (propertiesText != null)

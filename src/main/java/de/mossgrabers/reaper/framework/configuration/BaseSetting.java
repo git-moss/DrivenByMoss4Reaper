@@ -12,6 +12,7 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Set;
 
 
@@ -80,7 +81,7 @@ public abstract class BaseSetting<C extends JComponent, T> implements IfxSetting
     @Override
     public String getID ()
     {
-        return StringUtils.fixASCII (new StringBuilder (this.category).append ('_').append (this.label).toString ().toUpperCase ()).replace (' ', '_').replace ('?', '_');
+        return StringUtils.fixASCII (new StringBuilder (this.category).append ('_').append (this.label).toString ().toUpperCase (Locale.US)).replace (' ', '_').replace ('?', '_');
     }
 
 

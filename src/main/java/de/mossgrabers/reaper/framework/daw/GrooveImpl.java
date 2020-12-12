@@ -7,6 +7,7 @@ package de.mossgrabers.reaper.framework.daw;
 import de.mossgrabers.framework.daw.GrooveParameterID;
 import de.mossgrabers.framework.daw.IGroove;
 import de.mossgrabers.framework.daw.data.IParameter;
+import de.mossgrabers.framework.daw.data.empty.EmptyParameter;
 import de.mossgrabers.reaper.communication.Processor;
 import de.mossgrabers.reaper.framework.IniFiles;
 import de.mossgrabers.reaper.framework.daw.data.parameter.GrooveParameter;
@@ -47,7 +48,8 @@ public class GrooveImpl extends BaseImpl implements IGroove
     @Override
     public IParameter getParameter (final GrooveParameterID id)
     {
-        return this.parameters.get (id);
+        final IParameter parameter = this.parameters.get (id);
+        return parameter == null ? EmptyParameter.INSTANCE : parameter;
     }
 
 

@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -567,7 +568,7 @@ public class DeviceManager
         if (modulePath.length <= 1)
             return;
         final String o = modulePath[0].startsWith ("\"") ? modulePath[0].substring (1) : modulePath[0];
-        if (NON_CATEGORIES.contains (o.toLowerCase ()))
+        if (NON_CATEGORIES.contains (o.toLowerCase (Locale.US)))
         {
             device.setVendor (o);
             vendorsSet.add (o);

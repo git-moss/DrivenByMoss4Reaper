@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -61,7 +62,7 @@ public class DeviceCollection
                 if (split == null || split.length == 0)
                     return;
                 final String filename = split[split.length - 1].replace (' ', '_').replace ('(', '_').replace (')', '_');
-                this.vstItems.add (filename.toLowerCase ());
+                this.vstItems.add (filename.toLowerCase (Locale.US));
                 break;
 
             case TYPE_QUERY:
@@ -72,9 +73,9 @@ public class DeviceCollection
                 for (final String part: item.split (" OR "))
                 {
                     final String [] notParts = part.split (" NOT ");
-                    mustMatch.add (notParts[0].toLowerCase ());
+                    mustMatch.add (notParts[0].toLowerCase (Locale.US));
                     for (int i = 1; i < notParts.length; i++)
-                        mustNotMatch.add (notParts[i].toLowerCase ());
+                        mustNotMatch.add (notParts[i].toLowerCase (Locale.US));
                 }
                 this.queryItems.put (item, new Pair<> (mustMatch, mustNotMatch));
                 break;
@@ -158,7 +159,7 @@ public class DeviceCollection
     private static boolean compareQuery (final Set<String> mustMatch, final Set<String> mustNotMatch, final Device device)
     {
         // Compare all texts at once
-        final String text = (device.getName () + " " + device.getVendor () + " " + device.getFileType ()).toLowerCase ();
+        final String text = (device.getName () + " " + device.getVendor () + " " + device.getFileType ()).toLowerCase (Locale.US);
 
         boolean success = mustMatch.isEmpty ();
         for (final String match: mustMatch)

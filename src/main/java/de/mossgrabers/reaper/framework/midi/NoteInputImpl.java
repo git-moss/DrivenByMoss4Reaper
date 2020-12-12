@@ -11,6 +11,7 @@ import de.mossgrabers.reaper.communication.MessageSender;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 
@@ -67,7 +68,7 @@ public class NoteInputImpl implements INoteInput
                     for (final String f: replaced)
                     {
                         for (int i = 0; i <= 0xF; i++)
-                            replaced2.add (f.replaceFirst (" ", Integer.toHexString (i).toUpperCase ()));
+                            replaced2.add (f.replaceFirst (" ", Integer.toHexString (i).toUpperCase (Locale.US)));
                     }
                     replaced = replaced2;
                 }
