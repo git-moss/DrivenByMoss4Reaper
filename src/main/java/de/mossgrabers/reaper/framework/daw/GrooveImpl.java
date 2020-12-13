@@ -9,7 +9,6 @@ import de.mossgrabers.framework.daw.IGroove;
 import de.mossgrabers.framework.daw.data.IParameter;
 import de.mossgrabers.framework.daw.data.empty.EmptyParameter;
 import de.mossgrabers.reaper.communication.Processor;
-import de.mossgrabers.reaper.framework.IniFiles;
 import de.mossgrabers.reaper.framework.daw.data.parameter.GrooveParameter;
 
 import java.util.EnumMap;
@@ -30,17 +29,13 @@ public class GrooveImpl extends BaseImpl implements IGroove
      * Constructor
      *
      * @param dataSetup Some configuration variables
-     * @param iniFiles The INI configuration files
      */
-    public GrooveImpl (final DataSetupEx dataSetup, final IniFiles iniFiles)
+    public GrooveImpl (final DataSetupEx dataSetup)
     {
         super (dataSetup);
 
-        this.parameters.put (GrooveParameterID.SHUFFLE_AMOUNT, new GrooveParameter (dataSetup, 0, iniFiles));
-        this.parameters.put (GrooveParameterID.SHUFFLE_RATE, new GrooveParameter (dataSetup, 1, iniFiles));
-
-        this.parameters.put (GrooveParameterID.ACCENT_AMOUNT, new GrooveParameter (dataSetup, 2, iniFiles));
-        this.parameters.put (GrooveParameterID.ACCENT_PHASE, new GrooveParameter (dataSetup, 3, iniFiles));
+        this.parameters.put (GrooveParameterID.ENABLED, new GrooveParameter (dataSetup, GrooveParameterID.ENABLED));
+        this.parameters.put (GrooveParameterID.SHUFFLE_AMOUNT, new GrooveParameter (dataSetup, GrooveParameterID.SHUFFLE_AMOUNT));
     }
 
 

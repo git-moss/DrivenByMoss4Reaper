@@ -35,6 +35,8 @@ public enum Processor
     NOTEREPEAT,
     /** The playing notes. */
     PLAYINGNOTES,
+    /** The groove. */
+    GROOVE,
 
     /** Single commands - play. */
     PLAY,

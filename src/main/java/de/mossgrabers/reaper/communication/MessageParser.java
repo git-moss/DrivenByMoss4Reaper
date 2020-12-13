@@ -7,7 +7,9 @@ package de.mossgrabers.reaper.communication;
 import de.mossgrabers.framework.controller.IControlSurface;
 import de.mossgrabers.framework.controller.IControllerSetup;
 import de.mossgrabers.framework.controller.color.ColorEx;
+import de.mossgrabers.framework.daw.GrooveParameterID;
 import de.mossgrabers.framework.daw.IBrowser;
+import de.mossgrabers.framework.daw.IGroove;
 import de.mossgrabers.framework.daw.IHost;
 import de.mossgrabers.framework.daw.IModel;
 import de.mossgrabers.framework.daw.IProject;
@@ -43,6 +45,7 @@ import de.mossgrabers.reaper.framework.daw.data.bank.SceneBankImpl;
 import de.mossgrabers.reaper.framework.daw.data.bank.SendBankImpl;
 import de.mossgrabers.reaper.framework.daw.data.bank.TrackBankImpl;
 import de.mossgrabers.reaper.framework.daw.data.bank.UserParameterBankImpl;
+import de.mossgrabers.reaper.framework.daw.data.parameter.GrooveParameter;
 import de.mossgrabers.reaper.framework.daw.data.parameter.MetronomeVolumeParameterImpl;
 import de.mossgrabers.reaper.framework.daw.data.parameter.ParameterImpl;
 import de.mossgrabers.reaper.framework.midi.NoteRepeatImpl;
@@ -211,6 +214,10 @@ public class MessageParser
 
             case "noterepeat":
                 this.parseNoteRepeat (parts, value);
+                break;
+
+            case "groove":
+                this.parseGroove (parts, value);
                 break;
 
             default:
@@ -963,6 +970,28 @@ public class MessageParser
 
             default:
                 this.host.error ("Unhandled NoteRepeat Parameter: " + command);
+                break;
+        }
+    }
+
+
+    private void parseGroove (final Queue<String> parts, final String value)
+    {
+        final IGroove groove = this.model.getGroove ();
+
+        final String command = parts.poll ();
+        switch (command)
+        {
+            case "active":
+                ((GrooveParameter) groove.getParameter (GrooveParameterID.ENABLED)).setInternalValue (Double.parseDouble (value));
+                break;
+
+            case "amount":
+                ((GrooveParameter) groove.getParameter (GrooveParameterID.SHUFFLE_AMOUNT)).setInternalValue (Double.parseDouble (value));
+                break;
+
+            default:
+                this.host.error ("Unhandled Groove Parameter: " + command);
                 break;
         }
     }
