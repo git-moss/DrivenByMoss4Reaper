@@ -24,15 +24,15 @@ import java.util.Set;
  *
  * @author J&uuml;rgen Mo&szlig;graber
  */
-public abstract class BaseSetting<C extends JComponent, T> implements IfxSetting<T>
+public abstract class BaseSetting<C extends JComponent, T> implements IfxSetting
 {
-    protected final LogModel             logModel;
-    protected final C                    field;
+    private final JLabel                   labelWidget;
+    private final String                   label;
+    private final String                   category;
 
-    private final JLabel                 labelWidget;
-    private final Set<IValueObserver<T>> observers = new HashSet<> ();
-    private final String                 label;
-    private final String                 category;
+    protected final LogModel               logModel;
+    protected final C                      field;
+    protected final Set<IValueObserver<T>> observers = new HashSet<> ();
 
 
     /**
@@ -50,14 +50,6 @@ public abstract class BaseSetting<C extends JComponent, T> implements IfxSetting
         this.category = category;
         this.field = field;
         this.labelWidget = new JLabel (this.label);
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void init ()
-    {
-        this.set (this.get ());
     }
 
 
@@ -98,14 +90,6 @@ public abstract class BaseSetting<C extends JComponent, T> implements IfxSetting
     public JComponent getWidget ()
     {
         return this.field;
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void addValueObserver (final IValueObserver<T> observer)
-    {
-        this.observers.add (observer);
     }
 
 

@@ -93,13 +93,13 @@ public class ProjectSettingsDialog extends BasicDialog
 
             String category = null;
             final ISettingsUI settings = instance.getDocumentSettingsUI ();
-            final List<IfxSetting<?>> ifxSettings = ((DocumentSettingsUI) settings).getSettings ();
+            final List<IfxSetting> ifxSettings = ((DocumentSettingsUI) settings).getSettings ();
             if (ifxSettings.isEmpty ())
             {
                 mainColumn.add (new JLabel ("This device has no project settings."));
                 continue;
             }
-            for (final IfxSetting<?> s: ifxSettings)
+            for (final IfxSetting s: ifxSettings)
             {
                 final String cat = s.getCategory ();
                 if (category == null || !category.equals (cat))

@@ -608,13 +608,7 @@ public class MainApp implements MessageSender, AppCallback, WindowManager
     public void setDefaultDocumentSettings ()
     {
         for (final IControllerInstance instance: this.instanceManager.getInstances ())
-        {
-            final DocumentSettingsUI documentSettingsUI = instance.getDocumentSettingsUI ();
-            for (final IfxSetting<?> setting: documentSettingsUI.getSettings ())
-            {
-                setting.reset ();
-            }
-        }
+            instance.getDocumentSettingsUI ().getSettings ().forEach (IfxSetting::reset);
     }
 
 

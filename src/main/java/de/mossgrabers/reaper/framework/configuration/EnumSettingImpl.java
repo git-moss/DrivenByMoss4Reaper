@@ -18,7 +18,7 @@ import javax.swing.JComboBox;
  *
  * @author J&uuml;rgen Mo&szlig;graber
  */
-public class EnumSettingImpl extends BaseSetting<JComboBox<String>, String> implements IEnumSetting
+public class EnumSettingImpl extends BaseValueSetting<JComboBox<String>, String> implements IEnumSetting
 {
     private final String initialValue;
     private String       value;
@@ -63,6 +63,7 @@ public class EnumSettingImpl extends BaseSetting<JComboBox<String>, String> impl
     private void setInternal (final String value)
     {
         this.value = value;
+        this.setDirty ();
         this.flush ();
     }
 

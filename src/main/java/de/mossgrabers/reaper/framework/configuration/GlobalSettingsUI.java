@@ -243,4 +243,20 @@ public class GlobalSettingsUI extends AbstractSettingsUI
 
         this.settings.forEach (s -> s.store (properties));
     }
+
+
+    /**
+     * Check if any of the settings has changed and needs to be stored.
+     *
+     * @return True if dirty
+     */
+    public boolean isDirty ()
+    {
+        for (final IfxSetting setting: this.settings)
+        {
+            if (setting.isDirty ())
+                return true;
+        }
+        return false;
+    }
 }

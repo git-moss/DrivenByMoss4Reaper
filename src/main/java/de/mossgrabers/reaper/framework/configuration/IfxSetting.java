@@ -14,11 +14,9 @@ import javax.swing.JLabel;
 /**
  * Interface to editing a setting with a Java FX control widget.
  *
- * @param <T> The type of the settings value
- *
  * @author J&uuml;rgen Mo&szlig;graber
  */
-public interface IfxSetting<T> extends ISetting<T>
+public interface IfxSetting extends ISetting
 {
     /**
      * Set and fire the initial or loaded value, if present.
@@ -92,4 +90,12 @@ public interface IfxSetting<T> extends ISetting<T>
      * Set the default value.
      */
     void reset ();
+
+
+    /**
+     * Check if the value has been changed since loaded from the settings.
+     *
+     * @return True if dirty
+     */
+    boolean isDirty ();
 }

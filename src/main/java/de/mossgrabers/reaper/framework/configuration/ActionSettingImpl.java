@@ -23,7 +23,7 @@ import java.awt.event.KeyEvent;
  *
  * @author J&uuml;rgen Mo&szlig;graber
  */
-public class ActionSettingImpl extends BaseSetting<ActionPanel, String> implements IActionSetting
+public class ActionSettingImpl extends BaseValueSetting<ActionPanel, String> implements IActionSetting
 {
     private String  value;
     private boolean isSelectionActive;
@@ -77,6 +77,7 @@ public class ActionSettingImpl extends BaseSetting<ActionPanel, String> implemen
     public void set (final String value)
     {
         this.value = value;
+        this.setDirty ();
         this.flush ();
 
         this.isSelectionActive = false;

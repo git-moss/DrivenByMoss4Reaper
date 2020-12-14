@@ -21,7 +21,7 @@ import java.awt.Color;
  *
  * @author J&uuml;rgen Mo&szlig;graber
  */
-public class ColorSettingImpl extends BaseSetting<ColoredButton, ColorEx> implements IColorSetting
+public class ColorSettingImpl extends BaseValueSetting<ColoredButton, ColorEx> implements IColorSetting
 {
     private final ColorEx initialValue;
     private ColorEx       value;
@@ -74,6 +74,7 @@ public class ColorSettingImpl extends BaseSetting<ColoredButton, ColorEx> implem
     public void set (final ColorEx value)
     {
         this.value = value;
+        this.setDirty ();
         this.flush ();
 
         SafeRunLater.execute (this.logModel, () -> this.field.setBackground (new Color ((float) this.value.getRed (), (float) this.value.getGreen (), (float) this.value.getBlue ())));

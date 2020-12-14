@@ -5,6 +5,7 @@
 package de.mossgrabers.reaper.framework.configuration;
 
 import de.mossgrabers.framework.configuration.ISignalSetting;
+import de.mossgrabers.framework.observer.IValueObserver;
 import de.mossgrabers.reaper.ui.utils.LogModel;
 import de.mossgrabers.reaper.ui.utils.PropertiesEx;
 
@@ -37,17 +38,9 @@ public class SignalSettingImpl extends BaseSetting<JButton, Void> implements ISi
 
     /** {@inheritDoc} */
     @Override
-    public void set (final Void value)
+    public void init ()
     {
         // Intentionally empty
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public Void get ()
-    {
-        return null;
     }
 
 
@@ -80,5 +73,21 @@ public class SignalSettingImpl extends BaseSetting<JButton, Void> implements ISi
     public void reset ()
     {
         // Intentionally empty
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void addSignalObserver (IValueObserver<Void> observer)
+    {
+        this.observers.add (observer);
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean isDirty ()
+    {
+        return false;
     }
 }

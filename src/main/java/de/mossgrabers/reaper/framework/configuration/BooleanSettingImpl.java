@@ -17,7 +17,7 @@ import javax.swing.JCheckBox;
  *
  * @author J&uuml;rgen Mo&szlig;graber
  */
-public class BooleanSettingImpl extends BaseSetting<JCheckBox, Boolean> implements IBooleanSetting
+public class BooleanSettingImpl extends BaseValueSetting<JCheckBox, Boolean> implements IBooleanSetting
 {
     private final boolean initialValue;
     private boolean       value;
@@ -56,6 +56,7 @@ public class BooleanSettingImpl extends BaseSetting<JCheckBox, Boolean> implemen
     public void set (final boolean value)
     {
         this.value = value;
+        this.setDirty ();
         this.flush ();
 
         SafeRunLater.execute (this.logModel, () -> {

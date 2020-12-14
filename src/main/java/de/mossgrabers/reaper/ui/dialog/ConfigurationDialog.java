@@ -49,6 +49,7 @@ public class ConfigurationDialog extends BasicDialog
     private final transient LogModel         model;
     private final transient GlobalSettingsUI settings;
 
+
     /**
      * Constructor.
      *
@@ -77,7 +78,7 @@ public class ConfigurationDialog extends BasicDialog
      */
     public void setAction (final String actionID)
     {
-        for (final IfxSetting<?> s: this.settings.getSettings ())
+        for (final IfxSetting s: this.settings.getSettings ())
         {
             if (s instanceof ActionSettingImpl && ((ActionSettingImpl) s).isSelectionActive ())
             {
@@ -143,7 +144,7 @@ public class ConfigurationDialog extends BasicDialog
         }
 
         String category = null;
-        for (final IfxSetting<?> s: this.settings.getSettings ())
+        for (final IfxSetting s: this.settings.getSettings ())
         {
             final String cat = s.getCategory ();
             if (category == null || !category.equals (cat))

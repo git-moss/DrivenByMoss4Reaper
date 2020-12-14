@@ -21,7 +21,7 @@ import java.text.NumberFormat;
  *
  * @author J&uuml;rgen Mo&szlig;graber
  */
-public class IntegerSettingImpl extends BaseSetting<JFormattedTextField, Integer> implements IIntegerSetting
+public class IntegerSettingImpl extends BaseValueSetting<JFormattedTextField, Integer> implements IIntegerSetting
 {
     private final int minValue;
     private final int maxValue;
@@ -86,6 +86,7 @@ public class IntegerSettingImpl extends BaseSetting<JFormattedTextField, Integer
         if (value < this.minValue || value > this.maxValue)
             return;
         this.value = value;
+        this.setDirty ();
         this.flush ();
 
         SafeRunLater.execute (this.logModel, () -> {

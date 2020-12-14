@@ -165,6 +165,12 @@ public abstract class AbstractControllerInstance implements IControllerInstance,
             if (!this.isRunning)
                 return;
 
+            if (this.globalSettingsUI.isDirty ())
+            {
+                this.logModel.info ("Storing configuration...");
+                this.storeConfiguration ();
+            }
+
             this.logModel.info ("Closing controller...");
             if (this.controllerSetup != null)
                 this.controllerSetup.exit ();
@@ -371,7 +377,7 @@ public abstract class AbstractControllerInstance implements IControllerInstance,
         }
         catch (final IOException ex)
         {
-            this.logModel.error ("Could not load controller configuration file.", ex);
+            this.logModel.error ("Could not save controller configuration file.", ex);
         }
     }
 }

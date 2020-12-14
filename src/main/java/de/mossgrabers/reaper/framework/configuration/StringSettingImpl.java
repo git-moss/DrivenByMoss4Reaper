@@ -20,7 +20,7 @@ import java.awt.event.KeyEvent;
  *
  * @author J&uuml;rgen Mo&szlig;graber
  */
-public class StringSettingImpl extends BaseSetting<JTextField, String> implements IStringSetting
+public class StringSettingImpl extends BaseValueSetting<JTextField, String> implements IStringSetting
 {
     private final String initialValue;
     private String       value;
@@ -59,6 +59,7 @@ public class StringSettingImpl extends BaseSetting<JTextField, String> implement
     public void set (final String value)
     {
         this.value = value;
+        this.setDirty ();
         this.flush ();
 
         SafeRunLater.execute (this.logModel, () -> {

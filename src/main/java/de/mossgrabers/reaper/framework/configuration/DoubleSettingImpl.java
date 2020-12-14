@@ -21,7 +21,7 @@ import java.text.NumberFormat;
  *
  * @author J&uuml;rgen Mo&szlig;graber
  */
-public class DoubleSettingImpl extends BaseSetting<JFormattedTextField, Double> implements IDoubleSetting
+public class DoubleSettingImpl extends BaseValueSetting<JFormattedTextField, Double> implements IDoubleSetting
 {
     private final double initialValue;
     private double       value;
@@ -78,6 +78,7 @@ public class DoubleSettingImpl extends BaseSetting<JFormattedTextField, Double> 
     public void set (final double value)
     {
         this.value = value;
+        this.setDirty ();
         this.flush ();
 
         SafeRunLater.execute (this.logModel, () -> {
