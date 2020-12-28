@@ -13,6 +13,7 @@ public class Controller
 {
     private static MainApp app;
 
+
     /**
      * Private due to the fact that it only provides static functions.
      */

@@ -6,7 +6,6 @@ package de.mossgrabers.reaper.framework.daw;
 
 import de.mossgrabers.framework.controller.color.ColorEx;
 import de.mossgrabers.framework.daw.AbstractModel;
-import de.mossgrabers.framework.daw.IClip;
 import de.mossgrabers.framework.daw.INoteClip;
 import de.mossgrabers.framework.daw.ModelSetup;
 import de.mossgrabers.framework.daw.constants.DeviceID;
@@ -20,6 +19,7 @@ import de.mossgrabers.framework.scale.Scales;
 import de.mossgrabers.framework.utils.FrameworkException;
 import de.mossgrabers.reaper.framework.IniFiles;
 import de.mossgrabers.reaper.framework.daw.data.CursorDeviceImpl;
+import de.mossgrabers.reaper.framework.daw.data.CursorTrackImpl;
 import de.mossgrabers.reaper.framework.daw.data.DrumDeviceImpl;
 import de.mossgrabers.reaper.framework.daw.data.EqualizerDeviceImpl;
 import de.mossgrabers.reaper.framework.daw.data.MasterTrackImpl;
@@ -69,6 +69,7 @@ public class ModelImpl extends AbstractModel
         this.transport = new TransportImpl (dataSetup, this, iniFiles);
         this.groove = new GrooveImpl (dataSetup);
         this.markerBank = new MarkerBankImpl (dataSetup, modelSetup.getNumMarkers ());
+        this.cursorTrack = new CursorTrackImpl (this);
 
         dataSetup.setTransport (this.transport);
 
@@ -158,7 +159,7 @@ public class ModelImpl extends AbstractModel
     {
         synchronized (this.cursorClips)
         {
-            return (INoteClip) this.cursorClips.computeIfAbsent (cols + "-" + rows, k -> new CursorClipImpl (this.dataSetup, cols, rows));
+            return this.cursorClips.computeIfAbsent (cols + "-" + rows, k -> new CursorClipImpl (this.dataSetup, cols, rows));
         }
     }
 
@@ -184,7 +185,7 @@ public class ModelImpl extends AbstractModel
 
     /** {@inheritDoc} */
     @Override
-    public IClip getClip ()
+    public INoteClip getCursorClip ()
     {
         if (this.cursorClips.isEmpty ())
             throw new FrameworkException ("No cursor clip created!");
@@ -197,23 +198,6 @@ public class ModelImpl extends AbstractModel
     public void ensureClip ()
     {
         this.getNoteClip (0, 0);
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public boolean isCursorTrackPinned ()
-    {
-        // Not supported
-        return false;
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void toggleCursorTrackPinned ()
-    {
-        // Not supported
     }
 
 
@@ -242,7 +226,7 @@ public class ModelImpl extends AbstractModel
     {
         synchronized (this.cursorClips)
         {
-            for (final IClip clip: this.cursorClips.values ())
+            for (final INoteClip clip: this.cursorClips.values ())
                 ((CursorClipImpl) clip).setNotes (notes);
         }
     }
@@ -257,7 +241,7 @@ public class ModelImpl extends AbstractModel
     {
         synchronized (this.cursorClips)
         {
-            for (final IClip clip: this.cursorClips.values ())
+            for (final INoteClip clip: this.cursorClips.values ())
                 ((CursorClipImpl) clip).setExistsValue (exists);
         }
     }
@@ -272,7 +256,7 @@ public class ModelImpl extends AbstractModel
     {
         synchronized (this.cursorClips)
         {
-            for (final IClip clip: this.cursorClips.values ())
+            for (final INoteClip clip: this.cursorClips.values ())
                 ((CursorClipImpl) clip).setPlayStartIntern (start);
         }
     }
@@ -287,7 +271,7 @@ public class ModelImpl extends AbstractModel
     {
         synchronized (this.cursorClips)
         {
-            for (final IClip clip: this.cursorClips.values ())
+            for (final INoteClip clip: this.cursorClips.values ())
                 ((CursorClipImpl) clip).setPlayEndIntern (end);
         }
     }
@@ -302,7 +286,7 @@ public class ModelImpl extends AbstractModel
     {
         synchronized (this.cursorClips)
         {
-            for (final IClip clip: this.cursorClips.values ())
+            for (final INoteClip clip: this.cursorClips.values ())
                 ((CursorClipImpl) clip).setPlayPosition (playPosition);
         }
     }
@@ -317,7 +301,7 @@ public class ModelImpl extends AbstractModel
     {
         synchronized (this.cursorClips)
         {
-            for (final IClip clip: this.cursorClips.values ())
+            for (final INoteClip clip: this.cursorClips.values ())
                 ((CursorClipImpl) clip).setColorValue (color);
         }
     }
@@ -332,7 +316,7 @@ public class ModelImpl extends AbstractModel
     {
         synchronized (this.cursorClips)
         {
-            for (final IClip clip: this.cursorClips.values ())
+            for (final INoteClip clip: this.cursorClips.values ())
                 ((CursorClipImpl) clip).setLoopEnabledState (isLoopEnabled);
         }
     }

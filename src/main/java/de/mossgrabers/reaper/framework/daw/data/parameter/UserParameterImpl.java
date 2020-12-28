@@ -39,8 +39,8 @@ public class UserParameterImpl extends ParameterImpl
     @Override
     protected void sendValue ()
     {
-        final ITrack selectedTrack = this.model.getSelectedTrack ();
-        if (selectedTrack instanceof ChannelImpl)
-            ((ChannelImpl) selectedTrack).sendPositionedItemOSC ("user/" + this.createCommand ("value"), this.value);
+        final ITrack cursorTrack = this.model.getCursorTrack ();
+        if (cursorTrack instanceof ChannelImpl)
+            ((ChannelImpl) cursorTrack).sendPositionedItemOSC ("user/" + this.createCommand ("value"), this.value);
     }
 }

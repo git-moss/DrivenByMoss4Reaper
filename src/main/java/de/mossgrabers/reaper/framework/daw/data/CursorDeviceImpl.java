@@ -104,6 +104,14 @@ public class CursorDeviceImpl extends SpecificDeviceImpl implements ICursorDevic
 
     /** {@inheritDoc} */
     @Override
+    public void setPinned (final boolean isPinned)
+    {
+        // Not supported
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
     public void selectPrevious ()
     {
         if (!this.canSelectPreviousFX ())

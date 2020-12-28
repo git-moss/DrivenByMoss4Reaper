@@ -78,7 +78,7 @@ public class SignalSettingImpl extends BaseSetting<JButton, Void> implements ISi
 
     /** {@inheritDoc} */
     @Override
-    public void addSignalObserver (IValueObserver<Void> observer)
+    public void addSignalObserver (final IValueObserver<Void> observer)
     {
         this.observers.add (observer);
     }
