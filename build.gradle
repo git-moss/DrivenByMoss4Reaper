@@ -10,7 +10,7 @@ plugins {
 sourceCompatibility = 15
 targetCompatibility = 15
 
-version = '10.9.6'
+version = '11.0.0'
 
 jar {
     manifest {
