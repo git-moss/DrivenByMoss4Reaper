@@ -21,6 +21,7 @@ import de.mossgrabers.reaper.controller.kontrol.mki.KontrolMkIS88ControllerInsta
 import de.mossgrabers.reaper.controller.kontrol.mkii.KontrolProtocolV1ControllerInstance;
 import de.mossgrabers.reaper.controller.kontrol.mkii.KontrolProtocolV2ControllerInstance;
 import de.mossgrabers.reaper.controller.launchkey.LaunchkeyMiniMk3ControllerInstance;
+import de.mossgrabers.reaper.controller.launchkey.LaunchkeyMk3ControllerInstance;
 import de.mossgrabers.reaper.controller.launchpad.LaunchpadMiniMkIIIControllerInstance;
 import de.mossgrabers.reaper.controller.launchpad.LaunchpadMkIIControllerInstance;
 import de.mossgrabers.reaper.controller.launchpad.LaunchpadProControllerInstance;
@@ -85,6 +86,7 @@ public class ControllerInstanceManager
         DEF_TO_CLASS.put (KontrolProtocolV1ControllerInstance.CONTROLLER_DEFINITION, KontrolProtocolV1ControllerInstance.class);
         DEF_TO_CLASS.put (KontrolProtocolV2ControllerInstance.CONTROLLER_DEFINITION, KontrolProtocolV2ControllerInstance.class);
         DEF_TO_CLASS.put (LaunchkeyMiniMk3ControllerInstance.CONTROLLER_DEFINITION, LaunchkeyMiniMk3ControllerInstance.class);
+        DEF_TO_CLASS.put (LaunchkeyMk3ControllerInstance.CONTROLLER_DEFINITION, LaunchkeyMk3ControllerInstance.class);
         DEF_TO_CLASS.put (LaunchpadMkIIControllerInstance.CONTROLLER_DEFINITION, LaunchpadMkIIControllerInstance.class);
         DEF_TO_CLASS.put (LaunchpadProControllerInstance.CONTROLLER_DEFINITION, LaunchpadProControllerInstance.class);
         DEF_TO_CLASS.put (LaunchpadXControllerInstance.CONTROLLER_DEFINITION, LaunchpadXControllerInstance.class);

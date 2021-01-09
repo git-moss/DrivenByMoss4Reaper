@@ -4,8 +4,8 @@
 
 package de.mossgrabers.reaper.controller.launchkey;
 
-import de.mossgrabers.controller.launchkey.LaunchkeyMiniMk3ControllerDefinition;
-import de.mossgrabers.controller.launchkey.LaunchkeyMiniMk3ControllerSetup;
+import de.mossgrabers.controller.launchkey.mini.LaunchkeyMiniMk3ControllerDefinition;
+import de.mossgrabers.controller.launchkey.mini.LaunchkeyMiniMk3ControllerSetup;
 import de.mossgrabers.framework.controller.IControllerSetup;
 import de.mossgrabers.reaper.communication.MessageSender;
 import de.mossgrabers.reaper.controller.AbstractControllerInstance;
