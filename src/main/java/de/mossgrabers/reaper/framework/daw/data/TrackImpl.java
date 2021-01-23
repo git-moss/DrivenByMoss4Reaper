@@ -6,6 +6,7 @@ package de.mossgrabers.reaper.framework.daw.data;
 
 import de.mossgrabers.framework.daw.constants.AutomationMode;
 import de.mossgrabers.framework.daw.constants.RecordQuantization;
+import de.mossgrabers.framework.daw.data.IParameter;
 import de.mossgrabers.framework.daw.data.ITrack;
 import de.mossgrabers.framework.daw.data.bank.ISlotBank;
 import de.mossgrabers.framework.daw.resource.ChannelType;
@@ -66,6 +67,7 @@ public class TrackImpl extends ChannelImpl implements ITrack
     private int                           depth;
     private boolean                       recordQuantizationNoteLength;
     private RecordQuantization            recordQuantization;
+    private final IParameter              crossfadeParameter;
 
 
     /**
@@ -84,6 +86,7 @@ public class TrackImpl extends ChannelImpl implements ITrack
 
         this.trackBank = trackBank;
         this.slotBank = new SlotBankImpl (dataSetup, (SceneBankImpl) trackBank.getSceneBank (), index, numScenes);
+        this.crossfadeParameter = new CrossfadeParameter (this.valueChanger, index);
     }
 
 
@@ -105,6 +108,7 @@ public class TrackImpl extends ChannelImpl implements ITrack
 
         this.trackBank = trackBank;
         this.slotBank = new SlotBankImpl (dataSetup, (SceneBankImpl) trackBank.getSceneBank (), index, numScenes);
+        this.crossfadeParameter = new CrossfadeParameter (this.valueChanger, index);
     }
 
 
@@ -121,6 +125,14 @@ public class TrackImpl extends ChannelImpl implements ITrack
     public void setName (final String name)
     {
         this.sendPositionedItemOSC ("name", name);
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public IParameter getCrossfadeParameter ()
+    {
+        return this.crossfadeParameter;
     }
 
 
@@ -328,56 +340,6 @@ public class TrackImpl extends ChannelImpl implements ITrack
     public AutomationMode getAutomation ()
     {
         return this.automationMode;
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void changeCrossfadeModeAsNumber (final int control)
-    {
-        // Not supported
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public String getCrossfadeMode ()
-    {
-        // Not supported
-        return "AB";
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void setCrossfadeMode (final String mode)
-    {
-        // Not supported
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public int getCrossfadeModeAsNumber ()
-    {
-        // Not supported
-        return 1;
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void setCrossfadeModeAsNumber (final int modeValue)
-    {
-        // Not supported
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void toggleCrossfadeMode ()
-    {
-        // Not supported
     }
 
 

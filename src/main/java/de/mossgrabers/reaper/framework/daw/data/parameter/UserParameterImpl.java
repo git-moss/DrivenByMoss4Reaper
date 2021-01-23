@@ -5,9 +5,9 @@
 package de.mossgrabers.reaper.framework.daw.data.parameter;
 
 import de.mossgrabers.framework.daw.IModel;
-import de.mossgrabers.framework.daw.data.ITrack;
+import de.mossgrabers.framework.daw.data.ICursorTrack;
 import de.mossgrabers.reaper.framework.daw.DataSetupEx;
-import de.mossgrabers.reaper.framework.daw.data.ChannelImpl;
+import de.mossgrabers.reaper.framework.daw.data.CursorTrackImpl;
 
 
 /**
@@ -39,8 +39,8 @@ public class UserParameterImpl extends ParameterImpl
     @Override
     protected void sendValue ()
     {
-        final ITrack cursorTrack = this.model.getCursorTrack ();
-        if (cursorTrack instanceof ChannelImpl)
-            ((ChannelImpl) cursorTrack).sendPositionedItemOSC ("user/" + this.createCommand ("value"), this.value);
+        final ICursorTrack cursorTrack = this.model.getCursorTrack ();
+        if (cursorTrack instanceof CursorTrackImpl)
+            ((CursorTrackImpl) cursorTrack).sendPositionedItemOSC ("user/" + this.createCommand ("value"), this.value);
     }
 }

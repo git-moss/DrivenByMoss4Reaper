@@ -44,6 +44,15 @@ public class CursorTrackImpl implements ICursorTrack
 
     /** {@inheritDoc} */
     @Override
+    public IParameter getCrossfadeParameter ()
+    {
+        final ITrack selectedTrack = this.getSelectedTrack ();
+        return selectedTrack != null ? selectedTrack.getCrossfadeParameter () : EmptyParameter.INSTANCE;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
     public boolean isGroup ()
     {
         final ITrack selectedTrack = this.getSelectedTrack ();
@@ -162,64 +171,6 @@ public class CursorTrackImpl implements ICursorTrack
     {
         final ITrack selectedTrack = this.getSelectedTrack ();
         return selectedTrack != null && selectedTrack.canHoldAudioData ();
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public String getCrossfadeMode ()
-    {
-        final ITrack selectedTrack = this.getSelectedTrack ();
-        return selectedTrack != null ? selectedTrack.getCrossfadeMode () : "AB";
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void changeCrossfadeModeAsNumber (final int control)
-    {
-        final ITrack selectedTrack = this.getSelectedTrack ();
-        if (selectedTrack != null)
-            selectedTrack.changeCrossfadeModeAsNumber (control);
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void setCrossfadeMode (final String mode)
-    {
-        final ITrack selectedTrack = this.getSelectedTrack ();
-        if (selectedTrack != null)
-            selectedTrack.setCrossfadeMode (mode);
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public int getCrossfadeModeAsNumber ()
-    {
-        final ITrack selectedTrack = this.getSelectedTrack ();
-        return selectedTrack != null ? selectedTrack.getCrossfadeModeAsNumber () : 0;
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void setCrossfadeModeAsNumber (final int modeValue)
-    {
-        final ITrack selectedTrack = this.getSelectedTrack ();
-        if (selectedTrack != null)
-            selectedTrack.setCrossfadeModeAsNumber (modeValue);
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void toggleCrossfadeMode ()
-    {
-        final ITrack selectedTrack = this.getSelectedTrack ();
-        if (selectedTrack != null)
-            selectedTrack.toggleCrossfadeMode ();
     }
 
 
@@ -849,5 +800,19 @@ public class CursorTrackImpl implements ICursorTrack
         // Is the master track selected?
         final IMasterTrack masterTrack = this.model.getMasterTrack ();
         return masterTrack.isSelected () ? masterTrack : null;
+    }
+
+
+    /**
+     * Send an item command with a position.
+     *
+     * @param command The command
+     * @param value The value
+     */
+    public void sendPositionedItemOSC (final String command, final double value)
+    {
+        final ITrack selectedTrack = this.getSelectedTrack ();
+        if (selectedTrack != null)
+            ((ChannelImpl) selectedTrack).sendPositionedItemOSC (command, value);
     }
 }

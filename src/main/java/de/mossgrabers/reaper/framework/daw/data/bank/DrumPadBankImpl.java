@@ -10,6 +10,7 @@ import de.mossgrabers.framework.daw.data.IDrumPad;
 import de.mossgrabers.framework.daw.data.ILayer;
 import de.mossgrabers.framework.daw.data.bank.IDrumPadBank;
 import de.mossgrabers.framework.daw.data.bank.ISceneBank;
+import de.mossgrabers.framework.daw.data.empty.EmptyDrumPad;
 import de.mossgrabers.reaper.framework.daw.DataSetupEx;
 import de.mossgrabers.reaper.framework.daw.data.DrumPadImpl;
 
@@ -19,9 +20,9 @@ import de.mossgrabers.reaper.framework.daw.data.DrumPadImpl;
  *
  * @author J&uuml;rgen Mo&szlig;graber
  */
-public class DrumPadBankImpl extends AbstractBankImpl<IDrumPad> implements IDrumPadBank
+public class DrumPadBankImpl extends AbstractPagedBankImpl<DrumPadImpl, ILayer> implements IDrumPadBank
 {
-    private int numSends;
+    private final int numSends;
 
 
     /**
@@ -33,12 +34,50 @@ public class DrumPadBankImpl extends AbstractBankImpl<IDrumPad> implements IDrum
      */
     public DrumPadBankImpl (final DataSetupEx dataSetup, final int numLayers, final int numSends)
     {
-        super (dataSetup, numLayers);
+        super (dataSetup, numLayers, EmptyDrumPad.INSTANCE);
 
         this.numSends = numSends;
 
-        for (int i = 0; i < this.pageSize; i++)
-            this.items.add (new DrumPadImpl (this.dataSetup, i, this.numSends));
+        if (numLayers == 0)
+            return;
+
+        // Fake 128 drum pads which covers the whole MIDI range
+        this.setItemCount (128);
+
+        for (int i = 0; i < 128; i++)
+        {
+            final DrumPadImpl drumPad = this.getUnpagedItem (i);
+            drumPad.setPosition (i);
+            drumPad.setIndex (numLayers > 0 ? i % numLayers : i);
+            drumPad.setInternalName ("Drum " + i);
+        }
+
+        this.setSelectedDrumPad (36);
+        this.scrollTo (36);
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public IDrumPad getItem (final int index)
+    {
+        return (IDrumPad) super.getItem (index);
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public IDrumPad getSelectedItem ()
+    {
+        return (IDrumPad) super.getSelectedItem ();
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    protected IDrumPad createItem (int position)
+    {
+        return new DrumPadImpl (this.dataSetup, this, position, this.numSends);
     }
 
 
@@ -101,5 +140,25 @@ public class DrumPadBankImpl extends AbstractBankImpl<IDrumPad> implements IDrum
     {
         // Not supported
         return false;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void scrollTo (final int position, final boolean adjustPage)
+    {
+        this.setBankOffset (position / this.pageSize * this.pageSize);
+    }
+
+
+    /**
+     * Change the selection to the drum pad at the given position.
+     *
+     * @param position The drum pads position
+     */
+    public void setSelectedDrumPad (final int position)
+    {
+        for (int i = 0; i < this.itemCount; i++)
+            this.getUnpagedItem (i).setSelected (i == position);
     }
 }

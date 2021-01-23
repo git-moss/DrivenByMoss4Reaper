@@ -7,31 +7,38 @@ package de.mossgrabers.reaper.framework.daw.data;
 import de.mossgrabers.framework.controller.color.ColorEx;
 import de.mossgrabers.framework.daw.data.IDrumPad;
 import de.mossgrabers.reaper.framework.daw.DataSetupEx;
+import de.mossgrabers.reaper.framework.daw.data.bank.DrumPadBankImpl;
 
 import java.util.function.Supplier;
 
 
 /**
- * The data of a channel.
+ * The data of a drum pad.
  *
  * @author J&uuml;rgen Mo&szlig;graber
  */
 public class DrumPadImpl extends ChannelImpl implements IDrumPad
 {
-    private Supplier<ColorEx> supplier;
+    private final DrumPadBankImpl bank;
+
+    private Supplier<ColorEx>     supplier;
 
 
     /**
      * Constructor.
      *
      * @param dataSetup Some configuration variables
+     * @param bank The bank for changing the selection
      * @param index The index of the channel in the page
      * @param numSends The number of sends of a bank
      */
-    public DrumPadImpl (final DataSetupEx dataSetup, final int index, final int numSends)
+    public DrumPadImpl (final DataSetupEx dataSetup, final DrumPadBankImpl bank, final int index, final int numSends)
     {
         super (dataSetup, index, numSends);
 
+        this.bank = bank;
+
+        // Always existing
         this.setExists (true);
     }
 
@@ -40,7 +47,7 @@ public class DrumPadImpl extends ChannelImpl implements IDrumPad
     @Override
     public void select ()
     {
-        // Intentionally empty
+        this.bank.setSelectedDrumPad (this.getPosition ());
     }
 
 

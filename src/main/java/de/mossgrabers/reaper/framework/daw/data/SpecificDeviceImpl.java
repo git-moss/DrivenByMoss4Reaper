@@ -65,7 +65,7 @@ public class SpecificDeviceImpl extends DeviceImpl implements ISpecificDevice
         }
 
         // Always empty
-        this.layerBank = new LayerBankImpl (checkedNumDeviceLayers);
+        this.layerBank = new LayerBankImpl (dataSetup, checkedNumDeviceLayers);
 
         // Monitor the drum pad layers of a container device (if any)
         this.drumPadBank = new DrumPadBankImpl (dataSetup, checkedNumDrumPadLayers, numSends);
@@ -165,8 +165,8 @@ public class SpecificDeviceImpl extends DeviceImpl implements ISpecificDevice
     @Override
     public boolean hasDrumPads ()
     {
-        // Not supported
-        return false;
+        // Always true to support drum sequencers
+        return true;
     }
 
 

@@ -8,6 +8,8 @@ import de.mossgrabers.framework.daw.DAWColor;
 import de.mossgrabers.framework.daw.data.ILayer;
 import de.mossgrabers.framework.daw.data.bank.ILayerBank;
 import de.mossgrabers.framework.daw.data.bank.ISceneBank;
+import de.mossgrabers.reaper.framework.daw.DataSetupEx;
+import de.mossgrabers.reaper.framework.daw.data.LayerImpl;
 
 
 /**
@@ -21,19 +23,15 @@ public class LayerBankImpl extends AbstractBankImpl<ILayer> implements ILayerBan
     /**
      * Constructor.
      *
+     * @param dataSetup Some configuration variables
      * @param numDeviceLayers The number of layers
      */
-    public LayerBankImpl (final int numDeviceLayers)
+    public LayerBankImpl (final DataSetupEx dataSetup, final int numDeviceLayers)
     {
-        super (null, 0);
-    }
+        super (dataSetup, numDeviceLayers);
 
-
-    /** {@inheritDoc} */
-    @Override
-    public boolean hasZeroLayers ()
-    {
-        return true;
+        for (int i = 0; i < this.pageSize; i++)
+            this.items.add (new LayerImpl (this.dataSetup, i, numDeviceLayers));
     }
 
 
