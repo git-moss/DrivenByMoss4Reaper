@@ -19,7 +19,6 @@ public class LogModel
     private JTextArea     logMessage;
     private StringBuilder buffer     = new StringBuilder ();
 
-
     /**
      * Constructor.
      */
@@ -55,7 +54,8 @@ public class LogModel
     {
         this.info (message);
         final StringWriter writer = new StringWriter ();
-        ex.printStackTrace (new PrintWriter (writer));
+        if (ex != null)
+            ex.printStackTrace (new PrintWriter (writer));
         this.info (writer.toString ());
     }
 

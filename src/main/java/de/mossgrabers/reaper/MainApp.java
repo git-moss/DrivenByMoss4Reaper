@@ -72,7 +72,6 @@ public class MainApp implements MessageSender, AppCallback, WindowManager
     private String                    iniPath;
     private final IniFiles            iniFiles           = new IniFiles ();
 
-
     /**
      * Constructor.
      *
@@ -138,7 +137,7 @@ public class MainApp implements MessageSender, AppCallback, WindowManager
         }
         catch (final Throwable ex)
         {
-            this.logModel.error ("Could not LibUsb library.", ex.getCause ());
+            this.logModel.error ("Could not LibUsb library.", ex);
         }
     }
 
