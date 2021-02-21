@@ -8,6 +8,7 @@ import de.mossgrabers.framework.controller.hardware.IHwSurfaceFactory;
 import de.mossgrabers.framework.daw.IHost;
 import de.mossgrabers.framework.daw.IMemoryBlock;
 import de.mossgrabers.framework.daw.constants.Capability;
+import de.mossgrabers.framework.daw.data.IDeviceMetadata;
 import de.mossgrabers.framework.graphics.IBitmap;
 import de.mossgrabers.framework.graphics.IImage;
 import de.mossgrabers.framework.osc.IOpenSoundControlCallback;
@@ -17,6 +18,7 @@ import de.mossgrabers.framework.osc.IOpenSoundControlServer;
 import de.mossgrabers.framework.usb.IUsbDevice;
 import de.mossgrabers.framework.usb.UsbException;
 import de.mossgrabers.framework.usb.UsbMatcher;
+import de.mossgrabers.reaper.framework.device.DeviceManager;
 import de.mossgrabers.reaper.framework.graphics.BitmapImpl;
 import de.mossgrabers.reaper.framework.graphics.SVGImage;
 import de.mossgrabers.reaper.framework.hardware.HwSurfaceFactoryImpl;
@@ -290,5 +292,21 @@ public class HostImpl implements IHost
         final HwSurfaceFactoryImpl surfaceFactory = new HwSurfaceFactoryImpl (this);
         surfaceFactory.setDimension (width, height);
         return surfaceFactory;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public List<IDeviceMetadata> getInstrumentMetadata ()
+    {
+        return new ArrayList<> (DeviceManager.get ().getInstruments ());
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public List<IDeviceMetadata> getAudioEffectMetadata ()
+    {
+        return new ArrayList<> (DeviceManager.get ().getEffects ());
     }
 }

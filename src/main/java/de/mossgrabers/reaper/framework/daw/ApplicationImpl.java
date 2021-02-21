@@ -243,7 +243,7 @@ public class ApplicationImpl extends BaseImpl implements IApplication
     @Override
     public void addEffectTrack ()
     {
-        this.sender.invokeAction (Actions.INSERT_NEW_TRACK_AT_END);
+        this.sender.invokeAction (Actions.INSERT_NEW_TRACK);
     }
 
 
@@ -251,7 +251,7 @@ public class ApplicationImpl extends BaseImpl implements IApplication
     @Override
     public void addInstrumentTrack ()
     {
-        this.sender.invokeAction (Actions.INSERT_NEW_TRACK_FROM_TEMPLATE);
+        this.sender.invokeAction (Actions.INSERT_NEW_TRACK);
     }
 
 

@@ -46,6 +46,8 @@ public class DeviceManager
     private static final Set<String>     NON_CATEGORIES                 = Set.of ("ix", "till", "loser", "liteon", "sstillwell", "teej", "schwa", "u-he", "remaincalm_org");
 
     private final List<Device>           devices                        = new ArrayList<> ();
+    private final List<Device>           instruments                    = new ArrayList<> ();
+    private final List<Device>           effects                        = new ArrayList<> ();
     private final List<String>           categories                     = new ArrayList<> ();
     private final List<String>           vendors                        = new ArrayList<> ();
     private final List<DeviceCollection> collections                    = new ArrayList<> ();
@@ -97,6 +99,34 @@ public class DeviceManager
         synchronized (this.devices)
         {
             return new ArrayList<> (this.devices);
+        }
+    }
+
+
+    /**
+     * Get all instrument devices.
+     *
+     * @return The instrument devices
+     */
+    public List<Device> getInstruments ()
+    {
+        synchronized (this.devices)
+        {
+            return new ArrayList<> (this.instruments);
+        }
+    }
+
+
+    /**
+     * Get all effect devices.
+     *
+     * @return The effect devices
+     */
+    public List<Device> getEffects ()
+    {
+        synchronized (this.devices)
+        {
+            return new ArrayList<> (this.effects);
         }
     }
 
@@ -250,6 +280,14 @@ public class DeviceManager
                 this.parseCollectionFilters (iniFiles.getIniFxFolders ());
 
             this.devices.sort ( (d1, d2) -> d1.getDisplayName ().compareToIgnoreCase (d2.getDisplayName ()));
+
+            this.devices.forEach (device -> {
+                DeviceType type = device.getType ();
+                if (type == DeviceType.INSTRUMENT)
+                    this.instruments.add (device);
+                else if (type == DeviceType.AUDIO_EFFECT)
+                    this.effects.add (device);
+            });
         }
     }
 
@@ -503,6 +541,8 @@ public class DeviceManager
     private void clearCache ()
     {
         this.devices.clear ();
+        this.instruments.clear ();
+        this.effects.clear ();
         this.categories.clear ();
         this.vendors.clear ();
         this.collections.clear ();

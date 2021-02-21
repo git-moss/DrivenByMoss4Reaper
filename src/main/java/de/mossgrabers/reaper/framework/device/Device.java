@@ -4,6 +4,8 @@
 
 package de.mossgrabers.reaper.framework.device;
 
+import de.mossgrabers.framework.daw.data.IDeviceMetadata;
+
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -14,7 +16,7 @@ import java.util.Set;
  *
  * @author J&uuml;rgen Mo&szlig;graber
  */
-public class Device
+public class Device implements IDeviceMetadata
 {
     private final String         name;
     private final String         module;
@@ -41,11 +43,8 @@ public class Device
     }
 
 
-    /**
-     * Get the name of the device.
-     *
-     * @return The name
-     */
+    /** {@inheritDoc} */
+    @Override
     public String getName ()
     {
         return this.name;

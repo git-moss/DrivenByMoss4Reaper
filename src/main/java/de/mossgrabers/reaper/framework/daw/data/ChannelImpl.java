@@ -6,6 +6,7 @@ package de.mossgrabers.reaper.framework.daw.data;
 
 import de.mossgrabers.framework.controller.color.ColorEx;
 import de.mossgrabers.framework.daw.data.IChannel;
+import de.mossgrabers.framework.daw.data.IDeviceMetadata;
 import de.mossgrabers.framework.daw.data.IParameter;
 import de.mossgrabers.framework.daw.data.bank.ISendBank;
 import de.mossgrabers.framework.daw.resource.ChannelType;
@@ -16,6 +17,7 @@ import de.mossgrabers.reaper.framework.daw.DataSetupEx;
 import de.mossgrabers.reaper.framework.daw.data.bank.SendBankImpl;
 import de.mossgrabers.reaper.framework.daw.data.parameter.ParameterImpl;
 import de.mossgrabers.reaper.framework.daw.data.parameter.TrackParameterImpl;
+import de.mossgrabers.reaper.framework.device.Device;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -599,6 +601,14 @@ public class ChannelImpl extends ItemImpl implements IChannel
     public void addColorObserver (final IValueObserver<ColorEx> observer)
     {
         this.colorObservers.add (observer);
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void addDevice (final IDeviceMetadata metadata)
+    {
+        this.sender.processStringArg (Processor.DEVICE, "add/0", ((Device) metadata).getCreationName ());
     }
 
 

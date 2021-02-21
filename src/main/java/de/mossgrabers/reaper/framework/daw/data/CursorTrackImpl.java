@@ -8,6 +8,7 @@ import de.mossgrabers.framework.controller.color.ColorEx;
 import de.mossgrabers.framework.daw.IModel;
 import de.mossgrabers.framework.daw.constants.RecordQuantization;
 import de.mossgrabers.framework.daw.data.ICursorTrack;
+import de.mossgrabers.framework.daw.data.IDeviceMetadata;
 import de.mossgrabers.framework.daw.data.IMasterTrack;
 import de.mossgrabers.framework.daw.data.IParameter;
 import de.mossgrabers.framework.daw.data.ITrack;
@@ -777,6 +778,16 @@ public class CursorTrackImpl implements ICursorTrack
     public void setPinned (final boolean isPinned)
     {
         // Pinning is not supported
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void addDevice (final IDeviceMetadata metadata)
+    {
+        final ITrack selectedTrack = this.getSelectedTrack ();
+        if (selectedTrack != null)
+            ((ChannelImpl) selectedTrack).addDevice (metadata);
     }
 
 
