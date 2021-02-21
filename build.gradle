@@ -10,7 +10,7 @@ plugins {
 sourceCompatibility = 15
 targetCompatibility = 15
 
-version = '11.5.3'
+version = '11.6.0'
 
 jar {
     manifest {
@@ -56,10 +56,7 @@ installDist {
             fileset(dir: sourceDir) {
                 include(name: 'purejavahidapi-*-javadoc.jar')
                 include(name: 'purejavahidapi-*-sources.jar')
-                include(name: 'libusb4java-1.3.0-linux-aarch64.jar')
-                include(name: 'libusb4java-1.3.0-linux-arm.jar')
-                include(name: 'libusb4java-1.3.0-linux-x86.jar')
-                include(name: 'libusb4java-1.3.0-win32-x86.jar')
+                include(name: 'libusb4java-*.jar')
             }
         }
         ant.move (todir: javaLibsDir) {
@@ -81,19 +78,20 @@ installDist {
         String name = 'build/DrivenByMoss4Reaper-' + version
 
         // Windows
-        ant.zip (destfile: name + '-Windows.zip') {
+        ant.zip (destfile: name + '-Windows.zip') {            
             fileset(dir: destinationDir)
+            zipfileset(prefix: 'drivenbymoss-libs', dir: new File ('libs', 'libusb4java')) {
+                include(name: '**/libusb4java-*-win32-x86-64.jar')
+            }
             fileset(dir: new File ('runtime', 'windows'))
         }
 
-        // Mac
-        String macosTar = name + '-Macos.tar.gz'
+        // Mac - Intel
+        String macosTar = name + '-Macos-x86.tar.gz'
         ant.tar (destfile: macosTar, compression: 'gzip') {
-            tarfileset(dir: destinationDir) {
-                exclude(name: '**/libusb4java-1.3.0-darwin-x86-64.jar')
-            }
-            tarfileset(dir: new File ('libs', 'macos-fix')) {
-                include(name: '**/libusb4java-1.3.0-darwin-x86-64-FIXED.jar')
+            tarfileset(dir: destinationDir)
+            tarfileset(prefix: 'drivenbymoss-libs', dir: new File ('libs', 'libusb4java')) {
+                include(name: '**/libusb4java-*-darwin.jar')
             }
             tarfileset(dir: new File ('runtime', 'macos'), filemode: 664) {
                 exclude(name: '**/bin/java')
@@ -107,10 +105,32 @@ installDist {
             }
         }
 
+        // Mac - ARM
+        String macosArmTar = name + '-Macos-ARM.tar.gz'
+        ant.tar (destfile: macosArmTar, compression: 'gzip') {
+            tarfileset(dir: destinationDir)
+            tarfileset(prefix: 'drivenbymoss-libs', dir: new File ('libs', 'libusb4java')) {
+                include(name: '**/libusb4java-*-darwin.jar')
+            }
+            tarfileset(dir: new File ('runtime', 'macos-arm'), filemode: 664) {
+                exclude(name: '**/bin/java')
+                exclude(name: '**/bin/keytool')
+                exclude(name: '**/lib/jspawnhelper')
+            }
+            tarfileset(dir: new File ('runtime', 'macos-arm'), filemode: 775) {
+                include(name: '**/bin/java')
+                include(name: '**/bin/keytool')
+                include(name: '**/lib/jspawnhelper')
+            }
+        }
+
         // Linux
         String linuxTar = name + '-Linux.tar.gz'
         ant.tar (destfile: linuxTar, compression: 'gzip') {
             tarfileset(dir: destinationDir)
+            tarfileset(prefix: 'drivenbymoss-libs', dir: new File ('libs', 'libusb4java')) {
+                include(name: '**/libusb4java-*-linux-x86-64.jar')
+            }
             tarfileset(dir: new File ('runtime', 'linux'), filemode: 664) {
                 exclude(name: '**/bin/java')
                 exclude(name: '**/bin/keytool')
@@ -140,12 +160,12 @@ repositories {
 dependencies {
     implementation group: 'org.usb4java', name: 'usb4java', version: '1.3.0'
     implementation group: 'com.illposed.osc', name: 'javaosc-core', version: '0.7'
-    implementation group: 'uk.co.xfactory-librarians', name: 'coremidi4j', version: '1.5'
+    implementation group: 'uk.co.xfactory-librarians', name: 'coremidi4j', version: '1.6'
     implementation group: 'com.nikhaldimann', name: 'inieditor', version: 'r6'
     implementation group: 'net.java.dev.jna', name: 'jna', version: '5.7.0'
     implementation group: 'net.java.dev.jna', name: 'jna-platform', version: '5.7.0'
     implementation group: 'com.weblookandfeel', name: 'svg-salamander', version: '1.1.2.2'
-    implementation fileTree(dir: 'libs', include: '*.jar')
+    implementation fileTree(dir: 'libs', include: '**/*.jar')
 }
 
 // Necessary to remove xml-api dependency introduced by Batik from Eclipse (it is already part of Java 11)
