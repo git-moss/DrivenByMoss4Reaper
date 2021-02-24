@@ -19,7 +19,7 @@ import java.util.Set;
  */
 public class Device implements IDeviceMetadata
 {
-    private final static Set<DeviceFileType> INSTRUMENT_TYPES = EnumSet.of (DeviceFileType.VSTI, DeviceFileType.VST3I, DeviceFileType.AUI);
+    private static final Set<DeviceFileType> INSTRUMENT_TYPES = EnumSet.of (DeviceFileType.VSTI, DeviceFileType.VST3I, DeviceFileType.AUI);
 
     private final String                     name;
     private final String                     module;
@@ -27,6 +27,7 @@ public class Device implements IDeviceMetadata
     private final String                     creationName;
     private String                           vendor;
     private final Set<String>                categories       = new HashSet<> (1);
+
 
     /**
      * Constructor.
@@ -50,6 +51,14 @@ public class Device implements IDeviceMetadata
     public String getName ()
     {
         return this.name;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public String getFullName ()
+    {
+        return String.format ("%s (%s)", this.name, this.fileType.getName ());
     }
 
 
