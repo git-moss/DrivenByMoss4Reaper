@@ -26,23 +26,28 @@ public class IniFiles
     private static final String REAPER_MAIN             = "REAPER.ini";
     private static final String REAPER_MAIN2            = "reaper.ini";
     private static final String VST_PLUGINS_64          = "reaper-vstplugins64.ini";
+    private static final String VST_PLUGINS_ARM64       = "reaper-vstplugins_arm64.ini";
     private static final String AU_PLUGINS_64           = "reaper-auplugins64.ini";
+    private static final String AU_PLUGINS_ARM64        = "reaper-auplugins_arm64.ini";
     private static final String FX_TAGS                 = "reaper-fxtags.ini";
     private static final String FX_FOLDERS              = "reaper-fxfolders.ini";
 
     private final IniEditor     iniReaperMain           = new IniEditor ();
     private final IniEditor     iniVstPlugins64         = new IniEditor ();
+    private final IniEditor     iniVstPluginsARM64      = new IniEditor ();
     private final IniEditor     iniFxTags               = new IniEditor ();
     private final IniEditor     iniFxFolders            = new IniEditor ();
     private String              iniAuPlugins64Content;
+    private String              iniAuPluginsARM64Content;
 
     private String              iniPath;
 
     private boolean             isVstPresent;
+    private boolean             isVstARMPresent;
     private boolean             isAuPresent             = false;
+    private boolean             isAuARMPresent          = false;
     private boolean             isFxTagsPresent;
     private boolean             isFxFoldersPresent;
-
 
     /**
      * Constructor.
@@ -88,7 +93,8 @@ public class IniFiles
 
         this.isVstPresent = loadINIFile (iniPath + File.separator + VST_PLUGINS_64, this.iniVstPlugins64, logModel);
 
-        if (OperatingSystem.get () == OperatingSystem.MAC)
+        final OperatingSystem os = OperatingSystem.get ();
+        if (os == OperatingSystem.MAC || os == OperatingSystem.MAC_ARM)
         {
             final File iniAuPlugins64 = new File (iniPath + File.separator + AU_PLUGINS_64);
             if (iniAuPlugins64.exists ())
@@ -101,6 +107,25 @@ public class IniFiles
                 catch (final IOException ex)
                 {
                     logModel.error ("Could not load AU configuration file.", ex);
+                }
+            }
+
+            if (os == OperatingSystem.MAC_ARM)
+            {
+                this.isVstARMPresent = loadINIFile (iniPath + File.separator + VST_PLUGINS_ARM64, this.iniVstPluginsARM64, logModel);
+
+                final File iniAuPluginsARM64 = new File (iniPath + File.separator + AU_PLUGINS_ARM64);
+                if (iniAuPluginsARM64.exists ())
+                {
+                    try
+                    {
+                        this.iniAuPluginsARM64Content = Files.readString (iniAuPluginsARM64.toPath (), Charset.defaultCharset ());
+                        this.isAuARMPresent = true;
+                    }
+                    catch (final IOException ex)
+                    {
+                        logModel.error ("Could not load AU configuration file.", ex);
+                    }
                 }
             }
         }
@@ -122,6 +147,17 @@ public class IniFiles
 
 
     /**
+     * Get the VST ARM plugins config file.
+     *
+     * @return The file
+     */
+    public IniEditor getIniVstPluginsARM64 ()
+    {
+        return this.iniVstPluginsARM64;
+    }
+
+
+    /**
      * Get the content of the AU plugins config file.
      *
      * @return The file content
@@ -129,6 +165,17 @@ public class IniFiles
     public String getIniAuPlugins64 ()
     {
         return this.iniAuPlugins64Content;
+    }
+
+
+    /**
+     * Get the content of the AU ARM plugins config file.
+     *
+     * @return The file content
+     */
+    public String getIniAuPluginsARM64 ()
+    {
+        return this.iniAuPluginsARM64Content;
     }
 
 
@@ -166,6 +213,17 @@ public class IniFiles
 
 
     /**
+     * Is the VST ARM plugins config file present?
+     *
+     * @return True if successfully loaded
+     */
+    public boolean isVstARMPresent ()
+    {
+        return this.isVstARMPresent;
+    }
+
+
+    /**
      * Is the AU plugins config file present?
      *
      * @return True if successfully loaded
@@ -173,6 +231,17 @@ public class IniFiles
     public boolean isAuPresent ()
     {
         return this.isAuPresent;
+    }
+
+
+    /**
+     * Is the AU ARM plugins config file present?
+     *
+     * @return True if successfully loaded
+     */
+    public boolean isAuARMPresent ()
+    {
+        return this.isAuARMPresent;
     }
 
 

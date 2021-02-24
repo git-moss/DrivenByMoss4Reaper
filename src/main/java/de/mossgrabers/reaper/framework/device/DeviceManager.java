@@ -54,7 +54,6 @@ public class DeviceManager
 
     private static final DeviceManager   INSTANCE                       = new DeviceManager ();
 
-
     /**
      * Private due to singleton.
      */
@@ -258,9 +257,13 @@ public class DeviceManager
 
             // Load all 64 bit devices
             if (iniFiles.isVstPresent ())
-                this.parseVstDevicesFile (iniFiles.getIniVstPlugins64 ());
+                this.parseVstDevicesFile (Device.Architecture.x64, iniFiles.getIniVstPlugins64 ());
+            if (iniFiles.isVstARMPresent ())
+                this.parseVstDevicesFile (Device.Architecture.ARM, iniFiles.getIniVstPluginsARM64 ());
             if (iniFiles.isAuPresent ())
-                this.parseAuDevicesFile (iniFiles.getIniAuPlugins64 ());
+                this.parseAuDevicesFile (Device.Architecture.x64, iniFiles.getIniAuPlugins64 ());
+            if (iniFiles.isAuARMPresent ())
+                this.parseAuDevicesFile (Device.Architecture.ARM, iniFiles.getIniAuPluginsARM64 ());
 
             final Set<String> categoriesSet = new TreeSet<> ();
             final Set<String> vendorsSet = new TreeSet<> ();
@@ -357,14 +360,15 @@ public class DeviceManager
     /**
      * Parses the VST 64 devices file.
      *
+     * @param architecture The processor architecture for which the device is compiled
      * @param iniFile The ini file from which to parse
      */
-    private void parseVstDevicesFile (final IniEditor iniFile)
+    private void parseVstDevicesFile (final Device.Architecture architecture, final IniEditor iniFile)
     {
         final Map<String, String> section = iniFile.getSectionMap ("vstcache");
         for (final Entry<String, String> entry: section.entrySet ())
         {
-            final Device device = parseVstDevice (entry.getKey (), entry.getValue ());
+            final Device device = parseVstDevice (architecture, entry.getKey (), entry.getValue ());
             if (device != null)
                 this.devices.add (device);
         }
@@ -374,9 +378,10 @@ public class DeviceManager
     /**
      * Parses the AU 64 devices file content.
      *
+     * @param architecture The processor architecture for which the device is compiled
      * @param iniFileContent The content of the INI file from which to parse
      */
-    private void parseAuDevicesFile (final String iniFileContent)
+    private void parseAuDevicesFile (final Device.Architecture architecture, final String iniFileContent)
     {
         iniFileContent.lines ().forEach (line -> {
 
@@ -387,7 +392,7 @@ public class DeviceManager
             if (split.length != 2)
                 return;
 
-            final Device device = parseAuDevice (split[0], split[1]);
+            final Device device = parseAuDevice (architecture, split[0], split[1]);
             if (device != null)
                 this.devices.add (device);
 
@@ -480,12 +485,13 @@ public class DeviceManager
 
     /**
      * Parse the information of a VST device.
-     *
+     * 
+     * @param architecture The processor architecture for which the device is compiled
      * @param module The module name
      * @param nameAndCompany The name and company
      * @return The created device or null if the information cannot be parsed
      */
-    private static Device parseVstDevice (final String module, final String nameAndCompany)
+    private static Device parseVstDevice (final Device.Architecture architecture, final String module, final String nameAndCompany)
     {
         final Matcher matcher = PATTERN_VST.matcher (nameAndCompany);
         if (!matcher.matches ())
@@ -508,18 +514,19 @@ public class DeviceManager
         else
             dt = module.endsWith ("vst3") ? DeviceFileType.VST3 : DeviceFileType.VST;
 
-        return new Device (creationName, name, module, dt);
+        return new Device (creationName, name, module, dt, architecture);
     }
 
 
     /**
      * Parse the information of a AU device.
      *
+     * @param architecture The processor architecture for which the device is compiled
      * @param module The module name
      * @param isInstrument The encoded instrument tag (&lt;!inst&gt; or &lt;!inst&gt;)
      * @return The created device or null if the information cannot be parsed
      */
-    private static Device parseAuDevice (final String module, final String isInstrument)
+    private static Device parseAuDevice (final Device.Architecture architecture, final String module, final String isInstrument)
     {
         final Matcher matcher = PATTERN_AU_COMPANY_DEVICE_NAME.matcher (module);
         if (!matcher.matches ())
@@ -529,7 +536,7 @@ public class DeviceManager
         final String deviceName = matcher.group (2);
 
         final DeviceFileType dt = IS_INSTRUMENT_TAG.equals (isInstrument) ? DeviceFileType.AUI : DeviceFileType.AU;
-        final Device device = new Device (module, deviceName, module, dt);
+        final Device device = new Device (module, deviceName, module, dt, architecture);
         device.setVendor (company);
         return device;
     }
@@ -601,7 +608,7 @@ public class DeviceManager
             return;
         final String name = matcher.group (4).substring (4);
         final String module = matcher.group (1);
-        final Device device = new Device (module, name, module, DeviceFileType.JS);
+        final Device device = new Device (module, name, module, DeviceFileType.JS, Device.Architecture.SCRIPT);
         this.devices.add (device);
 
         final String [] modulePath = module.split ("/");

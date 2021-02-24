@@ -21,13 +21,20 @@ public class Device implements IDeviceMetadata
 {
     private static final Set<DeviceFileType> INSTRUMENT_TYPES = EnumSet.of (DeviceFileType.VSTI, DeviceFileType.VST3I, DeviceFileType.AUI);
 
-    private final String                     name;
-    private final String                     module;
-    private final DeviceFileType             fileType;
-    private final String                     creationName;
-    private String                           vendor;
-    private final Set<String>                categories       = new HashSet<> (1);
+    protected enum Architecture
+    {
+        SCRIPT,
+        x64,
+        ARM
+    }
 
+    private final String         name;
+    private final String         module;
+    private final DeviceFileType fileType;
+    private final Architecture   architecture;
+    private final String         creationName;
+    private String               vendor;
+    private final Set<String>    categories = new HashSet<> (1);
 
     /**
      * Constructor.
@@ -36,13 +43,15 @@ public class Device implements IDeviceMetadata
      * @param name The name of the device
      * @param module The name of the library module
      * @param type The type of the device (plugin type)
+     * @param architecture The architecture
      */
-    public Device (final String creationName, final String name, final String module, final DeviceFileType type)
+    public Device (final String creationName, final String name, final String module, final DeviceFileType type, final Architecture architecture)
     {
         this.creationName = creationName;
         this.name = name;
         this.module = module;
         this.fileType = type;
+        this.architecture = architecture;
     }
 
 
@@ -58,7 +67,7 @@ public class Device implements IDeviceMetadata
     @Override
     public String getFullName ()
     {
-        return String.format ("%s (%s)", this.name, this.fileType.getName ());
+        return String.format ("%s (%s - %s)", this.name, this.fileType.getName (), this.architecture);
     }
 
 
