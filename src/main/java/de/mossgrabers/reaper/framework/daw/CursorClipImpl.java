@@ -8,6 +8,7 @@ import de.mossgrabers.framework.controller.color.ColorEx;
 import de.mossgrabers.framework.daw.INoteClip;
 import de.mossgrabers.framework.daw.IStepInfo;
 import de.mossgrabers.framework.daw.constants.Resolution;
+import de.mossgrabers.framework.daw.constants.TransportConstants;
 import de.mossgrabers.framework.daw.data.GridStep;
 import de.mossgrabers.reaper.communication.Processor;
 
@@ -140,11 +141,14 @@ public class CursorClipImpl extends BaseImpl implements INoteClip
 
     /** {@inheritDoc} */
     @Override
-    public void changePlayStart (final int control)
+    public void changePlayStart (final int control, final boolean slow)
     {
         if (this.clipStart == -1)
             return;
-        this.setPlayStart (Math.max (0, this.clipStart + this.valueChanger.calcKnobChange (control, -100)));
+
+        final boolean increase = this.valueChanger.isIncrease (control);
+        final double frac = slow ? TransportConstants.INC_FRACTION_TIME_SLOW : TransportConstants.INC_FRACTION_TIME;
+        this.setPlayStart (increase ? this.clipStart + frac : Math.max (this.clipStart - frac, 0.0));
     }
 
 
@@ -168,12 +172,14 @@ public class CursorClipImpl extends BaseImpl implements INoteClip
 
     /** {@inheritDoc} */
     @Override
-    public void changePlayEnd (final int control)
+    public void changePlayEnd (final int control, final boolean slow)
     {
         if (this.clipEnd == -1)
             return;
-        final double speed = this.valueChanger.calcKnobChange (control, -100);
-        this.setPlayEnd (Math.max (0, this.clipEnd + speed));
+
+        final boolean increase = this.valueChanger.isIncrease (control);
+        final double frac = slow ? TransportConstants.INC_FRACTION_TIME_SLOW : TransportConstants.INC_FRACTION_TIME;
+        this.setPlayEnd (increase ? this.clipEnd + frac : Math.max (this.clipEnd - frac, 0.0));
     }
 
 
@@ -218,9 +224,9 @@ public class CursorClipImpl extends BaseImpl implements INoteClip
 
     /** {@inheritDoc} */
     @Override
-    public void changeLoopStart (final int control)
+    public void changeLoopStart (final int control, final boolean slow)
     {
-        this.changePlayStart (control);
+        this.changePlayStart (control, slow);
     }
 
 
@@ -242,9 +248,9 @@ public class CursorClipImpl extends BaseImpl implements INoteClip
 
     /** {@inheritDoc} */
     @Override
-    public void changeLoopLength (final int control)
+    public void changeLoopLength (final int control, final boolean slow)
     {
-        this.changePlayEnd (control);
+        this.changePlayEnd (control, slow);
     }
 
 
@@ -319,7 +325,7 @@ public class CursorClipImpl extends BaseImpl implements INoteClip
 
     /** {@inheritDoc} */
     @Override
-    public void changeAccent (final int control)
+    public void changeAccent (final int control, final boolean slow)
     {
         // Not supported
     }
