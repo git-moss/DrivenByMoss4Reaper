@@ -43,7 +43,7 @@ public abstract class BaseSetting<C extends JComponent, T> implements IfxSetting
      * @param category The name of the category, may not be null
      * @param field The widget for editing the setting
      */
-    public BaseSetting (final LogModel logModel, final String label, final String category, final C field)
+    protected BaseSetting (final LogModel logModel, final String label, final String category, final C field)
     {
         this.logModel = logModel;
         this.label = label;

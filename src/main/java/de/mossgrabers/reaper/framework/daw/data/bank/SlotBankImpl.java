@@ -12,6 +12,7 @@ import de.mossgrabers.reaper.framework.daw.data.SlotImpl;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 
 /**
@@ -51,19 +52,19 @@ public class SlotBankImpl extends AbstractPagedBankImpl<SlotImpl, ISlot> impleme
 
     /** {@inheritDoc} */
     @Override
-    public ISlot getSelectedItem ()
+    public Optional<ISlot> getSelectedItem ()
     {
         if (this.items.isEmpty ())
-            return null;
+            return Optional.empty ();
 
         for (int i = 0; i < this.getPageSize (); i++)
         {
             final ISlot slot = this.getItem (i);
             if (slot.isSelected ())
-                return slot;
+                return Optional.of (slot);
         }
 
-        return null;
+        return Optional.empty ();
     }
 
 
@@ -71,16 +72,16 @@ public class SlotBankImpl extends AbstractPagedBankImpl<SlotImpl, ISlot> impleme
     @Override
     public List<ISlot> getSelectedItems ()
     {
-        final ISlot selectedItem = this.getSelectedItem ();
-        return selectedItem == null ? Collections.emptyList () : Collections.singletonList (selectedItem);
+        final Optional<ISlot> selectedItem = this.getSelectedItem ();
+        return selectedItem.isEmpty () ? Collections.emptyList () : Collections.singletonList (selectedItem.get ());
     }
 
 
     /** {@inheritDoc} */
     @Override
-    public ISlot getEmptySlot (final int startFrom)
+    public Optional<ISlot> getEmptySlot (final int startFrom)
     {
-        return new SlotImpl (this.dataSetup, this.trackIndex, startFrom);
+        return Optional.of (new SlotImpl (this.dataSetup, this.trackIndex, startFrom));
     }
 
 

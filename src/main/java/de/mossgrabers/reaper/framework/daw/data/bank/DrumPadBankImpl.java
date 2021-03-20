@@ -14,6 +14,8 @@ import de.mossgrabers.framework.daw.data.empty.EmptyDrumPad;
 import de.mossgrabers.reaper.framework.daw.DataSetupEx;
 import de.mossgrabers.reaper.framework.daw.data.DrumPadImpl;
 
+import java.util.Optional;
+
 
 /**
  * Encapsulates the data of a drumpad bank.
@@ -67,15 +69,7 @@ public class DrumPadBankImpl extends AbstractPagedBankImpl<DrumPadImpl, ILayer> 
 
     /** {@inheritDoc} */
     @Override
-    public IDrumPad getSelectedItem ()
-    {
-        return (IDrumPad) super.getSelectedItem ();
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    protected IDrumPad createItem (int position)
+    protected IDrumPad createItem (final int position)
     {
         return new DrumPadImpl (this.dataSetup, this, position, this.numSends);
     }
@@ -93,10 +87,10 @@ public class DrumPadBankImpl extends AbstractPagedBankImpl<DrumPadImpl, ILayer> 
     @Override
     public String getSelectedChannelColorEntry ()
     {
-        final ILayer sel = this.getSelectedItem ();
-        if (sel == null)
+        final Optional<ILayer> sel = this.getSelectedItem ();
+        if (sel.isEmpty ())
             return DAWColor.COLOR_OFF.name ();
-        final ColorEx color = sel.getColor ();
+        final ColorEx color = sel.get ().getColor ();
         return DAWColor.getColorIndex (color);
     }
 

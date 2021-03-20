@@ -11,6 +11,7 @@ import de.mossgrabers.framework.observer.IItemSelectionObserver;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 
 /**
@@ -159,9 +160,9 @@ public class ParameterPageBankImpl extends AbstractBank<String> implements IPara
 
     /** {@inheritDoc} */
     @Override
-    public String getSelectedItem ()
+    public Optional<String> getSelectedItem ()
     {
-        return this.getItem (this.getSelectedItemIndex ());
+        return Optional.of (this.getItem (this.getSelectedItemIndex ()));
     }
 
 
@@ -169,7 +170,8 @@ public class ParameterPageBankImpl extends AbstractBank<String> implements IPara
     @Override
     public List<String> getSelectedItems ()
     {
-        return Collections.singletonList (this.getSelectedItem ());
+        final Optional<String> selectedItem = this.getSelectedItem ();
+        return Collections.singletonList (selectedItem.isPresent () ? selectedItem.get () : "");
     }
 
 

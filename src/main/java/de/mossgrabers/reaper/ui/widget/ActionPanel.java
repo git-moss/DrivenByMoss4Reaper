@@ -4,8 +4,6 @@
 
 package de.mossgrabers.reaper.ui.widget;
 
-import de.mossgrabers.reaper.communication.MessageSender;
-
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -28,10 +26,8 @@ public class ActionPanel extends JPanel
 
     /**
      * Constructor.
-     *
-     * @param sender
      */
-    public ActionPanel (final MessageSender sender)
+    public ActionPanel ()
     {
         super (new BorderLayout ());
 

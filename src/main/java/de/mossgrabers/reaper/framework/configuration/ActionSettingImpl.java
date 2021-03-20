@@ -40,7 +40,7 @@ public class ActionSettingImpl extends BaseValueSetting<ActionPanel, String> imp
      */
     public ActionSettingImpl (final MessageSender sender, final LogModel logModel, final PropertiesEx properties, final String label, final String category)
     {
-        super (logModel, label, category, new ActionPanel (sender));
+        super (logModel, label, category, new ActionPanel ());
 
         this.load (properties);
 

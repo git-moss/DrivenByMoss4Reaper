@@ -22,6 +22,7 @@ import org.usb4java.LibUsbException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 
 
 /**
@@ -202,10 +203,10 @@ public class UsbDeviceImpl implements IUsbDevice
 
     /** {@inheritDoc} */
     @Override
-    public IHidDevice getHidDevice () throws UsbException
+    public Optional<IHidDevice> getHidDevice () throws UsbException
     {
         if (this.hidDevice == null)
             this.hidDevice = new HidDeviceImpl (this.usbMatcher.getVendor (), this.usbMatcher.getProductID ());
-        return this.hidDevice;
+        return Optional.ofNullable (this.hidDevice);
     }
 }

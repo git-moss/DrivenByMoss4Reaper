@@ -49,6 +49,7 @@ public class IniFiles
     private boolean             isFxTagsPresent;
     private boolean             isFxFoldersPresent;
 
+
     /**
      * Constructor.
      */

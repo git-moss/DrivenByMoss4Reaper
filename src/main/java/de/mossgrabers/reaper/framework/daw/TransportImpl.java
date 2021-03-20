@@ -9,6 +9,7 @@ import de.mossgrabers.framework.daw.ITransport;
 import de.mossgrabers.framework.daw.constants.AutomationMode;
 import de.mossgrabers.framework.daw.constants.TransportConstants;
 import de.mossgrabers.framework.daw.data.IParameter;
+import de.mossgrabers.framework.daw.data.ITrack;
 import de.mossgrabers.framework.daw.data.empty.EmptyParameter;
 import de.mossgrabers.reaper.communication.Processor;
 import de.mossgrabers.reaper.framework.Actions;
@@ -19,6 +20,7 @@ import de.mossgrabers.reaper.framework.daw.data.parameter.MetronomeVolumeParamet
 
 import java.text.NumberFormat;
 import java.util.Locale;
+import java.util.Optional;
 
 
 /**
@@ -437,9 +439,12 @@ public class TransportImpl extends BaseImpl implements ITransport
     public AutomationMode getAutomationWriteMode ()
     {
         // Get from selected track
-        TrackImpl selectedTrack = (TrackImpl) this.model.getCurrentTrackBank ().getSelectedItem ();
-        if (selectedTrack == null)
+        final Optional<ITrack> selectedTrackOpt = this.model.getCurrentTrackBank ().getSelectedItem ();
+        final TrackImpl selectedTrack;
+        if (selectedTrackOpt.isEmpty ())
             selectedTrack = (TrackImpl) this.model.getMasterTrack ();
+        else
+            selectedTrack = (TrackImpl) selectedTrackOpt.get ();
         return selectedTrack.getAutomation ();
     }
 
@@ -448,12 +453,12 @@ public class TransportImpl extends BaseImpl implements ITransport
     @Override
     public void setAutomationWriteMode (final AutomationMode mode)
     {
-        final TrackImpl selectedTrack = (TrackImpl) this.model.getCurrentTrackBank ().getSelectedItem ();
+        final Optional<ITrack> selectedTrackOpt = this.model.getCurrentTrackBank ().getSelectedItem ();
         final String modeName = "auto" + mode.getIdentifier ();
-        if (selectedTrack == null)
+        if (selectedTrackOpt.isEmpty ())
             this.sender.processIntArg (Processor.MASTER, modeName, 1);
         else
-            this.sender.processIntArg (Processor.TRACK, selectedTrack.getPosition () + "/" + modeName, 1);
+            this.sender.processIntArg (Processor.TRACK, selectedTrackOpt.get ().getPosition () + "/" + modeName, 1);
     }
 
 
@@ -667,7 +672,12 @@ public class TransportImpl extends BaseImpl implements ITransport
     @Override
     public void changeTempo (final boolean increase, final boolean slow)
     {
-        this.sender.processNoArg (Processor.TEMPO, increase ? slow ? "+" : "++" : slow ? "-" : "--");
+        final String dir;
+        if (increase)
+            dir = slow ? "+" : "++";
+        else
+            dir = slow ? "-" : "--";
+        this.sender.processNoArg (Processor.TEMPO, dir);
     }
 
 

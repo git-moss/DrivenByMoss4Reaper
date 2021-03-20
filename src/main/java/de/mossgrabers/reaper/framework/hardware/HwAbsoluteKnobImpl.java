@@ -70,9 +70,9 @@ public class HwAbsoluteKnobImpl extends AbstractHwAbsoluteControl implements IHw
         ((GraphicsContextImpl) gc).fillArc (centerX, centerY, radius, ColorEx.WHITE, 270 - length, length);
         gc.fillCircle (centerX, centerY, radius * 0.8, ColorEx.BLACK);
 
-        if (this.parameter instanceof ParameterImpl)
+        if (this.parameter instanceof ParameterImpl pi)
         {
-            final double paramValue = ((ParameterImpl) this.parameter).getInternalValue ();
+            final double paramValue = pi.getInternalValue ();
             final int l = (int) Math.round (paramValue * 360.0);
             ((GraphicsContextImpl) gc).fillArc (centerX, centerY, radius, ColorEx.RED, 270 - l - 5, 10);
         }

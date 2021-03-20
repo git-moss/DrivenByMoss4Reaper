@@ -18,7 +18,9 @@ public enum DeviceLocation
     /** AU devices. */
     AU("AU");
 
+
     private String name;
+
 
     /**
      * Constructor.

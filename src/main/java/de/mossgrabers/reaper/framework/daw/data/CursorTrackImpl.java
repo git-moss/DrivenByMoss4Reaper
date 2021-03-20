@@ -21,6 +21,8 @@ import de.mossgrabers.framework.daw.data.empty.EmptySlotBank;
 import de.mossgrabers.framework.daw.resource.ChannelType;
 import de.mossgrabers.framework.observer.IValueObserver;
 
+import java.util.Optional;
+
 
 /**
  * The master track.
@@ -795,17 +797,17 @@ public class CursorTrackImpl implements ICursorTrack
     {
         // Is a "normal" track selected?
         ITrackBank tb = this.model.getTrackBank ();
-        ITrack sel = tb.getSelectedItem ();
-        if (sel != null)
-            return sel;
+        Optional<ITrack> sel = tb.getSelectedItem ();
+        if (sel.isPresent ())
+            return sel.get ();
 
         // Is an effect track selected?
         tb = this.model.getEffectTrackBank ();
         if (tb != null)
         {
             sel = tb.getSelectedItem ();
-            if (sel != null)
-                return sel;
+            if (sel.isPresent ())
+                return sel.get ();
         }
 
         // Is the master track selected?

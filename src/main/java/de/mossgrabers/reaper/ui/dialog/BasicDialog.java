@@ -51,7 +51,7 @@ public abstract class BasicDialog extends JDialog
      * @param isModal Should the dialog be modal ?
      * @param disposeOnClose Should the dialog be hidden or disposed on close
      */
-    public BasicDialog (final JFrame frame, final String title, final boolean isModal, final boolean disposeOnClose)
+    protected BasicDialog (final JFrame frame, final String title, final boolean isModal, final boolean disposeOnClose)
     {
         super (frame, title, isModal);
 

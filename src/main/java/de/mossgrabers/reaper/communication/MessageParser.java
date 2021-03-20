@@ -63,6 +63,7 @@ import java.util.concurrent.LinkedBlockingDeque;
  */
 public class MessageParser
 {
+    private static final String          TAG_ACTIVE = "active";
     private static final String          TAG_PARAM  = "param";
     private static final String          TAG_COLOR  = "color";
     private static final String          TAG_SELECT = "select";
@@ -373,7 +374,7 @@ public class MessageParser
                 ((TrackBankImpl) this.model.getTrackBank ()).markDirty ();
                 break;
 
-            case "active":
+            case TAG_ACTIVE:
                 track.setInternalIsActivated (Double.parseDouble (value) > 0);
                 ((TrackBankImpl) this.model.getTrackBank ()).markDirty ();
                 break;
@@ -559,8 +560,8 @@ public class MessageParser
         switch (command)
         {
             case TAG_COUNT:
-                if (device instanceof CursorDeviceImpl)
-                    ((CursorDeviceImpl) device).setDeviceCount (Integer.parseInt (value));
+                if (device instanceof CursorDeviceImpl cdi)
+                    cdi.setDeviceCount (Integer.parseInt (value));
                 break;
 
             case TAG_EXISTS:
@@ -588,8 +589,8 @@ public class MessageParser
                 break;
 
             case "sibling":
-                if (device instanceof CursorDeviceImpl)
-                    this.parseSibling ((CursorDeviceImpl) device, command, parts, value);
+                if (device instanceof CursorDeviceImpl cdi)
+                    this.parseSibling (cdi, command, parts, value);
                 break;
 
             case TAG_PARAM:
@@ -597,13 +598,13 @@ public class MessageParser
                 break;
 
             case "band":
-                if (device instanceof EqualizerDeviceImpl)
+                if (device instanceof EqualizerDeviceImpl edi)
                 {
                     final String bandIndex = parts.poll ();
                     try
                     {
                         final int position = Integer.parseInt (bandIndex);
-                        ((EqualizerDeviceImpl) device).setTypeInternal (position, value);
+                        edi.setTypeInternal (position, value);
                     }
                     catch (final NumberFormatException ex)
                     {
@@ -951,7 +952,7 @@ public class MessageParser
         final String command = parts.poll ();
         switch (command)
         {
-            case "active":
+            case TAG_ACTIVE:
                 final boolean isActive = Double.parseDouble (value) > 0;
                 surface.getConfiguration ().setNoteRepeatActive (isActive);
                 break;
@@ -986,7 +987,7 @@ public class MessageParser
         final String command = parts.poll ();
         switch (command)
         {
-            case "active":
+            case TAG_ACTIVE:
                 ((GrooveParameter) groove.getParameter (GrooveParameterID.ENABLED)).setInternalValue (Double.parseDouble (value));
                 break;
 

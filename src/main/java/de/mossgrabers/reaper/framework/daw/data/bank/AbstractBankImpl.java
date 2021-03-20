@@ -10,6 +10,8 @@ import de.mossgrabers.framework.daw.data.bank.AbstractItemBank;
 import de.mossgrabers.reaper.communication.MessageSender;
 import de.mossgrabers.reaper.framework.daw.DataSetupEx;
 
+import java.util.Optional;
+
 
 /**
  * An abstract bank which provides some basic features.
@@ -33,7 +35,7 @@ public abstract class AbstractBankImpl<T extends IItem> extends AbstractItemBank
      * @param dataSetup Some configuration variables
      * @param pageSize The number of elements in a page of the bank
      */
-    public AbstractBankImpl (final DataSetupEx dataSetup, final int pageSize)
+    protected AbstractBankImpl (final DataSetupEx dataSetup, final int pageSize)
     {
         super (dataSetup == null ? null : dataSetup.getHost (), pageSize);
 
@@ -90,8 +92,8 @@ public abstract class AbstractBankImpl<T extends IItem> extends AbstractItemBank
     @Override
     public boolean canScrollPageForwards ()
     {
-        final T sel = this.getSelectedItem ();
-        return sel != null && sel.getPosition () < this.getItemCount () - 1;
+        final Optional<T> sel = this.getSelectedItem ();
+        return sel.isPresent () && sel.get ().getPosition () < this.getItemCount () - 1;
     }
 
 

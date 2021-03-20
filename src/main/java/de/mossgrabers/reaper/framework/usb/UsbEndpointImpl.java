@@ -120,6 +120,8 @@ public class UsbEndpointImpl implements IUsbEndpoint
         catch (final InterruptedException ex)
         {
             this.host.error ("Thread was interrupted while waiting for LibUsb transfer cancelation.", ex);
+            Thread.currentThread ().interrupt ();
+
         }
     }
 

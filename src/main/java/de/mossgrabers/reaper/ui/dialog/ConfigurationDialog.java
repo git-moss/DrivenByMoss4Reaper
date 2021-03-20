@@ -80,9 +80,9 @@ public class ConfigurationDialog extends BasicDialog
     {
         for (final IfxSetting s: this.settings.getSettings ())
         {
-            if (s instanceof ActionSettingImpl && ((ActionSettingImpl) s).isSelectionActive ())
+            if (s instanceof ActionSettingImpl asi && asi.isSelectionActive ())
             {
-                ((ActionSettingImpl) s).set (actionID);
+                asi.set (actionID);
                 this.toFront ();
             }
         }

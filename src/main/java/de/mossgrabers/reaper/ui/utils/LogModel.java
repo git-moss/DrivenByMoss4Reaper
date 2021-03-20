@@ -19,6 +19,7 @@ public class LogModel
     private JTextArea     logMessage;
     private StringBuilder buffer     = new StringBuilder ();
 
+
     /**
      * Constructor.
      */

@@ -54,6 +54,7 @@ public class DeviceManager
 
     private static final DeviceManager   INSTANCE                       = new DeviceManager ();
 
+
     /**
      * Private due to singleton.
      */
@@ -257,11 +258,11 @@ public class DeviceManager
 
             // Load all 64 bit devices
             if (iniFiles.isVstPresent ())
-                this.parseVstDevicesFile (Device.Architecture.x64, iniFiles.getIniVstPlugins64 ());
+                this.parseVstDevicesFile (Device.Architecture.X64, iniFiles.getIniVstPlugins64 ());
             if (iniFiles.isVstARMPresent ())
                 this.parseVstDevicesFile (Device.Architecture.ARM, iniFiles.getIniVstPluginsARM64 ());
             if (iniFiles.isAuPresent ())
-                this.parseAuDevicesFile (Device.Architecture.x64, iniFiles.getIniAuPlugins64 ());
+                this.parseAuDevicesFile (Device.Architecture.X64, iniFiles.getIniAuPlugins64 ());
             if (iniFiles.isAuARMPresent ())
                 this.parseAuDevicesFile (Device.Architecture.ARM, iniFiles.getIniAuPluginsARM64 ());
 
@@ -285,7 +286,7 @@ public class DeviceManager
             this.devices.sort ( (d1, d2) -> d1.getDisplayName ().compareToIgnoreCase (d2.getDisplayName ()));
 
             this.devices.forEach (device -> {
-                DeviceType type = device.getType ();
+                final DeviceType type = device.getType ();
                 if (type == DeviceType.INSTRUMENT)
                     this.instruments.add (device);
                 else if (type == DeviceType.AUDIO_EFFECT)
@@ -485,7 +486,7 @@ public class DeviceManager
 
     /**
      * Parse the information of a VST device.
-     * 
+     *
      * @param architecture The processor architecture for which the device is compiled
      * @param module The module name
      * @param nameAndCompany The name and company

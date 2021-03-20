@@ -1,3 +1,3 @@
-export JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-15.jdk/Contents/Home/
+export JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-16.jdk/Contents/Home/
 
 ./gradlew clean generateLicenseReport installDist

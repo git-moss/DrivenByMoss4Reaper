@@ -32,9 +32,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -53,15 +51,10 @@ public class SVGImage implements IImage
 
     private static final Map<String, Map<Color, SVGImage>> CACHE           = new HashMap<> ();
     private static final Object                            CACHE_LOCK      = new Object ();
-    private static final Set<String>                       STROKE_ELEMENTS = new HashSet<> (4);
+    private static final Set<String>                       STROKE_ELEMENTS = Set.of ("polygon", "circle", "path", "rect");
 
     private final BufferedImage                            bufferedImage;
     private final String                                   imageName;
-
-    static
-    {
-        Collections.addAll (STROKE_ELEMENTS, "polygon", "circle", "path", "rect");
-    }
 
 
     /**

@@ -35,7 +35,7 @@ public abstract class ItemImpl extends BaseImpl implements IItem
      * @param dataSetup Some configuration variables
      * @param index The index
      */
-    public ItemImpl (final DataSetupEx dataSetup, final int index)
+    protected ItemImpl (final DataSetupEx dataSetup, final int index)
     {
         super (dataSetup);
 

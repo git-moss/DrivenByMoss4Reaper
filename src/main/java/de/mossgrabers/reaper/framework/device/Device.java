@@ -21,12 +21,14 @@ public class Device implements IDeviceMetadata
 {
     private static final Set<DeviceFileType> INSTRUMENT_TYPES = EnumSet.of (DeviceFileType.VSTI, DeviceFileType.VST3I, DeviceFileType.AUI);
 
+
     protected enum Architecture
     {
         SCRIPT,
-        x64,
+        X64,
         ARM
     }
+
 
     private final String         name;
     private final String         module;
@@ -35,6 +37,7 @@ public class Device implements IDeviceMetadata
     private final String         creationName;
     private String               vendor;
     private final Set<String>    categories = new HashSet<> (1);
+
 
     /**
      * Constructor.

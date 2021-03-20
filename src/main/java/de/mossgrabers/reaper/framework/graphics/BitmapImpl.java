@@ -155,7 +155,6 @@ public class BitmapImpl implements IBitmap
         private static final long serialVersionUID   = -6034592629355700876L;
 
         private final Timer       animationTimer;
-        private BoxPanel          buttons;
 
         private final JPanel      canvas             = new JPanel ()
                                                      {
@@ -194,10 +193,10 @@ public class BitmapImpl implements IBitmap
             contentPane.add (this.canvas, BorderLayout.CENTER);
 
             // Close button
-            this.buttons = new BoxPanel (BoxLayout.X_AXIS, true);
-            this.buttons.createSpace (BoxPanel.GLUE);
-            this.setButtons (null, this.buttons.createButton ("Close", null, BoxPanel.NONE));
-            contentPane.add (this.buttons, BorderLayout.SOUTH);
+            final BoxPanel buttons = new BoxPanel (BoxLayout.X_AXIS, true);
+            buttons.createSpace (BoxPanel.GLUE);
+            this.setButtons (null, buttons.createButton ("Close", null, BoxPanel.NONE));
+            contentPane.add (buttons, BorderLayout.SOUTH);
 
             return contentPane;
         }

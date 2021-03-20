@@ -32,7 +32,7 @@ public abstract class BaseValueSetting<C extends JComponent, T> extends BaseSett
      * @param category The name of the category, may not be null
      * @param field The widget for editing the setting
      */
-    public BaseValueSetting (final LogModel logModel, final String label, final String category, final C field)
+    protected BaseValueSetting (final LogModel logModel, final String label, final String category, final C field)
     {
         super (logModel, label, category, field);
     }

@@ -400,9 +400,8 @@ public final class Functions
     public static void fixScrollPaneTo (final JComponent component, final int width, final int height)
     {
         final Component comp = component.getParent ().getParent ();
-        if (comp instanceof JComponent)
+        if (comp instanceof JComponent c)
         {
-            final JComponent c = (JComponent) comp;
             final Dimension dim = new Dimension (width, height);
             c.setMinimumSize (dim);
             c.setPreferredSize (dim);
@@ -419,9 +418,8 @@ public final class Functions
     public static void fixScrollPaneTo (final JComponent component, final int width)
     {
         final Component comp = component.getParent ().getParent ();
-        if (comp instanceof JComponent)
+        if (comp instanceof JComponent c)
         {
-            final JComponent c = (JComponent) comp;
             final Dimension dim = c.getPreferredSize ();
             dim.width = width;
             c.setMinimumSize (dim);
@@ -439,10 +437,9 @@ public final class Functions
     public static void enableComponent (final Component c, final boolean enable)
     {
         c.setEnabled (enable);
-        if (c instanceof Container)
+        if (c instanceof Container container)
         {
-            final Component [] cs = ((Container) c).getComponents ();
-            for (final Component element: cs)
+            for (final Component element: container.getComponents ())
                 enableComponent (element, enable);
         }
     }
@@ -488,8 +485,8 @@ public final class Functions
     public static void setBusy (final boolean busy)
     {
         final Frame frame = getFocusedFrame ();
-        if (frame instanceof JFrame)
-            ((JFrame) frame).getGlassPane ().setVisible (busy);
+        if (frame instanceof JFrame jf)
+            jf.getGlassPane ().setVisible (busy);
     }
 
 

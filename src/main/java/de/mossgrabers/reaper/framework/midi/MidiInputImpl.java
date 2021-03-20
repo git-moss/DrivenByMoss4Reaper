@@ -273,10 +273,10 @@ public class MidiInputImpl implements IMidiInput
     {
         try
         {
-            if (message instanceof SysexMessage)
-                this.handleSysexMessage ((SysexMessage) message);
-            else if (message instanceof ShortMessage)
-                this.handleShortMessage ((ShortMessage) message);
+            if (message instanceof SysexMessage sysex)
+                this.handleSysexMessage (sysex);
+            else if (message instanceof ShortMessage sm)
+                this.handleShortMessage (sm);
             else
                 this.host.error ("Unknown MIDI class.");
         }

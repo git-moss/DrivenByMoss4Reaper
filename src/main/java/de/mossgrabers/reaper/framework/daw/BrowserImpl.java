@@ -231,10 +231,10 @@ public class BrowserImpl extends AbstractBrowser
     public void replace (final IItem item)
     {
         // Slot and Drum Pad not supported
-        if (!(item instanceof CursorDeviceImpl))
+        if (!(item instanceof CursorDeviceImpl cdi))
             return;
 
-        this.browse (ContentType.PRESET, ((CursorDeviceImpl) item).getPosition ());
+        this.browse (ContentType.PRESET, cdi.getPosition ());
 
         final String name = item.getName ();
         this.infoText = "Replace: " + (name.length () == 0 ? "Empty" : name);
@@ -308,6 +308,10 @@ public class BrowserImpl extends AbstractBrowser
                     final int index = this.getSelectedResultIndex ();
                     if (index != -1)
                         this.sender.processIntArg (Processor.DEVICE, "preset", index);
+                    break;
+
+                default:
+                    // Not used
                     break;
             }
         }

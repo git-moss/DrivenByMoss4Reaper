@@ -71,7 +71,7 @@ public abstract class AbstractControllerInstance implements IControllerInstance,
      * @param sender The sender
      * @param iniFiles The INI configuration files
      */
-    public AbstractControllerInstance (final IControllerDefinition controllerDefinition, final LogModel logModel, final WindowManager windowManager, final MessageSender sender, final IniFiles iniFiles)
+    protected AbstractControllerInstance (final IControllerDefinition controllerDefinition, final LogModel logModel, final WindowManager windowManager, final MessageSender sender, final IniFiles iniFiles)
     {
         this.controllerDefinition = controllerDefinition;
         this.logModel = logModel;

@@ -140,7 +140,7 @@ public class TrackImpl extends ChannelImpl implements ITrack
     @Override
     public void enter ()
     {
-        if (!(this.trackBank instanceof TrackBankImpl))
+        if (!(this.trackBank instanceof TrackBankImpl tbi))
             return;
 
         // Only group tracks can be entered
@@ -150,7 +150,7 @@ public class TrackImpl extends ChannelImpl implements ITrack
         // If this track is already the cursor track, enter it straight away
         if (this.isSelected ())
         {
-            ((TrackBankImpl) this.trackBank).enterCurrentFolder ();
+            tbi.enterCurrentFolder ();
             return;
         }
 

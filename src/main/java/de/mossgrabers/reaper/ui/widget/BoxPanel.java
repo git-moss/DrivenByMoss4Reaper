@@ -906,8 +906,8 @@ public class BoxPanel extends JPanel
         final List<JComponent> swingComponents = new ArrayList<> ();
         for (final Component component: this.getComponents ())
         {
-            if (component instanceof JComponent && !(component instanceof javax.swing.Box.Filler))
-                swingComponents.add ((JComponent) component);
+            if (component instanceof JComponent jc && !(component instanceof javax.swing.Box.Filler))
+                swingComponents.add (jc);
         }
         return swingComponents;
     }

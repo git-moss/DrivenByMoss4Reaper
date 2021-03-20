@@ -42,7 +42,7 @@ public abstract class AbstractSettingsUI implements ISettingsUI
      * @param properties Where to store to
      * @param sender The sender
      */
-    public AbstractSettingsUI (final LogModel logModel, final PropertiesEx properties, final MessageSender sender)
+    protected AbstractSettingsUI (final LogModel logModel, final PropertiesEx properties, final MessageSender sender)
     {
         this.logModel = logModel;
         this.properties = properties;

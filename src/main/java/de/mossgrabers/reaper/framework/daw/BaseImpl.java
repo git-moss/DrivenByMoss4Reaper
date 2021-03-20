@@ -30,7 +30,7 @@ public abstract class BaseImpl implements IObserverManagement
      *
      * @param dataSetup Some configuration variables
      */
-    public BaseImpl (final DataSetupEx dataSetup)
+    protected BaseImpl (final DataSetupEx dataSetup)
     {
         this.dataSetup = dataSetup;
         this.host = dataSetup != null ? dataSetup.getHost () : null;

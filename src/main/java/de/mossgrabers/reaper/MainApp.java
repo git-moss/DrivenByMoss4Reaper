@@ -72,6 +72,7 @@ public class MainApp implements MessageSender, AppCallback, WindowManager
     private String                    iniPath;
     private final IniFiles            iniFiles           = new IniFiles ();
 
+
     /**
      * Constructor.
      *

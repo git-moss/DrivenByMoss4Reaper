@@ -7,6 +7,8 @@ package de.mossgrabers.reaper.framework.daw.data.bank;
 import de.mossgrabers.framework.daw.data.IItem;
 import de.mossgrabers.reaper.framework.daw.DataSetupEx;
 
+import java.util.Optional;
+
 
 /**
  * An abstract bank which supports paging of items.
@@ -29,7 +31,7 @@ public abstract class AbstractPagedBankImpl<S extends T, T extends IItem> extend
      * @param pageSize The number of elements in a page of the bank
      * @param emptyItem The empty item object
      */
-    public AbstractPagedBankImpl (final DataSetupEx dataSetup, final int pageSize, final T emptyItem)
+    protected AbstractPagedBankImpl (final DataSetupEx dataSetup, final int pageSize, final T emptyItem)
     {
         super (dataSetup, pageSize);
 
@@ -119,8 +121,8 @@ public abstract class AbstractPagedBankImpl<S extends T, T extends IItem> extend
     @Override
     public void selectNextItem ()
     {
-        final T sel = this.getSelectedItem ();
-        final int index = sel == null ? 0 : sel.getIndex () + 1;
+        final Optional<T> sel = this.getSelectedItem ();
+        final int index = sel.isEmpty () ? 0 : sel.get ().getIndex () + 1;
         if (index == this.pageSize)
             this.selectNextPage ();
         else
@@ -132,8 +134,8 @@ public abstract class AbstractPagedBankImpl<S extends T, T extends IItem> extend
     @Override
     public void selectPreviousItem ()
     {
-        final T sel = this.getSelectedItem ();
-        final int index = sel == null ? 0 : sel.getIndex () - 1;
+        final Optional<T> sel = this.getSelectedItem ();
+        final int index = sel.isEmpty () ? 0 : sel.get ().getIndex () - 1;
         if (index == -1)
             this.selectPreviousPage ();
         else

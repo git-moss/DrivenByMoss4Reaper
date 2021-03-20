@@ -20,7 +20,7 @@ public class CrossfadeParameter extends AbstractParameterImpl
 
     /**
      * Constructor.
-     * 
+     *
      * @param valueChanger The value changer
      * @param index The index of the crossfade parameter
      */

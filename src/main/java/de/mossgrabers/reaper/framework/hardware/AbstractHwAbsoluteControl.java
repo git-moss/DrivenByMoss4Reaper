@@ -40,7 +40,7 @@ public abstract class AbstractHwAbsoluteControl extends AbstractHwContinuousCont
      * @param host The host
      * @param label The label of the control
      */
-    public AbstractHwAbsoluteControl (final String id, final IHost host, final String label)
+    protected AbstractHwAbsoluteControl (final String id, final IHost host, final String label)
     {
         super (host, label);
 

@@ -7,8 +7,8 @@ plugins {
     id 'eclipse'
 }
 
-sourceCompatibility = 15
-targetCompatibility = 15
+sourceCompatibility = 16
+targetCompatibility = 16
 
 version = '11.6.2'
 

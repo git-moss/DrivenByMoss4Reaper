@@ -14,6 +14,8 @@ import de.mossgrabers.reaper.communication.Processor;
 import de.mossgrabers.reaper.framework.daw.DataSetupEx;
 import de.mossgrabers.reaper.framework.daw.data.TrackImpl;
 
+import java.util.Optional;
+
 
 /**
  * An abstract track bank.
@@ -22,9 +24,11 @@ import de.mossgrabers.reaper.framework.daw.data.TrackImpl;
  */
 public abstract class AbstractTrackBankImpl extends AbstractPagedBankImpl<TrackImpl, ITrack> implements ITrackBank
 {
-    private int        numScenes;
-    private int        numSends;
-    private ISceneBank sceneBank;
+    private static final String SELECT_COMMAND = "/select";
+
+    private int                 numScenes;
+    private int                 numSends;
+    private ISceneBank          sceneBank;
 
 
     /**
@@ -35,7 +39,7 @@ public abstract class AbstractTrackBankImpl extends AbstractPagedBankImpl<TrackI
      * @param numScenes The number of scenes of a bank page
      * @param numSends The number of sends of a bank page
      */
-    public AbstractTrackBankImpl (final DataSetupEx dataSetup, final int numTracks, final int numScenes, final int numSends)
+    protected AbstractTrackBankImpl (final DataSetupEx dataSetup, final int numTracks, final int numScenes, final int numSends)
     {
         super (dataSetup, numTracks, EmptyTrack.INSTANCE);
 
@@ -82,10 +86,10 @@ public abstract class AbstractTrackBankImpl extends AbstractPagedBankImpl<TrackI
     @Override
     public String getSelectedChannelColorEntry ()
     {
-        final ITrack sel = this.getSelectedItem ();
-        if (sel == null)
+        final Optional<ITrack> sel = this.getSelectedItem ();
+        if (sel.isEmpty ())
             return DAWColor.COLOR_OFF.name ();
-        return DAWColor.getColorIndex (sel.getColor ());
+        return DAWColor.getColorIndex (sel.get ().getColor ());
     }
 
 
@@ -152,14 +156,14 @@ public abstract class AbstractTrackBankImpl extends AbstractPagedBankImpl<TrackI
         super.scrollPageBackwards ();
 
         // Deselect previous selected track (if any)
-        final ITrack selectedTrack = this.getSelectedItem ();
-        if (selectedTrack != null)
-            this.sendTrackOSC (selectedTrack.getPosition () + "/select", 0);
+        final Optional<ITrack> selectedTrack = this.getSelectedItem ();
+        if (selectedTrack.isPresent ())
+            this.sendTrackOSC (selectedTrack.get ().getPosition () + SELECT_COMMAND, 0);
 
         // Select item on new page
         final int selIndex = this.pageSize - 1;
         final int selPos = this.getItem (selIndex).getPosition ();
-        this.sendTrackOSC (selPos + "/select", 1);
+        this.sendTrackOSC (selPos + SELECT_COMMAND, 1);
     }
 
 
@@ -170,13 +174,13 @@ public abstract class AbstractTrackBankImpl extends AbstractPagedBankImpl<TrackI
         super.scrollPageForwards ();
 
         // Deselect previous selected track (if any)
-        final ITrack selectedTrack = this.getSelectedItem ();
-        if (selectedTrack != null)
-            this.sendTrackOSC (selectedTrack.getPosition () + "/select", 0);
+        final Optional<ITrack> selectedTrack = this.getSelectedItem ();
+        if (selectedTrack.isPresent ())
+            this.sendTrackOSC (selectedTrack.get ().getPosition () + SELECT_COMMAND, 0);
 
         // Select item on new page
         final int selPos = this.getItem (0).getPosition ();
-        this.sendTrackOSC (selPos + "/select", 1);
+        this.sendTrackOSC (selPos + SELECT_COMMAND, 1);
     }
 
 

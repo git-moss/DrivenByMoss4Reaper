@@ -38,8 +38,8 @@ import java.util.Map;
  */
 public class HwRelativeKnobImpl extends AbstractHwContinuousControl implements IHwRelativeKnob, IReaperHwControl
 {
-    private final static Map<RelativeEncoding, IValueChanger> VALUE_CHANGERS        = new EnumMap<> (RelativeEncoding.class);
-    private final static DefaultValueChanger                  DEFAULT_VALUE_CHANGER = new DefaultValueChanger (127, 1);
+    private static final Map<RelativeEncoding, IValueChanger> VALUE_CHANGERS        = new EnumMap<> (RelativeEncoding.class);
+    private static final DefaultValueChanger                  DEFAULT_VALUE_CHANGER = new DefaultValueChanger (127, 1);
 
     static
     {
@@ -174,9 +174,9 @@ public class HwRelativeKnobImpl extends AbstractHwContinuousControl implements I
         final double centerY = (bounds.getY () + radius) * scale;
         gc.fillCircle (centerX, centerY, radius * scale, ColorEx.BLACK);
 
-        if (this.parameter instanceof ParameterImpl)
+        if (this.parameter instanceof ParameterImpl pi)
         {
-            final double paramValue = ((ParameterImpl) this.parameter).getInternalValue ();
+            final double paramValue = pi.getInternalValue ();
             final int l = (int) Math.round (paramValue * 360.0);
             ((GraphicsContextImpl) gc).fillArc (centerX, centerY, radius * scale, ColorEx.RED, 270 - l - 4, 4);
         }
@@ -244,7 +244,7 @@ public class HwRelativeKnobImpl extends AbstractHwContinuousControl implements I
     @Override
     public void setSensitivity (final double sensitivity)
     {
-        VALUE_CHANGERS.forEach ( (encoding, valueChanger) -> valueChanger.setSensitivity (sensitivity));
+        VALUE_CHANGERS.forEach ( (enc, valueChanger) -> valueChanger.setSensitivity (sensitivity));
     }
 
 
