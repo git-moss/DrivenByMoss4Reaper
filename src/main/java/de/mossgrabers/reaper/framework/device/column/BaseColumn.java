@@ -183,7 +183,7 @@ public abstract class BaseColumn extends ItemImpl implements IBrowserColumn
     /**
      * Register a selection listener.
      *
-     * @param listener THe listener
+     * @param listener The listener
      */
     public void addSelectionListener (final FilterListener listener)
     {

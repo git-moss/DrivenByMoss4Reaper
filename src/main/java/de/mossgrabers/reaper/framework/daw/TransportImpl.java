@@ -840,7 +840,7 @@ public class TransportImpl extends BaseImpl implements ITransport
     /**
      * Set the numerator.
      *
-     * @param numerator THe numerator
+     * @param numerator The numerator
      */
     public void setNumerator (final int numerator)
     {

@@ -70,7 +70,7 @@ public class RobotUtil
     /**
      * Send a press and release event key.
      *
-     * @param key THe key to send
+     * @param key The key to send
      */
     public static void sendKey (final int key)
     {
