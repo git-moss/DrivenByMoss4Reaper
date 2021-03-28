@@ -46,8 +46,8 @@ public class GlobalSettingsUI extends AbstractSettingsUI
      * @param sender The sender
      * @param logModel The log model
      * @param properties Where to store to
-     * @param numMidiInPorts The number of required midi input ports
-     * @param numMidiOutPorts The number of required midi output ports
+     * @param numMidiInPorts The number of required MIDI input ports
+     * @param numMidiOutPorts The number of required MIDI output ports
      * @param discoveryPairs Suggestions for automatically selecting the required in-/outputs
      */
     public GlobalSettingsUI (final MessageSender sender, final LogModel logModel, final PropertiesEx properties, final int numMidiInPorts, final int numMidiOutPorts, final List<Pair<String [], String []>> discoveryPairs)
@@ -86,10 +86,10 @@ public class GlobalSettingsUI extends AbstractSettingsUI
 
 
     /**
-     * Get the selected midi input. A controller can require several midi inputs.
+     * Get the selected MIDI input. A controller can require several MIDI inputs.
      *
-     * @param index The index of the midi input
-     * @return The midi device or null if none is selected
+     * @param index The index of the MIDI input
+     * @return The MIDI device or null if none is selected
      */
     public MidiDevice getSelectedMidiInput (final int index)
     {
@@ -98,10 +98,10 @@ public class GlobalSettingsUI extends AbstractSettingsUI
 
 
     /**
-     * Get the selected midi output. A controller can require several midi outputs.
+     * Get the selected MIDI output. A controller can require several MIDI outputs.
      *
-     * @param index The index of the midi output
-     * @return The midi device or null if none is selected
+     * @param index The index of the MIDI output
+     * @return The MIDI device or null if none is selected
      */
     public MidiDevice getSelectedMidiOutput (final int index)
     {
@@ -110,9 +110,9 @@ public class GlobalSettingsUI extends AbstractSettingsUI
 
 
     /**
-     * Get the selected midi inputs. A controller can require several midi inputs.
+     * Get the selected MIDI inputs. A controller can require several MIDI inputs.
      *
-     * @return The midi device or null if none is selected
+     * @return The MIDI device or null if none is selected
      */
     public MidiDevice [] getSelectedMidiInputs ()
     {
@@ -121,9 +121,9 @@ public class GlobalSettingsUI extends AbstractSettingsUI
 
 
     /**
-     * Get the selected midi outputs. A controller can require several midi outputs.
+     * Get the selected MIDI outputs. A controller can require several MIDI outputs.
      *
-     * @return The midi device or null if none is selected
+     * @return The MIDI device or null if none is selected
      */
     public MidiDevice [] getSelectedMidiOutputs ()
     {
@@ -132,7 +132,7 @@ public class GlobalSettingsUI extends AbstractSettingsUI
 
 
     /**
-     * Create all selection widgets for the midi inputs.
+     * Create all selection widgets for the MIDI inputs.
      *
      * @return All widgets
      */
@@ -156,7 +156,7 @@ public class GlobalSettingsUI extends AbstractSettingsUI
 
 
     /**
-     * Create all selection widgets for the midi outputs.
+     * Create all selection widgets for the MIDI outputs.
      *
      * @return All widgets
      */

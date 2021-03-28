@@ -33,7 +33,7 @@ public class MasterTrackImpl extends TrackImpl implements IMasterTrack
      * Constructor.
      *
      * @param dataSetup Some configuration variables
-     * @param trackBank The trackbank for calculating the index
+     * @param trackBank The track bank for calculating the index
      * @param numSends The number of sends on a page
      */
     public MasterTrackImpl (final DataSetupEx dataSetup, final TrackBankImpl trackBank, final int numSends)

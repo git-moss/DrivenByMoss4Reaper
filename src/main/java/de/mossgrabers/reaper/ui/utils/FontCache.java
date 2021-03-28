@@ -15,9 +15,9 @@ import java.util.Map;
  */
 public class FontCache
 {
-    /** Use sans serif as the base font. */
+    /** Use sans-serif as the base font. */
     public static final String SANS_SERIF  = "SansSerif";
-    /** Use monospaced as the base font. */
+    /** Use mono-spaced as the base font. */
     public static final String MONOSPACED  = "Monospaced";
 
     private Font               baseFont;

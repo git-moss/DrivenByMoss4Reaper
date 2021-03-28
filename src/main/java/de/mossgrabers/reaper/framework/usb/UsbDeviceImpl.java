@@ -52,7 +52,7 @@ public class UsbDeviceImpl implements IUsbDevice
         this.host = host;
         this.usbMatcher = usbMatcher;
 
-        // Only attempt to open the device if endpoints are configured
+        // Only attempt to open the device if end-points are configured
         if (usbMatcher.getEndpoints ().isEmpty ())
             return;
 

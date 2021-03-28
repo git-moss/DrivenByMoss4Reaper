@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit;
 
 
 /**
- * Implementation for an USB endpoint.
+ * Implementation for an USB end-point.
  *
  * @author J&uuml;rgen Mo&szlig;graber
  */
@@ -40,7 +40,7 @@ public class UsbEndpointImpl implements IUsbEndpoint
      *
      * @param host The host
      * @param handle The libusb device handle
-     * @param endpointAddress The endpoint address
+     * @param endpointAddress The end-point address
      * @param isBulk True if bulk transfer should be used otherwise interrupt
      */
     public UsbEndpointImpl (final IHost host, final DeviceHandle handle, final byte endpointAddress, final boolean isBulk)

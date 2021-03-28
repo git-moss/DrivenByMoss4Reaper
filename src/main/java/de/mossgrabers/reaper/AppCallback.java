@@ -52,7 +52,7 @@ public interface AppCallback
 
 
     /**
-     * Dis-/enable a controller.
+     * Disable/enable a controller.
      *
      * @param controllerIndex The index of the controller
      */
@@ -78,7 +78,7 @@ public interface AppCallback
 
 
     /**
-     * Dis-/enable an update processor for performance improvements.
+     * Disable/enable an update processor for performance improvements.
      *
      * @param processor The processor to The processor to dis-/enable
      * @param enable True to enable processor updates, false to disable

@@ -145,7 +145,7 @@ public class ControllerInstanceManager
     /**
      * Get all controller definitions.
      *
-     * @return All registeredcontroller definitions
+     * @return All registered controller definitions
      */
     public Set<IControllerDefinition> getDefinitions ()
     {

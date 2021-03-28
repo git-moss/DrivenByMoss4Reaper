@@ -252,7 +252,7 @@ public class HwRelativeKnobImpl extends AbstractHwContinuousControl implements I
     @Override
     public void setIndexInGroup (final int index)
     {
-        // Not suported
+        // Not supported
     }
 
 

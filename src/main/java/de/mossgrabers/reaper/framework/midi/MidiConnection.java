@@ -21,7 +21,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 
 /**
- * Handles a midi connection to a midi device which has an input and output.
+ * Handles a MIDI connection to a MIDI device which has an input and output.
  *
  * @author J&uuml;rgen Mo&szlig;graber
  */
@@ -52,10 +52,10 @@ public class MidiConnection
 
 
     /**
-     * Sets a midi device as the output device. It opens the device if it is not already in use and
+     * Sets a MIDI device as the output device. It opens the device if it is not already in use and
      * creates a receiver. If there is already a receiver opened it is closed.
      *
-     * @param device The midi device to set
+     * @param device The MIDI device to set
      */
     public void setOutput (final MidiDevice device)
     {
@@ -93,8 +93,8 @@ public class MidiConnection
      * Sets a midi device as the output device. It opens the device if it is not already in use and
      * creates a receiver. If there is already a receiver opened it is closed.
      *
-     * @param device The midi device to set
-     * @param callback Callback handler for midi message reception
+     * @param device The MIDI device to set
+     * @param callback Callback handler for MIDI message reception
      */
     public void setInput (final MidiDevice device, final MidiMessageHandler callback)
     {
@@ -158,7 +158,7 @@ public class MidiConnection
 
 
     /**
-     * Send a midi CC message to the output.
+     * Send a MIDI CC message to the output.
      *
      * @param cc The CC number
      * @param value The value for the CC
@@ -170,9 +170,9 @@ public class MidiConnection
 
 
     /**
-     * Send a midi note to the output.
+     * Send a MIDI note to the output.
      *
-     * @param channel The midi channel on which to send the note
+     * @param channel The MIDI channel on which to send the note
      * @param note The note to send
      * @param velocity The velocity of the note
      */
@@ -194,9 +194,9 @@ public class MidiConnection
 
 
     /**
-     * Send a midi note to the output.
+     * Send a MIDI note to the output.
      *
-     * @param status The status and midi channel
+     * @param status The status and MIDI channel
      * @param data1 The first data byte
      * @param data2 The second data byte
      */
@@ -207,7 +207,7 @@ public class MidiConnection
 
 
     /**
-     * Checks if the midi input is open and data can be received from it.
+     * Checks if the MIDI input is open and data can be received from it.
      *
      * @return True if open
      */
@@ -218,7 +218,7 @@ public class MidiConnection
 
 
     /**
-     * Closes all used midi devices and frees the resources.
+     * Closes all used MIDI devices and frees the resources.
      */
     public void cleanup ()
     {
@@ -253,7 +253,7 @@ public class MidiConnection
 
 
     /**
-     * Close devices, which might still be open because the app did not close them.
+     * Close devices, which might still be open because the application did not close them.
      */
     public static void cleanupUnusedDevices ()
     {

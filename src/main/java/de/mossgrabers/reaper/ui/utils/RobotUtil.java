@@ -48,11 +48,11 @@ public class RobotUtil
 
 
     /**
-     * Util class.
+     * Utility class.
      */
     private RobotUtil ()
     {
-        // Intentionally emtpy
+        // Intentionally empty
     }
 
 

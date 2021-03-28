@@ -182,7 +182,7 @@ public class ConfigurationDialog extends BasicDialog
 
 
     /**
-     * Rescans all available midi devices and fills the midi input and outputs combo boxes.
+     * Rescans all available MIDI devices and fills the MIDI input and outputs combo boxes.
      */
     void updateMidiDevices ()
     {

@@ -16,7 +16,7 @@ import java.util.Set;
 
 
 /**
- * A filter folder with either specificly assigned plugins or a search query.
+ * A filter folder with either specifically assigned plugins or a search query.
  *
  * @author J&uuml;rgen Mo&szlig;graber
  */

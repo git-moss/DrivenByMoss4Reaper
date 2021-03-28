@@ -12,7 +12,7 @@ import java.awt.Component;
 
 
 /**
- * Renders a checkbox item in a list box.
+ * Renders a check-box item in a list box.
  *
  * @author J&uuml;rgen Mo&szlig;graber
  */

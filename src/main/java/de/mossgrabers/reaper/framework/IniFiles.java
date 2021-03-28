@@ -137,7 +137,7 @@ public class IniFiles
 
 
     /**
-     * Get the VST plugins config file.
+     * Get the VST plugins configuration file.
      *
      * @return The file
      */
@@ -148,7 +148,7 @@ public class IniFiles
 
 
     /**
-     * Get the VST ARM plugins config file.
+     * Get the VST ARM plugins configuration file.
      *
      * @return The file
      */
@@ -159,7 +159,7 @@ public class IniFiles
 
 
     /**
-     * Get the content of the AU plugins config file.
+     * Get the content of the AU plugins configuration file.
      *
      * @return The file content
      */
@@ -170,7 +170,7 @@ public class IniFiles
 
 
     /**
-     * Get the content of the AU ARM plugins config file.
+     * Get the content of the AU ARM plugins configuration file.
      *
      * @return The file content
      */
@@ -181,7 +181,7 @@ public class IniFiles
 
 
     /**
-     * Get the FX tags config file.
+     * Get the FX tags configuration file.
      *
      * @return The file
      */
@@ -192,7 +192,7 @@ public class IniFiles
 
 
     /**
-     * Get the FX folders config file.
+     * Get the FX folders configuration file.
      *
      * @return The file
      */
@@ -203,7 +203,7 @@ public class IniFiles
 
 
     /**
-     * Is the VST plugins config file present?
+     * Is the VST plugins configuration file present?
      *
      * @return True if successfully loaded
      */
@@ -214,7 +214,7 @@ public class IniFiles
 
 
     /**
-     * Is the VST ARM plugins config file present?
+     * Is the VST ARM plugins configuration file present?
      *
      * @return True if successfully loaded
      */
@@ -225,7 +225,7 @@ public class IniFiles
 
 
     /**
-     * Is the AU plugins config file present?
+     * Is the AU plugins configuration file present?
      *
      * @return True if successfully loaded
      */
@@ -236,7 +236,7 @@ public class IniFiles
 
 
     /**
-     * Is the AU ARM plugins config file present?
+     * Is the AU ARM plugins configuration file present?
      *
      * @return True if successfully loaded
      */
@@ -247,7 +247,7 @@ public class IniFiles
 
 
     /**
-     * Is the FX tags config file present?
+     * Is the FX tags configuration file present?
      *
      * @return True if successfully loaded
      */
@@ -258,7 +258,7 @@ public class IniFiles
 
 
     /**
-     * Is the FX folders config file present?
+     * Is the FX folders configuration file present?
      *
      * @return True if successfully loaded
      */
@@ -272,7 +272,7 @@ public class IniFiles
      * Load an INI file.
      *
      * @param filename The absolute filename to try
-     * @param iniFile The ini file
+     * @param iniFile The INI file
      * @param logModel For logging
      * @return True if successfully loaded
      */
@@ -289,7 +289,7 @@ public class IniFiles
      * Load an INI file.
      *
      * @param filenames The absolute filenames to try
-     * @param iniFile The ini file
+     * @param iniFile The INI file
      * @param logModel For logging
      * @return True if successfully loaded
      */

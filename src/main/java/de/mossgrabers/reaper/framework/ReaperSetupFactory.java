@@ -45,8 +45,8 @@ public class ReaperSetupFactory implements ISetupFactory
      * @param sender The OSC sender
      * @param host The DAW host
      * @param logModel The logging model
-     * @param inputs The midi input devices
-     * @param outputs The midi output devices
+     * @param inputs The MIDI input devices
+     * @param outputs The MIDI output devices
      */
     public ReaperSetupFactory (final IniFiles iniFiles, final MessageSender sender, final IHost host, final LogModel logModel, final MidiDevice [] inputs, final MidiDevice [] outputs)
     {
@@ -58,7 +58,7 @@ public class ReaperSetupFactory implements ISetupFactory
 
 
     /**
-     * Cleanup all midi connections.
+     * Cleanup all MIDI connections.
      */
     public void cleanup ()
     {

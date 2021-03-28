@@ -113,7 +113,7 @@ public class OpenSoundControlClientImpl implements IOpenSoundControlClient
 
 
     /**
-     * Close the wrapped osc client and free resources.
+     * Close the wrapped OSC client and free resources.
      */
     public void close ()
     {

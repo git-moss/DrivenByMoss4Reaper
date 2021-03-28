@@ -249,7 +249,7 @@ public class DeviceManager
 
     /**
      * Load all information about available devices from different INI files
-     * (reaper-vstplugins64.ini, reaper-fxtags.ini, reaper-jsfx.ini) in Reapers configuration path.
+     * (reaper-vstplugins64.ini, reaper-fxtags.ini, reaper-jsfx.ini) in Reapers' configuration path.
      *
      * @param iniFiles Access to the INI files
      * @param logModel For logging
@@ -366,7 +366,7 @@ public class DeviceManager
      * Parses the VST 64 devices file.
      *
      * @param architecture The processor architecture for which the device is compiled
-     * @param iniFile The ini file from which to parse
+     * @param iniFile The INI file from which to parse
      */
     private void parseVstDevicesFile (final Device.Architecture architecture, final IniEditor iniFile)
     {

@@ -8,16 +8,16 @@ import javax.sound.midi.MidiMessage;
 
 
 /**
- * Callback interface for receiving midi messages.
+ * Callback interface for receiving MIDI messages.
  *
  * @author J&uuml;rgen Mo&szlig;graber
  */
 public interface MidiMessageHandler
 {
     /**
-     * Handles a midi message.
+     * Handles a MIDI message.
      *
-     * @param message The midi message to handle
+     * @param message The MIDI message to handle
      * @param timeStamp The timestamp of the message
      */
     void handleMidiMessage (MidiMessage message, long timeStamp);

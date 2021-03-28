@@ -56,7 +56,7 @@ public final class Actions
     /** Track: Duplicate tracks. */
     public static final int           DUPLICATE_TRACKS                = 40062;
 
-    /** Item: Open in built in midi editor. */
+    /** Item: Open in built in MIDI editor. */
     public static final int           OPEN_IN_BUILT_IN_MIDI_EDITOR    = 40153;
     /** Load the 1st window set. */
     public static final int           LOAD_WINDOW_SET_1               = 40454;
@@ -73,7 +73,7 @@ public final class Actions
     public static final int           TOGGLE_SHOW_MIDI_EDITOR_WINDOWS = 40716;
     /** View: Show track manager window. */
     public static final int           SHOW_TRACK_MANAGER_WINDOW       = 40906;
-    /** Toggle fullscreen. */
+    /** Toggle full-screen. */
     public static final int           TOGGLE_FULLSCREEN               = 40346;
     /** Media explorer: Show/hide media explorer. */
     public static final int           TOGGLE_MEDIA_EXPLORER           = 50124;
@@ -85,9 +85,9 @@ public final class Actions
     /** Mixer: Toggle show FX parameters if space available. */
     public static final int           TOGGLE_FX_PARAMETERS            = 40910;
 
-    /** Select all notes in the midi editor. */
+    /** Select all notes in the MIDI editor. */
     public static final int           MIDI_SELECT_ALL_NOTES           = 40003;
-    /** Quantize all notes in the midi editor. */
+    /** Quantize all notes in the MIDI editor. */
     public static final int           MIDI_QUANTIZE_SELECTED_NOTES    = 40728;
 
     /** Item: Dynamic split items... */
@@ -95,7 +95,7 @@ public final class Actions
 
     /** Track : Mute Tracks. */
     public static final int           MUTE_TRACKS                     = 40730;
-    /** Track : Unmute Tracks. */
+    /** Track : Un-mute Tracks. */
     public static final int           UNMUTE_TRACKS                   = 40731;
 
     /** Track: Set all FX offline for selected tracks. */
@@ -105,7 +105,7 @@ public final class Actions
 
     /** Track: Lock track controls. */
     public static final int           LOCK_TRACK_CONTROLS             = 41312;
-    /** Track: Unock track controls. */
+    /** Track: Unlock track controls. */
     public static final int           UNLOCK_TRACK_CONTROLS           = 41313;
 
     /** Track: Go to next track. */

@@ -35,9 +35,9 @@ public class Midi
 
 
     /**
-     * Read information about all available midi devices in the system.
+     * Read information about all available MIDI devices in the system.
      *
-     * @throws MidiUnavailableException Midi is not available on this system
+     * @throws MidiUnavailableException MIDI is not available on this system
      */
     public static void readDeviceMetadata () throws MidiUnavailableException
     {
@@ -59,7 +59,7 @@ public class Midi
 
 
     /**
-     * Get all midi devices which can be used as an output. readDeviceMetadata must have called
+     * Get all MIDI devices which can be used as an output. readDeviceMetadata must have called
      * before.
      *
      * @return All output devices

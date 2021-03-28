@@ -14,7 +14,7 @@ import javax.swing.JComboBox;
 
 
 /**
- * Reaper implementation of an enum setting.
+ * Reaper implementation of an enumeration setting.
  *
  * @author J&uuml;rgen Mo&szlig;graber
  */

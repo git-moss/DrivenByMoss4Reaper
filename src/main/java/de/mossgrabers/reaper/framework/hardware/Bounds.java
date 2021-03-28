@@ -18,7 +18,7 @@ public class Bounds
 
 
     /**
-     * Contructor.
+     * Constructor.
      *
      * @param x The x position
      * @param y The y position

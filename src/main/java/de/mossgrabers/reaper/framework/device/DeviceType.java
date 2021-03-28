@@ -15,7 +15,7 @@ public enum DeviceType
     AUDIO_EFFECT("Audio Effect"),
     /** An instrument. */
     INSTRUMENT("Instrument"),
-    /** A Midi Effect. */
+    /** A MIDI Effect. */
     MIDI_EFFECT("Midi Effect");
 
 

@@ -8,7 +8,7 @@ import de.mossgrabers.reaper.controller.IControllerInstance;
 
 
 /**
- * A checkbox item to be used in a list box.
+ * A check-box item to be used in a list box.
  *
  * @author J&uuml;rgen Mo&szlig;graber
  */
@@ -29,7 +29,7 @@ public class CheckboxListItem
 
 
     /**
-     * Get the selection state of the checkbox.
+     * Get the selection state of the check-box.
      *
      * @return True if selected
      */
@@ -40,7 +40,7 @@ public class CheckboxListItem
 
 
     /**
-     * Set the selection state of the checkbox.
+     * Set the selection state of the check-box.
      *
      * @param isSelected True to set
      */

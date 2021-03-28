@@ -136,7 +136,7 @@ public class TwoColsPanel extends BoxPanel
          * Constructor.
          *
          * @param label The label to adjust
-         * @param component The componant to adjust
+         * @param component The component to adjust
          */
         public SizeAdjuster (final JLabel label, final JComponent component)
         {

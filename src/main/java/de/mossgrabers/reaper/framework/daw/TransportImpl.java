@@ -860,7 +860,7 @@ public class TransportImpl extends BaseImpl implements ITransport
 
 
     /**
-     * Dis-/Enable the preroll click.
+     * Disable/Enable the preroll click.
      *
      * @param enable True to enable
      */

@@ -128,7 +128,7 @@ public class BoxPanel extends JPanel
 
     /**
      * Wraps the BoxPanel inside the NORTH part of a JPanel with BorderLayout. This is useful to
-     * prevent the controls inside the boxpanel to be sized vertically.
+     * prevent the controls inside the box-panel to be sized vertically.
      *
      * @return The wrapper panel
      */
@@ -140,7 +140,7 @@ public class BoxPanel extends JPanel
 
     /**
      * Wraps the BoxPanel inside the SOUTH part of a JPanel with BorderLayout. This is useful to
-     * prevent the controls inside the boxpanel to be sized vertically.
+     * prevent the controls inside the box-panel to be sized vertically.
      *
      * @return The wrapper panel
      */
@@ -152,7 +152,7 @@ public class BoxPanel extends JPanel
 
     /**
      * Wraps the BoxPanel inside the LEFT part of a JPanel with BorderLayout. This is useful to
-     * prevent the controls inside the boxpanel to be sized hoizontally.
+     * prevent the controls inside the box-panel to be sized horizontally.
      *
      * @return The wrapper panel
      */
@@ -164,7 +164,7 @@ public class BoxPanel extends JPanel
 
     /**
      * Wraps the BoxPanel inside the RIGHT part of a JPanel with BorderLayout. This is useful to
-     * prevent the controls inside the boxpanel to be sized hoizontally.
+     * prevent the controls inside the box-panel to be sized horizontally.
      *
      * @return The wrapper panel
      */
@@ -178,7 +178,7 @@ public class BoxPanel extends JPanel
      * Sticks the panel to a BorderLayout direction by wrapping the panl in to a BorderLayout-ed
      * JPanel.
      *
-     * @param where The BorderLayout diration
+     * @param where The BorderLayout direction
      * @return The wrapper panel
      */
     protected JPanel stickTo (final String where)
@@ -190,7 +190,7 @@ public class BoxPanel extends JPanel
 
 
     /**
-     * Dis-/Enables the panel with all its subcomponents.
+     * Disable/Enables the panel with all its subcomponents.
      *
      * @param enable What to do
      */
@@ -201,14 +201,14 @@ public class BoxPanel extends JPanel
 
 
     /**
-     * Creates and adds a combobox to the panel.
+     * Creates and adds a combo-box to the panel.
      *
      * @param <E> The type of the combobox's content
-     * @param label The name of the label which is added to the combobox
+     * @param label The name of the label which is added to the combo-box
      * @param mnemonic A shortcut for the field
      * @param space Add space after the element (NONE, SMALL, NORMAL, LARGE, GLUE)
-     * @param content The content of the combobox
-     * @return The created combobox
+     * @param content The content of the combo-box
+     * @return The created combo-box
      */
     public <E> JComboBoxX<E> createComboBox (final String label, final String mnemonic, final int space, final Collection<E> content)
     {
@@ -217,13 +217,13 @@ public class BoxPanel extends JPanel
 
 
     /**
-     * Creates and adds a listbox to the panel.
+     * Creates and adds a list-box to the panel.
      *
      * @param <E> The type of the combobox's content
      * @param label The name of the label which is added to the listbox
      * @param mnemonic A shortcut for the field
      * @param space Add space after the element (NONE, SMALL, NORMAL, LARGE, GLUE)
-     * @param content The content of the listbox
+     * @param content The content of the list-box
      * @return The created list box
      */
     public <E> JListX<E> createListBox (final String label, final String mnemonic, final int space, final Collection<E> content)
@@ -233,13 +233,13 @@ public class BoxPanel extends JPanel
 
 
     /**
-     * Adds a listbox to the panel.
+     * Adds a list-box to the panel.
      *
      * @param <E> The type of the combobox's content
-     * @param label The name of the label which is added to the listbox
+     * @param label The name of the label which is added to the list-box
      * @param mnemonic A shortcut for the field
      * @param space Add space after the element (NONE, SMALL, NORMAL, LARGE, GLUE)
-     * @param list The listbox to add
+     * @param list The list-box to add
      * @return The created list box
      */
     public <E> JListX<E> createListBox (final String label, final String mnemonic, final int space, final JListX<E> list)
@@ -369,7 +369,7 @@ public class BoxPanel extends JPanel
      * @param label The name of the label which is added to the field
      * @param mnemonic A shortcut for the field
      * @param space Add space after the element (NONE, SMALL, NORMAL, LARGE, GLUE)
-     * @param columns Columns of the textfield
+     * @param columns Columns of the text field
      * @return The created text field
      */
     public JTextField createField (final String label, final String mnemonic, final int space, final int columns)
@@ -384,7 +384,7 @@ public class BoxPanel extends JPanel
      * @param label The name of the label which is added to the field
      * @param mnemonic A shortcut for the field
      * @param space Add space after the element (NONE, SMALL, NORMAL, LARGE, GLUE)
-     * @param columns Columns of the textfield
+     * @param columns Columns of the text field
      * @param maxChars If not -1 the characters are limited to this number
      * @return The created text field
      */
@@ -403,7 +403,7 @@ public class BoxPanel extends JPanel
      * @param label The name of the label which is added to the field
      * @param mnemonic A shortcut for the field
      * @param space Add space after the element (NONE, SMALL, NORMAL, LARGE, GLUE)
-     * @param columns Columns of the textfield
+     * @param columns Columns of the text field
      * @return The created password field
      */
     public JPasswordField createPasswordField (final String label, final String mnemonic, final int space, final int columns)
@@ -418,7 +418,7 @@ public class BoxPanel extends JPanel
      * @param label The label which is added to the field
      * @param mnemonic A shortcut for the field
      * @param space Add space after the element (NONE, SMALL, NORMAL, LARGE, GLUE)
-     * @param columns Columns of the textfield
+     * @param columns Columns of the text field
      * @return The created password field
      */
     public JPasswordField createPasswordField (final JLabel label, final String mnemonic, final int space, final int columns)
@@ -433,7 +433,7 @@ public class BoxPanel extends JPanel
      * @param label The name of the label which is added to the field
      * @param mnemonic A shortcut for the field
      * @param space Add space after the element (NONE, SMALL, NORMAL, LARGE, GLUE)
-     * @param columns Columns of the textfield
+     * @param columns Columns of the text field
      * @param maxChars If not -1 the characters are limited to this number
      * @return The created password field
      */
@@ -453,7 +453,7 @@ public class BoxPanel extends JPanel
      * @param label The label which is added to the field
      * @param mnemonic A shortcut for the field
      * @param space Add space after the element (NONE, SMALL, NORMAL, LARGE, GLUE)
-     * @param columns Columns of the textfield
+     * @param columns Columns of the text field
      * @param maxChars If not -1 the characters are limited to this number
      * @return The created password field
      */
@@ -487,8 +487,8 @@ public class BoxPanel extends JPanel
      * @param label The name of the label which is added to the field
      * @param mnemonic A shortcut for the field
      * @param space Add space after the element (NONE, SMALL, NORMAL, LARGE, GLUE)
-     * @param rows Rows of the textarea
-     * @param columns Columns of the textarea
+     * @param rows Rows of the text area
+     * @param columns Columns of the text area
      * @return The created text area
      */
     public JTextArea createTextArea (final String label, final String mnemonic, final int space, final int rows, final int columns)
@@ -503,8 +503,8 @@ public class BoxPanel extends JPanel
      * @param label The name of the label which is added to the field
      * @param mnemonic A shortcut for the field
      * @param space Add space after the element (NONE, SMALL, NORMAL, LARGE, GLUE)
-     * @param rows Rows of the textarea
-     * @param columns Columns of the textarea
+     * @param rows Rows of the text area
+     * @param columns Columns of the text area
      * @param maxChars If not -1 the characters are limited to this number
      * @return The created text area
      */
@@ -537,7 +537,7 @@ public class BoxPanel extends JPanel
      * @param label The name of the label which is added to the field
      * @param mnemonic A shortcut for the field
      * @param space Add space after the element (NONE, SMALL, NORMAL, LARGE, GLUE)
-     * @param rows Rows of the textpane
+     * @param rows Rows of the text pane
      * @return The created text pane
      */
     public JTextPane createTextPane (final String label, final String mnemonic, final int space, final int rows)
@@ -548,7 +548,7 @@ public class BoxPanel extends JPanel
         {
             final Dimension dim = textPane.getPreferredSize ();
             dim.height = rows * textPane.getFontMetrics (textPane.getFont ()).getHeight ();
-            // The parents parent is the scrollpane
+            // The parents parent is the scroll pane
             final Container scrollPane = textPane.getParent ().getParent ();
             scrollPane.setPreferredSize (dim);
             if (dim.width > 10)
@@ -756,7 +756,7 @@ public class BoxPanel extends JPanel
      * @param mnemonic A shortcut for the label
      * @param tooltip Tooltip text
      * @param space Add space after the element (NONE, SMALL, NORMAL, LARGE, GLUE)
-     * @param addScrollPane If true a the component is wrapped in a scrollpane
+     * @param addScrollPane If true a the component is wrapped in a scroll pane
      * @return The added component
      */
     public <T extends JComponent> T addComponent (final T component, final String label, final String mnemonic, final String tooltip, final int space, final boolean addScrollPane)
@@ -775,7 +775,7 @@ public class BoxPanel extends JPanel
      * @param mnemonic A shortcut for the label
      * @param tooltip Tooltip text
      * @param space Add space after the element (NONE, SMALL, NORMAL, LARGE, GLUE)
-     * @param addScrollPane If true a the component is wrapped in a scrollpane
+     * @param addScrollPane If true a the component is wrapped in a scroll pane
      * @return The added component
      */
     public <T extends JComponent> T addComponent (final T component, final JLabel label, final String mnemonic, final String tooltip, final int space, final boolean addScrollPane)
@@ -833,7 +833,7 @@ public class BoxPanel extends JPanel
      * @param label The name of the label which is added to the field
      * @param mnemonic A shortcut for the field
      * @param space Add space after the element (NONE, SMALL, NORMAL, LARGE, GLUE)
-     * @param columns Columns of the textfield
+     * @param columns Columns of the text field
      * @return The text field
      */
     protected <T extends JTextField> T addField (final T field, final String label, final String mnemonic, final int space, final int columns)
@@ -851,7 +851,7 @@ public class BoxPanel extends JPanel
      * @param label The label which is added to the field
      * @param mnemonic A shortcut for the field
      * @param space Add space after the element (NONE, SMALL, NORMAL, LARGE, GLUE)
-     * @param columns Columns of the textfield
+     * @param columns Columns of the text field
      * @return The text field
      */
     protected JTextField addField (final JTextField field, final JLabel label, final String mnemonic, final int space, final int columns)
@@ -863,7 +863,7 @@ public class BoxPanel extends JPanel
 
 
     /**
-     * Reads the text from the functions-resourcebundle if text starts with '@'.
+     * Reads the text from the functions-resource bundle if text starts with '@'.
      *
      * @param text The text or a message id starting with '@'
      * @return The loaded char

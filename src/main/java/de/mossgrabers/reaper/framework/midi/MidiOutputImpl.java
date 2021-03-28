@@ -8,7 +8,7 @@ import de.mossgrabers.framework.daw.midi.AbstractMidiOutputImpl;
 
 
 /**
- * A midi output
+ * A MIDI output
  *
  * @author J&uuml;rgen Mo&szlig;graber
  */

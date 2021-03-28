@@ -72,7 +72,7 @@ public abstract class BasicDialog extends JDialog
 
 
     /**
-     * Sets the ok button.
+     * Sets the OK button.
      *
      * @param ok The OK button
      */
@@ -83,7 +83,7 @@ public abstract class BasicDialog extends JDialog
 
 
     /**
-     * Sets the ok and cancel button.
+     * Sets the OK and cancel button.
      *
      * @param ok The OK button
      * @param cancel The cancel button
@@ -119,9 +119,9 @@ public abstract class BasicDialog extends JDialog
 
 
     /**
-     * Returns true if the ok button was clicked to exit the dialog.
+     * Returns true if the OK button was clicked to exit the dialog.
      *
-     * @return True if the ok button was clicked to exit the dialog.
+     * @return True if the OK button was clicked to exit the dialog.
      */
     public boolean isConfirmed ()
     {
@@ -130,7 +130,7 @@ public abstract class BasicDialog extends JDialog
 
 
     /**
-     * Start the initialisation for the dialog. Every subclass must call this function in the
+     * Start the initialization for the dialog. Every subclass must call this function in the
      * constructor!
      */
     protected void basicInit ()
@@ -282,7 +282,7 @@ public abstract class BasicDialog extends JDialog
 
 
     /**
-     * Calls the ok () function.
+     * Calls the OK-function.
      */
     class OkButtonActionListener implements ActionListener
     {
@@ -295,7 +295,7 @@ public abstract class BasicDialog extends JDialog
 
 
     /**
-     * Calls the cancel () function.
+     * Calls the cancel-function.
      */
     class CancelButtonActionListener implements ActionListener
     {

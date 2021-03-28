@@ -34,8 +34,8 @@ public class MidiAccessImpl implements IMidiAccess
      * @param logModel The logging model
      * @param host The host
      * @param sender The OSC sender
-     * @param inputs The midi input devices
-     * @param outputs The midi output devices
+     * @param inputs The MIDI input devices
+     * @param outputs The MIDI output devices
      */
     public MidiAccessImpl (final LogModel logModel, final IHost host, final MessageSender sender, final MidiDevice [] inputs, final MidiDevice [] outputs)
     {
@@ -52,7 +52,7 @@ public class MidiAccessImpl implements IMidiAccess
 
 
     /**
-     * Cleanup all midi connections.
+     * Cleanup all MIDI connections.
      */
     public void cleanup ()
     {

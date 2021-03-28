@@ -229,7 +229,7 @@ public class PropertiesEx extends java.util.Properties
 
 
     /**
-     * Writes an enumaration property.
+     * Writes an enumeration property.
      *
      * @param key Id of the property
      * @param value The value to set

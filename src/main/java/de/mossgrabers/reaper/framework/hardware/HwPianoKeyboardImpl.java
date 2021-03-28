@@ -252,7 +252,7 @@ public class HwPianoKeyboardImpl implements IHwPianoKeyboard, IReaperHwControl
         final double kwb = this.keyWidthBlack / scale;
         final double khb = this.keyHeightBlack / scale;
 
-        // Calc white key
+        // Calculate white key
         final int num = (int) (x / kww);
         final int pos = num % 7 + 1;
         final int whiteKey = 12 * (num / 7) + WHITE_KEYS_DETECT[pos];
@@ -261,7 +261,7 @@ public class HwPianoKeyboardImpl implements IHwPianoKeyboard, IReaperHwControl
             return whiteKey;
 
         // A white or black key
-        // Move val to 1. key
+        // Move value to 1. key
         final int transNumX = (int) (x - num * kww);
 
         if (transNumX <= kwb / 2)

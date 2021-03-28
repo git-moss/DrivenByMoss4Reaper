@@ -31,7 +31,7 @@ public final class Functions
 
 
     /**
-     * Initialise the Singleton object.
+     * Initialize the Singleton object.
      *
      * @param messages A resource bundle which contains message texts
      */
@@ -65,7 +65,7 @@ public final class Functions
 
 
     /**
-     * Initialise the Singleton object.
+     * Initialize the Singleton object.
      *
      * @param messages A resource bundle which contains message texts
      * @param openSaveDlgDim The size of the open and save dialog used for the getFileFromUser
@@ -459,7 +459,7 @@ public final class Functions
 
 
     /**
-     * Positions a popup menu on the screen at the given x/y position. Takes care that the menu is
+     * Positions a pop-up menu on the screen at the given x/y position. Takes care that the menu is
      * fully visible on the screen.
      *
      * @param menu The menu to display

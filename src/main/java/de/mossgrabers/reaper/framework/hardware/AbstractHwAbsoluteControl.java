@@ -111,7 +111,7 @@ public abstract class AbstractHwAbsoluteControl extends AbstractHwContinuousCont
     @Override
     public void disableTakeOver ()
     {
-        // Takeover is currently not supported with Reaper
+        // Take over is currently not supported with Reaper
     }
 
 
@@ -119,6 +119,6 @@ public abstract class AbstractHwAbsoluteControl extends AbstractHwContinuousCont
     @Override
     public void setIndexInGroup (final int index)
     {
-        // Not suported
+        // Not supported
     }
 }

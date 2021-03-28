@@ -25,9 +25,9 @@ public class MainConfiguration extends PropertiesEx
 
 
     /**
-     * Load the settings from the config file.
+     * Load the settings from the configuration file.
      *
-     * @param path The path where the config file is stored
+     * @param path The path where the configuration file is stored
      * @throws IOException Could not load configuration file
      */
     public void load (final String path) throws IOException
@@ -44,9 +44,9 @@ public class MainConfiguration extends PropertiesEx
 
 
     /**
-     * Store the settings to the config file.
+     * Store the settings to the configuration file.
      *
-     * @param path The path where the config file is stored
+     * @param path The path where the configuration file is stored
      * @throws IOException Could not store
      */
     public void save (final String path) throws IOException
