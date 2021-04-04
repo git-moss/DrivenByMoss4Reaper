@@ -4,11 +4,15 @@
 
 package de.mossgrabers.reaper.framework.daw.data.bank;
 
+import de.mossgrabers.framework.controller.color.ColorEx;
 import de.mossgrabers.framework.daw.DAWColor;
+import de.mossgrabers.framework.daw.IApplication;
+import de.mossgrabers.framework.daw.data.ICursorTrack;
 import de.mossgrabers.framework.daw.data.ITrack;
 import de.mossgrabers.framework.daw.data.bank.ISceneBank;
 import de.mossgrabers.framework.daw.data.bank.ITrackBank;
 import de.mossgrabers.framework.daw.data.empty.EmptyTrack;
+import de.mossgrabers.framework.daw.resource.ChannelType;
 import de.mossgrabers.framework.observer.IIndexedValueObserver;
 import de.mossgrabers.reaper.communication.Processor;
 import de.mossgrabers.reaper.framework.daw.DataSetupEx;
@@ -26,6 +30,8 @@ public abstract class AbstractTrackBankImpl extends AbstractPagedBankImpl<TrackI
 {
     private static final String SELECT_COMMAND = "/select";
 
+    private final IApplication  application;
+    private final ICursorTrack  cursorTrack;
     private int                 numScenes;
     private int                 numSends;
     private ISceneBank          sceneBank;
@@ -35,13 +41,18 @@ public abstract class AbstractTrackBankImpl extends AbstractPagedBankImpl<TrackI
      * Constructor.
      *
      * @param dataSetup Some configuration variables
+     * @param cursorTrack The cursor track
+     * @param application The application
      * @param numTracks The number of tracks of a bank page
      * @param numScenes The number of scenes of a bank page
      * @param numSends The number of sends of a bank page
      */
-    protected AbstractTrackBankImpl (final DataSetupEx dataSetup, final int numTracks, final int numScenes, final int numSends)
+    protected AbstractTrackBankImpl (final DataSetupEx dataSetup, final ICursorTrack cursorTrack, final IApplication application, final int numTracks, final int numScenes, final int numSends)
     {
         super (dataSetup, numTracks, EmptyTrack.INSTANCE);
+
+        this.application = application;
+        this.cursorTrack = cursorTrack;
 
         this.numScenes = numScenes;
         this.numSends = numSends;
@@ -155,7 +166,7 @@ public abstract class AbstractTrackBankImpl extends AbstractPagedBankImpl<TrackI
     {
         super.scrollPageBackwards ();
 
-        // Deselect previous selected track (if any)
+        // Unselect previous selected track (if any)
         final Optional<ITrack> selectedTrack = this.getSelectedItem ();
         if (selectedTrack.isPresent ())
             this.sendTrackOSC (selectedTrack.get ().getPosition () + SELECT_COMMAND, 0);
@@ -241,6 +252,71 @@ public abstract class AbstractTrackBankImpl extends AbstractPagedBankImpl<TrackI
     {
         for (final ITrack element: this.items)
             element.setMute (false);
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void addChannel (final ChannelType type)
+    {
+        this.addChannel (type, null);
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void addChannel (final ChannelType type, final String name)
+    {
+        final DAWColor color = DAWColor.getNextColor ();
+        this.addChannel (type, name, color.getColor ());
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void addChannel (final ChannelType type, final String name, final ColorEx color)
+    {
+        this.addTrack (type);
+
+        if (name == null && color == null)
+            return;
+
+        this.host.scheduleTask ( () -> {
+
+            if (!this.cursorTrack.doesExist ())
+                return;
+            if (name != null)
+                this.cursorTrack.setName (name);
+            if (color != null)
+                this.cursorTrack.setColor (color);
+
+        }, 300);
+    }
+
+
+    /**
+     * Adds a new track to this track bank.
+     * 
+     * @param type The type of the track to add
+     */
+    protected void addTrack (final ChannelType type)
+    {
+        switch (type)
+        {
+            case HYBRID:
+            case INSTRUMENT:
+                this.application.addInstrumentTrack ();
+                break;
+
+            case EFFECT:
+                this.application.addEffectTrack ();
+                break;
+
+            default:
+            case AUDIO:
+                this.application.addAudioTrack ();
+                break;
+        }
     }
 
 

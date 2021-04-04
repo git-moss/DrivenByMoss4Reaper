@@ -4,6 +4,8 @@
 
 package de.mossgrabers.reaper.framework.daw.data.bank;
 
+import de.mossgrabers.framework.daw.IApplication;
+import de.mossgrabers.framework.daw.data.ICursorTrack;
 import de.mossgrabers.framework.observer.INoteObserver;
 import de.mossgrabers.reaper.framework.daw.DataSetupEx;
 
@@ -19,12 +21,14 @@ public class EffectTrackBankImpl extends AbstractTrackBankImpl
      * Constructor.
      *
      * @param dataSetup Some configuration variables
+     * @param cursorTrack The cursor track
+     * @param application The application
      * @param numTracks The number of track of a bank page
      * @param numScenes The number of scenes of a bank page
      */
-    public EffectTrackBankImpl (final DataSetupEx dataSetup, final int numTracks, final int numScenes)
+    public EffectTrackBankImpl (final DataSetupEx dataSetup, final ICursorTrack cursorTrack, final IApplication application, final int numTracks, final int numScenes)
     {
-        super (dataSetup, numTracks, numScenes, 0);
+        super (dataSetup, cursorTrack, application, numTracks, numScenes, 0);
     }
 
 

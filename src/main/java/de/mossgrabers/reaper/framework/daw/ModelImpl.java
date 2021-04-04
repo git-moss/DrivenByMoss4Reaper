@@ -125,7 +125,7 @@ public class ModelImpl extends AbstractModel
         //////////////////////////////////////////////////////////////////////////////
         // Create track banks
 
-        final TrackBankImpl trackBankImpl = new TrackBankImpl (drumDevices, dataSetup, numTracks, numScenes, numSends, modelSetup.hasFlatTrackList (), modelSetup.hasFullFlatTrackList ());
+        final TrackBankImpl trackBankImpl = new TrackBankImpl (dataSetup, this.cursorTrack, this.application, drumDevices, numTracks, numScenes, numSends, modelSetup.hasFlatTrackList (), modelSetup.hasFullFlatTrackList ());
         this.trackBank = trackBankImpl;
         this.masterTrack = new MasterTrackImpl (dataSetup, trackBankImpl, numSends);
         trackBankImpl.setMasterTrack ((TrackImpl) this.masterTrack);
@@ -147,7 +147,7 @@ public class ModelImpl extends AbstractModel
     public ISceneBank createSceneBank (final int numScenes)
     {
         return this.sceneBanks.computeIfAbsent (Integer.valueOf (numScenes), key -> {
-            final TrackBankImpl tb = new TrackBankImpl (this.dataSetup, 1, numScenes, this.modelSetup.getNumSends (), true, false);
+            final TrackBankImpl tb = new TrackBankImpl (this.dataSetup, this.cursorTrack, this.application, 1, numScenes, this.modelSetup.getNumSends (), true, false);
             this.trackBanks.add (tb);
             return tb.getSceneBank ();
         });
