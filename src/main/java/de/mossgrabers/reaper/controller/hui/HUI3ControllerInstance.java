@@ -16,14 +16,14 @@ import de.mossgrabers.reaper.ui.utils.LogModel;
 
 
 /**
- * HUI without extender controller instance.
+ * HUI with 2 extenders.
  *
  * @author J&uuml;rgen Mo&szlig;graber
  */
-public class HUIControllerInstance extends AbstractControllerInstance
+public class HUI3ControllerInstance extends AbstractControllerInstance
 {
     /** The controller definition instance. */
-    public static final HUIControllerDefinition CONTROLLER_DEFINITION = new HUIControllerDefinition ();
+    public static final HUIControllerDefinition CONTROLLER_DEFINITION = new HUIControllerDefinition (2);
 
 
     /**
@@ -34,7 +34,7 @@ public class HUIControllerInstance extends AbstractControllerInstance
      * @param sender The sender
      * @param iniFiles The INI configuration files
      */
-    public HUIControllerInstance (final LogModel logModel, final WindowManager windowManager, final MessageSender sender, final IniFiles iniFiles)
+    public HUI3ControllerInstance (final LogModel logModel, final WindowManager windowManager, final MessageSender sender, final IniFiles iniFiles)
     {
         super (CONTROLLER_DEFINITION, logModel, windowManager, sender, iniFiles);
     }
@@ -44,6 +44,6 @@ public class HUIControllerInstance extends AbstractControllerInstance
     @Override
     protected IControllerSetup<?, ?> createControllerSetup (final ReaperSetupFactory setupFactory)
     {
-        return new HUIControllerSetup (this.host, setupFactory, this.globalSettingsUI, this.documentSettingsUI);
+        return new HUIControllerSetup (this.host, setupFactory, this.globalSettingsUI, this.documentSettingsUI, 3);
     }
 }
