@@ -6,17 +6,19 @@ package de.mossgrabers.controller.ni.maschine.jam.command.trigger;
 
 import de.mossgrabers.controller.ni.maschine.jam.MaschineJamConfiguration;
 import de.mossgrabers.controller.ni.maschine.jam.controller.MaschineJamControlSurface;
-import de.mossgrabers.framework.command.trigger.mode.ModeCursorCommand;
+import de.mossgrabers.framework.command.trigger.mode.ModeSelectCommand;
+import de.mossgrabers.framework.controller.ButtonID;
 import de.mossgrabers.framework.daw.IModel;
+import de.mossgrabers.framework.mode.Modes;
 import de.mossgrabers.framework.utils.ButtonEvent;
 
 
 /**
- * Command for navigating to the previous mode page. Toggles metronome on shift.
+ * Command for the Maschine Jam Macro button.
  *
  * @author J&uuml;rgen Mo&szlig;graber
  */
-public class MaschineJamPageLeftCommand extends ModeCursorCommand<MaschineJamControlSurface, MaschineJamConfiguration>
+public class MaschineJamMacroCommand extends ModeSelectCommand<MaschineJamControlSurface, MaschineJamConfiguration>
 {
     /**
      * Constructor.
@@ -24,22 +26,22 @@ public class MaschineJamPageLeftCommand extends ModeCursorCommand<MaschineJamCon
      * @param model The model
      * @param surface The surface
      */
-    public MaschineJamPageLeftCommand (final IModel model, final MaschineJamControlSurface surface)
+    public MaschineJamMacroCommand (final IModel model, final MaschineJamControlSurface surface)
     {
-        super (Direction.DOWN, model, surface, false);
+        super (model, surface, Modes.TRACK);
     }
 
 
     /** {@inheritDoc} */
     @Override
-    public void execute (final ButtonEvent event, final int velocity)
+    public void executeNormal (final ButtonEvent event)
     {
         if (event != ButtonEvent.DOWN)
             return;
 
-        if (this.surface.isShiftPressed ())
-            this.model.getTransport ().toggleMetronome ();
+        if (this.surface.isPressed (ButtonID.SELECT))
+            this.model.getApplication ().addInstrumentTrack ();
         else
-            super.execute (event, velocity);
+            super.executeNormal (event);
     }
 }

@@ -7,10 +7,9 @@ package de.mossgrabers.controller.ni.maschine.jam.command.trigger;
 import de.mossgrabers.controller.ni.maschine.jam.MaschineJamConfiguration;
 import de.mossgrabers.controller.ni.maschine.jam.controller.EncoderModeManager;
 import de.mossgrabers.controller.ni.maschine.jam.controller.MaschineJamControlSurface;
-import de.mossgrabers.framework.command.trigger.transport.TapTempoCommand;
+import de.mossgrabers.framework.command.trigger.clip.QuantizeCommand;
 import de.mossgrabers.framework.daw.IModel;
 import de.mossgrabers.framework.utils.ButtonEvent;
-import de.mossgrabers.framework.view.Views;
 
 
 /**
@@ -18,7 +17,7 @@ import de.mossgrabers.framework.view.Views;
  *
  * @author J&uuml;rgen Mo&szlig;graber
  */
-public class MaschineJamTapTempoCommand extends TapTempoCommand<MaschineJamControlSurface, MaschineJamConfiguration>
+public class MaschineJamGridCommand extends QuantizeCommand<MaschineJamControlSurface, MaschineJamConfiguration>
 {
     private final EncoderModeManager encoderManager;
 
@@ -30,7 +29,7 @@ public class MaschineJamTapTempoCommand extends TapTempoCommand<MaschineJamContr
      * @param model The model
      * @param surface The surface
      */
-    public MaschineJamTapTempoCommand (final EncoderModeManager encoderManager, final IModel model, final MaschineJamControlSurface surface)
+    public MaschineJamGridCommand (final EncoderModeManager encoderManager, final IModel model, final MaschineJamControlSurface surface)
     {
         super (model, surface);
 
@@ -40,31 +39,17 @@ public class MaschineJamTapTempoCommand extends TapTempoCommand<MaschineJamContr
 
     /** {@inheritDoc} */
     @Override
-    public void executeShifted (final ButtonEvent event)
-    {
-        super.execute (event, 127);
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
     public void execute (final ButtonEvent event, final int velocity)
     {
-        if (this.surface.isShiftPressed ())
+        if (this.surface.isShiftPressed () || this.surface.isSelectPressed ())
         {
-            this.executeShifted (event);
+            super.execute (event, velocity);
             return;
         }
 
         if (event == ButtonEvent.DOWN)
-        {
-            this.surface.getViewManager ().setTemporary (Views.TEMPO);
-            this.encoderManager.enableTemporaryEncodeMode (EncoderMode.TEMPORARY_TEMPO);
-        }
+            this.encoderManager.enableTemporaryEncodeMode (EncoderMode.TEMPORARY_PLAY_POSITION);
         else if (event == ButtonEvent.UP)
-        {
-            this.surface.getViewManager ().restore ();
             this.encoderManager.disableTemporaryEncodeMode ();
-        }
     }
 }

@@ -6,17 +6,18 @@ package de.mossgrabers.controller.ni.maschine.jam.command.trigger;
 
 import de.mossgrabers.controller.ni.maschine.jam.MaschineJamConfiguration;
 import de.mossgrabers.controller.ni.maschine.jam.controller.MaschineJamControlSurface;
-import de.mossgrabers.framework.command.trigger.mode.ModeCursorCommand;
+import de.mossgrabers.framework.command.trigger.mode.ModeMultiSelectCommand;
 import de.mossgrabers.framework.daw.IModel;
+import de.mossgrabers.framework.mode.Modes;
 import de.mossgrabers.framework.utils.ButtonEvent;
 
 
 /**
- * Command for navigating to the previous mode page. Toggles metronome on shift.
+ * The control button command.
  *
  * @author J&uuml;rgen Mo&szlig;graber
  */
-public class MaschineJamPageLeftCommand extends ModeCursorCommand<MaschineJamControlSurface, MaschineJamConfiguration>
+public class MaschineJamControlCommand extends ModeMultiSelectCommand<MaschineJamControlSurface, MaschineJamConfiguration>
 {
     /**
      * Constructor.
@@ -24,22 +25,19 @@ public class MaschineJamPageLeftCommand extends ModeCursorCommand<MaschineJamCon
      * @param model The model
      * @param surface The surface
      */
-    public MaschineJamPageLeftCommand (final IModel model, final MaschineJamControlSurface surface)
+    public MaschineJamControlCommand (final IModel model, final MaschineJamControlSurface surface)
     {
-        super (Direction.DOWN, model, surface, false);
+        super (model, surface, Modes.DEVICE_PARAMS, Modes.USER);
     }
 
 
     /** {@inheritDoc} */
     @Override
-    public void execute (final ButtonEvent event, final int velocity)
+    public void executeShifted (final ButtonEvent event)
     {
-        if (event != ButtonEvent.DOWN)
+        if (event != ButtonEvent.UP)
             return;
 
-        if (this.surface.isShiftPressed ())
-            this.model.getTransport ().toggleMetronome ();
-        else
-            super.execute (event, velocity);
+        this.model.getCursorDevice ().toggleWindowOpen ();
     }
 }

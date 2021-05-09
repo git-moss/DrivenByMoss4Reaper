@@ -10,17 +10,16 @@ import de.mossgrabers.controller.ni.maschine.jam.controller.FaderConfig;
 import de.mossgrabers.controller.ni.maschine.jam.controller.MaschineJamControlSurface;
 import de.mossgrabers.framework.controller.ContinuousID;
 import de.mossgrabers.framework.daw.IModel;
-import de.mossgrabers.framework.daw.data.ICursorDevice;
 import de.mossgrabers.framework.daw.data.IParameter;
-import de.mossgrabers.framework.mode.device.ParameterMode;
+import de.mossgrabers.framework.mode.device.UserMode;
 
 
 /**
- * The parameter mode.
+ * The user parameter mode.
  *
  * @author J&uuml;rgen Mo&szlig;graber
  */
-public class MaschineJamParameterMode extends ParameterMode<MaschineJamControlSurface, MaschineJamConfiguration> implements IMaschineJamMode
+public class MaschineJamUserMode extends UserMode<MaschineJamControlSurface, MaschineJamConfiguration> implements IMaschineJamMode
 {
     private static final FaderConfig FADER_OFF = new FaderConfig (FaderConfig.TYPE_SINGLE, 0, 0);
 
@@ -31,7 +30,7 @@ public class MaschineJamParameterMode extends ParameterMode<MaschineJamControlSu
      * @param surface The control surface
      * @param model The model
      */
-    public MaschineJamParameterMode (final MaschineJamControlSurface surface, final IModel model)
+    public MaschineJamUserMode (final MaschineJamControlSurface surface, final IModel model)
     {
         super (surface, model, true, ContinuousID.createSequentialList (ContinuousID.FADER1, 8));
     }
@@ -41,12 +40,7 @@ public class MaschineJamParameterMode extends ParameterMode<MaschineJamControlSu
     @Override
     public void selectPreviousItemPage ()
     {
-        if (this.surface.isSelectPressed ())
-            this.cursorDevice.selectPrevious ();
-        else
-            this.cursorDevice.getParameterBank ().scrollBackwards ();
-
-        this.mvHelper.notifySelectedDeviceAndParameterPage ();
+        super.selectPreviousItem ();
     }
 
 
@@ -54,12 +48,7 @@ public class MaschineJamParameterMode extends ParameterMode<MaschineJamControlSu
     @Override
     public void selectNextItemPage ()
     {
-        if (this.surface.isSelectPressed ())
-            this.cursorDevice.selectNext ();
-        else
-            this.cursorDevice.getParameterBank ().scrollForwards ();
-
-        this.mvHelper.notifySelectedDeviceAndParameterPage ();
+        super.selectNextItem ();
     }
 
 
@@ -67,15 +56,11 @@ public class MaschineJamParameterMode extends ParameterMode<MaschineJamControlSu
     @Override
     public FaderConfig setupFader (final int index)
     {
-        final ICursorDevice cursorDevice = this.model.getCursorDevice ();
-        if (!cursorDevice.doesExist ())
-            return FADER_OFF;
-
-        final IParameter parameter = cursorDevice.getParameterBank ().getItem (index);
+        final IParameter parameter = this.model.getUserParameterBank ().getItem (index);
         if (!parameter.doesExist ())
             return FADER_OFF;
 
         final int value = this.model.getValueChanger ().toMidiValue (parameter.getValue ());
-        return new FaderConfig (FaderConfig.TYPE_SINGLE, MaschineColorManager.PARAM_COLORS.get (index).intValue (), value);
+        return new FaderConfig (FaderConfig.TYPE_SINGLE, MaschineColorManager.COLOR_WHITE, value);
     }
 }

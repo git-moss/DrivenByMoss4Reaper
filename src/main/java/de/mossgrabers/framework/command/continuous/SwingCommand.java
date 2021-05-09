@@ -7,21 +7,22 @@ package de.mossgrabers.framework.command.continuous;
 import de.mossgrabers.framework.command.core.AbstractContinuousCommand;
 import de.mossgrabers.framework.configuration.Configuration;
 import de.mossgrabers.framework.controller.IControlSurface;
+import de.mossgrabers.framework.daw.GrooveParameterID;
+import de.mossgrabers.framework.daw.IGroove;
 import de.mossgrabers.framework.daw.IModel;
-import de.mossgrabers.framework.daw.ITransport;
 
 
 /**
- * Command to change the tempo.
+ * Command to change the swing.
  *
  * @param <S> The type of the control surface
  * @param <C> The type of the configuration
  *
  * @author J&uuml;rgen Mo&szlig;graber
  */
-public class TempoCommand<S extends IControlSurface<C>, C extends Configuration> extends AbstractContinuousCommand<S, C>
+public class SwingCommand<S extends IControlSurface<C>, C extends Configuration> extends AbstractContinuousCommand<S, C>
 {
-    protected final ITransport transport;
+    protected final IGroove groove;
 
 
     /**
@@ -30,11 +31,11 @@ public class TempoCommand<S extends IControlSurface<C>, C extends Configuration>
      * @param model The model
      * @param surface The surface
      */
-    public TempoCommand (final IModel model, final S surface)
+    public SwingCommand (final IModel model, final S surface)
     {
         super (model, surface);
 
-        this.transport = this.model.getTransport ();
+        this.groove = this.model.getGroove ();
     }
 
 
@@ -42,6 +43,6 @@ public class TempoCommand<S extends IControlSurface<C>, C extends Configuration>
     @Override
     public void execute (final int value)
     {
-        this.transport.changeTempo (this.model.getValueChanger ().isIncrease (value), this.surface.isKnobSensitivitySlow ());
+        this.groove.getParameter (GrooveParameterID.SHUFFLE_AMOUNT).changeValue (value);
     }
 }
