@@ -69,7 +69,7 @@ public abstract class AbstractSettingsUI implements ISettingsUI
 
 
     /**
-     * Init all settings.
+     * Initialize all settings.
      */
     public void init ()
     {

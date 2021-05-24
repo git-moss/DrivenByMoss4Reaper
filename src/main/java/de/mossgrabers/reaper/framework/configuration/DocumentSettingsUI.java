@@ -33,6 +33,15 @@ public class DocumentSettingsUI extends AbstractSettingsUI
 
 
     /**
+     * Removes all widgets for re-creation.
+     */
+    public void clearWidgets ()
+    {
+        this.settings.clear ();
+    }
+
+
+    /**
      * Store all settings to the properties.
      *
      * @return The properties

@@ -114,6 +114,7 @@ public abstract class AbstractControllerInstance implements IControllerInstance,
             this.host = new HostImpl (this.logModel, this.windowManager);
 
             this.loadConfiguration ();
+            this.documentSettingsUI.clearWidgets ();
             this.globalSettingsUI = new GlobalSettingsUI (this.sender, this.logModel, this.controllerConfiguration, this.controllerDefinition.getNumMidiInPorts (), this.controllerDefinition.getNumMidiOutPorts (), this.controllerDefinition.getMidiDiscoveryPairs (OperatingSystem.get ()));
             this.globalSettingsUI.initMIDI ();
 
