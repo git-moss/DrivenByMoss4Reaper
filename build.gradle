@@ -1,7 +1,7 @@
 plugins {
     // The following plugin causes the Gradle 7 deprecation warnings!
     id 'com.github.jk1.dependency-license-report' version '1.16'
-    id 'com.github.ben-manes.versions' version '0.38.0'
+    id 'com.github.ben-manes.versions' version '0.39.0'
     id 'java'
     id 'application'
     id 'eclipse'
