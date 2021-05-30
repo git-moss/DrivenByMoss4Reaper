@@ -186,6 +186,7 @@ java/util/function/Function
 jdk/internal/module/ModuleLoaderMap$Mapper
 java/util/HashMap
 java/util/ImmutableCollections
+java/lang/ModuleLayer
 jdk/internal/math/FDBigInteger
 java/lang/NullPointerException
 java/lang/ArithmeticException
@@ -811,7 +812,6 @@ java/io/RandomAccessFile$1
 java/util/ImmutableCollections$Map1
 java/util/HashMap$ValueSpliterator
 java/util/Collections$UnmodifiableCollection$1
-java/lang/ModuleLayer
 java/util/LinkedHashSet
 jdk/internal/module/ModuleLoaderMap
 jdk/internal/module/ModuleLoaderMap$Modules
