@@ -139,8 +139,11 @@ public class TrackModule extends AbstractModule
         writer.sendOSC (trackAddress + "canHoldAudioData", track.canHoldAudioData (), dump);
         writer.sendOSC (trackAddress + "position", track.getPosition (), dump);
 
-        if (track instanceof ICursorTrack cursorTrack)
+        if (track instanceof ICursorTrack)
+        {
+            final ICursorTrack cursorTrack = (ICursorTrack) track;
             writer.sendOSC (trackAddress + "pinned", cursorTrack.isPinned (), dump);
+        }
 
         final ISendBank sendBank = track.getSendBank ();
         for (int i = 0; i < sendBank.getPageSize (); i++)
@@ -435,8 +438,9 @@ public class TrackModule extends AbstractModule
                 break;
 
             case "pinned":
-                if (track instanceof ICursorTrack cursorTrack)
+                if (track instanceof ICursorTrack)
                 {
+                    final ICursorTrack cursorTrack = (ICursorTrack) track;
                     if (value == null)
                         cursorTrack.togglePinned ();
                     else

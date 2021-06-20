@@ -89,12 +89,12 @@ public class DeviceLayerDetailsMode extends BaseMode<ILayer>
         switch (index)
         {
             case 6:
-                if (this.bank instanceof IDrumPadBank drumPadBank)
-                    drumPadBank.clearMute ();
+                if (this.bank instanceof IDrumPadBank)
+                    ((IDrumPadBank) this.bank).clearMute ();
                 break;
             case 7:
-                if (this.bank instanceof IDrumPadBank drumPadBank)
-                    drumPadBank.clearSolo ();
+                if (this.bank instanceof IDrumPadBank)
+                    ((IDrumPadBank) this.bank).clearSolo ();
                 break;
             default:
                 // Not used

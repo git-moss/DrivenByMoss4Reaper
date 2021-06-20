@@ -83,6 +83,7 @@ import de.mossgrabers.framework.daw.data.bank.ITrackBank;
 import de.mossgrabers.framework.daw.midi.IMidiAccess;
 import de.mossgrabers.framework.daw.midi.IMidiInput;
 import de.mossgrabers.framework.daw.midi.IMidiOutput;
+import de.mossgrabers.framework.featuregroup.AbstractView;
 import de.mossgrabers.framework.featuregroup.IView;
 import de.mossgrabers.framework.featuregroup.ModeManager;
 import de.mossgrabers.framework.featuregroup.ViewManager;
@@ -562,6 +563,11 @@ public class LaunchpadControllerSetup extends AbstractControllerSetup<LaunchpadC
 
 
     /** {@inheritDoc} */
+    @SuppressWarnings(
+    {
+        "rawtypes",
+        "unchecked"
+    })
     @Override
     protected void registerContinuousCommands ()
     {
@@ -577,7 +583,7 @@ public class LaunchpadControllerSetup extends AbstractControllerSetup<LaunchpadC
         };
         for (final Views viewID: views)
         {
-            final IView view = viewManager.get (viewID);
+            final AbstractView view = (AbstractView) viewManager.get (viewID);
             view.registerAftertouchCommand (new AftertouchViewCommand<> (view, this.model, surface));
         }
     }
@@ -781,7 +787,7 @@ public class LaunchpadControllerSetup extends AbstractControllerSetup<LaunchpadC
         final ITrackBank tbe = this.model.getEffectTrackBank ();
         final ICursorDevice cursorDevice = this.model.getCursorDevice ();
         final IView view = viewManager.getActive ();
-        final int selSend = view instanceof SendsView sendsView ? sendsView.getSelectedSend () : -1;
+        final int selSend = view instanceof SendsView ? ((SendsView) view).getSelectedSend () : -1;
         final boolean isSession = view instanceof SessionView && !isVolume && !isPan && !isSends;
 
         final boolean isEffect = this.model.isEffectTrackBankActive ();

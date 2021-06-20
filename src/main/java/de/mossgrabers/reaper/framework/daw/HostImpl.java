@@ -108,12 +108,18 @@ public class HostImpl implements IHost
                 return false;
 
             case NOTE_EDIT_RELEASE_VELOCITY:
-            case NOTE_EDIT_CHANCE:
-            case NOTE_EDIT_EXPRESSIONS:
-            case NOTE_EDIT_OCCURRENCE:
-            case NOTE_EDIT_RECCURRENCE:
-            case NOTE_EDIT_REPEAT:
-            case NOTE_EDIT_VELOCITY_SPREAD:
+            case NOTE_EDIT_TRANSPOSE:
+            case NOTE_EDIT_TIMBRE:
+            case NOTE_EDIT_PRESSURE:
+            case NOTE_EDIT_PANORAMA:
+            case NOTE_EDIT_GAIN:
+                // TODO Version #13
+                // case NOTE_EDIT_CHANCE:
+                // case NOTE_EDIT_EXPRESSIONS:
+                // case NOTE_EDIT_OCCURRENCE:
+                // case NOTE_EDIT_RECCURRENCE:
+                // case NOTE_EDIT_REPEAT:
+                // case NOTE_EDIT_VELOCITY_SPREAD:
                 return false;
 
             case QUANTIZE_INPUT_NOTE_LENGTH:
@@ -259,7 +265,7 @@ public class HostImpl implements IHost
 
     /** {@inheritDoc} */
     @Override
-    public IOpenSoundControlMessage createOSCMessage (final String address, final List<?> values)
+    public IOpenSoundControlMessage createOSCMessage (final String address, final List<Object> values)
     {
         return new OpenSoundControlMessageImpl (address, values);
     }

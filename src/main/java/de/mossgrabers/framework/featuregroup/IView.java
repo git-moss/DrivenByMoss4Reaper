@@ -7,7 +7,6 @@ package de.mossgrabers.framework.featuregroup;
 import de.mossgrabers.framework.command.core.AftertouchCommand;
 import de.mossgrabers.framework.controller.ButtonID;
 import de.mossgrabers.framework.utils.ButtonEvent;
-import de.mossgrabers.framework.utils.KeyManager;
 
 
 /**
@@ -87,12 +86,4 @@ public interface IView extends IFeatureGroup
      * @param index The index of the track in the page
      */
     void selectTrack (int index);
-
-
-    /**
-     * Get the key manager.
-     *
-     * @return The key manager
-     */
-    KeyManager getKeyManager ();
 }

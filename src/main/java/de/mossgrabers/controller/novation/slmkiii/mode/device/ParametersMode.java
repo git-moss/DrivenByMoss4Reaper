@@ -65,13 +65,17 @@ public class ParametersMode extends AbstractParametersMode<IItem>
      *
      * @param showDevices True to show devices otherwise parameters
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings(
+    {
+        "rawtypes",
+        "unchecked"
+    })
     public final void setShowDevices (final boolean showDevices)
     {
         this.showDevices = showDevices;
 
         final ICursorDevice cursorDevice = this.model.getCursorDevice ();
-        this.switchBanks ((IBank<IItem>) (this.showDevices ? cursorDevice.getDeviceBank () : cursorDevice.getParameterBank ()));
+        this.switchBanks ((IBank) (this.showDevices ? cursorDevice.getDeviceBank () : cursorDevice.getParameterBank ()));
     }
 
 

@@ -43,9 +43,9 @@ public class APCStopClipCommand extends StopClipCommand<APCControlSurface, APCCo
 
         // Set the step resolution in sequencer modes
         final IView view = this.surface.getViewManager ().getActive ();
-        if (view instanceof AbstractSequencerView<?, ?> sequencerView)
+        if (view instanceof AbstractSequencerView)
         {
-            sequencerView.setResolutionIndex (this.index);
+            ((AbstractSequencerView<?, ?>) view).setResolutionIndex (this.index);
             return;
         }
 

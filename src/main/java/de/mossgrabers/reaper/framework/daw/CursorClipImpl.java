@@ -7,7 +7,6 @@ package de.mossgrabers.reaper.framework.daw;
 import de.mossgrabers.framework.controller.color.ColorEx;
 import de.mossgrabers.framework.daw.INoteClip;
 import de.mossgrabers.framework.daw.IStepInfo;
-import de.mossgrabers.framework.daw.NoteOccurrenceType;
 import de.mossgrabers.framework.daw.constants.Resolution;
 import de.mossgrabers.framework.daw.constants.TransportConstants;
 import de.mossgrabers.framework.daw.data.GridStep;
@@ -562,173 +561,173 @@ public class CursorClipImpl extends BaseImpl implements INoteClip
         // Not supported
     }
 
-
-    /** {@inheritDoc}} */
-    @Override
-    public void updateVelocitySpread (int channel, int step, int row, double velocitySpread)
-    {
-        // Not supported
-    }
-
-
-    /** {@inheritDoc}} */
-    @Override
-    public void changeVelocitySpread (int channel, int step, int row, int control)
-    {
-        // Not supported
-    }
-
-
-    /** {@inheritDoc}} */
-    @Override
-    public void updateIsChanceEnabled (int channel, int step, int row, boolean isEnabled)
-    {
-        // Not supported
-    }
-
-
-    /** {@inheritDoc}} */
-    @Override
-    public void updateChance (int channel, int step, int row, double chance)
-    {
-        // Not supported
-    }
-
-
-    /** {@inheritDoc}} */
-    @Override
-    public void changeChance (int channel, int step, int row, int control)
-    {
-        // Not supported
-    }
-
-
-    /** {@inheritDoc}} */
-    @Override
-    public void updateIsOccurrenceEnabled (int channel, int step, int row, boolean isEnabled)
-    {
-        // Not supported
-    }
-
-
-    /** {@inheritDoc}} */
-    @Override
-    public void setPrevNextOccurrence (int channel, int step, int row, boolean increase)
-    {
-        // Not supported
-    }
-
-
-    /** {@inheritDoc}} */
-    @Override
-    public void setOccurrence (int channel, int step, int row, NoteOccurrenceType occurrence)
-    {
-        // Not supported
-    }
-
-
-    /** {@inheritDoc}} */
-    @Override
-    public void updateIsRecurrenceEnabled (int channel, int step, int row, boolean isEnabled)
-    {
-        // Not supported
-    }
-
-
-    /** {@inheritDoc}} */
-    @Override
-    public void updateRecurrenceLength (int channel, int step, int row, int recurrenceLength)
-    {
-        // Not supported
-    }
-
-
-    /** {@inheritDoc}} */
-    @Override
-    public void updateRecurrenceMask (int channel, int step, int row, int mask)
-    {
-        // Not supported
-    }
-
-
-    /** {@inheritDoc}} */
-    @Override
-    public void changeRecurrenceLength (int channel, int step, int row, int control)
-    {
-        // Not supported
-    }
-
-
-    /** {@inheritDoc}} */
-    @Override
-    public void updateIsRepeatEnabled (int channel, int step, int row, boolean isEnabled)
-    {
-        // Not supported
-    }
-
-
-    /** {@inheritDoc}} */
-    @Override
-    public void updateRepeatCount (int channel, int step, int row, int value)
-    {
-        // Not supported
-    }
-
-
-    /** {@inheritDoc}} */
-    @Override
-    public void changeRepeatCount (int channel, int step, int row, int control)
-    {
-        // Not supported
-    }
-
-
-    /** {@inheritDoc}} */
-    @Override
-    public void updateRepeatCurve (int channel, int step, int row, double value)
-    {
-        // Not supported
-    }
-
-
-    /** {@inheritDoc}} */
-    @Override
-    public void changeRepeatCurve (int channel, int step, int row, int control)
-    {
-        // Not supported
-    }
-
-
-    /** {@inheritDoc}} */
-    @Override
-    public void updateRepeatVelocityCurve (int channel, int step, int row, double value)
-    {
-        // Not supported
-    }
-
-
-    /** {@inheritDoc}} */
-    @Override
-    public void changeRepeatVelocityCurve (int channel, int step, int row, int control)
-    {
-        // Not supported
-    }
-
-
-    /** {@inheritDoc}} */
-    @Override
-    public void updateRepeatVelocityEnd (int channel, int step, int row, double value)
-    {
-        // Not supported
-    }
-
-
-    /** {@inheritDoc}} */
-    @Override
-    public void changeRepeatVelocityEnd (int channel, int step, int row, int control)
-    {
-        // Not supported
-    }
+    // TODO Version #13
+    // /** {@inheritDoc}} */
+    // @Override
+    // public void updateVelocitySpread (int channel, int step, int row, double velocitySpread)
+    // {
+    // // Not supported
+    // }
+    //
+    //
+    // /** {@inheritDoc}} */
+    // @Override
+    // public void changeVelocitySpread (int channel, int step, int row, int control)
+    // {
+    // // Not supported
+    // }
+    //
+    //
+    // /** {@inheritDoc}} */
+    // @Override
+    // public void updateIsChanceEnabled (int channel, int step, int row, boolean isEnabled)
+    // {
+    // // Not supported
+    // }
+    //
+    //
+    // /** {@inheritDoc}} */
+    // @Override
+    // public void updateChance (int channel, int step, int row, double chance)
+    // {
+    // // Not supported
+    // }
+    //
+    //
+    // /** {@inheritDoc}} */
+    // @Override
+    // public void changeChance (int channel, int step, int row, int control)
+    // {
+    // // Not supported
+    // }
+    //
+    //
+    // /** {@inheritDoc}} */
+    // @Override
+    // public void updateIsOccurrenceEnabled (int channel, int step, int row, boolean isEnabled)
+    // {
+    // // Not supported
+    // }
+    //
+    //
+    // /** {@inheritDoc}} */
+    // @Override
+    // public void setPrevNextOccurrence (int channel, int step, int row, boolean increase)
+    // {
+    // // Not supported
+    // }
+    //
+    //
+    // /** {@inheritDoc}} */
+    // @Override
+    // public void setOccurrence (int channel, int step, int row, NoteOccurrenceType occurrence)
+    // {
+    // // Not supported
+    // }
+    //
+    //
+    // /** {@inheritDoc}} */
+    // @Override
+    // public void updateIsRecurrenceEnabled (int channel, int step, int row, boolean isEnabled)
+    // {
+    // // Not supported
+    // }
+    //
+    //
+    // /** {@inheritDoc}} */
+    // @Override
+    // public void updateRecurrenceLength (int channel, int step, int row, int recurrenceLength)
+    // {
+    // // Not supported
+    // }
+    //
+    //
+    // /** {@inheritDoc}} */
+    // @Override
+    // public void updateRecurrenceMask (int channel, int step, int row, int mask)
+    // {
+    // // Not supported
+    // }
+    //
+    //
+    // /** {@inheritDoc}} */
+    // @Override
+    // public void changeRecurrenceLength (int channel, int step, int row, int control)
+    // {
+    // // Not supported
+    // }
+    //
+    //
+    // /** {@inheritDoc}} */
+    // @Override
+    // public void updateIsRepeatEnabled (int channel, int step, int row, boolean isEnabled)
+    // {
+    // // Not supported
+    // }
+    //
+    //
+    // /** {@inheritDoc}} */
+    // @Override
+    // public void updateRepeatCount (int channel, int step, int row, int value)
+    // {
+    // // Not supported
+    // }
+    //
+    //
+    // /** {@inheritDoc}} */
+    // @Override
+    // public void changeRepeatCount (int channel, int step, int row, int control)
+    // {
+    // // Not supported
+    // }
+    //
+    //
+    // /** {@inheritDoc}} */
+    // @Override
+    // public void updateRepeatCurve (int channel, int step, int row, double value)
+    // {
+    // // Not supported
+    // }
+    //
+    //
+    // /** {@inheritDoc}} */
+    // @Override
+    // public void changeRepeatCurve (int channel, int step, int row, int control)
+    // {
+    // // Not supported
+    // }
+    //
+    //
+    // /** {@inheritDoc}} */
+    // @Override
+    // public void updateRepeatVelocityCurve (int channel, int step, int row, double value)
+    // {
+    // // Not supported
+    // }
+    //
+    //
+    // /** {@inheritDoc}} */
+    // @Override
+    // public void changeRepeatVelocityCurve (int channel, int step, int row, int control)
+    // {
+    // // Not supported
+    // }
+    //
+    //
+    // /** {@inheritDoc}} */
+    // @Override
+    // public void updateRepeatVelocityEnd (int channel, int step, int row, double value)
+    // {
+    // // Not supported
+    // }
+    //
+    //
+    // /** {@inheritDoc}} */
+    // @Override
+    // public void changeRepeatVelocityEnd (int channel, int step, int row, int control)
+    // {
+    // // Not supported
+    // }
 
 
     /** {@inheritDoc} */
