@@ -252,7 +252,7 @@ public class PropertiesEx extends java.util.Properties
     @Override
     public synchronized Object put (final Object key, final Object value)
     {
-        if (value != null && !(value instanceof String str && str.length () == 0))
+        if (value != null && !(value instanceof final String str && str.length () == 0))
             return super.put (key, value);
         this.remove (key);
         return null;

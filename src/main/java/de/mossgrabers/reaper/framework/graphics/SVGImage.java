@@ -78,7 +78,7 @@ public class SVGImage implements IImage
                 {
                     return new SVGImage (imageName, color);
                 }
-                catch (IOException ex)
+                catch (final IOException ex)
                 {
                     throw new FrameworkException ("SVG image not found.", ex);
                 }

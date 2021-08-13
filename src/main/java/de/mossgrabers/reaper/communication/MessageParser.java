@@ -561,7 +561,7 @@ public class MessageParser
         switch (command)
         {
             case TAG_COUNT:
-                if (device instanceof CursorDeviceImpl cdi)
+                if (device instanceof final CursorDeviceImpl cdi)
                     cdi.setDeviceCount (Integer.parseInt (value));
                 break;
 
@@ -590,7 +590,7 @@ public class MessageParser
                 break;
 
             case "sibling":
-                if (device instanceof CursorDeviceImpl cdi)
+                if (device instanceof final CursorDeviceImpl cdi)
                     this.parseSibling (cdi, command, parts, value);
                 break;
 
@@ -599,7 +599,7 @@ public class MessageParser
                 break;
 
             case "band":
-                if (device instanceof EqualizerDeviceImpl edi)
+                if (device instanceof final EqualizerDeviceImpl edi)
                 {
                     final String bandIndex = parts.poll ();
                     try

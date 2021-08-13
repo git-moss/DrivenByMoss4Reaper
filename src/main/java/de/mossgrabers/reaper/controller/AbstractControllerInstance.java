@@ -58,7 +58,7 @@ public abstract class AbstractControllerInstance implements IControllerInstance,
 
     private boolean                       isRunning               = false;
     private final Object                  startSync               = new Object ();
-    private List<JFrame>                  simulators              = new ArrayList<> ();
+    private final List<JFrame>            simulators              = new ArrayList<> ();
     private ConfigurationDialog           configurationDialog;
 
 

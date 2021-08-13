@@ -273,9 +273,9 @@ public class MidiInputImpl implements IMidiInput
     {
         try
         {
-            if (message instanceof SysexMessage sysex)
+            if (message instanceof final SysexMessage sysex)
                 this.handleSysexMessage (sysex);
-            else if (message instanceof ShortMessage sm)
+            else if (message instanceof final ShortMessage sm)
                 this.handleShortMessage (sm);
             else
                 this.host.error ("Unknown MIDI class.");
@@ -332,11 +332,8 @@ public class MidiInputImpl implements IMidiInput
             }
         }
 
-        if (isProcessed)
-            return;
-
         // Ignore active sensing
-        if (status == 0xF8)
+        if (isProcessed || status == 0xF8)
             return;
 
         if (this.shortCallback != null)

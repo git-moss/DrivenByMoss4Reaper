@@ -163,7 +163,7 @@ public class QFactorInvertedParameter implements IParameter
 
     /** {@inheritDoc} */
     @Override
-    public void setValue (IValueChanger valueChanger, int value)
+    public void setValue (final IValueChanger valueChanger, final int value)
     {
         this.parameter.setValue (valueChanger, this.maxValue - value - 1);
     }

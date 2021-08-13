@@ -188,7 +188,7 @@ public class HwSurfaceFactoryImpl implements IHwSurfaceFactory
     public void clearCache ()
     {
         this.controls.forEach (control -> {
-            if (control instanceof IHwLight light)
+            if (control instanceof final IHwLight light)
                 light.forceFlush ();
         });
     }

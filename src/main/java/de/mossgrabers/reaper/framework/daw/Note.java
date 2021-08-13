@@ -24,7 +24,7 @@ public class Note
 
     /**
      * Constructor.
-     * 
+     *
      * @param isMuted True if muted
      * @param start The start of the note
      * @param end The end of the note

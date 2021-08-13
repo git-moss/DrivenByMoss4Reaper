@@ -12,7 +12,7 @@ import java.nio.ByteBuffer;
  */
 public class MemoryBlockImpl implements IMemoryBlock
 {
-    private ByteBuffer buffer;
+    private final ByteBuffer buffer;
 
 
     /**

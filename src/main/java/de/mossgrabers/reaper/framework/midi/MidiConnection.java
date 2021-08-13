@@ -34,10 +34,10 @@ public class MidiConnection
     private Receiver                     receiver;
     private Transmitter                  transmitter;
 
-    private LogModel                     model;
+    private final LogModel               model;
     private final Object                 sendLock       = new Object ();
 
-    private AtomicInteger                maxSysexLength = new AtomicInteger (0);
+    private final AtomicInteger          maxSysexLength = new AtomicInteger (0);
 
 
     /**

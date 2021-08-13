@@ -25,7 +25,7 @@ public class MidiDeviceConverter extends DefaultListCellRenderer
     @Override
     public Component getListCellRendererComponent (final JList<?> list, final Object value, final int index, final boolean isSelected, final boolean cellHasFocus)
     {
-        final Object v = value instanceof MidiDevice md ? md.getDeviceInfo ().getName () : value;
+        final Object v = value instanceof final MidiDevice md ? md.getDeviceInfo ().getName () : value;
         return super.getListCellRendererComponent (list, v, index, isSelected, cellHasFocus);
     }
 }

@@ -111,9 +111,9 @@ public class OpenSoundControlServerImpl implements IOpenSoundControlServer
 
         private void collectMessages (final List<OSCMessage> messages, final OSCPacket packet)
         {
-            if (packet instanceof OSCMessage osc)
+            if (packet instanceof final OSCMessage osc)
                 messages.add (osc);
-            else if (packet instanceof OSCBundle bundle)
+            else if (packet instanceof final OSCBundle bundle)
             {
                 for (final OSCPacket op: bundle.getPackets ())
                     this.collectMessages (messages, op);

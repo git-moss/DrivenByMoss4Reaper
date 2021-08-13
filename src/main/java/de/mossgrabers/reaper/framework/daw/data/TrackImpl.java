@@ -140,24 +140,21 @@ public class TrackImpl extends ChannelImpl implements ITrack
     @Override
     public void enter ()
     {
-        if (!(this.trackBank instanceof TrackBankImpl tbi))
-            return;
-
         // Only group tracks can be entered
-        if (!this.isGroup ())
-            return;
-
-        // If this track is already the cursor track, enter it straight away
-        if (this.isSelected ())
+        if (this.trackBank instanceof final TrackBankImpl tbi && this.isGroup ())
         {
-            tbi.enterCurrentFolder ();
-            return;
-        }
+            // If this track is already the cursor track, enter it straight away
+            if (this.isSelected ())
+            {
+                tbi.enterCurrentFolder ();
+                return;
+            }
 
-        // Make the track cursor track
-        this.select ();
-        // Delay the child selection a bit to ensure the track is selected
-        this.host.scheduleTask (((TrackBankImpl) this.trackBank)::enterCurrentFolder, 100);
+            // Make the track cursor track
+            this.select ();
+            // Delay the child selection a bit to ensure the track is selected
+            this.host.scheduleTask (((TrackBankImpl) this.trackBank)::enterCurrentFolder, 100);
+        }
     }
 
 

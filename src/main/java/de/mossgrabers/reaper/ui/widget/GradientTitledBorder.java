@@ -83,14 +83,17 @@ public class GradientTitledBorder extends TitledBorder
     @Override
     public void paintBorder (final Component c, final Graphics g, final int x, final int y, final int width, final int height)
     {
-        if (!(g instanceof Graphics2D g2))
+        if (g instanceof final Graphics2D g2)
+        {
+            g2.setPaint (new GradientPaint (x, y, this.gradientColor1, (float) x + width, y, this.gradientColor2));
+            final int h = this.getBorderInsets (c).top;
+            g2.fillRect (x, y, width, y + h);
+            final Font f = this.getTitleFont ();
+            final Rectangle2D bounds = f.getStringBounds (this.getTitle (), g2.getFontRenderContext ());
+            super.paintBorder (c, g2, x, y + (int) (h - bounds.getHeight ()) / 2, width, height);
+        }
+        else
             throw new ClassCastException ("Parameter g must be an instance of Graphics2D but is " + g.getClass () + ".");
-        g2.setPaint (new GradientPaint (x, y, this.gradientColor1, (float) x + width, y, this.gradientColor2));
-        final int h = this.getBorderInsets (c).top;
-        g2.fillRect (x, y, width, y + h);
-        final Font f = this.getTitleFont ();
-        final Rectangle2D bounds = f.getStringBounds (this.getTitle (), g2.getFontRenderContext ());
-        super.paintBorder (c, g2, x, y + (int) (h - bounds.getHeight ()) / 2, width, height);
     }
 
 

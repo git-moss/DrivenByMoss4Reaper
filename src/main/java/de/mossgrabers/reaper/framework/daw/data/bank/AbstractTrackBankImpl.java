@@ -32,9 +32,9 @@ public abstract class AbstractTrackBankImpl extends AbstractPagedBankImpl<TrackI
 
     private final IApplication  application;
     private final ICursorTrack  cursorTrack;
-    private int                 numScenes;
-    private int                 numSends;
-    private ISceneBank          sceneBank;
+    private final int           numScenes;
+    private final int           numSends;
+    private final ISceneBank    sceneBank;
 
 
     /**
@@ -296,7 +296,7 @@ public abstract class AbstractTrackBankImpl extends AbstractPagedBankImpl<TrackI
 
     /**
      * Adds a new track to this track bank.
-     * 
+     *
      * @param type The type of the track to add
      */
     protected void addTrack (final ChannelType type)

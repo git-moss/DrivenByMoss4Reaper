@@ -231,16 +231,10 @@ public class DeviceManager
 
     private static boolean accept (final Device d, final DeviceFileType fileType, final String category, final String vendor, final DeviceLocation location, final DeviceType deviceType)
     {
-        if (fileType != null && d.getFileType () != fileType)
+        if (fileType != null && d.getFileType () != fileType || category != null && !d.hasCategory (category))
             return false;
 
-        if (category != null && !d.hasCategory (category))
-            return false;
-
-        if (vendor != null && !vendor.equals (d.getVendor ()))
-            return false;
-
-        if (location != null && d.getLocation () != location)
+        if (vendor != null && !vendor.equals (d.getVendor ()) || location != null && d.getLocation () != location)
             return false;
 
         return deviceType == null || d.getType () == deviceType;

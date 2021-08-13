@@ -76,7 +76,7 @@ public class HwFaderImpl extends AbstractHwAbsoluteControl implements IHwFader
             final double scaledHeight = height / factor * this.currentValue;
             gc.fillRectangle (left, top + height - scaledHeight, width, scaledHeight, ColorEx.WHITE);
 
-            if (this.parameter instanceof ParameterImpl pi)
+            if (this.parameter instanceof final ParameterImpl pi)
             {
                 final double paramValue = pi.getInternalValue ();
                 final double valueHeight = height * paramValue;
@@ -88,7 +88,7 @@ public class HwFaderImpl extends AbstractHwAbsoluteControl implements IHwFader
             final double scaledWidth = width / factor * this.currentValue;
             gc.fillRectangle (left, top, scaledWidth, height, ColorEx.WHITE);
 
-            if (this.parameter instanceof ParameterImpl pi)
+            if (this.parameter instanceof final ParameterImpl pi)
             {
                 final double paramValue = pi.getInternalValue ();
                 final double valueWidth = width * paramValue;

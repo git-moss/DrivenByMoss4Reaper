@@ -174,7 +174,7 @@ public class HwRelativeKnobImpl extends AbstractHwContinuousControl implements I
         final double centerY = (bounds.getY () + radius) * scale;
         gc.fillCircle (centerX, centerY, radius * scale, ColorEx.BLACK);
 
-        if (this.parameter instanceof ParameterImpl pi)
+        if (this.parameter instanceof final ParameterImpl pi)
         {
             final double paramValue = pi.getInternalValue ();
             final int l = (int) Math.round (paramValue * 360.0);

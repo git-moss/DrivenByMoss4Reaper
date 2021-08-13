@@ -24,7 +24,7 @@ public class NoteInputImpl implements INoteInput
 {
     private Integer []        keyTranslationTable;
     private Integer []        velocityTranslationTable;
-    private Set<String>       filters = new HashSet<> ();
+    private final Set<String> filters = new HashSet<> ();
     private final INoteRepeat noteRepeat;
 
 

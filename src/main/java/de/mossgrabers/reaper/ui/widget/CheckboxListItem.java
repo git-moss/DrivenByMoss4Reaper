@@ -14,7 +14,7 @@ import de.mossgrabers.reaper.controller.IControllerInstance;
  */
 public class CheckboxListItem
 {
-    private IControllerInstance item;
+    private final IControllerInstance item;
 
 
     /**

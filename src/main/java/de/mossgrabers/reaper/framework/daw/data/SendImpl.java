@@ -20,7 +20,7 @@ public class SendImpl extends ParameterImpl implements ISend
 {
     private static final Object UPDATE_LOCK = new Object ();
 
-    private IChannel            channel;
+    private final IChannel      channel;
 
 
     /**

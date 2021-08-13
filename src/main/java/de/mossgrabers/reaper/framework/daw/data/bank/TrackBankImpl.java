@@ -47,7 +47,7 @@ public class TrackBankImpl extends AbstractTrackBankImpl
     private final int []             noteCache     = new int [128];
 
     private TrackImpl                master;
-    private List<TrackImpl>          flatTracks    = new ArrayList<> ();
+    private final List<TrackImpl>    flatTracks    = new ArrayList<> ();
     private TreeNode<TrackImpl>      rootTrack     = new TreeNode<> ();
     private TreeNode<TrackImpl>      currentFolder = this.rootTrack;
 
@@ -74,7 +74,7 @@ public class TrackBankImpl extends AbstractTrackBankImpl
 
     /**
      * Constructor.
-     * 
+     *
      * @param dataSetup Some configuration variables
      * @param cursorTrack The cursor track
      * @param application The application
@@ -444,7 +444,7 @@ public class TrackBankImpl extends AbstractTrackBankImpl
         hierarchy.add (newRoot);
 
         for (int i = 0; i < super.getItemCount (); i++)
-            insertInHierarchy (this.getUnpagedItem (i), hierarchy);
+            this.insertInHierarchy (this.getUnpagedItem (i), hierarchy);
 
         this.rootTrack = newRoot;
 

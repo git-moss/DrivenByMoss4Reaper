@@ -16,12 +16,12 @@ import java.util.Map;
 public class FontCache
 {
     /** Use sans-serif as the base font. */
-    public static final String SANS_SERIF  = "SansSerif";
+    public static final String      SANS_SERIF  = "SansSerif";
     /** Use mono-spaced as the base font. */
-    public static final String MONOSPACED  = "Monospaced";
+    public static final String      MONOSPACED  = "Monospaced";
 
-    private Font               baseFont;
-    private Map<Double, Font>  scaledFonts = new HashMap<> ();
+    private final Font              baseFont;
+    private final Map<Double, Font> scaledFonts = new HashMap<> ();
 
 
     /**

@@ -15,9 +15,9 @@ import java.io.StringWriter;
  */
 public class LogModel
 {
-    private final Object  updateLock = new Object ();
-    private JTextArea     logMessage;
-    private StringBuilder buffer     = new StringBuilder ();
+    private final Object        updateLock = new Object ();
+    private JTextArea           logMessage;
+    private final StringBuilder buffer     = new StringBuilder ();
 
 
     /**

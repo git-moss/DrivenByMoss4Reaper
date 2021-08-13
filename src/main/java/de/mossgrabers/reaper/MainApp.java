@@ -58,19 +58,19 @@ import java.util.regex.Pattern;
  */
 public class MainApp implements MessageSender, AppCallback, WindowManager
 {
-    private static final int          DEVICE_UPDATE_RATE = 30;
-    private static final Pattern      TAG_PATTERN        = Pattern.compile ("(.*?)=\"(.*?)\"\\s*");
+    private static final int                DEVICE_UPDATE_RATE = 30;
+    private static final Pattern            TAG_PATTERN        = Pattern.compile ("(.*?)=\"(.*?)\"\\s*");
 
-    private final LogModel            logModel           = new LogModel ();
+    private final LogModel                  logModel           = new LogModel ();
 
-    private final MainConfiguration   mainConfiguration  = new MainConfiguration ();
-    private final Object              mainFrameLock      = new Object ();
-    private MainFrame                 mainFrame;
+    private final MainConfiguration         mainConfiguration  = new MainConfiguration ();
+    private final Object                    mainFrameLock      = new Object ();
+    private MainFrame                       mainFrame;
 
-    private ControllerInstanceManager instanceManager;
-    private final Timer               animationTimer;
-    private String                    iniPath;
-    private final IniFiles            iniFiles           = new IniFiles ();
+    private final ControllerInstanceManager instanceManager;
+    private final Timer                     animationTimer;
+    private final String                    iniPath;
+    private final IniFiles                  iniFiles           = new IniFiles ();
 
 
     /**

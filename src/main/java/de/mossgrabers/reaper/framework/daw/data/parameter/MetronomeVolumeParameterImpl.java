@@ -4,7 +4,8 @@
 
 package de.mossgrabers.reaper.framework.daw.data.parameter;
 
-import de.mossgrabers.framework.daw.data.empty.EmptyParameter;
+import de.mossgrabers.framework.controller.valuechanger.IValueChanger;
+import de.mossgrabers.framework.daw.data.AbstractParameterImpl;
 import de.mossgrabers.reaper.communication.Processor;
 import de.mossgrabers.reaper.framework.daw.DataSetupEx;
 
@@ -14,12 +15,15 @@ import de.mossgrabers.reaper.framework.daw.DataSetupEx;
  *
  * @author J&uuml;rgen Mo&szlig;graber
  */
-public class MetronomeVolumeParameterImpl extends EmptyParameter
+public class MetronomeVolumeParameterImpl extends AbstractParameterImpl
 {
-    private final DataSetupEx dataSetup;
+    private final DataSetupEx   dataSetup;
 
-    private double            metronomeVolume    = 0.5;
-    private String            metronomeVolumeStr = "0.0";
+    // -6dB
+    private static final double DEFAULT_VOLUME     = 0.592449;
+
+    private double              metronomeVolume    = DEFAULT_VOLUME;
+    private String              metronomeVolumeStr = "0.0";
 
 
     /**
@@ -29,7 +33,58 @@ public class MetronomeVolumeParameterImpl extends EmptyParameter
      */
     public MetronomeVolumeParameterImpl (final DataSetupEx dataSetup)
     {
+        super (dataSetup.getValueChanger (), -1);
+
         this.dataSetup = dataSetup;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void setValue (final IValueChanger valueChanger, final int value)
+    {
+        this.metronomeVolume = valueChanger.toNormalizedValue (value);
+        this.dataSetup.getSender ().processIntArg (Processor.METRO_VOL, valueChanger.toMidiValue (value));
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public int getValue ()
+    {
+        return this.valueChanger.fromNormalizedValue (Math.max (this.metronomeVolume, 0));
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void setNormalizedValue (final double value)
+    {
+        this.setValue (this.valueChanger.fromNormalizedValue (value));
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void changeValue (final IValueChanger valueChanger, final int value)
+    {
+        this.setValue (valueChanger.changeValue (value, this.getValue ()));
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void setValueImmediatly (final int value)
+    {
+        this.setValue (value);
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void resetValue ()
+    {
+        this.setNormalizedValue (DEFAULT_VOLUME);
     }
 
 
@@ -43,25 +98,9 @@ public class MetronomeVolumeParameterImpl extends EmptyParameter
 
     /** {@inheritDoc} */
     @Override
-    public void setValue (final int value)
+    public String getDisplayedValue ()
     {
-        this.dataSetup.getSender ().processIntArg (Processor.METRO_VOL, this.dataSetup.getValueChanger ().toMidiValue (value));
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void setNormalizedValue (final double value)
-    {
-        this.setValue (this.dataSetup.getValueChanger ().fromNormalizedValue (value));
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public int getValue ()
-    {
-        return this.dataSetup.getValueChanger ().fromNormalizedValue (Math.max (this.metronomeVolume, 0));
+        return this.metronomeVolumeStr;
     }
 
 
@@ -73,14 +112,6 @@ public class MetronomeVolumeParameterImpl extends EmptyParameter
     public void setInternalMetronomeVolume (final double metronomeVolume)
     {
         this.metronomeVolume = metronomeVolume;
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public String getDisplayedValue ()
-    {
-        return this.metronomeVolumeStr;
     }
 
 

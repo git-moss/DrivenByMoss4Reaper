@@ -21,7 +21,7 @@ import java.util.Optional;
  */
 public class ParameterPageBankImpl extends AbstractBank<String> implements IParameterPageBank
 {
-    private IParameterBank parameterBank;
+    private final IParameterBank parameterBank;
 
 
     /**

@@ -15,9 +15,6 @@ import de.mossgrabers.framework.daw.data.AbstractParameterImpl;
  */
 public class CrossfadeParameter extends AbstractParameterImpl
 {
-    private final IValueChanger valueChanger;
-
-
     /**
      * Constructor.
      *
@@ -26,9 +23,7 @@ public class CrossfadeParameter extends AbstractParameterImpl
      */
     public CrossfadeParameter (final IValueChanger valueChanger, final int index)
     {
-        super (index);
-
-        this.valueChanger = valueChanger;
+        super (valueChanger, index);
     }
 
 
@@ -58,14 +53,6 @@ public class CrossfadeParameter extends AbstractParameterImpl
 
     /** {@inheritDoc} */
     @Override
-    public void inc (final double increment)
-    {
-        // Not supported
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
     public String getDisplayedValue ()
     {
         return "AB";
@@ -74,64 +61,8 @@ public class CrossfadeParameter extends AbstractParameterImpl
 
     /** {@inheritDoc} */
     @Override
-    public void setNormalizedValue (final double value)
-    {
-        // Not supported
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
     public int getValue ()
     {
         return this.valueChanger.getUpperBound () / 2;
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void setValue (final int value)
-    {
-        // Not supported
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void setValue (final IValueChanger valueChanger, final int value)
-    {
-        // Not supported
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void setValueImmediatly (final int value)
-    {
-        // Not supported
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void changeValue (final int control)
-    {
-        // Not supported
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void changeValue (final IValueChanger valueChanger, final int value)
-    {
-        // Not supported
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void resetValue ()
-    {
-        // Not supported
     }
 }

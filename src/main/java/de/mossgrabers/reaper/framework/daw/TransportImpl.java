@@ -32,32 +32,32 @@ import java.util.Optional;
  */
 public class TransportImpl extends BaseImpl implements ITransport
 {
-    private static final int             PUNCH_OFF     = 0;
-    private static final int             PUNCH_ITEMS   = 1;
-    private static final int             PUNCH_LOOP    = 2;
+    private static final int                   PUNCH_OFF     = 0;
+    private static final int                   PUNCH_ITEMS   = 1;
+    private static final int                   PUNCH_LOOP    = 2;
 
-    private static final Object          UPDATE_LOCK   = new Object ();
+    private static final Object                UPDATE_LOCK   = new Object ();
 
-    private final IModel                 model;
-    private IniFiles                     iniFiles;
+    private final IModel                       model;
+    private final IniFiles                     iniFiles;
 
-    private double                       position      = 0;            // Time
-    private String                       positionStr   = "";
-    private double                       tempo         = 120.0;
-    private String                       beatsStr      = "";
+    private double                             position      = 0;            // Time
+    private String                             positionStr   = "";
+    private double                             tempo         = 120.0;
+    private String                             beatsStr      = "";
 
-    private boolean                      isMetronomeOn = false;
-    private boolean                      isPlaying     = false;
-    private boolean                      isRecording   = false;
-    private boolean                      isLooping     = false;
+    private boolean                            isMetronomeOn = false;
+    private boolean                            isPlaying     = false;
+    private boolean                            isRecording   = false;
+    private boolean                            isLooping     = false;
 
-    private int                          numerator     = 4;
-    private int                          denominator   = 4;
-    private boolean                      prerollClick  = false;
-    private int                          preroll       = 2;
+    private int                                numerator     = 4;
+    private int                                denominator   = 4;
+    private boolean                            prerollClick  = false;
+    private int                                preroll       = 2;
 
-    private int                          punchMode     = PUNCH_OFF;
-    private MetronomeVolumeParameterImpl metronomeVolumeParameter;
+    private int                                punchMode     = PUNCH_OFF;
+    private final MetronomeVolumeParameterImpl metronomeVolumeParameter;
 
 
     /**

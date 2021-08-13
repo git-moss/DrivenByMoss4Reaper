@@ -61,7 +61,7 @@ public class MainFrame extends JFrame
     private final DefaultListModel<CheckboxListItem> listModel        = new DefaultListModel<> ();
     private final JList<CheckboxListItem>            controllerList   = new JList<> (this.listModel);
 
-    private DebugDialog                              debugDialog;
+    private final DebugDialog                        debugDialog;
 
 
     /**

@@ -26,10 +26,10 @@ import java.util.concurrent.TimeUnit;
  */
 public class UsbEndpointImpl implements IUsbEndpoint
 {
-    private IHost                host;
-    private DeviceHandle         handle;
-    private byte                 endpointAddress;
-    private boolean              isBulk;
+    private final IHost          host;
+    private final DeviceHandle   handle;
+    private final byte           endpointAddress;
+    private final boolean        isBulk;
     private Transfer             activeTransfer;
     private final Object         transferLock = new Object ();
     private final CountDownLatch clearLatch   = new CountDownLatch (1);

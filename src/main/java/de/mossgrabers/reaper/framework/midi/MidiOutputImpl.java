@@ -14,7 +14,7 @@ import de.mossgrabers.framework.daw.midi.AbstractMidiOutputImpl;
  */
 class MidiOutputImpl extends AbstractMidiOutputImpl
 {
-    private MidiConnection midiConnection;
+    private final MidiConnection midiConnection;
 
 
     /**

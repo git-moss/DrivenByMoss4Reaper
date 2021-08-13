@@ -22,7 +22,7 @@ import java.util.Map;
  */
 public class GrooveImpl extends BaseImpl implements IGroove
 {
-    private Map<GrooveParameterID, IParameter> parameters = new EnumMap<> (GrooveParameterID.class);
+    private final Map<GrooveParameterID, IParameter> parameters = new EnumMap<> (GrooveParameterID.class);
 
 
     /**

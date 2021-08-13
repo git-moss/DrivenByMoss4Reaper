@@ -31,9 +31,9 @@ import java.awt.geom.Rectangle2D;
  */
 public class GraphicsContextImpl implements IGraphicsContext
 {
-    private final FontCache fontCache;
+    private final FontCache  fontCache;
 
-    private Graphics2D      gc;
+    private final Graphics2D gc;
 
 
     /**

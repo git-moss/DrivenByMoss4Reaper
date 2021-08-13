@@ -18,12 +18,12 @@ import de.mossgrabers.reaper.framework.daw.data.ItemImpl;
  */
 public class ParameterImpl extends ItemImpl implements IParameter
 {
-    private String   valueStr          = "";
-    private boolean  isBeingTouched;
+    private String    valueStr          = "";
+    private boolean   isBeingTouched;
 
-    protected double value;
-    protected double lastReceivedValue = -1;
-    private int      defaultValue;
+    protected double  value;
+    protected double  lastReceivedValue = -1;
+    private final int defaultValue;
 
 
     /**
@@ -112,7 +112,7 @@ public class ParameterImpl extends ItemImpl implements IParameter
 
     /** {@inheritDoc} */
     @Override
-    public void setValue (IValueChanger valueChanger, int value)
+    public void setValue (final IValueChanger valueChanger, final int value)
     {
         this.setNormalizedValue (valueChanger.toNormalizedValue (value));
     }

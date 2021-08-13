@@ -26,7 +26,7 @@ import java.util.List;
 public class MasterTrackImpl extends TrackImpl implements IMasterTrack
 {
     private final List<IItemSelectionObserver> observers = new ArrayList<> ();
-    private UserParameterImpl                  crossfaderParameter;
+    private final UserParameterImpl            crossfaderParameter;
 
 
     /**
