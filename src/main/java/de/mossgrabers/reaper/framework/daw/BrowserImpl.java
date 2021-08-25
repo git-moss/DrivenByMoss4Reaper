@@ -30,6 +30,7 @@ import de.mossgrabers.reaper.framework.device.column.DeviceLocationFilterColumn;
 import de.mossgrabers.reaper.framework.device.column.DeviceTagsFilterColumn;
 import de.mossgrabers.reaper.framework.device.column.DeviceTypeFilterColumn;
 import de.mossgrabers.reaper.framework.device.column.EmptyFilterColumn;
+import de.mossgrabers.reaper.ui.BrowserDialog;
 
 import java.util.Collections;
 import java.util.List;
@@ -76,7 +77,7 @@ public class BrowserImpl extends AbstractBrowser
 
     private final MessageSender        sender;
     private final IBrowserColumn [] [] columnDataContentTypes;
-
+    private final BrowserDialog        browserWindow;
     private int                        insertPosition;
 
 
@@ -93,7 +94,7 @@ public class BrowserImpl extends AbstractBrowser
         super (numFilterColumnEntries, numResults);
 
         this.cursorDevice = cursorDevice;
-        this.sender = dataSetup != null ? dataSetup.getSender () : null;
+        this.sender = dataSetup.getSender ();
 
         this.deviceCollectionFilterColumn = new DeviceCollectionFilterColumn (0, numFilterColumnEntries);
         this.deviceLocationFilterColumn = new DeviceLocationFilterColumn (1, numFilterColumnEntries);
@@ -131,6 +132,8 @@ public class BrowserImpl extends AbstractBrowser
 
         for (final IBrowserColumn column: this.columnDataContentTypes[ContentType.DEVICE.ordinal ()])
             ((BaseColumn) column).addSelectionListener (this::updateFilteredDevices);
+
+        this.browserWindow = ((HostImpl) dataSetup.getHost ()).getWindowManager ().getMainFrame ().getBrowserDialog ();
 
         this.enableObservers (false);
     }
@@ -279,6 +282,7 @@ public class BrowserImpl extends AbstractBrowser
         this.insertPosition = insertPos;
         this.setContentType (contentType);
         this.isBrowserActive = true;
+        this.browserWindow.open (this);
         this.fireActiveObserver (this.isBrowserActive);
     }
 
@@ -287,6 +291,8 @@ public class BrowserImpl extends AbstractBrowser
     @Override
     public void stopBrowsing (final boolean commitSelection)
     {
+        this.browserWindow.close (Boolean.FALSE);
+
         if (!this.isBrowserActive)
             return;
 

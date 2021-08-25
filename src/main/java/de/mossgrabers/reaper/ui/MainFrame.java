@@ -62,6 +62,7 @@ public class MainFrame extends JFrame
     private final JList<CheckboxListItem>            controllerList   = new JList<> (this.listModel);
 
     private final DebugDialog                        debugDialog;
+    private final BrowserDialog                      browserDialog;
 
 
     /**
@@ -85,6 +86,7 @@ public class MainFrame extends JFrame
         this.setTitle ();
 
         this.debugDialog = new DebugDialog (this, callback);
+        this.browserDialog = new BrowserDialog (this);
 
         // Top pane
 
@@ -164,7 +166,6 @@ public class MainFrame extends JFrame
             this.listModel.addElement (new CheckboxListItem (instance));
 
         this.updateWidgetStates ();
-
     }
 
 
@@ -217,6 +218,17 @@ public class MainFrame extends JFrame
     public void projectSettings ()
     {
         this.callback.projectSettings ();
+    }
+
+
+    /**
+     * Get the browser dialog.
+     *
+     * @return The browser dialog
+     */
+    public BrowserDialog getBrowserDialog ()
+    {
+        return this.browserDialog;
     }
 
 

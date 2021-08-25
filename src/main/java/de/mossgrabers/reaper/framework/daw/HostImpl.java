@@ -303,4 +303,15 @@ public class HostImpl implements IHost
     {
         return new ArrayList<> (DeviceManager.get ().getEffects ());
     }
+
+
+    /**
+     * Get the window manager.
+     *
+     * @return The window manager
+     */
+    public WindowManager getWindowManager ()
+    {
+        return this.windowManager;
+    }
 }

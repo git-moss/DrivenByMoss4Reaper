@@ -135,7 +135,8 @@ public abstract class BasicDialog extends JDialog
      */
     protected void basicInit ()
     {
-        this.frame.setCursor (Cursor.getPredefinedCursor (Cursor.WAIT_CURSOR));
+        if (this.frame != null)
+            this.frame.setCursor (Cursor.getPredefinedCursor (Cursor.WAIT_CURSOR));
 
         try
         {
@@ -148,7 +149,8 @@ public abstract class BasicDialog extends JDialog
             this.set ();
 
             this.pack ();
-            this.setLocationRelativeTo (this.frame);
+            if (this.frame != null)
+                this.setLocationRelativeTo (this.frame);
         }
         catch (final Exception ex)
         {
@@ -158,7 +160,8 @@ public abstract class BasicDialog extends JDialog
         // Make sure the window is up to date with the current L&F
         SwingUtilities.updateComponentTreeUI (this);
 
-        this.frame.setCursor (Cursor.getPredefinedCursor (Cursor.DEFAULT_CURSOR));
+        if (this.frame != null)
+            this.frame.setCursor (Cursor.getPredefinedCursor (Cursor.DEFAULT_CURSOR));
     }
 
 

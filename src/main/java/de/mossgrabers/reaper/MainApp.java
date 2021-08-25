@@ -68,7 +68,7 @@ public class MainApp implements MessageSender, AppCallback, WindowManager
     private MainFrame                       mainFrame;
 
     private final ControllerInstanceManager instanceManager;
-    private final Timer                     animationTimer;
+    private Timer                           animationTimer;
     private final String                    iniPath;
     private final IniFiles                  iniFiles           = new IniFiles ();
 
@@ -91,13 +91,14 @@ public class MainApp implements MessageSender, AppCallback, WindowManager
 
         this.instanceManager = new ControllerInstanceManager (this.logModel, this, this, this.iniFiles);
 
-        if (this.iniPath.isEmpty ())
-            this.logModel.info ("Missing INI path parameter! Cannot start the application.");
-        else
+        if (this.iniPath == null || this.iniPath.isEmpty ())
         {
-            this.loadConfig ();
-            this.loadINIFiles (this.iniPath);
+            this.logModel.info ("Missing INI path parameter! Cannot start the application.");
+            return;
         }
+
+        this.loadConfig ();
+        this.loadINIFiles (this.iniPath);
 
         this.animationTimer = new Timer (DEVICE_UPDATE_RATE, event -> {
             try
@@ -110,16 +111,13 @@ public class MainApp implements MessageSender, AppCallback, WindowManager
             }
         });
 
-        if (this.iniPath != null)
-        {
-            this.initUSB ();
-            SafeRunLater.execute (this.logModel, this::startupInfrastructure);
-        }
+        this.initUSB ();
+        SafeRunLater.execute (this.logModel, this::startupInfrastructure);
     }
 
 
     /**
-     * Initialise USB.
+     * Initialize USB.
      */
     protected void initUSB ()
     {
@@ -147,7 +145,8 @@ public class MainApp implements MessageSender, AppCallback, WindowManager
         this.logModel.info ("Exiting platform...");
 
         this.logModel.info ("Stopping flush timer...");
-        this.animationTimer.stop ();
+        if (this.animationTimer != null)
+            this.animationTimer.stop ();
 
         this.instanceManager.stopAll ();
 
@@ -168,7 +167,7 @@ public class MainApp implements MessageSender, AppCallback, WindowManager
 
 
     /**
-     * Load the settings from the config file.
+     * Load the settings from the configuration file.
      */
     protected void loadConfig ()
     {
@@ -186,7 +185,7 @@ public class MainApp implements MessageSender, AppCallback, WindowManager
 
 
     /**
-     * Save the settings from the config file.
+     * Save the settings from the configuration file.
      */
     protected void saveConfig ()
     {
@@ -268,7 +267,8 @@ public class MainApp implements MessageSender, AppCallback, WindowManager
      */
     private void startFlushTimer ()
     {
-        this.animationTimer.start ();
+        if (this.animationTimer != null)
+            this.animationTimer.start ();
     }
 
 
