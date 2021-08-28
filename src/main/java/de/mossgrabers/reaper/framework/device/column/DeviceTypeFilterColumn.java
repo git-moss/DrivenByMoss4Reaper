@@ -7,6 +7,9 @@ package de.mossgrabers.reaper.framework.device.column;
 import de.mossgrabers.reaper.framework.device.DeviceManager;
 import de.mossgrabers.reaper.framework.device.DeviceType;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 /**
  * A filter column for device types.
@@ -35,6 +38,18 @@ public class DeviceTypeFilterColumn extends BaseColumn
     protected int getMaxNumItems ()
     {
         return DeviceType.values ().length;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public List<String> getAllItems ()
+    {
+        final DeviceType [] type = DeviceType.values ();
+        final List<String> result = new ArrayList<> (type.length);
+        for (final DeviceType location: type)
+            result.add (location.getName ());
+        return result;
     }
 
 

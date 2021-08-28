@@ -4,8 +4,10 @@
 
 package de.mossgrabers.reaper.controller.utilities.midimonitor;
 
+import de.mossgrabers.controller.utilities.midimonitor.MidiMonitorConfiguration;
 import de.mossgrabers.controller.utilities.midimonitor.MidiMonitorDefinition;
 import de.mossgrabers.controller.utilities.midimonitor.MidiMonitorSetup;
+import de.mossgrabers.framework.controller.IControlSurface;
 import de.mossgrabers.framework.controller.IControllerSetup;
 import de.mossgrabers.reaper.communication.MessageSender;
 import de.mossgrabers.reaper.controller.AbstractControllerInstance;
@@ -20,7 +22,7 @@ import de.mossgrabers.reaper.ui.utils.LogModel;
  *
  * @author J&uuml;rgen Mo&szlig;graber
  */
-public class MidiMonitorInstance extends AbstractControllerInstance
+public class MidiMonitorInstance extends AbstractControllerInstance<IControlSurface<MidiMonitorConfiguration>, MidiMonitorConfiguration>
 {
     /** The controller definition instance. */
     public static final MidiMonitorDefinition CONTROLLER_DEFINITION = new MidiMonitorDefinition ();
@@ -42,7 +44,7 @@ public class MidiMonitorInstance extends AbstractControllerInstance
 
     /** {@inheritDoc} */
     @Override
-    protected IControllerSetup<?, ?> createControllerSetup (final ReaperSetupFactory setupFactory)
+    protected IControllerSetup<IControlSurface<MidiMonitorConfiguration>, MidiMonitorConfiguration> createControllerSetup (final ReaperSetupFactory setupFactory)
     {
         return new MidiMonitorSetup (this.host, setupFactory, this.globalSettingsUI, this.documentSettingsUI);
     }

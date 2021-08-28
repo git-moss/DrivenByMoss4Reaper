@@ -4,6 +4,8 @@
 
 package de.mossgrabers.reaper.controller;
 
+import de.mossgrabers.framework.configuration.Configuration;
+import de.mossgrabers.framework.controller.IControlSurface;
 import de.mossgrabers.framework.controller.IControllerDefinition;
 import de.mossgrabers.framework.controller.IControllerSetup;
 import de.mossgrabers.framework.usb.UsbMatcher;
@@ -37,9 +39,12 @@ import java.util.List;
 /**
  * Abstract implementation for a controller instance.
  *
+ * @param <C> The type of the configuration
+ * @param <S> The type of the control surface
+ *
  * @author J&uuml;rgen Mo&szlig;graber
  */
-public abstract class AbstractControllerInstance implements IControllerInstance, TestCallback
+public abstract class AbstractControllerInstance<S extends IControlSurface<C>, C extends Configuration> implements IControllerInstance, TestCallback
 {
     protected final IControllerDefinition controllerDefinition;
     protected final LogModel              logModel;
@@ -154,7 +159,13 @@ public abstract class AbstractControllerInstance implements IControllerInstance,
     }
 
 
-    protected abstract IControllerSetup<?, ?> createControllerSetup (final ReaperSetupFactory setupFactory);
+    /**
+     * Create an instance of the related controller setup.
+     *
+     * @param setupFactory The setup factory
+     * @return The instance
+     */
+    protected abstract IControllerSetup<S, C> createControllerSetup (final ReaperSetupFactory setupFactory);
 
 
     /** {@inheritDoc} */

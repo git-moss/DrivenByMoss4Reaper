@@ -480,7 +480,7 @@ public final class Functions
     /**
      * Show the WAIT-Cursor for the mouse.
      *
-     * @param busy True if the WAIT-Curor should be shown
+     * @param busy True if the WAIT-Cursor should be shown
      */
     public static void setBusy (final boolean busy)
     {

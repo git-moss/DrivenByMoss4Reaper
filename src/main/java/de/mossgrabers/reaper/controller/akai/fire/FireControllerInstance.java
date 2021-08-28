@@ -4,8 +4,10 @@
 
 package de.mossgrabers.reaper.controller.akai.fire;
 
+import de.mossgrabers.controller.akai.fire.FireConfiguration;
 import de.mossgrabers.controller.akai.fire.FireControllerDefinition;
 import de.mossgrabers.controller.akai.fire.FireControllerSetup;
+import de.mossgrabers.controller.akai.fire.controller.FireControlSurface;
 import de.mossgrabers.framework.controller.IControllerSetup;
 import de.mossgrabers.reaper.communication.MessageSender;
 import de.mossgrabers.reaper.controller.AbstractControllerInstance;
@@ -20,7 +22,7 @@ import de.mossgrabers.reaper.ui.utils.LogModel;
  *
  * @author J&uuml;rgen Mo&szlig;graber
  */
-public class FireControllerInstance extends AbstractControllerInstance
+public class FireControllerInstance extends AbstractControllerInstance<FireControlSurface, FireConfiguration>
 {
     /** The controller definition instance. */
     public static final FireControllerDefinition CONTROLLER_DEFINITION = new FireControllerDefinition ();
@@ -42,7 +44,7 @@ public class FireControllerInstance extends AbstractControllerInstance
 
     /** {@inheritDoc} */
     @Override
-    protected IControllerSetup<?, ?> createControllerSetup (final ReaperSetupFactory setupFactory)
+    protected IControllerSetup<FireControlSurface, FireConfiguration> createControllerSetup (final ReaperSetupFactory setupFactory)
     {
         return new FireControllerSetup (this.host, setupFactory, this.globalSettingsUI, this.documentSettingsUI);
     }

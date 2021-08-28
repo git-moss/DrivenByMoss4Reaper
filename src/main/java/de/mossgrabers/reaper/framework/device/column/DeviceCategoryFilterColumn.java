@@ -6,6 +6,8 @@ package de.mossgrabers.reaper.framework.device.column;
 
 import de.mossgrabers.reaper.framework.device.DeviceManager;
 
+import java.util.List;
+
 
 /**
  * A filter column for device categories.
@@ -31,9 +33,9 @@ public class DeviceCategoryFilterColumn extends BaseColumn
 
     /** {@inheritDoc} */
     @Override
-    protected int getMaxNumItems ()
+    public List<String> getAllItems ()
     {
-        return DeviceManager.get ().getCategories ().size ();
+        return DeviceManager.get ().getCategories ();
     }
 
 
@@ -74,7 +76,7 @@ public class DeviceCategoryFilterColumn extends BaseColumn
             if (this.position == 0)
                 return WILDCARD;
             final int pos = this.position - 1;
-            return pos < DeviceCategoryFilterColumn.this.getMaxNumItems () ? DeviceManager.get ().getCategories ().get (pos) : "";
+            return pos < DeviceCategoryFilterColumn.this.getMaxNumItems () ? DeviceCategoryFilterColumn.this.getAllItems ().get (pos) : "";
         }
 
 
@@ -86,7 +88,7 @@ public class DeviceCategoryFilterColumn extends BaseColumn
             if (this.position == 0)
                 return deviceManager.getNumDevices ();
             final int pos = this.position - 1;
-            return pos < DeviceCategoryFilterColumn.this.getMaxNumItems () ? deviceManager.filterByCategory (deviceManager.getCategories ().get (pos)).size () : 0;
+            return pos < DeviceCategoryFilterColumn.this.getMaxNumItems () ? deviceManager.filterByCategory (DeviceCategoryFilterColumn.this.getAllItems ().get (pos)).size () : 0;
         }
     }
 }

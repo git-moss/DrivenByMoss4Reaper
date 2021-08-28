@@ -5,6 +5,7 @@
 package de.mossgrabers.reaper.framework.daw;
 
 import de.mossgrabers.framework.daw.AbstractBrowser;
+import de.mossgrabers.framework.daw.IHost;
 import de.mossgrabers.framework.daw.data.IBrowserColumn;
 import de.mossgrabers.framework.daw.data.IBrowserColumnItem;
 import de.mossgrabers.framework.daw.data.IChannel;
@@ -30,8 +31,9 @@ import de.mossgrabers.reaper.framework.device.column.DeviceLocationFilterColumn;
 import de.mossgrabers.reaper.framework.device.column.DeviceTagsFilterColumn;
 import de.mossgrabers.reaper.framework.device.column.DeviceTypeFilterColumn;
 import de.mossgrabers.reaper.framework.device.column.EmptyFilterColumn;
-import de.mossgrabers.reaper.ui.BrowserDialog;
+import de.mossgrabers.reaper.ui.dialog.BrowserDialog;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
@@ -78,6 +80,7 @@ public class BrowserImpl extends AbstractBrowser
     private final MessageSender        sender;
     private final IBrowserColumn [] [] columnDataContentTypes;
     private final BrowserDialog        browserWindow;
+    private final IHost                host;
     private int                        insertPosition;
 
 
@@ -95,6 +98,8 @@ public class BrowserImpl extends AbstractBrowser
 
         this.cursorDevice = cursorDevice;
         this.sender = dataSetup.getSender ();
+
+        this.host = dataSetup.getHost ();
 
         this.deviceCollectionFilterColumn = new DeviceCollectionFilterColumn (0, numFilterColumnEntries);
         this.deviceLocationFilterColumn = new DeviceLocationFilterColumn (1, numFilterColumnEntries);
@@ -224,8 +229,16 @@ public class BrowserImpl extends AbstractBrowser
         this.columnData = this.columnDataContentTypes[id];
         this.selectedIndex = 0;
 
+        this.browserWindow.updateFilters ();
+
         if (contentType == ContentType.DEVICE)
             this.updateFilteredDevices ();
+        else
+        {
+            this.host.scheduleTask ( () -> {
+                this.browserWindow.updateResults (this.selectedIndex);
+            }, 1000);
+        }
     }
 
 
@@ -278,11 +291,12 @@ public class BrowserImpl extends AbstractBrowser
     {
         this.stopBrowsing (false);
 
+        this.browserWindow.open (this);
+
         this.enableObservers (true);
         this.insertPosition = insertPos;
         this.setContentType (contentType);
         this.isBrowserActive = true;
-        this.browserWindow.open (this);
         this.fireActiveObserver (this.isBrowserActive);
     }
 
@@ -291,7 +305,7 @@ public class BrowserImpl extends AbstractBrowser
     @Override
     public void stopBrowsing (final boolean commitSelection)
     {
-        this.browserWindow.close (Boolean.FALSE);
+        this.browserWindow.close (false, false);
 
         if (!this.isBrowserActive)
             return;
@@ -373,10 +387,16 @@ public class BrowserImpl extends AbstractBrowser
     }
 
 
-    private void setSelectedResult (final int index)
+    /**
+     * Select an item in the results.
+     *
+     * @param index The in the items
+     */
+    public void setSelectedResult (final int index)
     {
         final int length = this.isPresetContentType () ? this.presetCount : this.filteredDevices.size ();
         this.selectedIndex = Math.min (Math.max (0, index), length - 1);
+        this.browserWindow.updateResultSelection (this.selectedIndex);
     }
 
 
@@ -467,6 +487,19 @@ public class BrowserImpl extends AbstractBrowser
 
         if (this.selectedIndex >= this.filteredDevices.size ())
             this.selectedIndex = 0;
+
+        this.browserWindow.updateResults (this.selectedIndex);
+    }
+
+
+    /**
+     * Get the visible devices filtered by the currently selected filters.
+     *
+     * @return The filtered devices
+     */
+    public List<Device> getFilteredDevices ()
+    {
+        return this.filteredDevices;
     }
 
 
@@ -544,5 +577,19 @@ public class BrowserImpl extends AbstractBrowser
             // Never used
             return null;
         }
+    }
+
+
+    /**
+     * Get all available presets for the selected device.
+     *
+     * @return The names of the presets
+     */
+    public List<String> getPresets ()
+    {
+        final List<String> results = new ArrayList<> (this.presetCount);
+        for (int i = 0; i < this.presetCount; i++)
+            results.add (this.presets[i]);
+        return results;
     }
 }

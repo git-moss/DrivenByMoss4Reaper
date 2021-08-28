@@ -4,7 +4,9 @@
 
 package de.mossgrabers.reaper.controller.novation.launchpad;
 
+import de.mossgrabers.controller.novation.launchpad.LaunchpadConfiguration;
 import de.mossgrabers.controller.novation.launchpad.LaunchpadControllerSetup;
+import de.mossgrabers.controller.novation.launchpad.controller.LaunchpadControlSurface;
 import de.mossgrabers.controller.novation.launchpad.definition.LaunchpadProMk3ControllerDefinition;
 import de.mossgrabers.framework.controller.IControllerSetup;
 import de.mossgrabers.reaper.communication.MessageSender;
@@ -20,7 +22,7 @@ import de.mossgrabers.reaper.ui.utils.LogModel;
  *
  * @author J&uuml;rgen Mo&szlig;graber
  */
-public class LaunchpadProMk3ControllerInstance extends AbstractControllerInstance
+public class LaunchpadProMk3ControllerInstance extends AbstractControllerInstance<LaunchpadControlSurface, LaunchpadConfiguration>
 {
     /** The controller definition instance. */
     public static final LaunchpadProMk3ControllerDefinition CONTROLLER_DEFINITION = new LaunchpadProMk3ControllerDefinition ();
@@ -42,7 +44,7 @@ public class LaunchpadProMk3ControllerInstance extends AbstractControllerInstanc
 
     /** {@inheritDoc} */
     @Override
-    protected IControllerSetup<?, ?> createControllerSetup (final ReaperSetupFactory setupFactory)
+    protected IControllerSetup<LaunchpadControlSurface, LaunchpadConfiguration> createControllerSetup (final ReaperSetupFactory setupFactory)
     {
         return new LaunchpadControllerSetup (this.host, setupFactory, this.globalSettingsUI, this.documentSettingsUI, CONTROLLER_DEFINITION);
     }

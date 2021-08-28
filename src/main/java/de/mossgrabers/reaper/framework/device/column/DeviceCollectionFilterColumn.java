@@ -4,7 +4,11 @@
 
 package de.mossgrabers.reaper.framework.device.column;
 
+import de.mossgrabers.reaper.framework.device.DeviceCollection;
 import de.mossgrabers.reaper.framework.device.DeviceManager;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -34,6 +38,18 @@ public class DeviceCollectionFilterColumn extends BaseColumn
     protected int getMaxNumItems ()
     {
         return DeviceManager.get ().getCollections ().size ();
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public List<String> getAllItems ()
+    {
+        final List<DeviceCollection> collections = DeviceManager.get ().getCollections ();
+        final List<String> result = new ArrayList<> (collections.size ());
+        for (final DeviceCollection collection: collections)
+            result.add (collection.getName ());
+        return result;
     }
 
 

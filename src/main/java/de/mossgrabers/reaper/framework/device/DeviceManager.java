@@ -17,8 +17,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -36,23 +37,44 @@ import java.util.regex.Pattern;
  */
 public class DeviceManager
 {
-    private static final String          SECTION_FOLDERS                = "Folders";
-    private static final Pattern         PATTERN_VST                    = Pattern.compile (".+?,.+?,(.+?)(\\!\\!\\!VSTi)?");
-    private static final Pattern         PATTERN_COMPANY                = Pattern.compile ("(.*?)\\s*\\((.*?)\\)");
-    private static final Pattern         PATTERN_AU_COMPANY_DEVICE_NAME = Pattern.compile ("(.+?):\\s*(.+)");
-    private static final Pattern         PATTERN_JSFX                   = Pattern.compile ("NAME\\s?((\")?.+?(\")?)\\s?\"(.+?)\"");
-    private static final String          IS_INSTRUMENT_TAG              = "<inst>";
+    private static final String              SECTION_FOLDERS                = "Folders";
+    private static final Pattern             PATTERN_VST                    = Pattern.compile (".+?,.+?,(.+?)(\\!\\!\\!VSTi)?");
+    private static final Pattern             PATTERN_COMPANY                = Pattern.compile ("(.*?)\\s*\\((.*?)\\)");
+    private static final Pattern             PATTERN_AU_COMPANY_DEVICE_NAME = Pattern.compile ("(.+?):\\s*(.+)");
+    private static final Pattern             PATTERN_JSFX                   = Pattern.compile ("NAME\\s?((\")?.+?(\")?)\\s?\"(.+?)\"");
+    private static final String              IS_INSTRUMENT_TAG              = "<inst>";
+    private static final Map<String, String> JS_CATEGORY_MAP                = new HashMap<> ();
 
-    private static final Set<String>     NON_CATEGORIES                 = Set.of ("ix", "till", "loser", "liteon", "sstillwell", "teej", "schwa", "u-he", "remaincalm_org");
+    private static final DeviceManager       INSTANCE                       = new DeviceManager ();
 
-    private final List<Device>           devices                        = new ArrayList<> ();
-    private final List<Device>           instruments                    = new ArrayList<> ();
-    private final List<Device>           effects                        = new ArrayList<> ();
-    private final List<String>           categories                     = new ArrayList<> ();
-    private final List<String>           vendors                        = new ArrayList<> ();
-    private final List<DeviceCollection> collections                    = new ArrayList<> ();
+    private static final Set<String>         NON_CATEGORIES                 = Set.of ("ix", "till", "loser", "liteon", "sstillwell", "teej", "schwa", "u-he", "remaincalm_org");
 
-    private static final DeviceManager   INSTANCE                       = new DeviceManager ();
+    static
+    {
+        JS_CATEGORY_MAP.put ("analysis", "Analysis");
+        JS_CATEGORY_MAP.put ("delay", "Delay");
+        JS_CATEGORY_MAP.put ("dynamics", "Dynamics");
+        JS_CATEGORY_MAP.put ("filters", "Filter");
+        JS_CATEGORY_MAP.put ("guitar", "Guitar");
+        JS_CATEGORY_MAP.put ("loopsamplers", "Sampler");
+        JS_CATEGORY_MAP.put ("meters", "Analysis");
+        JS_CATEGORY_MAP.put ("midi", "MIDI");
+        JS_CATEGORY_MAP.put ("misc", "Misc");
+        JS_CATEGORY_MAP.put ("old_unsupported", "Misc");
+        JS_CATEGORY_MAP.put ("pitch", "Pitch");
+        JS_CATEGORY_MAP.put ("synthesis", "Synth");
+        JS_CATEGORY_MAP.put ("utility", "Tools");
+        JS_CATEGORY_MAP.put ("waveshapers", "Modulation");
+    }
+
+    private final List<Device>           devices            = new ArrayList<> ();
+    private final List<Device>           instruments        = new ArrayList<> ();
+    private final List<Device>           effects            = new ArrayList<> ();
+    private final List<String>           categories         = new ArrayList<> ();
+    private final List<String>           vendors            = new ArrayList<> ();
+    private final List<DeviceCollection> collections        = new ArrayList<> ();
+    private final List<DeviceFileType>   availableFileTypes = new ArrayList<> ();
+    private final List<DeviceLocation>   availableLocations = new ArrayList<> ();
 
 
     /**
@@ -264,6 +286,19 @@ public class DeviceManager
             if (iniFiles.isAuARMPresent ())
                 this.parseAuDevicesFile (Device.Architecture.ARM, iniFiles.getIniAuPluginsARM64 ());
 
+            if (iniFiles.isAuPresent () || iniFiles.isAuARMPresent ())
+            {
+                this.availableFileTypes.addAll (List.of (DeviceFileType.AU, DeviceFileType.AUI));
+                this.availableLocations.add (DeviceLocation.AU);
+            }
+            this.availableFileTypes.add (DeviceFileType.JS);
+            this.availableLocations.add (DeviceLocation.JS);
+            if (iniFiles.isVstPresent () || iniFiles.isVstARMPresent ())
+            {
+                this.availableFileTypes.addAll (List.of (DeviceFileType.VST, DeviceFileType.VSTI, DeviceFileType.VST3, DeviceFileType.VST3I));
+                this.availableLocations.add (DeviceLocation.VST);
+            }
+
             final Set<String> categoriesSet = new TreeSet<> ();
             final Set<String> vendorsSet = new TreeSet<> ();
 
@@ -291,6 +326,28 @@ public class DeviceManager
                     this.effects.add (device);
             });
         }
+    }
+
+
+    /**
+     * Get the file types present on this system.
+     *
+     * @return The file types
+     */
+    public List<DeviceFileType> getAvailableFileTypes ()
+    {
+        return this.availableFileTypes;
+    }
+
+
+    /**
+     * Get the locations present on this system.
+     *
+     * @return The file types
+     */
+    public List<DeviceLocation> getAvailableLocations ()
+    {
+        return this.availableLocations;
     }
 
 
@@ -402,7 +459,7 @@ public class DeviceManager
     /**
      * Parses the FX tags file.
      *
-     * @param iniFile The ini file from which to parse
+     * @param iniFile The INI file from which to parse
      * @param categoriesSet The categories set
      * @param vendorsSet The vendors set
      */
@@ -413,9 +470,21 @@ public class DeviceManager
             final String categoriesStr = iniFile.get ("category", d.getModule ());
             if (categoriesStr != null)
             {
-                final List<String> asList = Arrays.asList (categoriesStr.split ("\\|"));
-                d.setCategories (asList);
-                categoriesSet.addAll (asList);
+                final Set<String> cats = new HashSet<> ();
+                for (final String category: categoriesStr.split ("\\|"))
+                {
+                    if (!NON_CATEGORIES.contains (category))
+                        cats.add (category);
+                }
+                if (cats.isEmpty ())
+                {
+                    if (d.getType () == DeviceType.INSTRUMENT)
+                        cats.add ("Synth");
+                    else if (d.getType () == DeviceType.MIDI_EFFECT)
+                        cats.add ("MIDI");
+                }
+                d.setCategories (cats);
+                categoriesSet.addAll (cats);
             }
 
             final String vendor = iniFile.get ("developer", d.getModule ());
@@ -622,8 +691,14 @@ public class DeviceManager
         }
         else
         {
-            device.setCategories (Collections.singleton (o));
-            categoriesSet.add (o);
+            final String mapped = JS_CATEGORY_MAP.get (o);
+            if (mapped == null)
+            {
+                device.setCategories (Collections.singleton (o));
+                categoriesSet.add (o);
+            }
+            else
+                device.setCategories (Collections.singleton (mapped));
         }
     }
 }

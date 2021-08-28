@@ -4,8 +4,10 @@
 
 package de.mossgrabers.reaper.controller.mackie.hui;
 
+import de.mossgrabers.controller.mackie.hui.HUIConfiguration;
 import de.mossgrabers.controller.mackie.hui.HUIControllerDefinition;
 import de.mossgrabers.controller.mackie.hui.HUIControllerSetup;
+import de.mossgrabers.controller.mackie.hui.controller.HUIControlSurface;
 import de.mossgrabers.framework.controller.IControllerSetup;
 import de.mossgrabers.reaper.communication.MessageSender;
 import de.mossgrabers.reaper.controller.AbstractControllerInstance;
@@ -20,7 +22,7 @@ import de.mossgrabers.reaper.ui.utils.LogModel;
  *
  * @author J&uuml;rgen Mo&szlig;graber
  */
-public class HUI1ControllerInstance extends AbstractControllerInstance
+public class HUI1ControllerInstance extends AbstractControllerInstance<HUIControlSurface, HUIConfiguration>
 {
     /** The controller definition instance. */
     public static final HUIControllerDefinition CONTROLLER_DEFINITION = new HUIControllerDefinition (0);
@@ -42,7 +44,7 @@ public class HUI1ControllerInstance extends AbstractControllerInstance
 
     /** {@inheritDoc} */
     @Override
-    protected IControllerSetup<?, ?> createControllerSetup (final ReaperSetupFactory setupFactory)
+    protected IControllerSetup<HUIControlSurface, HUIConfiguration> createControllerSetup (final ReaperSetupFactory setupFactory)
     {
         return new HUIControllerSetup (this.host, setupFactory, this.globalSettingsUI, this.documentSettingsUI, 1);
     }

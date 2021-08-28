@@ -8,7 +8,7 @@ import javax.swing.SwingUtilities;
 
 
 /**
- * Helper class to catch exception happening inside a Platforem.runLater call.
+ * Helper class to catch exception happening inside a SwingUtilities.invokeLater call.
  *
  * @author J&uuml;rgen Mo&szlig;graber
  */

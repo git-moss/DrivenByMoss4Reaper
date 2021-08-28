@@ -5,8 +5,10 @@
 package de.mossgrabers.reaper.controller.ni.maschine.mk3;
 
 import de.mossgrabers.controller.ni.maschine.Maschine;
+import de.mossgrabers.controller.ni.maschine.mk3.MaschineConfiguration;
 import de.mossgrabers.controller.ni.maschine.mk3.MaschineControllerSetup;
 import de.mossgrabers.controller.ni.maschine.mk3.MaschineStudioControllerDefinition;
+import de.mossgrabers.controller.ni.maschine.mk3.controller.MaschineControlSurface;
 import de.mossgrabers.framework.controller.IControllerSetup;
 import de.mossgrabers.reaper.communication.MessageSender;
 import de.mossgrabers.reaper.controller.AbstractControllerInstance;
@@ -21,7 +23,7 @@ import de.mossgrabers.reaper.ui.utils.LogModel;
  *
  * @author J&uuml;rgen Mo&szlig;graber
  */
-public class MaschineStudioControllerInstance extends AbstractControllerInstance
+public class MaschineStudioControllerInstance extends AbstractControllerInstance<MaschineControlSurface, MaschineConfiguration>
 {
     /** The controller definition instance. */
     public static final MaschineStudioControllerDefinition CONTROLLER_DEFINITION = new MaschineStudioControllerDefinition ();
@@ -43,7 +45,7 @@ public class MaschineStudioControllerInstance extends AbstractControllerInstance
 
     /** {@inheritDoc} */
     @Override
-    protected IControllerSetup<?, ?> createControllerSetup (final ReaperSetupFactory setupFactory)
+    protected IControllerSetup<MaschineControlSurface, MaschineConfiguration> createControllerSetup (final ReaperSetupFactory setupFactory)
     {
         return new MaschineControllerSetup (this.host, setupFactory, this.globalSettingsUI, this.documentSettingsUI, Maschine.STUDIO);
     }

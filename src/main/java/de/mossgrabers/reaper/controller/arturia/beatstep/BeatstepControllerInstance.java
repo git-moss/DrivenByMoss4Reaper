@@ -4,8 +4,10 @@
 
 package de.mossgrabers.reaper.controller.arturia.beatstep;
 
+import de.mossgrabers.controller.arturia.beatstep.BeatstepConfiguration;
 import de.mossgrabers.controller.arturia.beatstep.BeatstepControllerDefinition;
 import de.mossgrabers.controller.arturia.beatstep.BeatstepControllerSetup;
+import de.mossgrabers.controller.arturia.beatstep.controller.BeatstepControlSurface;
 import de.mossgrabers.framework.controller.IControllerSetup;
 import de.mossgrabers.reaper.communication.MessageSender;
 import de.mossgrabers.reaper.controller.AbstractControllerInstance;
@@ -20,7 +22,7 @@ import de.mossgrabers.reaper.ui.utils.LogModel;
  *
  * @author J&uuml;rgen Mo&szlig;graber
  */
-public class BeatstepControllerInstance extends AbstractControllerInstance
+public class BeatstepControllerInstance extends AbstractControllerInstance<BeatstepControlSurface, BeatstepConfiguration>
 {
     /** The controller definition instance. */
     public static final BeatstepControllerDefinition CONTROLLER_DEFINITION = new BeatstepControllerDefinition ();
@@ -42,7 +44,7 @@ public class BeatstepControllerInstance extends AbstractControllerInstance
 
     /** {@inheritDoc} */
     @Override
-    protected IControllerSetup<?, ?> createControllerSetup (final ReaperSetupFactory setupFactory)
+    protected IControllerSetup<BeatstepControlSurface, BeatstepConfiguration> createControllerSetup (final ReaperSetupFactory setupFactory)
     {
         return new BeatstepControllerSetup (this.host, setupFactory, this.globalSettingsUI, this.documentSettingsUI);
     }

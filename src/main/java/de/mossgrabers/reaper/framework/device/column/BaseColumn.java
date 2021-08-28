@@ -11,6 +11,7 @@ import de.mossgrabers.reaper.communication.Processor;
 import de.mossgrabers.reaper.framework.daw.data.ItemImpl;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 
@@ -21,7 +22,8 @@ import java.util.Set;
  */
 public abstract class BaseColumn extends ItemImpl implements IBrowserColumn
 {
-    protected static final String         WILDCARD    = "All";
+    /** The wildcard for the filter columns. */
+    public static final String            WILDCARD    = "All";
 
     protected final IBrowserColumnItem [] items;
 
@@ -177,7 +179,18 @@ public abstract class BaseColumn extends ItemImpl implements IBrowserColumn
      *
      * @return The number
      */
-    protected abstract int getMaxNumItems ();
+    protected int getMaxNumItems ()
+    {
+        return this.getAllItems ().size ();
+    }
+
+
+    /**
+     * Get all items of the column (not only those on the current page).
+     *
+     * @return The items
+     */
+    public abstract List<String> getAllItems ();
 
 
     /**

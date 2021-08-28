@@ -4,8 +4,10 @@
 
 package de.mossgrabers.reaper.controller.ni.kontrol.mki;
 
+import de.mossgrabers.controller.ni.kontrol.mki.Kontrol1Configuration;
 import de.mossgrabers.controller.ni.kontrol.mki.Kontrol1ControllerDefinition;
 import de.mossgrabers.controller.ni.kontrol.mki.Kontrol1ControllerSetup;
+import de.mossgrabers.controller.ni.kontrol.mki.controller.Kontrol1ControlSurface;
 import de.mossgrabers.framework.controller.IControllerSetup;
 import de.mossgrabers.reaper.communication.MessageSender;
 import de.mossgrabers.reaper.controller.AbstractControllerInstance;
@@ -20,7 +22,7 @@ import de.mossgrabers.reaper.ui.utils.LogModel;
  *
  * @author J&uuml;rgen Mo&szlig;graber
  */
-public class KontrolMkIS25ControllerInstance extends AbstractControllerInstance
+public class KontrolMkIS25ControllerInstance extends AbstractControllerInstance<Kontrol1ControlSurface, Kontrol1Configuration>
 {
     /** The controller definition instance. */
     public static final Kontrol1ControllerDefinition CONTROLLER_DEFINITION = new Kontrol1ControllerDefinition (0);
@@ -42,7 +44,7 @@ public class KontrolMkIS25ControllerInstance extends AbstractControllerInstance
 
     /** {@inheritDoc} */
     @Override
-    protected IControllerSetup<?, ?> createControllerSetup (final ReaperSetupFactory setupFactory)
+    protected IControllerSetup<Kontrol1ControlSurface, Kontrol1Configuration> createControllerSetup (final ReaperSetupFactory setupFactory)
     {
         return new Kontrol1ControllerSetup (0, this.host, setupFactory, this.globalSettingsUI, this.documentSettingsUI);
     }

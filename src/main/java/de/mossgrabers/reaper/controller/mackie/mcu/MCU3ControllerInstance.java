@@ -4,8 +4,10 @@
 
 package de.mossgrabers.reaper.controller.mackie.mcu;
 
+import de.mossgrabers.controller.mackie.mcu.MCUConfiguration;
 import de.mossgrabers.controller.mackie.mcu.MCUControllerDefinition;
 import de.mossgrabers.controller.mackie.mcu.MCUControllerSetup;
+import de.mossgrabers.controller.mackie.mcu.controller.MCUControlSurface;
 import de.mossgrabers.framework.controller.IControllerSetup;
 import de.mossgrabers.reaper.communication.MessageSender;
 import de.mossgrabers.reaper.controller.AbstractControllerInstance;
@@ -20,7 +22,7 @@ import de.mossgrabers.reaper.ui.utils.LogModel;
  *
  * @author J&uuml;rgen Mo&szlig;graber
  */
-public class MCU3ControllerInstance extends AbstractControllerInstance
+public class MCU3ControllerInstance extends AbstractControllerInstance<MCUControlSurface, MCUConfiguration>
 {
     /** The controller definition instance. */
     public static final MCUControllerDefinition CONTROLLER_DEFINITION = new MCUControllerDefinition (2);
@@ -42,7 +44,7 @@ public class MCU3ControllerInstance extends AbstractControllerInstance
 
     /** {@inheritDoc} */
     @Override
-    protected IControllerSetup<?, ?> createControllerSetup (final ReaperSetupFactory setupFactory)
+    protected IControllerSetup<MCUControlSurface, MCUConfiguration> createControllerSetup (final ReaperSetupFactory setupFactory)
     {
         return new MCUControllerSetup (this.host, setupFactory, this.globalSettingsUI, this.documentSettingsUI, 3);
     }

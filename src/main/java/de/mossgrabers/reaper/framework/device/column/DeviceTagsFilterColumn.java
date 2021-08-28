@@ -6,6 +6,9 @@ package de.mossgrabers.reaper.framework.device.column;
 
 import de.mossgrabers.reaper.framework.device.DeviceManager;
 
+import java.util.Collections;
+import java.util.List;
+
 
 /**
  * A filter column for device tags.
@@ -34,6 +37,14 @@ public class DeviceTagsFilterColumn extends BaseColumn
     protected int getMaxNumItems ()
     {
         return 0;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public List<String> getAllItems ()
+    {
+        return Collections.emptyList ();
     }
 
 

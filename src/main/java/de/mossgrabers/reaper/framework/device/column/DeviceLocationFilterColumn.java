@@ -7,6 +7,9 @@ package de.mossgrabers.reaper.framework.device.column;
 import de.mossgrabers.reaper.framework.device.DeviceLocation;
 import de.mossgrabers.reaper.framework.device.DeviceManager;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 /**
  * A filter column for device locations.
@@ -34,7 +37,19 @@ public class DeviceLocationFilterColumn extends BaseColumn
     @Override
     protected int getMaxNumItems ()
     {
-        return DeviceLocation.values ().length;
+        return DeviceManager.get ().getAvailableLocations ().size ();
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public List<String> getAllItems ()
+    {
+        final List<DeviceLocation> locations = DeviceManager.get ().getAvailableLocations ();
+        final List<String> result = new ArrayList<> (locations.size ());
+        for (final DeviceLocation location: locations)
+            result.add (location.getName ());
+        return result;
     }
 
 
@@ -74,9 +89,9 @@ public class DeviceLocationFilterColumn extends BaseColumn
         {
             if (this.position == 0)
                 return WILDCARD;
-            final DeviceLocation [] values = DeviceLocation.values ();
+            final List<DeviceLocation> locations = DeviceManager.get ().getAvailableLocations ();
             final int pos = this.position - 1;
-            return pos < values.length ? values[pos].getName () : "";
+            return pos < locations.size () ? locations.get (pos).getName () : "";
         }
 
 
@@ -86,9 +101,9 @@ public class DeviceLocationFilterColumn extends BaseColumn
         {
             if (this.position == 0)
                 return DeviceManager.get ().getNumDevices ();
-            final DeviceLocation [] values = DeviceLocation.values ();
+            final List<DeviceLocation> locations = DeviceManager.get ().getAvailableLocations ();
             final int pos = this.position - 1;
-            return pos < values.length ? DeviceManager.get ().filterByLocation (values[pos]).size () : 0;
+            return pos < locations.size () ? DeviceManager.get ().filterByLocation (locations.get (pos)).size () : 0;
         }
     }
 }

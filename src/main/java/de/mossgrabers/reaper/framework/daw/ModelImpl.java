@@ -172,7 +172,7 @@ public class ModelImpl extends AbstractModel
         track.createClip (slot.getIndex (), lengthInBeats);
         slot.select ();
         if (overdub)
-            this.transport.record ();
+            this.transport.startRecording ();
     }
 
 

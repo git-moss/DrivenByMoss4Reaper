@@ -4,7 +4,8 @@
 
 package de.mossgrabers.reaper.framework.device.column;
 
-import de.mossgrabers.reaper.framework.device.DeviceManager;
+import java.util.Collections;
+import java.util.List;
 
 
 /**
@@ -41,7 +42,15 @@ public class EmptyFilterColumn extends BaseColumn
     @Override
     protected int getMaxNumItems ()
     {
-        return DeviceManager.get ().getCategories ().size ();
+        return 0;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public List<String> getAllItems ()
+    {
+        return Collections.emptyList ();
     }
 
 

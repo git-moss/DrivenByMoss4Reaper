@@ -4,8 +4,10 @@
 
 package de.mossgrabers.reaper.controller.novation.launchkey;
 
+import de.mossgrabers.controller.novation.launchkey.mini.LaunchkeyMiniMk3Configuration;
 import de.mossgrabers.controller.novation.launchkey.mini.LaunchkeyMiniMk3ControllerDefinition;
 import de.mossgrabers.controller.novation.launchkey.mini.LaunchkeyMiniMk3ControllerSetup;
+import de.mossgrabers.controller.novation.launchkey.mini.controller.LaunchkeyMiniMk3ControlSurface;
 import de.mossgrabers.framework.controller.IControllerSetup;
 import de.mossgrabers.reaper.communication.MessageSender;
 import de.mossgrabers.reaper.controller.AbstractControllerInstance;
@@ -20,7 +22,7 @@ import de.mossgrabers.reaper.ui.utils.LogModel;
  *
  * @author J&uuml;rgen Mo&szlig;graber
  */
-public class LaunchkeyMiniMk3ControllerInstance extends AbstractControllerInstance
+public class LaunchkeyMiniMk3ControllerInstance extends AbstractControllerInstance<LaunchkeyMiniMk3ControlSurface, LaunchkeyMiniMk3Configuration>
 {
     /** The controller definition instance. */
     public static final LaunchkeyMiniMk3ControllerDefinition CONTROLLER_DEFINITION = new LaunchkeyMiniMk3ControllerDefinition ();
@@ -42,7 +44,7 @@ public class LaunchkeyMiniMk3ControllerInstance extends AbstractControllerInstan
 
     /** {@inheritDoc} */
     @Override
-    protected IControllerSetup<?, ?> createControllerSetup (final ReaperSetupFactory setupFactory)
+    protected IControllerSetup<LaunchkeyMiniMk3ControlSurface, LaunchkeyMiniMk3Configuration> createControllerSetup (final ReaperSetupFactory setupFactory)
     {
         return new LaunchkeyMiniMk3ControllerSetup (this.host, setupFactory, this.globalSettingsUI, this.documentSettingsUI);
     }

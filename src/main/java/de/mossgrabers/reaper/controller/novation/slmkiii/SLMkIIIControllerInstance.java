@@ -4,8 +4,10 @@
 
 package de.mossgrabers.reaper.controller.novation.slmkiii;
 
+import de.mossgrabers.controller.novation.slmkiii.SLMkIIIConfiguration;
 import de.mossgrabers.controller.novation.slmkiii.SLMkIIIControllerDefinition;
 import de.mossgrabers.controller.novation.slmkiii.SLMkIIIControllerSetup;
+import de.mossgrabers.controller.novation.slmkiii.controller.SLMkIIIControlSurface;
 import de.mossgrabers.framework.controller.IControllerSetup;
 import de.mossgrabers.reaper.communication.MessageSender;
 import de.mossgrabers.reaper.controller.AbstractControllerInstance;
@@ -20,7 +22,7 @@ import de.mossgrabers.reaper.ui.utils.LogModel;
  *
  * @author J&uuml;rgen Mo&szlig;graber
  */
-public class SLMkIIIControllerInstance extends AbstractControllerInstance
+public class SLMkIIIControllerInstance extends AbstractControllerInstance<SLMkIIIControlSurface, SLMkIIIConfiguration>
 {
     /** The controller definition instance. */
     public static final SLMkIIIControllerDefinition CONTROLLER_DEFINITION = new SLMkIIIControllerDefinition ();
@@ -42,7 +44,7 @@ public class SLMkIIIControllerInstance extends AbstractControllerInstance
 
     /** {@inheritDoc} */
     @Override
-    protected IControllerSetup<?, ?> createControllerSetup (final ReaperSetupFactory setupFactory)
+    protected IControllerSetup<SLMkIIIControlSurface, SLMkIIIConfiguration> createControllerSetup (final ReaperSetupFactory setupFactory)
     {
         return new SLMkIIIControllerSetup (this.host, setupFactory, this.globalSettingsUI, this.documentSettingsUI);
     }

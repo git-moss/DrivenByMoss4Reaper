@@ -120,7 +120,7 @@ public class SlotImpl extends ItemImpl implements ISlot
 
     /** {@inheritDoc} */
     @Override
-    public void record ()
+    public void startRecording ()
     {
         if (this.getIndex () >= 0)
             this.sendTrackClipOSC ("record");

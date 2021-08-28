@@ -7,6 +7,9 @@ package de.mossgrabers.reaper.framework.device.column;
 import de.mossgrabers.reaper.framework.device.DeviceFileType;
 import de.mossgrabers.reaper.framework.device.DeviceManager;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 /**
  * A filter column for device file types.
@@ -34,7 +37,19 @@ public class DeviceFileTypeFilterColumn extends BaseColumn
     @Override
     protected int getMaxNumItems ()
     {
-        return DeviceFileType.values ().length;
+        return DeviceManager.get ().getAvailableFileTypes ().size ();
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public List<String> getAllItems ()
+    {
+        final List<DeviceFileType> types = DeviceManager.get ().getAvailableFileTypes ();
+        final List<String> result = new ArrayList<> (types.size ());
+        for (final DeviceFileType location: types)
+            result.add (location.getName ());
+        return result;
     }
 
 
@@ -74,9 +89,9 @@ public class DeviceFileTypeFilterColumn extends BaseColumn
         {
             if (this.position == 0)
                 return WILDCARD;
-            final DeviceFileType [] values = DeviceFileType.values ();
+            final List<DeviceFileType> types = DeviceManager.get ().getAvailableFileTypes ();
             final int pos = this.position - 1;
-            return pos < values.length ? values[pos].getName () : "";
+            return pos < types.size () ? types.get (pos).getName () : "";
         }
 
 
@@ -86,9 +101,9 @@ public class DeviceFileTypeFilterColumn extends BaseColumn
         {
             if (this.position == 0)
                 return DeviceManager.get ().getNumDevices ();
-            final DeviceFileType [] values = DeviceFileType.values ();
+            final List<DeviceFileType> types = DeviceManager.get ().getAvailableFileTypes ();
             final int pos = this.position - 1;
-            return pos < values.length ? DeviceManager.get ().filterByFileType (values[pos]).size () : 0;
+            return pos < types.size () ? DeviceManager.get ().filterByFileType (types.get (pos)).size () : 0;
         }
     }
 }

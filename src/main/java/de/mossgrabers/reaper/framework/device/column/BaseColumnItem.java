@@ -92,4 +92,12 @@ public abstract class BaseColumnItem extends ItemImpl implements IBrowserColumnI
         this.name = this.getCachedName ();
         this.hits = this.getCachedHitCount ();
     }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public String toString ()
+    {
+        return this.getCachedName () + " (" + this.getCachedHitCount () + ")";
+    }
 }

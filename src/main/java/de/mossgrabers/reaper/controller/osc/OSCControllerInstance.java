@@ -4,8 +4,10 @@
 
 package de.mossgrabers.reaper.controller.osc;
 
+import de.mossgrabers.controller.osc.OSCConfiguration;
 import de.mossgrabers.controller.osc.OSCControllerDefinition;
 import de.mossgrabers.controller.osc.OSCControllerSetup;
+import de.mossgrabers.framework.controller.IControlSurface;
 import de.mossgrabers.framework.controller.IControllerSetup;
 import de.mossgrabers.reaper.communication.MessageSender;
 import de.mossgrabers.reaper.controller.AbstractControllerInstance;
@@ -20,7 +22,7 @@ import de.mossgrabers.reaper.ui.utils.LogModel;
  *
  * @author J&uuml;rgen Mo&szlig;graber
  */
-public class OSCControllerInstance extends AbstractControllerInstance
+public class OSCControllerInstance extends AbstractControllerInstance<IControlSurface<OSCConfiguration>, OSCConfiguration>
 {
     /** The controller definition instance. */
     public static final OSCControllerDefinition CONTROLLER_DEFINITION = new OSCControllerDefinition ();
@@ -42,7 +44,7 @@ public class OSCControllerInstance extends AbstractControllerInstance
 
     /** {@inheritDoc} */
     @Override
-    protected IControllerSetup<?, ?> createControllerSetup (final ReaperSetupFactory setupFactory)
+    protected IControllerSetup<IControlSurface<OSCConfiguration>, OSCConfiguration> createControllerSetup (final ReaperSetupFactory setupFactory)
     {
         return new OSCControllerSetup (this.host, setupFactory, this.globalSettingsUI, this.documentSettingsUI);
     }

@@ -4,9 +4,11 @@
 
 package de.mossgrabers.reaper.controller.ni.kontrol.mkii;
 
+import de.mossgrabers.controller.ni.kontrol.mkii.KontrolProtocolConfiguration;
 import de.mossgrabers.controller.ni.kontrol.mkii.KontrolProtocolControllerDefinition;
 import de.mossgrabers.controller.ni.kontrol.mkii.KontrolProtocolControllerSetup;
 import de.mossgrabers.controller.ni.kontrol.mkii.controller.KontrolProtocol;
+import de.mossgrabers.controller.ni.kontrol.mkii.controller.KontrolProtocolControlSurface;
 import de.mossgrabers.controller.ni.kontrol.mkii.controller.KontrolProtocolDeviceDescriptorV1;
 import de.mossgrabers.framework.controller.IControllerSetup;
 import de.mossgrabers.reaper.communication.MessageSender;
@@ -22,7 +24,7 @@ import de.mossgrabers.reaper.ui.utils.LogModel;
  *
  * @author J&uuml;rgen Mo&szlig;graber
  */
-public class KontrolProtocolV1ControllerInstance extends AbstractControllerInstance
+public class KontrolProtocolV1ControllerInstance extends AbstractControllerInstance<KontrolProtocolControlSurface, KontrolProtocolConfiguration>
 {
     /** The controller definition instance. */
     public static final KontrolProtocolControllerDefinition CONTROLLER_DEFINITION = new KontrolProtocolControllerDefinition (new KontrolProtocolDeviceDescriptorV1 ());
@@ -44,7 +46,7 @@ public class KontrolProtocolV1ControllerInstance extends AbstractControllerInsta
 
     /** {@inheritDoc} */
     @Override
-    protected IControllerSetup<?, ?> createControllerSetup (final ReaperSetupFactory setupFactory)
+    protected IControllerSetup<KontrolProtocolControlSurface, KontrolProtocolConfiguration> createControllerSetup (final ReaperSetupFactory setupFactory)
     {
         return new KontrolProtocolControllerSetup (this.host, setupFactory, this.globalSettingsUI, this.documentSettingsUI, KontrolProtocol.VERSION_1);
     }

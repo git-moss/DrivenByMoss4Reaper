@@ -4,8 +4,10 @@
 
 package de.mossgrabers.reaper.controller.novation.sl;
 
+import de.mossgrabers.controller.novation.sl.SLConfiguration;
 import de.mossgrabers.controller.novation.sl.SLControllerDefinition;
 import de.mossgrabers.controller.novation.sl.SLControllerSetup;
+import de.mossgrabers.controller.novation.sl.controller.SLControlSurface;
 import de.mossgrabers.framework.controller.IControllerSetup;
 import de.mossgrabers.reaper.communication.MessageSender;
 import de.mossgrabers.reaper.controller.AbstractControllerInstance;
@@ -20,7 +22,7 @@ import de.mossgrabers.reaper.ui.utils.LogModel;
  *
  * @author J&uuml;rgen Mo&szlig;graber
  */
-public class SLMkIControllerInstance extends AbstractControllerInstance
+public class SLMkIControllerInstance extends AbstractControllerInstance<SLControlSurface, SLConfiguration>
 {
     /** The controller definition instance. */
     public static final SLControllerDefinition CONTROLLER_DEFINITION = new SLControllerDefinition (false);
@@ -42,7 +44,7 @@ public class SLMkIControllerInstance extends AbstractControllerInstance
 
     /** {@inheritDoc} */
     @Override
-    protected IControllerSetup<?, ?> createControllerSetup (final ReaperSetupFactory setupFactory)
+    protected IControllerSetup<SLControlSurface, SLConfiguration> createControllerSetup (final ReaperSetupFactory setupFactory)
     {
         return new SLControllerSetup (this.host, setupFactory, this.globalSettingsUI, this.documentSettingsUI, false);
     }

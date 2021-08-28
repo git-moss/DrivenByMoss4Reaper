@@ -4,8 +4,10 @@
 
 package de.mossgrabers.reaper.controller.utilities.autocolor;
 
+import de.mossgrabers.controller.utilities.autocolor.AutoColorConfiguration;
 import de.mossgrabers.controller.utilities.autocolor.AutoColorDefinition;
 import de.mossgrabers.controller.utilities.autocolor.AutoColorSetup;
+import de.mossgrabers.framework.controller.IControlSurface;
 import de.mossgrabers.framework.controller.IControllerSetup;
 import de.mossgrabers.reaper.communication.MessageSender;
 import de.mossgrabers.reaper.controller.AbstractControllerInstance;
@@ -20,7 +22,7 @@ import de.mossgrabers.reaper.ui.utils.LogModel;
  *
  * @author J&uuml;rgen Mo&szlig;graber
  */
-public class AutoColorInstance extends AbstractControllerInstance
+public class AutoColorInstance extends AbstractControllerInstance<IControlSurface<AutoColorConfiguration>, AutoColorConfiguration>
 {
     /** The controller definition instance. */
     public static final AutoColorDefinition CONTROLLER_DEFINITION = new AutoColorDefinition ();
@@ -42,7 +44,7 @@ public class AutoColorInstance extends AbstractControllerInstance
 
     /** {@inheritDoc} */
     @Override
-    protected IControllerSetup<?, ?> createControllerSetup (final ReaperSetupFactory setupFactory)
+    protected IControllerSetup<IControlSurface<AutoColorConfiguration>, AutoColorConfiguration> createControllerSetup (final ReaperSetupFactory setupFactory)
     {
         return new AutoColorSetup (this.host, setupFactory, this.globalSettingsUI, this.documentSettingsUI);
     }

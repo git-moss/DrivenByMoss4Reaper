@@ -135,7 +135,7 @@ public class TransportImpl extends BaseImpl implements ITransport
 
     /** {@inheritDoc} */
     @Override
-    public void record ()
+    public void startRecording ()
     {
         this.sender.processNoArg (Processor.RECORD);
     }

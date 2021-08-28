@@ -4,8 +4,10 @@
 
 package de.mossgrabers.reaper.controller.ni.maschine.jam;
 
+import de.mossgrabers.controller.ni.maschine.jam.MaschineJamConfiguration;
 import de.mossgrabers.controller.ni.maschine.jam.MaschineJamControllerDefinition;
 import de.mossgrabers.controller.ni.maschine.jam.MaschineJamControllerSetup;
+import de.mossgrabers.controller.ni.maschine.jam.controller.MaschineJamControlSurface;
 import de.mossgrabers.framework.controller.IControllerSetup;
 import de.mossgrabers.reaper.communication.MessageSender;
 import de.mossgrabers.reaper.controller.AbstractControllerInstance;
@@ -20,7 +22,7 @@ import de.mossgrabers.reaper.ui.utils.LogModel;
  *
  * @author J&uuml;rgen Mo&szlig;graber
  */
-public class MaschineJamControllerInstance extends AbstractControllerInstance
+public class MaschineJamControllerInstance extends AbstractControllerInstance<MaschineJamControlSurface, MaschineJamConfiguration>
 {
     /** The controller definition instance. */
     public static final MaschineJamControllerDefinition CONTROLLER_DEFINITION = new MaschineJamControllerDefinition ();
@@ -42,7 +44,7 @@ public class MaschineJamControllerInstance extends AbstractControllerInstance
 
     /** {@inheritDoc} */
     @Override
-    protected IControllerSetup<?, ?> createControllerSetup (final ReaperSetupFactory setupFactory)
+    protected IControllerSetup<MaschineJamControlSurface, MaschineJamConfiguration> createControllerSetup (final ReaperSetupFactory setupFactory)
     {
         return new MaschineJamControllerSetup (this.host, setupFactory, this.globalSettingsUI, this.documentSettingsUI);
     }

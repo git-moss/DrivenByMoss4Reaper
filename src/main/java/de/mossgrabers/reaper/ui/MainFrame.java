@@ -8,6 +8,7 @@ import de.mossgrabers.framework.controller.IControllerDefinition;
 import de.mossgrabers.reaper.AppCallback;
 import de.mossgrabers.reaper.controller.ControllerInstanceManager;
 import de.mossgrabers.reaper.controller.IControllerInstance;
+import de.mossgrabers.reaper.ui.dialog.BrowserDialog;
 import de.mossgrabers.reaper.ui.dialog.DebugDialog;
 import de.mossgrabers.reaper.ui.utils.LogModel;
 import de.mossgrabers.reaper.ui.widget.CheckboxListItem;

@@ -4,8 +4,10 @@
 
 package de.mossgrabers.reaper.controller.generic;
 
+import de.mossgrabers.controller.generic.GenericFlexiConfiguration;
 import de.mossgrabers.controller.generic.GenericFlexiControllerDefinition;
 import de.mossgrabers.controller.generic.GenericFlexiControllerSetup;
+import de.mossgrabers.controller.generic.controller.GenericFlexiControlSurface;
 import de.mossgrabers.framework.controller.IControllerSetup;
 import de.mossgrabers.reaper.communication.MessageSender;
 import de.mossgrabers.reaper.controller.AbstractControllerInstance;
@@ -20,7 +22,7 @@ import de.mossgrabers.reaper.ui.utils.LogModel;
  *
  * @author J&uuml;rgen Mo&szlig;graber
  */
-public class GenericFlexiControllerInstance extends AbstractControllerInstance
+public class GenericFlexiControllerInstance extends AbstractControllerInstance<GenericFlexiControlSurface, GenericFlexiConfiguration>
 {
     /** The controller definition instance. */
     public static final GenericFlexiControllerDefinition CONTROLLER_DEFINITION = new GenericFlexiControllerDefinition ();
@@ -42,7 +44,7 @@ public class GenericFlexiControllerInstance extends AbstractControllerInstance
 
     /** {@inheritDoc} */
     @Override
-    protected IControllerSetup<?, ?> createControllerSetup (final ReaperSetupFactory setupFactory)
+    protected IControllerSetup<GenericFlexiControlSurface, GenericFlexiConfiguration> createControllerSetup (final ReaperSetupFactory setupFactory)
     {
         return new GenericFlexiControllerSetup (this.host, setupFactory, this.globalSettingsUI, this.documentSettingsUI);
     }

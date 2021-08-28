@@ -4,8 +4,10 @@
 
 package de.mossgrabers.reaper.controller.akai.apc;
 
+import de.mossgrabers.controller.akai.apc.APCConfiguration;
 import de.mossgrabers.controller.akai.apc.APCControllerDefinition;
 import de.mossgrabers.controller.akai.apc.APCControllerSetup;
+import de.mossgrabers.controller.akai.apc.controller.APCControlSurface;
 import de.mossgrabers.framework.controller.IControllerSetup;
 import de.mossgrabers.reaper.communication.MessageSender;
 import de.mossgrabers.reaper.controller.AbstractControllerInstance;
@@ -20,7 +22,7 @@ import de.mossgrabers.reaper.ui.utils.LogModel;
  *
  * @author J&uuml;rgen Mo&szlig;graber
  */
-public class APC40mkIIControllerInstance extends AbstractControllerInstance
+public class APC40mkIIControllerInstance extends AbstractControllerInstance<APCControlSurface, APCConfiguration>
 {
     /** The controller definition instance. */
     public static final APCControllerDefinition CONTROLLER_DEFINITION = new APCControllerDefinition (true);
@@ -42,7 +44,7 @@ public class APC40mkIIControllerInstance extends AbstractControllerInstance
 
     /** {@inheritDoc} */
     @Override
-    protected IControllerSetup<?, ?> createControllerSetup (final ReaperSetupFactory setupFactory)
+    protected IControllerSetup<APCControlSurface, APCConfiguration> createControllerSetup (final ReaperSetupFactory setupFactory)
     {
         return new APCControllerSetup (this.host, setupFactory, this.globalSettingsUI, this.documentSettingsUI, true);
     }
