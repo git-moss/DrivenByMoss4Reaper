@@ -32,6 +32,8 @@ import java.util.Optional;
 public class CursorTrackImpl implements ICursorTrack
 {
     private final IModel model;
+    private boolean      isPinned    = false;
+    private ITrack       pinnedTrack = null;
 
 
     /**
@@ -49,7 +51,7 @@ public class CursorTrackImpl implements ICursorTrack
     @Override
     public IParameter getCrossfadeParameter ()
     {
-        final ITrack selectedTrack = this.getSelectedTrack ();
+        final ITrack selectedTrack = this.getPinnedOrSelectedTrack ();
         return selectedTrack != null ? selectedTrack.getCrossfadeParameter () : EmptyParameter.INSTANCE;
     }
 
@@ -58,7 +60,7 @@ public class CursorTrackImpl implements ICursorTrack
     @Override
     public boolean isGroup ()
     {
-        final ITrack selectedTrack = this.getSelectedTrack ();
+        final ITrack selectedTrack = this.getPinnedOrSelectedTrack ();
         return selectedTrack != null && selectedTrack.isGroup ();
     }
 
@@ -67,7 +69,7 @@ public class CursorTrackImpl implements ICursorTrack
     @Override
     public boolean hasParent ()
     {
-        final ITrack selectedTrack = this.getSelectedTrack ();
+        final ITrack selectedTrack = this.getPinnedOrSelectedTrack ();
         return selectedTrack != null && selectedTrack.hasParent ();
     }
 
@@ -76,7 +78,7 @@ public class CursorTrackImpl implements ICursorTrack
     @Override
     public boolean isRecArm ()
     {
-        final ITrack selectedTrack = this.getSelectedTrack ();
+        final ITrack selectedTrack = this.getPinnedOrSelectedTrack ();
         return selectedTrack != null && selectedTrack.isRecArm ();
     }
 
@@ -85,7 +87,7 @@ public class CursorTrackImpl implements ICursorTrack
     @Override
     public void setRecArm (final boolean value)
     {
-        final ITrack selectedTrack = this.getSelectedTrack ();
+        final ITrack selectedTrack = this.getPinnedOrSelectedTrack ();
         if (selectedTrack != null)
             selectedTrack.setRecArm (value);
     }
@@ -95,7 +97,7 @@ public class CursorTrackImpl implements ICursorTrack
     @Override
     public void toggleRecArm ()
     {
-        final ITrack selectedTrack = this.getSelectedTrack ();
+        final ITrack selectedTrack = this.getPinnedOrSelectedTrack ();
         if (selectedTrack != null)
             selectedTrack.toggleRecArm ();
     }
@@ -105,7 +107,7 @@ public class CursorTrackImpl implements ICursorTrack
     @Override
     public boolean isMonitor ()
     {
-        final ITrack selectedTrack = this.getSelectedTrack ();
+        final ITrack selectedTrack = this.getPinnedOrSelectedTrack ();
         return selectedTrack != null && selectedTrack.isMonitor ();
     }
 
@@ -114,7 +116,7 @@ public class CursorTrackImpl implements ICursorTrack
     @Override
     public void setMonitor (final boolean value)
     {
-        final ITrack selectedTrack = this.getSelectedTrack ();
+        final ITrack selectedTrack = this.getPinnedOrSelectedTrack ();
         if (selectedTrack != null)
             selectedTrack.setMonitor (value);
     }
@@ -124,7 +126,7 @@ public class CursorTrackImpl implements ICursorTrack
     @Override
     public void toggleMonitor ()
     {
-        final ITrack selectedTrack = this.getSelectedTrack ();
+        final ITrack selectedTrack = this.getPinnedOrSelectedTrack ();
         if (selectedTrack != null)
             selectedTrack.toggleMonitor ();
     }
@@ -134,7 +136,7 @@ public class CursorTrackImpl implements ICursorTrack
     @Override
     public boolean isAutoMonitor ()
     {
-        final ITrack selectedTrack = this.getSelectedTrack ();
+        final ITrack selectedTrack = this.getPinnedOrSelectedTrack ();
         return selectedTrack != null && selectedTrack.isAutoMonitor ();
     }
 
@@ -143,7 +145,7 @@ public class CursorTrackImpl implements ICursorTrack
     @Override
     public void setAutoMonitor (final boolean value)
     {
-        final ITrack selectedTrack = this.getSelectedTrack ();
+        final ITrack selectedTrack = this.getPinnedOrSelectedTrack ();
         if (selectedTrack != null)
             selectedTrack.setAutoMonitor (value);
     }
@@ -153,7 +155,7 @@ public class CursorTrackImpl implements ICursorTrack
     @Override
     public void toggleAutoMonitor ()
     {
-        final ITrack selectedTrack = this.getSelectedTrack ();
+        final ITrack selectedTrack = this.getPinnedOrSelectedTrack ();
         if (selectedTrack != null)
             selectedTrack.toggleAutoMonitor ();
     }
@@ -163,7 +165,7 @@ public class CursorTrackImpl implements ICursorTrack
     @Override
     public boolean canHoldNotes ()
     {
-        final ITrack selectedTrack = this.getSelectedTrack ();
+        final ITrack selectedTrack = this.getPinnedOrSelectedTrack ();
         return selectedTrack != null && selectedTrack.canHoldNotes ();
     }
 
@@ -172,7 +174,7 @@ public class CursorTrackImpl implements ICursorTrack
     @Override
     public boolean canHoldAudioData ()
     {
-        final ITrack selectedTrack = this.getSelectedTrack ();
+        final ITrack selectedTrack = this.getPinnedOrSelectedTrack ();
         return selectedTrack != null && selectedTrack.canHoldAudioData ();
     }
 
@@ -181,7 +183,7 @@ public class CursorTrackImpl implements ICursorTrack
     @Override
     public ISlotBank getSlotBank ()
     {
-        final ITrack selectedTrack = this.getSelectedTrack ();
+        final ITrack selectedTrack = this.getPinnedOrSelectedTrack ();
         return selectedTrack != null ? selectedTrack.getSlotBank () : EmptySlotBank.INSTANCE;
     }
 
@@ -190,7 +192,7 @@ public class CursorTrackImpl implements ICursorTrack
     @Override
     public void createClip (final int slotIndex, final int lengthInBeats)
     {
-        final ITrack selectedTrack = this.getSelectedTrack ();
+        final ITrack selectedTrack = this.getPinnedOrSelectedTrack ();
         if (selectedTrack != null)
             selectedTrack.createClip (slotIndex, lengthInBeats);
     }
@@ -200,7 +202,7 @@ public class CursorTrackImpl implements ICursorTrack
     @Override
     public boolean isPlaying ()
     {
-        final ITrack selectedTrack = this.getSelectedTrack ();
+        final ITrack selectedTrack = this.getPinnedOrSelectedTrack ();
         return selectedTrack != null && selectedTrack.isPlaying ();
     }
 
@@ -209,7 +211,7 @@ public class CursorTrackImpl implements ICursorTrack
     @Override
     public void stop ()
     {
-        final ITrack selectedTrack = this.getSelectedTrack ();
+        final ITrack selectedTrack = this.getPinnedOrSelectedTrack ();
         if (selectedTrack != null)
             selectedTrack.stop ();
     }
@@ -219,7 +221,7 @@ public class CursorTrackImpl implements ICursorTrack
     @Override
     public void returnToArrangement ()
     {
-        final ITrack selectedTrack = this.getSelectedTrack ();
+        final ITrack selectedTrack = this.getPinnedOrSelectedTrack ();
         if (selectedTrack != null)
             selectedTrack.returnToArrangement ();
     }
@@ -229,7 +231,7 @@ public class CursorTrackImpl implements ICursorTrack
     @Override
     public boolean isRecordQuantizationNoteLength ()
     {
-        final ITrack selectedTrack = this.getSelectedTrack ();
+        final ITrack selectedTrack = this.getPinnedOrSelectedTrack ();
         return selectedTrack != null && selectedTrack.isRecordQuantizationNoteLength ();
     }
 
@@ -238,7 +240,7 @@ public class CursorTrackImpl implements ICursorTrack
     @Override
     public void toggleRecordQuantizationNoteLength ()
     {
-        final ITrack selectedTrack = this.getSelectedTrack ();
+        final ITrack selectedTrack = this.getPinnedOrSelectedTrack ();
         if (selectedTrack != null)
             selectedTrack.toggleRecordQuantizationNoteLength ();
     }
@@ -248,7 +250,7 @@ public class CursorTrackImpl implements ICursorTrack
     @Override
     public RecordQuantization getRecordQuantizationGrid ()
     {
-        final ITrack selectedTrack = this.getSelectedTrack ();
+        final ITrack selectedTrack = this.getPinnedOrSelectedTrack ();
         return selectedTrack != null ? selectedTrack.getRecordQuantizationGrid () : RecordQuantization.RES_OFF;
     }
 
@@ -257,7 +259,7 @@ public class CursorTrackImpl implements ICursorTrack
     @Override
     public void setRecordQuantizationGrid (final RecordQuantization recordQuantization)
     {
-        final ITrack selectedTrack = this.getSelectedTrack ();
+        final ITrack selectedTrack = this.getPinnedOrSelectedTrack ();
         if (selectedTrack != null)
             selectedTrack.setRecordQuantizationGrid (recordQuantization);
     }
@@ -267,7 +269,7 @@ public class CursorTrackImpl implements ICursorTrack
     @Override
     public void addEqualizerDevice ()
     {
-        final ITrack selectedTrack = this.getSelectedTrack ();
+        final ITrack selectedTrack = this.getPinnedOrSelectedTrack ();
         if (selectedTrack != null)
             selectedTrack.addEqualizerDevice ();
     }
@@ -277,7 +279,7 @@ public class CursorTrackImpl implements ICursorTrack
     @Override
     public boolean isActivated ()
     {
-        final ITrack selectedTrack = this.getSelectedTrack ();
+        final ITrack selectedTrack = this.getPinnedOrSelectedTrack ();
         return selectedTrack != null && selectedTrack.isActivated ();
     }
 
@@ -286,7 +288,7 @@ public class CursorTrackImpl implements ICursorTrack
     @Override
     public ChannelType getType ()
     {
-        final ITrack selectedTrack = this.getSelectedTrack ();
+        final ITrack selectedTrack = this.getPinnedOrSelectedTrack ();
         return selectedTrack != null ? selectedTrack.getType () : ChannelType.UNKNOWN;
     }
 
@@ -295,7 +297,7 @@ public class CursorTrackImpl implements ICursorTrack
     @Override
     public IParameter getVolumeParameter ()
     {
-        final ITrack selectedTrack = this.getSelectedTrack ();
+        final ITrack selectedTrack = this.getPinnedOrSelectedTrack ();
         return selectedTrack != null ? selectedTrack.getVolumeParameter () : EmptyParameter.INSTANCE;
     }
 
@@ -304,7 +306,7 @@ public class CursorTrackImpl implements ICursorTrack
     @Override
     public String getVolumeStr ()
     {
-        final ITrack selectedTrack = this.getSelectedTrack ();
+        final ITrack selectedTrack = this.getPinnedOrSelectedTrack ();
         return selectedTrack != null ? selectedTrack.getVolumeStr () : "";
     }
 
@@ -313,7 +315,7 @@ public class CursorTrackImpl implements ICursorTrack
     @Override
     public String getVolumeStr (final int limit)
     {
-        final ITrack selectedTrack = this.getSelectedTrack ();
+        final ITrack selectedTrack = this.getPinnedOrSelectedTrack ();
         return selectedTrack != null ? selectedTrack.getVolumeStr (limit) : "";
     }
 
@@ -322,7 +324,7 @@ public class CursorTrackImpl implements ICursorTrack
     @Override
     public int getVolume ()
     {
-        final ITrack selectedTrack = this.getSelectedTrack ();
+        final ITrack selectedTrack = this.getPinnedOrSelectedTrack ();
         return selectedTrack != null ? selectedTrack.getVolume () : 0;
     }
 
@@ -331,7 +333,7 @@ public class CursorTrackImpl implements ICursorTrack
     @Override
     public void changeVolume (final int control)
     {
-        final ITrack selectedTrack = this.getSelectedTrack ();
+        final ITrack selectedTrack = this.getPinnedOrSelectedTrack ();
         if (selectedTrack != null)
             selectedTrack.changeVolume (control);
     }
@@ -341,7 +343,7 @@ public class CursorTrackImpl implements ICursorTrack
     @Override
     public void setVolume (final int value)
     {
-        final ITrack selectedTrack = this.getSelectedTrack ();
+        final ITrack selectedTrack = this.getPinnedOrSelectedTrack ();
         if (selectedTrack != null)
             selectedTrack.setVolume (value);
     }
@@ -351,7 +353,7 @@ public class CursorTrackImpl implements ICursorTrack
     @Override
     public void resetVolume ()
     {
-        final ITrack selectedTrack = this.getSelectedTrack ();
+        final ITrack selectedTrack = this.getPinnedOrSelectedTrack ();
         if (selectedTrack != null)
             selectedTrack.resetVolume ();
     }
@@ -361,7 +363,7 @@ public class CursorTrackImpl implements ICursorTrack
     @Override
     public void touchVolume (final boolean isBeingTouched)
     {
-        final ITrack selectedTrack = this.getSelectedTrack ();
+        final ITrack selectedTrack = this.getPinnedOrSelectedTrack ();
         if (selectedTrack != null)
             selectedTrack.touchVolume (isBeingTouched);
     }
@@ -371,7 +373,7 @@ public class CursorTrackImpl implements ICursorTrack
     @Override
     public void setVolumeIndication (final boolean indicate)
     {
-        final ITrack selectedTrack = this.getSelectedTrack ();
+        final ITrack selectedTrack = this.getPinnedOrSelectedTrack ();
         if (selectedTrack != null)
             selectedTrack.setVolumeIndication (indicate);
     }
@@ -381,7 +383,7 @@ public class CursorTrackImpl implements ICursorTrack
     @Override
     public int getModulatedVolume ()
     {
-        final ITrack selectedTrack = this.getSelectedTrack ();
+        final ITrack selectedTrack = this.getPinnedOrSelectedTrack ();
         return selectedTrack != null ? selectedTrack.getModulatedVolume () : 0;
     }
 
@@ -390,7 +392,7 @@ public class CursorTrackImpl implements ICursorTrack
     @Override
     public IParameter getPanParameter ()
     {
-        final ITrack selectedTrack = this.getSelectedTrack ();
+        final ITrack selectedTrack = this.getPinnedOrSelectedTrack ();
         return selectedTrack != null ? selectedTrack.getPanParameter () : EmptyParameter.INSTANCE;
     }
 
@@ -399,7 +401,7 @@ public class CursorTrackImpl implements ICursorTrack
     @Override
     public String getPanStr ()
     {
-        final ITrack selectedTrack = this.getSelectedTrack ();
+        final ITrack selectedTrack = this.getPinnedOrSelectedTrack ();
         return selectedTrack != null ? selectedTrack.getPanStr () : "";
     }
 
@@ -408,7 +410,7 @@ public class CursorTrackImpl implements ICursorTrack
     @Override
     public String getPanStr (final int limit)
     {
-        final ITrack selectedTrack = this.getSelectedTrack ();
+        final ITrack selectedTrack = this.getPinnedOrSelectedTrack ();
         return selectedTrack != null ? selectedTrack.getPanStr (limit) : "";
     }
 
@@ -417,7 +419,7 @@ public class CursorTrackImpl implements ICursorTrack
     @Override
     public int getPan ()
     {
-        final ITrack selectedTrack = this.getSelectedTrack ();
+        final ITrack selectedTrack = this.getPinnedOrSelectedTrack ();
         return selectedTrack != null ? selectedTrack.getPan () : 0;
     }
 
@@ -426,7 +428,7 @@ public class CursorTrackImpl implements ICursorTrack
     @Override
     public void changePan (final int control)
     {
-        final ITrack selectedTrack = this.getSelectedTrack ();
+        final ITrack selectedTrack = this.getPinnedOrSelectedTrack ();
         if (selectedTrack != null)
             selectedTrack.changePan (control);
     }
@@ -436,7 +438,7 @@ public class CursorTrackImpl implements ICursorTrack
     @Override
     public void setPan (final int value)
     {
-        final ITrack selectedTrack = this.getSelectedTrack ();
+        final ITrack selectedTrack = this.getPinnedOrSelectedTrack ();
         if (selectedTrack != null)
             selectedTrack.setPan (value);
     }
@@ -446,7 +448,7 @@ public class CursorTrackImpl implements ICursorTrack
     @Override
     public void resetPan ()
     {
-        final ITrack selectedTrack = this.getSelectedTrack ();
+        final ITrack selectedTrack = this.getPinnedOrSelectedTrack ();
         if (selectedTrack != null)
             selectedTrack.resetPan ();
     }
@@ -456,7 +458,7 @@ public class CursorTrackImpl implements ICursorTrack
     @Override
     public void touchPan (final boolean isBeingTouched)
     {
-        final ITrack selectedTrack = this.getSelectedTrack ();
+        final ITrack selectedTrack = this.getPinnedOrSelectedTrack ();
         if (selectedTrack != null)
             selectedTrack.touchPan (isBeingTouched);
     }
@@ -466,7 +468,7 @@ public class CursorTrackImpl implements ICursorTrack
     @Override
     public void setPanIndication (final boolean indicate)
     {
-        final ITrack selectedTrack = this.getSelectedTrack ();
+        final ITrack selectedTrack = this.getPinnedOrSelectedTrack ();
         if (selectedTrack != null)
             selectedTrack.setPanIndication (indicate);
     }
@@ -476,7 +478,7 @@ public class CursorTrackImpl implements ICursorTrack
     @Override
     public int getModulatedPan ()
     {
-        final ITrack selectedTrack = this.getSelectedTrack ();
+        final ITrack selectedTrack = this.getPinnedOrSelectedTrack ();
         return selectedTrack != null ? selectedTrack.getModulatedPan () : 0;
     }
 
@@ -485,7 +487,7 @@ public class CursorTrackImpl implements ICursorTrack
     @Override
     public void setIsActivated (final boolean value)
     {
-        final ITrack selectedTrack = this.getSelectedTrack ();
+        final ITrack selectedTrack = this.getPinnedOrSelectedTrack ();
         if (selectedTrack != null)
             selectedTrack.setIsActivated (value);
     }
@@ -495,7 +497,7 @@ public class CursorTrackImpl implements ICursorTrack
     @Override
     public void toggleIsActivated ()
     {
-        final ITrack selectedTrack = this.getSelectedTrack ();
+        final ITrack selectedTrack = this.getPinnedOrSelectedTrack ();
         if (selectedTrack != null)
             selectedTrack.toggleIsActivated ();
     }
@@ -505,7 +507,7 @@ public class CursorTrackImpl implements ICursorTrack
     @Override
     public ColorEx getColor ()
     {
-        final ITrack selectedTrack = this.getSelectedTrack ();
+        final ITrack selectedTrack = this.getPinnedOrSelectedTrack ();
         return selectedTrack != null ? selectedTrack.getColor () : ColorEx.BLACK;
     }
 
@@ -514,7 +516,7 @@ public class CursorTrackImpl implements ICursorTrack
     @Override
     public void setColor (final ColorEx color)
     {
-        final ITrack selectedTrack = this.getSelectedTrack ();
+        final ITrack selectedTrack = this.getPinnedOrSelectedTrack ();
         if (selectedTrack != null)
             selectedTrack.setColor (color);
     }
@@ -524,7 +526,7 @@ public class CursorTrackImpl implements ICursorTrack
     @Override
     public boolean isMute ()
     {
-        final ITrack selectedTrack = this.getSelectedTrack ();
+        final ITrack selectedTrack = this.getPinnedOrSelectedTrack ();
         return selectedTrack != null && selectedTrack.isMute ();
     }
 
@@ -533,7 +535,7 @@ public class CursorTrackImpl implements ICursorTrack
     @Override
     public void setMute (final boolean value)
     {
-        final ITrack selectedTrack = this.getSelectedTrack ();
+        final ITrack selectedTrack = this.getPinnedOrSelectedTrack ();
         if (selectedTrack != null)
             selectedTrack.setMute (value);
     }
@@ -543,7 +545,7 @@ public class CursorTrackImpl implements ICursorTrack
     @Override
     public void toggleMute ()
     {
-        final ITrack selectedTrack = this.getSelectedTrack ();
+        final ITrack selectedTrack = this.getPinnedOrSelectedTrack ();
         if (selectedTrack != null)
             selectedTrack.toggleMute ();
     }
@@ -553,7 +555,7 @@ public class CursorTrackImpl implements ICursorTrack
     @Override
     public boolean isSolo ()
     {
-        final ITrack selectedTrack = this.getSelectedTrack ();
+        final ITrack selectedTrack = this.getPinnedOrSelectedTrack ();
         return selectedTrack != null && selectedTrack.isSolo ();
     }
 
@@ -562,7 +564,7 @@ public class CursorTrackImpl implements ICursorTrack
     @Override
     public void setSolo (final boolean value)
     {
-        final ITrack selectedTrack = this.getSelectedTrack ();
+        final ITrack selectedTrack = this.getPinnedOrSelectedTrack ();
         if (selectedTrack != null)
             selectedTrack.setSolo (value);
     }
@@ -572,7 +574,7 @@ public class CursorTrackImpl implements ICursorTrack
     @Override
     public void toggleSolo ()
     {
-        final ITrack selectedTrack = this.getSelectedTrack ();
+        final ITrack selectedTrack = this.getPinnedOrSelectedTrack ();
         if (selectedTrack != null)
             selectedTrack.toggleSolo ();
     }
@@ -582,7 +584,7 @@ public class CursorTrackImpl implements ICursorTrack
     @Override
     public int getVu ()
     {
-        final ITrack selectedTrack = this.getSelectedTrack ();
+        final ITrack selectedTrack = this.getPinnedOrSelectedTrack ();
         return selectedTrack != null ? selectedTrack.getVu () : 0;
     }
 
@@ -591,7 +593,7 @@ public class CursorTrackImpl implements ICursorTrack
     @Override
     public int getVuLeft ()
     {
-        final ITrack selectedTrack = this.getSelectedTrack ();
+        final ITrack selectedTrack = this.getPinnedOrSelectedTrack ();
         return selectedTrack != null ? selectedTrack.getVuLeft () : 0;
     }
 
@@ -600,7 +602,7 @@ public class CursorTrackImpl implements ICursorTrack
     @Override
     public int getVuRight ()
     {
-        final ITrack selectedTrack = this.getSelectedTrack ();
+        final ITrack selectedTrack = this.getPinnedOrSelectedTrack ();
         return selectedTrack != null ? selectedTrack.getVuRight () : 0;
     }
 
@@ -609,7 +611,7 @@ public class CursorTrackImpl implements ICursorTrack
     @Override
     public void remove ()
     {
-        final ITrack selectedTrack = this.getSelectedTrack ();
+        final ITrack selectedTrack = this.getPinnedOrSelectedTrack ();
         if (selectedTrack != null)
             selectedTrack.remove ();
     }
@@ -619,7 +621,7 @@ public class CursorTrackImpl implements ICursorTrack
     @Override
     public void duplicate ()
     {
-        final ITrack selectedTrack = this.getSelectedTrack ();
+        final ITrack selectedTrack = this.getPinnedOrSelectedTrack ();
         if (selectedTrack != null)
             selectedTrack.duplicate ();
     }
@@ -629,7 +631,7 @@ public class CursorTrackImpl implements ICursorTrack
     @Override
     public ISendBank getSendBank ()
     {
-        final ITrack selectedTrack = this.getSelectedTrack ();
+        final ITrack selectedTrack = this.getPinnedOrSelectedTrack ();
         return selectedTrack != null ? selectedTrack.getSendBank () : EmptySendBank.INSTANCE;
     }
 
@@ -638,7 +640,7 @@ public class CursorTrackImpl implements ICursorTrack
     @Override
     public void enter ()
     {
-        final ITrack selectedTrack = this.getSelectedTrack ();
+        final ITrack selectedTrack = this.getPinnedOrSelectedTrack ();
         if (selectedTrack != null)
             selectedTrack.enter ();
     }
@@ -648,7 +650,7 @@ public class CursorTrackImpl implements ICursorTrack
     @Override
     public void addColorObserver (final IValueObserver<ColorEx> observer)
     {
-        final ITrack selectedTrack = this.getSelectedTrack ();
+        final ITrack selectedTrack = this.getPinnedOrSelectedTrack ();
         if (selectedTrack != null)
             selectedTrack.addColorObserver (observer);
     }
@@ -658,7 +660,7 @@ public class CursorTrackImpl implements ICursorTrack
     @Override
     public boolean doesExist ()
     {
-        final ITrack selectedTrack = this.getSelectedTrack ();
+        final ITrack selectedTrack = this.getPinnedOrSelectedTrack ();
         return selectedTrack != null && selectedTrack.doesExist ();
     }
 
@@ -667,7 +669,7 @@ public class CursorTrackImpl implements ICursorTrack
     @Override
     public int getIndex ()
     {
-        final ITrack selectedTrack = this.getSelectedTrack ();
+        final ITrack selectedTrack = this.getPinnedOrSelectedTrack ();
         return selectedTrack != null ? selectedTrack.getIndex () : -1;
     }
 
@@ -676,7 +678,7 @@ public class CursorTrackImpl implements ICursorTrack
     @Override
     public int getPosition ()
     {
-        final ITrack selectedTrack = this.getSelectedTrack ();
+        final ITrack selectedTrack = this.getPinnedOrSelectedTrack ();
         return selectedTrack != null ? selectedTrack.getPosition () : 0;
     }
 
@@ -685,6 +687,8 @@ public class CursorTrackImpl implements ICursorTrack
     @Override
     public boolean isSelected ()
     {
+        if (this.isPinned)
+            return true;
         final ITrack selectedTrack = this.getSelectedTrack ();
         return selectedTrack != null && selectedTrack.isSelected ();
     }
@@ -694,7 +698,7 @@ public class CursorTrackImpl implements ICursorTrack
     @Override
     public void setSelected (final boolean isSelected)
     {
-        final ITrack selectedTrack = this.getSelectedTrack ();
+        final ITrack selectedTrack = this.getPinnedOrSelectedTrack ();
         if (selectedTrack != null)
             selectedTrack.setSelected (isSelected);
     }
@@ -704,7 +708,7 @@ public class CursorTrackImpl implements ICursorTrack
     @Override
     public void select ()
     {
-        final ITrack selectedTrack = this.getSelectedTrack ();
+        final ITrack selectedTrack = this.getPinnedOrSelectedTrack ();
         if (selectedTrack != null)
             selectedTrack.select ();
     }
@@ -714,7 +718,7 @@ public class CursorTrackImpl implements ICursorTrack
     @Override
     public String getName ()
     {
-        final ITrack selectedTrack = this.getSelectedTrack ();
+        final ITrack selectedTrack = this.getPinnedOrSelectedTrack ();
         return selectedTrack != null ? selectedTrack.getName () : "";
     }
 
@@ -723,7 +727,7 @@ public class CursorTrackImpl implements ICursorTrack
     @Override
     public String getName (final int limit)
     {
-        final ITrack selectedTrack = this.getSelectedTrack ();
+        final ITrack selectedTrack = this.getPinnedOrSelectedTrack ();
         return selectedTrack != null ? selectedTrack.getName (limit) : "";
     }
 
@@ -732,7 +736,7 @@ public class CursorTrackImpl implements ICursorTrack
     @Override
     public void addNameObserver (final IValueObserver<String> observer)
     {
-        final ITrack selectedTrack = this.getSelectedTrack ();
+        final ITrack selectedTrack = this.getPinnedOrSelectedTrack ();
         if (selectedTrack != null)
             selectedTrack.select ();
     }
@@ -742,7 +746,7 @@ public class CursorTrackImpl implements ICursorTrack
     @Override
     public void setName (final String name)
     {
-        final ITrack selectedTrack = this.getSelectedTrack ();
+        final ITrack selectedTrack = this.getPinnedOrSelectedTrack ();
         if (selectedTrack != null)
             selectedTrack.setName (name);
     }
@@ -752,7 +756,7 @@ public class CursorTrackImpl implements ICursorTrack
     @Override
     public void enableObservers (final boolean enable)
     {
-        final ITrack selectedTrack = this.getSelectedTrack ();
+        final ITrack selectedTrack = this.getPinnedOrSelectedTrack ();
         if (selectedTrack != null)
             selectedTrack.enableObservers (enable);
     }
@@ -762,8 +766,7 @@ public class CursorTrackImpl implements ICursorTrack
     @Override
     public boolean isPinned ()
     {
-        // Pinning is not supported
-        return false;
+        return this.isPinned;
     }
 
 
@@ -771,7 +774,7 @@ public class CursorTrackImpl implements ICursorTrack
     @Override
     public void togglePinned ()
     {
-        // Pinning is not supported
+        this.setPinned (!this.isPinned);
     }
 
 
@@ -779,7 +782,20 @@ public class CursorTrackImpl implements ICursorTrack
     @Override
     public void setPinned (final boolean isPinned)
     {
-        // Pinning is not supported
+        if (isPinned)
+        {
+            this.pinnedTrack = this.getSelectedTrack ();
+            if (this.pinnedTrack == null || !this.pinnedTrack.doesExist ())
+            {
+                this.setPinned (false);
+                return;
+            }
+        }
+        else
+            this.pinnedTrack = null;
+
+        this.isPinned = isPinned;
+        this.sendPositionedItemOSC ("pin", this.pinnedTrack == null ? -1 : this.pinnedTrack.getPosition ());
     }
 
 
@@ -787,9 +803,17 @@ public class CursorTrackImpl implements ICursorTrack
     @Override
     public void addDevice (final IDeviceMetadata metadata)
     {
-        final ITrack selectedTrack = this.getSelectedTrack ();
+        final ITrack selectedTrack = this.getPinnedOrSelectedTrack ();
         if (selectedTrack != null)
             ((ChannelImpl) selectedTrack).addDevice (metadata);
+    }
+
+
+    private ITrack getPinnedOrSelectedTrack ()
+    {
+        if (this.isPinned)
+            return this.pinnedTrack;
+        return this.getSelectedTrack ();
     }
 
 
@@ -827,5 +851,24 @@ public class CursorTrackImpl implements ICursorTrack
         final ITrack selectedTrack = this.getSelectedTrack ();
         if (selectedTrack != null)
             ((ChannelImpl) selectedTrack).sendPositionedItemOSC (command, value);
+    }
+
+
+    private void sendPositionedItemOSC (final String command, final int value)
+    {
+        final ITrack selectedTrack = this.getSelectedTrack ();
+        if (selectedTrack != null)
+            ((ChannelImpl) selectedTrack).sendPositionedItemOSC (command, value);
+    }
+
+
+    /**
+     * Get the pinned track.
+     *
+     * @return The pinned track or null if there is no pinned track
+     */
+    public ITrack getPinnedTrack ()
+    {
+        return this.pinnedTrack;
     }
 }

@@ -72,6 +72,7 @@ public class ModelImpl extends AbstractModel
         this.markerBank = new MarkerBankImpl (dataSetup, modelSetup.getNumMarkers ());
         this.cursorTrack = new CursorTrackImpl (this);
 
+        dataSetup.setCursorTrack ((CursorTrackImpl) this.cursorTrack);
         dataSetup.setTransport (this.transport);
 
         final int numTracks = modelSetup.getNumTracks ();

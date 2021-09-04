@@ -129,9 +129,11 @@ public class HostImpl implements IHost
             case HAS_CROSSFADER:
             case HAS_DRUM_DEVICE:
             case HAS_EFFECT_BANK:
-            case HAS_PINNING:
             case HAS_SLOT_CHAINS:
                 return false;
+
+            case HAS_PINNING:
+                return true;
         }
         return false;
     }

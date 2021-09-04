@@ -90,6 +90,17 @@ public class TrackImpl extends ChannelImpl implements ITrack
     }
 
 
+    /** {@inheritDoc} */
+    @Override
+    public boolean isSelected ()
+    {
+        final CursorTrackImpl cursorTrack = this.dataSetup.getCursorTrack ();
+        if (cursorTrack.isPinned ())
+            return this == cursorTrack.getPinnedTrack ();
+        return super.isSelected ();
+    }
+
+
     /**
      * Constructor.
      *

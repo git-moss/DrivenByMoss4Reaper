@@ -291,7 +291,7 @@ public class ChannelImpl extends ItemImpl implements IChannel
 
     /**
      * Prevent updating of the value from the DAW when the user edits the value, otherwise the value
-     * "jumps" due to roundtrip delays.
+     * "jumps" due to round trip delays.
      *
      * @param isBeingTouched True if touched
      */

@@ -89,8 +89,8 @@ public class CursorDeviceImpl extends SpecificDeviceImpl implements ICursorDevic
     @Override
     public boolean isPinned ()
     {
-        // Not supported
-        return false;
+        // There is no selected device state in Reaper, therefore this is always pinned
+        return true;
     }
 
 
