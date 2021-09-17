@@ -238,6 +238,7 @@ java/lang/ref/Reference$1
 java/lang/ref/Finalizer$FinalizerThread
 jdk/internal/util/SystemProps
 jdk/internal/util/SystemProps$Raw
+jdk/internal/misc/VM
 java/nio/charset/Charset
 java/nio/charset/spi/CharsetProvider
 sun/nio/cs/StandardCharsets
@@ -264,7 +265,6 @@ jdk/internal/misc/TerminatingThreadLocal
 java/lang/StringCoding$Result
 java/lang/StringConcatHelper
 java/lang/VersionProps
-jdk/internal/misc/VM
 java/lang/CharacterData
 java/lang/CharacterDataLatin1
 java/util/HashMap$EntrySet
