@@ -116,7 +116,7 @@ public abstract class AbstractControllerInstance<S extends IControlSurface<C>, C
             if (this.isRunning)
                 return;
 
-            this.host = new HostImpl (this.logModel, this.windowManager);
+            this.host = new HostImpl (this.logModel, this.windowManager, this);
 
             this.loadConfiguration ();
             this.documentSettingsUI.clearWidgets ();
@@ -145,27 +145,14 @@ public abstract class AbstractControllerInstance<S extends IControlSurface<C>, C
 
     /** {@inheritDoc} */
     @Override
-    public GlobalSettingsUI getGlobalSettingsUI ()
+    public void restart ()
     {
-        return this.globalSettingsUI;
+        synchronized (this.startSync)
+        {
+            this.stop ();
+            this.start ();
+        }
     }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public DocumentSettingsUI getDocumentSettingsUI ()
-    {
-        return this.documentSettingsUI;
-    }
-
-
-    /**
-     * Create an instance of the related controller setup.
-     *
-     * @param setupFactory The setup factory
-     * @return The instance
-     */
-    protected abstract IControllerSetup<S, C> createControllerSetup (final ReaperSetupFactory setupFactory);
 
 
     /** {@inheritDoc} */
@@ -202,6 +189,31 @@ public abstract class AbstractControllerInstance<S extends IControlSurface<C>, C
             this.isRunning = false;
         }
     }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public GlobalSettingsUI getGlobalSettingsUI ()
+    {
+        return this.globalSettingsUI;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public DocumentSettingsUI getDocumentSettingsUI ()
+    {
+        return this.documentSettingsUI;
+    }
+
+
+    /**
+     * Create an instance of the related controller setup.
+     *
+     * @param setupFactory The setup factory
+     * @return The instance
+     */
+    protected abstract IControllerSetup<S, C> createControllerSetup (final ReaperSetupFactory setupFactory);
 
 
     /**

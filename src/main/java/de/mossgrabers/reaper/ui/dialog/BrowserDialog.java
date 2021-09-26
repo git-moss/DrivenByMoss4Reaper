@@ -116,7 +116,7 @@ public class BrowserDialog extends BasicDialog
             public void mouseClicked (final MouseEvent evt)
             {
                 if (evt.getClickCount () == 2)
-                    ok ();
+                    BrowserDialog.this.ok ();
             }
         });
 

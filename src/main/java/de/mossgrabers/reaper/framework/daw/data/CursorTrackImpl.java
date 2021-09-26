@@ -582,6 +582,15 @@ public class CursorTrackImpl implements ICursorTrack
 
     /** {@inheritDoc} */
     @Override
+    public boolean isMutedBySolo ()
+    {
+        final ITrack selectedTrack = this.getPinnedOrSelectedTrack ();
+        return selectedTrack != null && selectedTrack.isMutedBySolo ();
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
     public int getVu ()
     {
         final ITrack selectedTrack = this.getPinnedOrSelectedTrack ();
@@ -604,6 +613,33 @@ public class CursorTrackImpl implements ICursorTrack
     {
         final ITrack selectedTrack = this.getPinnedOrSelectedTrack ();
         return selectedTrack != null ? selectedTrack.getVuRight () : 0;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public int getVuPeakLeft ()
+    {
+        final ITrack selectedTrack = this.getPinnedOrSelectedTrack ();
+        return selectedTrack != null ? selectedTrack.getVuPeakLeft () : 0;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public int getVuPeakRight ()
+    {
+        final ITrack selectedTrack = this.getPinnedOrSelectedTrack ();
+        return selectedTrack != null ? selectedTrack.getVuPeakRight () : 0;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean hasDrumDevice ()
+    {
+        final ITrack selectedTrack = this.getPinnedOrSelectedTrack ();
+        return selectedTrack != null && selectedTrack.hasDrumDevice ();
     }
 
 

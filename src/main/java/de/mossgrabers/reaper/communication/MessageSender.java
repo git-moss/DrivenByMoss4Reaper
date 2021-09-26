@@ -118,9 +118,9 @@ public interface MessageSender
 
 
     /**
-     * Dis-/enable an update processor for performance improvements.
+     * Disable/enable an update processor for performance improvements.
      *
-     * @param processor The processor to The processor to dis-/enable
+     * @param processor The processor to The processor to disable/enable
      * @param enable True to enable processor updates, false to disable
      */
     void enableUpdates (final Processor processor, final boolean enable);

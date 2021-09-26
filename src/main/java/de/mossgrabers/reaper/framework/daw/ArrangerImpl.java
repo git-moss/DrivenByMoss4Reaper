@@ -5,6 +5,8 @@
 package de.mossgrabers.reaper.framework.daw;
 
 import de.mossgrabers.framework.daw.IArranger;
+import de.mossgrabers.reaper.communication.Processor;
+import de.mossgrabers.reaper.framework.Actions;
 
 
 /**
@@ -12,14 +14,19 @@ import de.mossgrabers.framework.daw.IArranger;
  *
  * @author J&uuml;rgen Mo&szlig;graber
  */
-public class ArrangerImpl implements IArranger
+public class ArrangerImpl extends BaseImpl implements IArranger
 {
+    private boolean followPlayback = false;
+
+
     /**
      * Constructor
+     *
+     * @param dataSetup Some configuration variables
      */
-    public ArrangerImpl ()
+    public ArrangerImpl (final DataSetupEx dataSetup)
     {
-        // Intentionally empty
+        super (dataSetup);
     }
 
 
@@ -52,8 +59,7 @@ public class ArrangerImpl implements IArranger
     @Override
     public boolean isPlaybackFollowEnabled ()
     {
-        // Not used
-        return false;
+        return this.followPlayback;
     }
 
 
@@ -61,7 +67,18 @@ public class ArrangerImpl implements IArranger
     @Override
     public void togglePlaybackFollow ()
     {
-        // Not used
+        this.sender.invokeAction (Actions.TOGGLE_FOLLOW_PLAYBACK);
+    }
+
+
+    /**
+     * Set following playback.
+     *
+     * @param isEnabled True to follow
+     */
+    public void setPlaybackFollow (final boolean isEnabled)
+    {
+        this.followPlayback = isEnabled;
     }
 
 
@@ -147,5 +164,13 @@ public class ArrangerImpl implements IArranger
     public void toggleEffectTracks ()
     {
         // Not supported
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    protected Processor getProcessor ()
+    {
+        return Processor.ACTION;
     }
 }

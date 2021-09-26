@@ -68,6 +68,7 @@ public class TrackImpl extends ChannelImpl implements ITrack
     private boolean                       recordQuantizationNoteLength;
     private RecordQuantization            recordQuantization;
     private final IParameter              crossfadeParameter;
+    private boolean                       isOverdub      = false;
 
 
     /**
@@ -87,17 +88,6 @@ public class TrackImpl extends ChannelImpl implements ITrack
         this.trackBank = trackBank;
         this.slotBank = new SlotBankImpl (dataSetup, (SceneBankImpl) trackBank.getSceneBank (), index, numScenes);
         this.crossfadeParameter = new CrossfadeParameter (this.valueChanger, index);
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public boolean isSelected ()
-    {
-        final CursorTrackImpl cursorTrack = this.dataSetup.getCursorTrack ();
-        if (cursorTrack.isPinned ())
-            return this == cursorTrack.getPinnedTrack ();
-        return super.isSelected ();
     }
 
 
@@ -136,6 +126,31 @@ public class TrackImpl extends ChannelImpl implements ITrack
     public void setName (final String name)
     {
         this.sendPositionedItemOSC ("name", name);
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean isSelected ()
+    {
+        final CursorTrackImpl cursorTrack = this.dataSetup.getCursorTrack ();
+        if (cursorTrack.isPinned ())
+            return this == cursorTrack.getPinnedTrack ();
+        return super.isSelected ();
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean isMutedBySolo ()
+    {
+        for (int position = 0; position < this.trackBank.getItemCount (); position++)
+        {
+            final ITrack track = this.trackBank.getUnpagedItem (position);
+            if (track != this && track.isSolo ())
+                return true;
+        }
+        return false;
     }
 
 
@@ -463,6 +478,16 @@ public class TrackImpl extends ChannelImpl implements ITrack
 
     /** {@inheritDoc} */
     @Override
+    public boolean hasDrumDevice ()
+    {
+        // The related method in cursor device always returns true to support sequencers but this
+        // one is used for track info, e.g. displaying a track icon. Therefore, return false.
+        return false;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
     public void addEqualizerDevice ()
     {
         this.sender.processNoArg (Processor.DEVICE, "eq-add");
@@ -497,5 +522,27 @@ public class TrackImpl extends ChannelImpl implements ITrack
     public int getDepth ()
     {
         return this.depth;
+    }
+
+
+    /**
+     * Set the MIDI overdub state.
+     *
+     * @param isEnabled True if enabled otherwise MIDI overwrite
+     */
+    public void setOverdub (final boolean isEnabled)
+    {
+        this.isOverdub = isEnabled;
+    }
+
+
+    /**
+     * Get the MIDI overdub state.
+     *
+     * @return True if enabled otherwise MIDI overwrite
+     */
+    public boolean isOverdub ()
+    {
+        return this.isOverdub;
     }
 }

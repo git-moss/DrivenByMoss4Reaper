@@ -8,6 +8,7 @@ import de.mossgrabers.framework.controller.IControllerDefinition;
 import de.mossgrabers.reaper.communication.MessageSender;
 import de.mossgrabers.reaper.controller.ableton.push.Push1ControllerInstance;
 import de.mossgrabers.reaper.controller.ableton.push.Push2ControllerInstance;
+import de.mossgrabers.reaper.controller.akai.acvs.ACVSLiveControllerInstance;
 import de.mossgrabers.reaper.controller.akai.apc.APC40mkIControllerInstance;
 import de.mossgrabers.reaper.controller.akai.apc.APC40mkIIControllerInstance;
 import de.mossgrabers.reaper.controller.akai.apcmini.APCminiControllerInstance;
@@ -111,6 +112,7 @@ public class ControllerInstanceManager
         DEF_TO_CLASS.put (MCU2ControllerInstance.CONTROLLER_DEFINITION, MCU2ControllerInstance.class);
         DEF_TO_CLASS.put (MCU3ControllerInstance.CONTROLLER_DEFINITION, MCU3ControllerInstance.class);
         DEF_TO_CLASS.put (MCU4ControllerInstance.CONTROLLER_DEFINITION, MCU4ControllerInstance.class);
+        DEF_TO_CLASS.put (ACVSLiveControllerInstance.CONTROLLER_DEFINITION, ACVSLiveControllerInstance.class);
         DEF_TO_CLASS.put (OSCControllerInstance.CONTROLLER_DEFINITION, OSCControllerInstance.class);
         DEF_TO_CLASS.put (Push1ControllerInstance.CONTROLLER_DEFINITION, Push1ControllerInstance.class);
         DEF_TO_CLASS.put (Push2ControllerInstance.CONTROLLER_DEFINITION, Push2ControllerInstance.class);

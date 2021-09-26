@@ -21,16 +21,15 @@ public final class Actions
     public static final int           PROJECT_TAB_NEXT                = 40861;
     /** Save project. */
     public static final int           PROJECT_SAVE                    = 40026;
+    /** Open dialog to load a project. */
+    public static final int           PROJECT_LOAD                    = 40025;
+
     /** Transport: Tap tempo. */
     public static final int           TRANSPORT_TAP_TEMPO             = 1134;
 
     /** Item: Remove items. */
     public static final int           REMOVE_ITEMS                    = 40006;
 
-    /** Undo. */
-    public static final int           EDIT_UNDO                       = 40029;
-    /** Redo. */
-    public static final int           EDIT_REDO                       = 40030;
     /** Record: Set record mode to normal. */
     public static final int           RECORD_MODE_NORMAL              = 40252;
     /** Record: Set record mode to selected item auto-punch. */
@@ -47,17 +46,11 @@ public final class Actions
     /** Options: Disable metronome. */
     public static final int           DISABLE_METRONOME               = 41746;
 
-    /** Track: Insert new track. */
-    public static final int           INSERT_NEW_TRACK                = 40001;
-    /** Track: Insert new track at end of mixer. */
-    public static final int           INSERT_NEW_TRACK_AT_END         = 41147;
     /** Track: Insert track from template.... */
     public static final int           INSERT_NEW_TRACK_FROM_TEMPLATE  = 46000;
     /** Track: Duplicate tracks. */
     public static final int           DUPLICATE_TRACKS                = 40062;
 
-    /** Item: Open in built in MIDI editor. */
-    public static final int           OPEN_IN_BUILT_IN_MIDI_EDITOR    = 40153;
     /** Load the 1st window set. */
     public static final int           LOAD_WINDOW_SET_1               = 40454;
     /** Load the 2nd window set. */
@@ -85,28 +78,8 @@ public final class Actions
     /** Mixer: Toggle show FX parameters if space available. */
     public static final int           TOGGLE_FX_PARAMETERS            = 40910;
 
-    /** Select all notes in the MIDI editor. */
-    public static final int           MIDI_SELECT_ALL_NOTES           = 40003;
-    /** Quantize all notes in the MIDI editor. */
-    public static final int           MIDI_QUANTIZE_SELECTED_NOTES    = 40728;
-
     /** Item: Dynamic split items... */
     public static final int           DYNAMIC_SPLIT                   = 40760;
-
-    /** Track : Mute Tracks. */
-    public static final int           MUTE_TRACKS                     = 40730;
-    /** Track : Un-mute Tracks. */
-    public static final int           UNMUTE_TRACKS                   = 40731;
-
-    /** Track: Set all FX offline for selected tracks. */
-    public static final int           SET_ALL_FX_OFFLINE              = 40535;
-    /** Track: Set all FX online for selected tracks. */
-    public static final int           SET_ALL_FX_ONLINE               = 40536;
-
-    /** Track: Lock track controls. */
-    public static final int           LOCK_TRACK_CONTROLS             = 41312;
-    /** Track: Unlock track controls. */
-    public static final int           UNLOCK_TRACK_CONTROLS           = 41313;
 
     /** Track: Go to next track. */
     public static final int           GO_TO_NEXT_TRACK                = 40285;
@@ -121,6 +94,9 @@ public final class Actions
     public static final int           ZOOM_OUT_VERT                   = 40112;
     /** View: Zoom in vertical. */
     public static final int           ZOOM_IN_VERT                    = 40111;
+
+    /** View: Toggle auto-view-scroll during playback */
+    public static final int           TOGGLE_FOLLOW_PLAYBACK          = 40036;
 
     private static final Set<Integer> IGNORE_IF_TEST_IS_ACTIVE        = new HashSet<> ();
     static

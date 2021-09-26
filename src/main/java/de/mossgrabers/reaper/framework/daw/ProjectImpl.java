@@ -4,6 +4,7 @@
 
 package de.mossgrabers.reaper.framework.daw;
 
+import de.mossgrabers.framework.configuration.Configuration;
 import de.mossgrabers.framework.daw.IModel;
 import de.mossgrabers.framework.daw.IProject;
 import de.mossgrabers.framework.daw.data.IParameter;
@@ -20,8 +21,9 @@ import de.mossgrabers.reaper.framework.daw.data.bank.TrackBankImpl;
  */
 public class ProjectImpl extends BaseImpl implements IProject
 {
-    private final IModel model;
-    private String       name = "None";
+    private final IModel        model;
+    private final Configuration configuration;
+    private String              name = "None";
 
 
     /**
@@ -29,12 +31,14 @@ public class ProjectImpl extends BaseImpl implements IProject
      *
      * @param dataSetup Some configuration variables
      * @param model The model
+     * @param configuration The configuration
      */
-    public ProjectImpl (final DataSetupEx dataSetup, final IModel model)
+    public ProjectImpl (final DataSetupEx dataSetup, final IModel model, final Configuration configuration)
     {
         super (dataSetup);
 
         this.model = model;
+        this.configuration = configuration;
     }
 
 
@@ -74,7 +78,16 @@ public class ProjectImpl extends BaseImpl implements IProject
     @Override
     public void createSceneFromPlayingLauncherClips ()
     {
-        // Not supported
+        this.sendOSC ("createSceneFromPlayingLauncherClips");
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void createScene ()
+    {
+        final int newClipLenghthInBeats = this.configuration.getNewClipLenghthInBeats (this.model.getTransport ().getQuartersPerMeasure ());
+        this.sendOSC ("createScene", newClipLenghthInBeats);
     }
 
 
@@ -94,6 +107,14 @@ public class ProjectImpl extends BaseImpl implements IProject
     public void save ()
     {
         this.sender.invokeAction (Actions.PROJECT_SAVE);
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void load ()
+    {
+        this.sender.invokeAction (Actions.PROJECT_LOAD);
     }
 
 

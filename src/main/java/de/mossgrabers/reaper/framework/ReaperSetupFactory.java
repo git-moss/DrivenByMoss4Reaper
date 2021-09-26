@@ -4,6 +4,7 @@
 
 package de.mossgrabers.reaper.framework;
 
+import de.mossgrabers.framework.configuration.Configuration;
 import de.mossgrabers.framework.controller.ISetupFactory;
 import de.mossgrabers.framework.controller.color.ColorManager;
 import de.mossgrabers.framework.controller.valuechanger.IValueChanger;
@@ -68,10 +69,10 @@ public class ReaperSetupFactory implements ISetupFactory
 
     /** {@inheritDoc} */
     @Override
-    public IModel createModel (final ColorManager colorManager, final IValueChanger valueChanger, final Scales scales, final ModelSetup modelSetup)
+    public IModel createModel (final Configuration configuration, final ColorManager colorManager, final IValueChanger valueChanger, final Scales scales, final ModelSetup modelSetup)
     {
         final DataSetupEx dataSetup = new DataSetupEx (this.host, valueChanger, colorManager, this.sender);
-        return new ModelImpl (modelSetup, dataSetup, scales, this.iniFiles);
+        return new ModelImpl (configuration, modelSetup, dataSetup, scales, this.iniFiles);
     }
 
 

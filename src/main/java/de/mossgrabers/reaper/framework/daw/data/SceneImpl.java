@@ -86,7 +86,7 @@ public class SceneImpl extends ItemImpl implements IScene
     @Override
     public void duplicate ()
     {
-        // Not supported
+        this.sendPositionedItemOSC ("duplicate");
     }
 
 

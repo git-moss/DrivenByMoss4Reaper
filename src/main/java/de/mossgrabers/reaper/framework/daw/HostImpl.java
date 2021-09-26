@@ -18,6 +18,7 @@ import de.mossgrabers.framework.osc.IOpenSoundControlServer;
 import de.mossgrabers.framework.usb.IUsbDevice;
 import de.mossgrabers.framework.usb.UsbException;
 import de.mossgrabers.framework.usb.UsbMatcher;
+import de.mossgrabers.reaper.controller.IControllerInstance;
 import de.mossgrabers.reaper.framework.device.DeviceManager;
 import de.mossgrabers.reaper.framework.graphics.BitmapImpl;
 import de.mossgrabers.reaper.framework.graphics.SVGImage;
@@ -53,6 +54,7 @@ public class HostImpl implements IHost
     private final List<OpenSoundControlClientImpl> oscSenders     = new ArrayList<> ();
     private final List<OpenSoundControlServerImpl> oscReceivers   = new ArrayList<> ();
     private final NotificationWindow               notificationWindow;
+    private final IControllerInstance              controllerInstance;
 
 
     /**
@@ -60,11 +62,13 @@ public class HostImpl implements IHost
      *
      * @param logModel The logging model
      * @param windowManager The window manager for the bitmap display window
+     * @param controllerInstance The controller instance for restarting it
      */
-    public HostImpl (final LogModel logModel, final WindowManager windowManager)
+    public HostImpl (final LogModel logModel, final WindowManager windowManager, final IControllerInstance controllerInstance)
     {
         this.logModel = logModel;
         this.windowManager = windowManager;
+        this.controllerInstance = controllerInstance;
 
         this.notificationWindow = new NotificationWindow (logModel);
     }
@@ -90,6 +94,14 @@ public class HostImpl implements IHost
 
     /** {@inheritDoc} */
     @Override
+    public void restart ()
+    {
+        this.controllerInstance.restart ();
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
     public boolean supports (final Capability capability)
     {
         switch (capability)
@@ -97,45 +109,33 @@ public class HostImpl implements IHost
             case MARKERS:
                 return true;
 
-            case NOTE_REPEAT_LENGTH:
-            case NOTE_REPEAT_USE_PRESSURE_TO_VELOCITY:
-            case NOTE_REPEAT_MODE:
+            case NOTE_REPEAT_LENGTH, NOTE_REPEAT_USE_PRESSURE_TO_VELOCITY, NOTE_REPEAT_MODE:
                 return true;
 
-            case NOTE_REPEAT_SWING:
-            case NOTE_REPEAT_OCTAVES:
-            case NOTE_REPEAT_IS_FREE_RUNNING:
+            case NOTE_REPEAT_SWING, NOTE_REPEAT_OCTAVES, NOTE_REPEAT_IS_FREE_RUNNING:
                 return false;
 
             case NOTE_EDIT_MUTE:
                 return true;
 
-            case NOTE_EDIT_RELEASE_VELOCITY:
-            case NOTE_EDIT_CHANCE:
-            case NOTE_EDIT_EXPRESSIONS:
-            case NOTE_EDIT_OCCURRENCE:
-            case NOTE_EDIT_RECCURRENCE:
-            case NOTE_EDIT_REPEAT:
-            case NOTE_EDIT_VELOCITY_SPREAD:
+            case NOTE_EDIT_RELEASE_VELOCITY, NOTE_EDIT_CHANCE, NOTE_EDIT_EXPRESSIONS, NOTE_EDIT_OCCURRENCE, NOTE_EDIT_RECCURRENCE, NOTE_EDIT_REPEAT, NOTE_EDIT_VELOCITY_SPREAD:
                 return false;
 
-            case QUANTIZE_INPUT_NOTE_LENGTH:
-            case QUANTIZE_AMOUNT:
+            case QUANTIZE_INPUT_NOTE_LENGTH, QUANTIZE_AMOUNT:
                 return false;
 
             case CUE_VOLUME:
                 return false;
 
-            case HAS_CROSSFADER:
-            case HAS_DRUM_DEVICE:
-            case HAS_EFFECT_BANK:
-            case HAS_SLOT_CHAINS:
+            case HAS_CROSSFADER, HAS_DRUM_DEVICE, HAS_EFFECT_BANK, HAS_SLOT_CHAINS:
                 return false;
 
             case HAS_PINNING:
                 return true;
+
+            default:
+                return false;
         }
-        return false;
     }
 
 

@@ -31,6 +31,12 @@ public interface IControllerInstance
 
 
     /**
+     * Restart the controller.
+     */
+    void restart ();
+
+
+    /**
      * Stop the controller.
      */
     void stop ();

@@ -25,6 +25,7 @@ import de.mossgrabers.framework.daw.midi.IMidiInput;
 import de.mossgrabers.framework.daw.resource.ChannelType;
 import de.mossgrabers.framework.featuregroup.IMode;
 import de.mossgrabers.reaper.framework.daw.ApplicationImpl;
+import de.mossgrabers.reaper.framework.daw.ArrangerImpl;
 import de.mossgrabers.reaper.framework.daw.BrowserImpl;
 import de.mossgrabers.reaper.framework.daw.ModelImpl;
 import de.mossgrabers.reaper.framework.daw.Note;
@@ -79,6 +80,7 @@ public class MessageParser
     private final IHost                  host;
     private final IProject               project;
     private final ApplicationImpl        application;
+    private final ArrangerImpl           arranger;
     private final MasterTrackImpl        masterTrack;
     private final TransportImpl          transport;
     private final CursorDeviceImpl       cursorDevice;
@@ -102,6 +104,7 @@ public class MessageParser
             this.host = null;
             this.project = null;
             this.application = null;
+            this.arranger = null;
             this.transport = null;
             this.masterTrack = null;
             this.cursorDevice = null;
@@ -114,6 +117,7 @@ public class MessageParser
             this.host = this.model.getHost ();
             this.project = this.model.getProject ();
             this.application = (ApplicationImpl) this.model.getApplication ();
+            this.arranger = (ArrangerImpl) this.model.getArranger ();
             this.transport = (TransportImpl) this.model.getTransport ();
             this.masterTrack = (MasterTrackImpl) this.model.getMasterTrack ();
             this.cursorDevice = (CursorDeviceImpl) this.model.getCursorDevice ();
@@ -280,7 +284,7 @@ public class MessageParser
                 break;
 
             case "tempo":
-                this.transport.setTempoState (Double.parseDouble (value));
+                this.transport.getTempoParameter ().setInternalTempo (Double.parseDouble (value));
                 break;
 
             case "time":
@@ -304,6 +308,10 @@ public class MessageParser
                 final int denominator = (int) Double.parseDouble (value);
                 if (denominator > 0)
                     this.transport.setDenominator (denominator);
+                break;
+
+            case "followPlayback":
+                this.arranger.setPlaybackFollow (Double.parseDouble (value) > 0);
                 break;
 
             default:
@@ -472,6 +480,10 @@ public class MessageParser
                         // Not used
                         break;
                 }
+                break;
+
+            case "overdub":
+                track.setOverdub (Double.parseDouble (value) > 0);
                 break;
 
             case TAG_COLOR:

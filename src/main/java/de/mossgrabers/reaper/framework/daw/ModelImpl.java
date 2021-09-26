@@ -4,6 +4,7 @@
 
 package de.mossgrabers.reaper.framework.daw;
 
+import de.mossgrabers.framework.configuration.Configuration;
 import de.mossgrabers.framework.controller.color.ColorEx;
 import de.mossgrabers.framework.daw.AbstractModel;
 import de.mossgrabers.framework.daw.INoteClip;
@@ -52,21 +53,22 @@ public class ModelImpl extends AbstractModel
     /**
      * Constructor.
      *
+     * @param configuration The configuration
      * @param modelSetup The configuration parameters for the model
      * @param dataSetup Some setup variables
      * @param scales The scales object
      * @param iniFiles The INI configuration files
      */
-    public ModelImpl (final ModelSetup modelSetup, final DataSetupEx dataSetup, final Scales scales, final IniFiles iniFiles)
+    public ModelImpl (final Configuration configuration, final ModelSetup modelSetup, final DataSetupEx dataSetup, final Scales scales, final IniFiles iniFiles)
     {
         super (modelSetup, dataSetup, scales);
 
         this.dataSetup = dataSetup;
 
         this.application = new ApplicationImpl (dataSetup);
-        this.arranger = new ArrangerImpl ();
+        this.arranger = new ArrangerImpl (dataSetup);
         this.mixer = new MixerImpl (dataSetup);
-        this.project = new ProjectImpl (dataSetup, this);
+        this.project = new ProjectImpl (dataSetup, this, configuration);
         this.transport = new TransportImpl (dataSetup, this, iniFiles);
         this.groove = new GrooveImpl (dataSetup);
         this.markerBank = new MarkerBankImpl (dataSetup, modelSetup.getNumMarkers ());
@@ -109,8 +111,7 @@ public class ModelImpl extends AbstractModel
         {
             switch (deviceID)
             {
-                case FIRST_INSTRUMENT:
-                case NI_KOMPLETE:
+                case FIRST_INSTRUMENT, NI_KOMPLETE:
                     final ISpecificDevice specificDevice = new CursorDeviceImpl (dataSetup, numSends, numParams, numDevicesInBank, numDeviceLayers, numDrumPadLayers);
                     this.specificDevices.put (DeviceID.FIRST_INSTRUMENT, specificDevice);
                     if (deviceID == DeviceID.NI_KOMPLETE)
@@ -119,6 +120,10 @@ public class ModelImpl extends AbstractModel
 
                 case EQ:
                     this.specificDevices.put (deviceID, new EqualizerDeviceImpl (dataSetup));
+                    break;
+
+                default:
+                    // Not used
                     break;
             }
         }
@@ -364,6 +369,7 @@ public class ModelImpl extends AbstractModel
                 if (color.isPresent ())
                     slot.setColor (new ColorEx (color.get ()));
                 slot.setExists (true);
+                slot.setHasContent (true);
             }
         }
 
@@ -373,7 +379,16 @@ public class ModelImpl extends AbstractModel
         {
             final TrackImpl track = tb.getUnpagedItem (i);
             final SlotBankImpl slotBank = (SlotBankImpl) track.getSlotBank ();
+
+            final int itemCount = slotBank.getItemCount ();
             slotBank.setMaxSlotCount (maxSlotCount);
+
+            for (int slotIndex = itemCount; slotIndex < maxSlotCount; slotIndex++)
+            {
+                final SlotImpl slot = slotBank.getUnpagedItem (slotIndex);
+                slot.setExists (true);
+                slot.setHasContent (false);
+            }
         }
     }
 

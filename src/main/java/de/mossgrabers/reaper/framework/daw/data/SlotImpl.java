@@ -18,6 +18,7 @@ import de.mossgrabers.reaper.framework.daw.DataSetupEx;
 public class SlotImpl extends ItemImpl implements ISlot
 {
     private int     trackIndex;
+    private boolean hasContent;
     private ColorEx color = new ColorEx (0.2, 0.2, 0.2);
 
 
@@ -40,7 +41,18 @@ public class SlotImpl extends ItemImpl implements ISlot
     @Override
     public boolean hasContent ()
     {
-        return this.doesExist ();
+        return this.hasContent;
+    }
+
+
+    /**
+     * Set the 'has content' state.
+     *
+     * @param hasContent True if the slot has content
+     */
+    public void setHasContent (final boolean hasContent)
+    {
+        this.hasContent = hasContent;
     }
 
 

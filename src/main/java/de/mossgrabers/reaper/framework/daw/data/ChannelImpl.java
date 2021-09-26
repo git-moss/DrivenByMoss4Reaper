@@ -39,6 +39,10 @@ public class ChannelImpl extends ItemImpl implements IChannel
     private double                             vu;
     private double                             vuLeft;
     private double                             vuRight;
+    private int                                vuPeakLeft;
+    private int                                vuPeakRight;
+    private int                                vuPeakLastVolume;
+
     private boolean                            isMute;
     private boolean                            isSolo;
     private boolean                            isActivated    = true;
@@ -352,6 +356,14 @@ public class ChannelImpl extends ItemImpl implements IChannel
 
     /** {@inheritDoc} */
     @Override
+    public boolean isMutedBySolo ()
+    {
+        return false;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
     public int getVu ()
     {
         return this.valueChanger.fromNormalizedValue (this.vu);
@@ -371,6 +383,46 @@ public class ChannelImpl extends ItemImpl implements IChannel
     public int getVuRight ()
     {
         return this.valueChanger.fromNormalizedValue (this.vuRight);
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public int getVuPeakLeft ()
+    {
+        this.checkPeakVolume ();
+
+        final int vuLeftAdjusted = this.getVuLeft ();
+        if (vuLeftAdjusted > this.vuPeakLeft)
+            this.vuPeakLeft = vuLeftAdjusted;
+        return this.vuPeakLeft;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public int getVuPeakRight ()
+    {
+        this.checkPeakVolume ();
+
+        final int vuRightAdjusted = this.getVuRight ();
+        if (vuRightAdjusted > this.vuPeakRight)
+            this.vuPeakRight = vuRightAdjusted;
+        return this.vuPeakRight;
+    }
+
+
+    /**
+     * If the volume has changed, reset the maximum peak value.
+     */
+    protected void checkPeakVolume ()
+    {
+        final int volume = this.volumeParameter.getValue ();
+        if (this.vuPeakLastVolume == volume)
+            return;
+        this.vuPeakLastVolume = volume;
+        this.vuPeakLeft = 0;
+        this.vuPeakRight = 0;
     }
 
 

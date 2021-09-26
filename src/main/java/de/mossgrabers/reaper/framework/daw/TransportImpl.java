@@ -12,16 +12,15 @@ import de.mossgrabers.framework.daw.constants.PostRecordingAction;
 import de.mossgrabers.framework.daw.constants.TransportConstants;
 import de.mossgrabers.framework.daw.data.IParameter;
 import de.mossgrabers.framework.daw.data.ITrack;
-import de.mossgrabers.framework.daw.data.empty.EmptyParameter;
 import de.mossgrabers.reaper.communication.Processor;
 import de.mossgrabers.reaper.framework.Actions;
 import de.mossgrabers.reaper.framework.IniFiles;
 import de.mossgrabers.reaper.framework.daw.data.MasterTrackImpl;
 import de.mossgrabers.reaper.framework.daw.data.TrackImpl;
 import de.mossgrabers.reaper.framework.daw.data.parameter.MetronomeVolumeParameterImpl;
+import de.mossgrabers.reaper.framework.daw.data.parameter.TempoParameterImpl;
 
-import java.text.NumberFormat;
-import java.util.Locale;
+import java.text.DecimalFormat;
 import java.util.Optional;
 
 
@@ -43,7 +42,6 @@ public class TransportImpl extends BaseImpl implements ITransport
 
     private double                             position      = 0;            // Time
     private String                             positionStr   = "";
-    private double                             tempo         = 120.0;
     private String                             beatsStr      = "";
 
     private boolean                            isMetronomeOn = false;
@@ -58,6 +56,7 @@ public class TransportImpl extends BaseImpl implements ITransport
 
     private int                                punchMode     = PUNCH_OFF;
     private final MetronomeVolumeParameterImpl metronomeVolumeParameter;
+    private final TempoParameterImpl           tempoParameter;
 
 
     /**
@@ -75,6 +74,7 @@ public class TransportImpl extends BaseImpl implements ITransport
         this.model = model;
 
         this.metronomeVolumeParameter = new MetronomeVolumeParameterImpl (dataSetup);
+        this.tempoParameter = new TempoParameterImpl (dataSetup);
     }
 
 
@@ -153,8 +153,7 @@ public class TransportImpl extends BaseImpl implements ITransport
     @Override
     public boolean isArrangerOverdub ()
     {
-        // Not supported
-        return false;
+        return this.isLauncherOverdub ();
     }
 
 
@@ -162,7 +161,7 @@ public class TransportImpl extends BaseImpl implements ITransport
     @Override
     public void toggleOverdub ()
     {
-        // Not supported
+        this.toggleLauncherOverdub ();
     }
 
 
@@ -170,8 +169,8 @@ public class TransportImpl extends BaseImpl implements ITransport
     @Override
     public boolean isLauncherOverdub ()
     {
-        // Not supported
-        return false;
+        final Optional<ITrack> selectedTrackOpt = this.model.getCurrentTrackBank ().getSelectedItem ();
+        return selectedTrackOpt.isPresent () && selectedTrackOpt.get ()instanceof final TrackImpl trackImpl && trackImpl.isOverdub ();
     }
 
 
@@ -179,7 +178,9 @@ public class TransportImpl extends BaseImpl implements ITransport
     @Override
     public void setLauncherOverdub (final boolean on)
     {
-        // Not supported
+        final Optional<ITrack> selectedTrackOpt = this.model.getCurrentTrackBank ().getSelectedItem ();
+        if (!selectedTrackOpt.isEmpty ())
+            this.sender.processBooleanArg (Processor.TRACK, selectedTrackOpt.get ().getPosition () + "/overdub", on);
     }
 
 
@@ -187,7 +188,7 @@ public class TransportImpl extends BaseImpl implements ITransport
     @Override
     public void toggleLauncherOverdub ()
     {
-        // Not supported
+        this.setLauncherOverdub (!this.isLauncherOverdub ());
     }
 
 
@@ -550,7 +551,14 @@ public class TransportImpl extends BaseImpl implements ITransport
             return;
         }
 
-        this.beatsStr = beats.substring (0, pos) + ":" + beats.substring (pos + 1);
+        final String ticksStr = beats.substring (pos + 1);
+        // Ticks are 0-99
+        int ticks = Integer.parseInt (ticksStr);
+        // Scale to 1-4:0-99 (= 0-399)
+        final int scaled = (int) Math.round (ticks * 399.0 / 99.0);
+        final int subBeats = scaled / 100;
+        ticks = scaled % 100;
+        this.beatsStr = String.format ("%s.%d:%02d", beats.substring (0, pos), Integer.valueOf (subBeats + 1), Integer.valueOf (ticks));
     }
 
 
@@ -683,23 +691,11 @@ public class TransportImpl extends BaseImpl implements ITransport
     }
 
 
-    /**
-     * Set the tempo value.
-     *
-     * @param tempo The value
-     */
-    public void setTempoState (final double tempo)
-    {
-        this.tempo = tempo;
-    }
-
-
     /** {@inheritDoc} */
     @Override
-    public IParameter getTempoParameter ()
+    public TempoParameterImpl getTempoParameter ()
     {
-        // Not supported since not used
-        return EmptyParameter.INSTANCE;
+        return this.tempoParameter;
     }
 
 
@@ -715,7 +711,7 @@ public class TransportImpl extends BaseImpl implements ITransport
     @Override
     public double getTempo ()
     {
-        return this.tempo;
+        return this.tempoParameter.getInternalValue ();
     }
 
 
@@ -723,9 +719,7 @@ public class TransportImpl extends BaseImpl implements ITransport
     @Override
     public String formatTempo (final double tempo)
     {
-        final NumberFormat instance = NumberFormat.getNumberInstance (Locale.US);
-        instance.setMaximumFractionDigits (2);
-        return instance.format (tempo);
+        return new DecimalFormat ("#.00").format (tempo);
     }
 
 
@@ -733,9 +727,7 @@ public class TransportImpl extends BaseImpl implements ITransport
     @Override
     public String formatTempoNoFraction (final double tempo)
     {
-        final NumberFormat instance = NumberFormat.getNumberInstance (Locale.US);
-        instance.setMaximumFractionDigits (0);
-        return instance.format (tempo);
+        return new DecimalFormat ("###").format (tempo);
     }
 
 

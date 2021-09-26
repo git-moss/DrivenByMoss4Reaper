@@ -58,25 +58,9 @@ public class MetronomeVolumeParameterImpl extends AbstractParameterImpl
 
     /** {@inheritDoc} */
     @Override
-    public void setNormalizedValue (final double value)
-    {
-        this.setValue (this.valueChanger.fromNormalizedValue (value));
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
     public void changeValue (final IValueChanger valueChanger, final int value)
     {
         this.setValue (valueChanger.changeValue (value, this.getValue ()));
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void setValueImmediatly (final int value)
-    {
-        this.setValue (value);
     }
 
 
