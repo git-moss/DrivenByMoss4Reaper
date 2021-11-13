@@ -32,6 +32,8 @@ import de.mossgrabers.controller.ni.maschine.mk3.controller.StudioEncoderModeMan
 import de.mossgrabers.controller.ni.maschine.mk3.mode.BrowseMode;
 import de.mossgrabers.controller.ni.maschine.mk3.mode.DrumConfigurationMode;
 import de.mossgrabers.controller.ni.maschine.mk3.mode.EditNoteMode;
+import de.mossgrabers.controller.ni.maschine.mk3.mode.LoopLengthMode;
+import de.mossgrabers.controller.ni.maschine.mk3.mode.LoopStartMode;
 import de.mossgrabers.controller.ni.maschine.mk3.mode.MaschinePanMode;
 import de.mossgrabers.controller.ni.maschine.mk3.mode.MaschineParametersMode;
 import de.mossgrabers.controller.ni.maschine.mk3.mode.MaschineSendMode;
@@ -57,6 +59,7 @@ import de.mossgrabers.framework.command.core.NopCommand;
 import de.mossgrabers.framework.command.core.TriggerCommand;
 import de.mossgrabers.framework.command.trigger.BrowserCommand;
 import de.mossgrabers.framework.command.trigger.Direction;
+import de.mossgrabers.framework.command.trigger.FootswitchCommand;
 import de.mossgrabers.framework.command.trigger.application.LayoutCommand;
 import de.mossgrabers.framework.command.trigger.application.OverdubCommand;
 import de.mossgrabers.framework.command.trigger.application.PaneCommand;
@@ -161,7 +164,7 @@ public class MaschineControllerSetup extends AbstractControllerSetup<MaschineCon
         this.maschine = maschine;
         this.colorManager = new MaschineColorManager ();
         this.valueChanger = new TwosComplementValueChanger (128, 1);
-        this.configuration = new MaschineConfiguration (host, this.valueChanger, factory.getArpeggiatorModes ());
+        this.configuration = new MaschineConfiguration (host, this.valueChanger, factory.getArpeggiatorModes (), maschine);
     }
 
 
@@ -235,8 +238,10 @@ public class MaschineControllerSetup extends AbstractControllerSetup<MaschineCon
         for (int i = 0; i < 8; i++)
             modeManager.register (Modes.get (Modes.SEND1, i), new MaschineSendMode (i, surface, this.model));
 
-        modeManager.register (Modes.POSITION, new PositionMode (surface, this.model));
         modeManager.register (Modes.TEMPO, new TempoMode (surface, this.model));
+        modeManager.register (Modes.POSITION, new PositionMode (surface, this.model));
+        modeManager.register (Modes.LOOP_START, new LoopStartMode (surface, this.model));
+        modeManager.register (Modes.LOOP_LENGTH, new LoopLengthMode (surface, this.model));
 
         modeManager.register (Modes.REPEAT_NOTE, new NoteRepeatMode (surface, this.model));
         modeManager.register (Modes.SCALES, new PlayConfigurationMode (surface, this.model));
@@ -387,7 +392,7 @@ public class MaschineControllerSetup extends AbstractControllerSetup<MaschineCon
 
         // Encoder Modes
         this.addButton (ButtonID.VOLUME, "VOLUME", new VolumePanSendCommand (this.model, surface), MaschineControlSurface.VOLUME, () -> Modes.isTrackMode (modeManager.getActiveID ()));
-        this.addButton (ButtonID.SWING, "SWING", new SwingCommand (this.model, surface), MaschineControlSurface.SWING, () -> modeManager.isActive (Modes.POSITION));
+        this.addButton (ButtonID.SWING, "SWING", new SwingCommand (this.model, surface), MaschineControlSurface.SWING, () -> modeManager.isActive (Modes.POSITION, Modes.LOOP_START, Modes.LOOP_LENGTH));
         this.addButton (ButtonID.TEMPO_TOUCH, "TEMPO", new TempoCommand (this.model, surface), MaschineControlSurface.TEMPO, () -> modeManager.isActive (Modes.TEMPO));
         this.addButton (ButtonID.DEVICE, "PLUG-IN", (event, velocity) -> {
 
@@ -491,6 +496,20 @@ public class MaschineControllerSetup extends AbstractControllerSetup<MaschineCon
 
         if (this.maschine == Maschine.STUDIO)
             this.registerMaschineStudioButtons (surface);
+
+        // Register foot switches
+        final int footswitches = this.maschine.getFootswitches ();
+        if (footswitches >= 2)
+        {
+            this.addButton (ButtonID.FOOTSWITCH1, "Foot Controller (Tip)", new FootswitchCommand<> (this.model, surface, 0), MaschineControlSurface.FOOTSWITCH1_TIP);
+            this.addButton (ButtonID.FOOTSWITCH2, "Foot Controller (Ring)", new FootswitchCommand<> (this.model, surface, 1), MaschineControlSurface.FOOTSWITCH1_RING);
+
+            if (footswitches == 4)
+            {
+                this.addButton (ButtonID.FOOTSWITCH3, "Foot Controller 2 (Tip)", new FootswitchCommand<> (this.model, surface, 2), MaschineControlSurface.FOOTSWITCH2_TIP);
+                this.addButton (ButtonID.FOOTSWITCH4, "Foot Controller 2 (Ring)", new FootswitchCommand<> (this.model, surface, 3), MaschineControlSurface.FOOTSWITCH2_RING);
+            }
+        }
     }
 
 
