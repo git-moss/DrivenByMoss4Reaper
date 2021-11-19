@@ -36,7 +36,6 @@ public class CursorTrackImpl implements ICursorTrack
     private boolean      isPinned        = false;
     private ITrack       pinnedTrack     = null;
 
-
     /**
      * Constructor.
      *
@@ -89,8 +88,8 @@ public class CursorTrackImpl implements ICursorTrack
     @Override
     public void toggleGroupExpanded ()
     {
-        // TODO Auto-generated method stub
-
+        this.isGroupExpanded = !this.isGroupExpanded;
+        this.sendPositionedItemOSC ("isGroupExpanded", this.isGroupExpanded);
     }
 
 
@@ -920,6 +919,14 @@ public class CursorTrackImpl implements ICursorTrack
 
 
     private void sendPositionedItemOSC (final String command, final int value)
+    {
+        final ITrack selectedTrack = this.getSelectedTrack ();
+        if (selectedTrack != null)
+            ((ChannelImpl) selectedTrack).sendPositionedItemOSC (command, value);
+    }
+
+
+    private void sendPositionedItemOSC (final String command, final boolean value)
     {
         final ITrack selectedTrack = this.getSelectedTrack ();
         if (selectedTrack != null)
