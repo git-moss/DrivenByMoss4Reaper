@@ -36,7 +36,6 @@ public class CursorTrackImpl implements ICursorTrack
     private boolean      isPinned        = false;
     private ITrack       pinnedTrack     = null;
 
-
     /**
      * Constructor.
      *
@@ -940,6 +939,14 @@ public class CursorTrackImpl implements ICursorTrack
      * @param value The value
      */
     private void sendPositionedItemOSC (final String command, final int value)
+    {
+        final ITrack selectedTrack = this.getSelectedTrack ();
+        if (selectedTrack != null)
+            ((ChannelImpl) selectedTrack).sendPositionedItemOSC (command, value);
+    }
+
+
+    private void sendPositionedItemOSC (final String command, final boolean value)
     {
         final ITrack selectedTrack = this.getSelectedTrack ();
         if (selectedTrack != null)
