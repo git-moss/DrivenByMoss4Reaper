@@ -11,23 +11,11 @@ import de.mossgrabers.reaper.controller.IControllerInstance;
  * A check-box item to be used in a list box.
  *
  * @author J&uuml;rgen Mo&szlig;graber
+ *
+ * @param item The item to encapsulate
  */
-public class CheckboxListItem
+public record CheckboxListItem (IControllerInstance item)
 {
-    private final IControllerInstance item;
-
-
-    /**
-     * Constructor.
-     *
-     * @param item The item to encapsulate
-     */
-    public CheckboxListItem (final IControllerInstance item)
-    {
-        this.item = item;
-    }
-
-
     /**
      * Get the selection state of the check-box.
      *
@@ -47,17 +35,6 @@ public class CheckboxListItem
     public void setSelected (final boolean isSelected)
     {
         this.item.setEnabled (isSelected);
-    }
-
-
-    /**
-     * Get the encapsulated item.
-     *
-     * @return The item
-     */
-    public IControllerInstance getItem ()
-    {
-        return this.item;
     }
 
 

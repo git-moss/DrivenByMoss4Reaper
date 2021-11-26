@@ -62,11 +62,11 @@ public class HwTextDisplayImpl extends AbstractHwControl implements IHwTextDispl
         if (bounds == null || this.lines[0] == null)
             return;
 
-        final double x = bounds.getX () * scale;
-        final double y = bounds.getY () * scale;
+        final double x = bounds.x () * scale;
+        final double y = bounds.y () * scale;
 
-        final double width = bounds.getWidth () * scale;
-        final double height = bounds.getHeight () * scale / this.lines.length;
+        final double width = bounds.width () * scale;
+        final double height = bounds.height () * scale / this.lines.length;
 
         final double fontSize = ((GraphicsContextImpl) gc).calculateFontSize (this.lines[0], height, width, 6.0);
 

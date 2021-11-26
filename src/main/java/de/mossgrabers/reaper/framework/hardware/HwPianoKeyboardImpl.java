@@ -131,8 +131,8 @@ public class HwPianoKeyboardImpl implements IHwPianoKeyboard, IReaperHwControl
         if (bounds == null)
             return;
 
-        final double width = bounds.getWidth () * scale;
-        final double height = bounds.getHeight () * scale;
+        final double width = bounds.width () * scale;
+        final double height = bounds.height () * scale;
 
         if (width != this.oldWidth || height != this.oldHeight)
         {
@@ -149,8 +149,8 @@ public class HwPianoKeyboardImpl implements IHwPianoKeyboard, IReaperHwControl
             this.offset = this.keyWidthWhite - this.keyWidthBlack / 2;
         }
 
-        final double x = bounds.getX () * scale;
-        final double y = bounds.getY () * scale;
+        final double x = bounds.x () * scale;
+        final double y = bounds.y () * scale;
 
         final int activeKey = this.pressedKey - NOTE_START;
 
@@ -192,8 +192,8 @@ public class HwPianoKeyboardImpl implements IHwPianoKeyboard, IReaperHwControl
         if (mouseEvent == MouseEvent.MOUSE_PRESSED && bounds.contains (scaleX, scaleY))
         {
             this.isPressed = true;
-            this.pressedX = scaleX - bounds.getX ();
-            this.pressedY = scaleY - bounds.getY ();
+            this.pressedX = scaleX - bounds.x ();
+            this.pressedY = scaleY - bounds.y ();
             this.pressedKey = NOTE_START + this.getKey (this.pressedX, this.pressedY, scale);
             this.currentValue = 0;
             this.midiInput.sendRawMidiEvent (0x90, this.pressedKey, 127);

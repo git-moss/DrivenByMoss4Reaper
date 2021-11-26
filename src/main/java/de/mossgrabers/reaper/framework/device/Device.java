@@ -60,7 +60,7 @@ public class Device implements IDeviceMetadata
 
     /** {@inheritDoc} */
     @Override
-    public String getName ()
+    public String name ()
     {
         return this.name;
     }
@@ -68,7 +68,7 @@ public class Device implements IDeviceMetadata
 
     /** {@inheritDoc} */
     @Override
-    public String getFullName ()
+    public String fullName ()
     {
         return String.format ("%s (%s - %s)", this.name, this.fileType.getName (), this.architecture);
     }

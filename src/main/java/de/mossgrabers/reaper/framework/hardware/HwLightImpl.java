@@ -171,8 +171,8 @@ public class HwLightImpl extends AbstractHwControl implements IHwLight, IReaperH
                 color = this.blinkColorEx;
         }
 
-        gc.fillRectangle (bounds.getX () * scale, bounds.getY () * scale, bounds.getWidth () * scale, bounds.getHeight () * scale, color);
-        gc.strokeRectangle (bounds.getX () * scale, bounds.getY () * scale, bounds.getWidth () * scale, bounds.getHeight () * scale, ColorEx.BLACK);
+        gc.fillRectangle (bounds.x () * scale, bounds.y () * scale, bounds.width () * scale, bounds.height () * scale, color);
+        gc.strokeRectangle (bounds.x () * scale, bounds.y () * scale, bounds.width () * scale, bounds.height () * scale, ColorEx.BLACK);
     }
 
 

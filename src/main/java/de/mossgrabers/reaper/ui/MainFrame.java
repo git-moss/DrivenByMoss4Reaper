@@ -371,7 +371,7 @@ public class MainFrame extends JFrame
         final CheckboxListItem checkboxListItem = this.listModel.get (selectedIndex);
         if (checkboxListItem == null)
             return;
-        final IControllerInstance controllerInstance = checkboxListItem.getItem ();
+        final IControllerInstance controllerInstance = checkboxListItem.item ();
         if (controllerInstance != null)
             controllerInstance.simulateUI ();
     }
@@ -385,7 +385,7 @@ public class MainFrame extends JFrame
         final CheckboxListItem checkboxListItem = this.listModel.get (selectedIndex);
         if (checkboxListItem == null)
             return;
-        final IControllerInstance controllerInstance = checkboxListItem.getItem ();
+        final IControllerInstance controllerInstance = checkboxListItem.item ();
         if (controllerInstance != null)
             controllerInstance.testUI ();
     }

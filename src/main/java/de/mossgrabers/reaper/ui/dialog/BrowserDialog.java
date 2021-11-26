@@ -227,7 +227,7 @@ public class BrowserDialog extends BasicDialog
             else
             {
                 for (final Device device: this.browser.getFilteredDevices ())
-                    model.addElement (device.getFullName ());
+                    model.addElement (device.fullName ());
             }
 
             this.updateResultSelection (selectedIndex);

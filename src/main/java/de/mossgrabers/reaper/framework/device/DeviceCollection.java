@@ -159,7 +159,7 @@ public class DeviceCollection
     private static boolean compareQuery (final Set<String> mustMatch, final Set<String> mustNotMatch, final Device device)
     {
         // Compare all texts at once
-        final String text = (device.getName () + " " + device.getVendor () + " " + device.getFileType ()).toLowerCase (Locale.US);
+        final String text = (device.name () + " " + device.getVendor () + " " + device.getFileType ()).toLowerCase (Locale.US);
 
         boolean success = mustMatch.isEmpty ();
         for (final String match: mustMatch)

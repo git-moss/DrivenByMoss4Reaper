@@ -60,9 +60,9 @@ public class HwAbsoluteKnobImpl extends AbstractHwAbsoluteControl implements IHw
         if (bounds == null)
             return;
 
-        final double radius = Math.min (bounds.getWidth (), bounds.getHeight ()) / 2.0;
-        final double centerX = (bounds.getX () + radius) * scale;
-        final double centerY = (bounds.getY () + radius) * scale;
+        final double radius = Math.min (bounds.width (), bounds.height ()) / 2.0;
+        final double centerX = (bounds.x () + radius) * scale;
+        final double centerY = (bounds.y () + radius) * scale;
 
         gc.fillCircle (centerX, centerY, radius, ColorEx.BLACK);
 

@@ -53,7 +53,7 @@ public class HwGraphicsDisplayImpl extends AbstractHwControl implements IHwGraph
         final Bounds bounds = this.layout.getBounds ();
         if (bounds == null)
             return;
-        ((BitmapImpl) this.bitmap).drawScaledImage (((GraphicsContextImpl) gc).getGraphics (), (int) (bounds.getX () * scale), (int) (bounds.getY () * scale), (int) (bounds.getWidth () * scale), (int) (bounds.getHeight () * scale));
+        ((BitmapImpl) this.bitmap).drawScaledImage (((GraphicsContextImpl) gc).getGraphics (), (int) (bounds.x () * scale), (int) (bounds.y () * scale), (int) (bounds.width () * scale), (int) (bounds.height () * scale));
     }
 
 

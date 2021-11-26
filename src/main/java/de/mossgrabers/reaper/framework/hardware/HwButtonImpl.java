@@ -137,10 +137,10 @@ public class HwButtonImpl extends AbstractHwButton implements IReaperHwControl
             final Bounds bounds = this.layout.getBounds ();
             if (bounds == null)
                 return;
-            final double width = bounds.getWidth () * scale;
-            final double height = bounds.getHeight () * scale;
+            final double width = bounds.width () * scale;
+            final double height = bounds.height () * scale;
             final double fontSize = ((GraphicsContextImpl) gc).calculateFontSize (this.label, height, width, 8.0);
-            gc.drawTextInBounds (this.label, bounds.getX () * scale, bounds.getY () * scale, width, height, Align.CENTER, textColor, fontSize);
+            gc.drawTextInBounds (this.label, bounds.x () * scale, bounds.y () * scale, width, height, Align.CENTER, textColor, fontSize);
         }
     }
 
@@ -184,7 +184,7 @@ public class HwButtonImpl extends AbstractHwButton implements IReaperHwControl
 
             if (mouseEvent == MouseEvent.MOUSE_PRESSED)
             {
-                final double value = 1 - Math.abs (scaleY - bounds.getY ()) / bounds.getHeight ();
+                final double value = 1 - Math.abs (scaleY - bounds.y ()) / bounds.height ();
                 final int type = this.midiType == BindType.CC ? 0xB0 : 0x90;
                 int v;
                 if (this.midiValue < 0)
@@ -198,8 +198,8 @@ public class HwButtonImpl extends AbstractHwButton implements IReaperHwControl
             if (mouseEvent == MouseEvent.MOUSE_DRAGGED && this.midiType == BindType.NOTE && this.isPressed ())
             {
                 if (this.currentY < 0)
-                    this.currentY = bounds.getY ();
-                final double value = 1 - Math.abs (scaleY - this.currentY) / bounds.getHeight ();
+                    this.currentY = bounds.y ();
+                final double value = 1 - Math.abs (scaleY - this.currentY) / bounds.height ();
                 this.midiInput.handleMidiMessage (new ShortMessage (0xA0, this.midiChannel, this.midiControl, (int) Math.max (0, Math.round (value * 127.0))));
             }
         }

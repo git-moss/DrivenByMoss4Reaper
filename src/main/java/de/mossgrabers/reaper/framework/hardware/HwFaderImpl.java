@@ -62,10 +62,10 @@ public class HwFaderImpl extends AbstractHwAbsoluteControl implements IHwFader
         if (bounds == null)
             return;
 
-        final double left = bounds.getX () * scale;
-        final double top = bounds.getY () * scale;
-        final double width = bounds.getWidth () * scale;
-        final double height = bounds.getHeight () * scale;
+        final double left = bounds.x () * scale;
+        final double top = bounds.y () * scale;
+        final double width = bounds.width () * scale;
+        final double height = bounds.height () * scale;
 
         gc.fillRectangle (left, top, width, height, ColorEx.BLACK);
 
@@ -130,9 +130,9 @@ public class HwFaderImpl extends AbstractHwAbsoluteControl implements IHwFader
             {
                 double value;
                 if (this.isVertical)
-                    value = 1 - (scaleY - bounds.getY ()) / bounds.getHeight ();
+                    value = 1 - (scaleY - bounds.y ()) / bounds.height ();
                 else
-                    value = (scaleX - bounds.getX ()) / bounds.getWidth ();
+                    value = (scaleX - bounds.x ()) / bounds.width ();
                 value = Math.max (0, Math.min (1, value));
 
                 if (this.midiInput == null)

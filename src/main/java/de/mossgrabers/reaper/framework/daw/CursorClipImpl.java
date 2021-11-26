@@ -795,7 +795,7 @@ public class CursorClipImpl extends BaseImpl implements INoteClip
             return;
 
         for (final GridStep editStep: this.editSteps)
-            this.sendClipData (editStep.getChannel (), editStep.getStep (), editStep.getNote ());
+            this.sendClipData (editStep.channel (), editStep.step (), editStep.note ());
         this.editSteps.clear ();
 
         this.updateNoteData ();
@@ -806,9 +806,9 @@ public class CursorClipImpl extends BaseImpl implements INoteClip
     {
         if (this.editSteps.isEmpty ())
             return;
-        final int channel = editStep.getChannel ();
-        final int step = editStep.getStep ();
-        final int note = editStep.getNote ();
+        final int channel = editStep.channel ();
+        final int step = editStep.step ();
+        final int note = editStep.note ();
         this.sendClipData (channel, step, note);
         this.host.scheduleTask ( () -> this.delayedUpdate (new GridStep (channel, step, note)), 100);
     }

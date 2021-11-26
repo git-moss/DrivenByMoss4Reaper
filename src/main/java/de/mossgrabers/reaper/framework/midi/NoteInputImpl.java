@@ -53,13 +53,13 @@ public class NoteInputImpl implements INoteInput
         }
         else
         {
-            // Remove questionmarks for faster comparison
+            // Remove question marks for faster comparison
             for (final String filter: filters)
             {
-                // Remove questionmarks at the end, which are not necessary
+                // Remove question marks at the end, which are not necessary
                 final String trim = filter.replace ('?', ' ').trim ();
 
-                // Fix questionmarks in the string (which are now spaces)
+                // Fix question marks in the string (which are now spaces)
                 List<String> replaced = new ArrayList<> (1);
                 replaced.add (trim);
                 while (replaced.get (0).contains (" "))

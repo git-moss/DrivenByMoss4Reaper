@@ -89,8 +89,8 @@ public class CursorTrackImpl implements ICursorTrack
     @Override
     public void toggleGroupExpanded ()
     {
-        // TODO Auto-generated method stub
-
+        this.isGroupExpanded = !this.isGroupExpanded;
+        this.sendPositionedItemOSC ("isGroupExpanded", this.isGroupExpanded);
     }
 
 
@@ -919,6 +919,26 @@ public class CursorTrackImpl implements ICursorTrack
     }
 
 
+    /**
+     * Send an item command with a position.
+     *
+     * @param command The command
+     * @param value The value
+     */
+    public void sendPositionedItemOSC (final String command, final boolean value)
+    {
+        final ITrack selectedTrack = this.getSelectedTrack ();
+        if (selectedTrack != null)
+            ((ChannelImpl) selectedTrack).sendPositionedItemOSC (command, value);
+    }
+
+
+    /**
+     * Send an item command with a position.
+     *
+     * @param command The command
+     * @param value The value
+     */
     private void sendPositionedItemOSC (final String command, final int value)
     {
         final ITrack selectedTrack = this.getSelectedTrack ();

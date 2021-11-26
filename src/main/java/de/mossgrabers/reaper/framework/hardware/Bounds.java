@@ -8,76 +8,14 @@ package de.mossgrabers.reaper.framework.hardware;
  * A bounding box with x/y position and a width and height.
  *
  * @author J&uuml;rgen Mo&szlig;graber
+ *
+ * @param x The x position
+ * @param y The y position
+ * @param width The width position
+ * @param height The height position
  */
-public class Bounds
+public record Bounds (double x, double y, double width, double height)
 {
-    private final double x;
-    private final double y;
-    private final double width;
-    private final double height;
-
-
-    /**
-     * Constructor.
-     *
-     * @param x The x position
-     * @param y The y position
-     * @param width The width position
-     * @param height The height position
-     */
-    public Bounds (final double x, final double y, final double width, final double height)
-    {
-        this.x = x;
-        this.y = y;
-        this.width = width;
-        this.height = height;
-    }
-
-
-    /**
-     * Get the x position.
-     *
-     * @return The x position
-     */
-    public double getX ()
-    {
-        return this.x;
-    }
-
-
-    /**
-     * Get the y position.
-     *
-     * @return The y position
-     */
-    public double getY ()
-    {
-        return this.y;
-    }
-
-
-    /**
-     * Get the width.
-     *
-     * @return The width
-     */
-    public double getWidth ()
-    {
-        return this.width;
-    }
-
-
-    /**
-     * Get the height.
-     *
-     * @return The height
-     */
-    public double getHeight ()
-    {
-        return this.height;
-    }
-
-
     /**
      * Test if the given point is inside of these bounds.
      *
