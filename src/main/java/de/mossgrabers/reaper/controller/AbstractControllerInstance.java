@@ -19,6 +19,7 @@ import de.mossgrabers.reaper.framework.ReaperSetupFactory;
 import de.mossgrabers.reaper.framework.configuration.DocumentSettingsUI;
 import de.mossgrabers.reaper.framework.configuration.GlobalSettingsUI;
 import de.mossgrabers.reaper.framework.daw.HostImpl;
+import de.mossgrabers.reaper.framework.midi.MissingMidiDevice;
 import de.mossgrabers.reaper.ui.SimulatorWindow;
 import de.mossgrabers.reaper.ui.WindowManager;
 import de.mossgrabers.reaper.ui.dialog.ConfigurationDialog;
@@ -26,6 +27,7 @@ import de.mossgrabers.reaper.ui.utils.LogModel;
 import de.mossgrabers.reaper.ui.utils.PropertiesEx;
 import de.mossgrabers.reaper.ui.utils.SafeRunLater;
 
+import javax.sound.midi.MidiDevice;
 import javax.swing.JFrame;
 
 import java.io.File;
@@ -122,6 +124,9 @@ public abstract class AbstractControllerInstance<S extends IControlSurface<C>, C
             this.documentSettingsUI.clearWidgets ();
             this.globalSettingsUI = new GlobalSettingsUI (this.sender, this.logModel, this.controllerConfiguration, this.controllerDefinition.getNumMidiInPorts (), this.controllerDefinition.getNumMidiOutPorts (), this.controllerDefinition.getMidiDiscoveryPairs (OperatingSystem.get ()));
             this.globalSettingsUI.initMIDI ();
+
+            if (!this.checkMidiDevices ())
+                return;
 
             if (!this.isEnabled ())
             {
@@ -403,5 +408,42 @@ public abstract class AbstractControllerInstance<S extends IControlSurface<C>, C
         {
             this.logModel.error ("Could not save controller configuration file.", ex);
         }
+    }
+
+
+    /**
+     * Check if MIDI in-/outputs are configured and available.
+     *
+     * @return True if all is fine
+     */
+    private boolean checkMidiDevices ()
+    {
+        boolean result = true;
+
+        for (final MidiDevice midiInput: this.globalSettingsUI.getSelectedMidiInputs ())
+        {
+            if (midiInput instanceof final MissingMidiDevice missing)
+            {
+                if (missing == MissingMidiDevice.NONE)
+                    this.logModel.info (this.controllerDefinition.toString () + ": MIDI input device not configured.");
+                else
+                    this.logModel.info (this.controllerDefinition.toString () + ": " + missing.getDeviceInfo ().getName ());
+                result = false;
+            }
+        }
+
+        for (final MidiDevice midiOutput: this.globalSettingsUI.getSelectedMidiOutputs ())
+        {
+            if (midiOutput instanceof final MissingMidiDevice missing)
+            {
+                if (missing == MissingMidiDevice.NONE)
+                    this.logModel.info (this.controllerDefinition.toString () + ": MIDI output device not configured.");
+                else
+                    this.logModel.info (this.controllerDefinition.toString () + ": " + missing.getDeviceInfo ().getName ());
+                result = false;
+            }
+        }
+
+        return result;
     }
 }

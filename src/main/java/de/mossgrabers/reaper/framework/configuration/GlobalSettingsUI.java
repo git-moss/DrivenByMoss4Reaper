@@ -8,6 +8,7 @@ import de.mossgrabers.framework.utils.Pair;
 import de.mossgrabers.reaper.communication.MessageSender;
 import de.mossgrabers.reaper.framework.midi.Midi;
 import de.mossgrabers.reaper.framework.midi.MidiDeviceConverter;
+import de.mossgrabers.reaper.framework.midi.MissingMidiDevice;
 import de.mossgrabers.reaper.ui.utils.LogModel;
 import de.mossgrabers.reaper.ui.utils.PropertiesEx;
 import de.mossgrabers.reaper.ui.utils.SafeRunLater;
@@ -186,29 +187,53 @@ public class GlobalSettingsUI extends AbstractSettingsUI
     {
         this.isEnabled = this.properties.getBoolean (TAG_IS_ENABLED, true);
 
+        // Load and set all input devices
         for (int i = 0; i < this.numMidiInPorts; i++)
         {
-            this.selectedMidiInputs[i] = Midi.getInputDevice (this.properties.getString (TAG_MIDI_INPUT + i));
-            if (this.selectedMidiInputs[i] != null)
-                continue;
-            for (final Pair<String [], String []> pair: this.discoveryPairs)
+            final String name = this.properties.getString (TAG_MIDI_INPUT + i);
+            if (name == null)
             {
-                this.selectedMidiInputs[i] = Midi.getInputDevice (pair.getKey ()[i]);
-                if (this.selectedMidiInputs[i] != null)
-                    break;
+                // No device selected try auto-detect
+                for (final Pair<String [], String []> pair: this.discoveryPairs)
+                {
+                    this.selectedMidiInputs[i] = Midi.getInputDevice (pair.getKey ()[i]);
+                    if (this.selectedMidiInputs[i] != null)
+                        break;
+                }
+                // If nothing was found add the 'None' device
+                if (this.selectedMidiInputs[i] == null)
+                    this.selectedMidiInputs[i] = MissingMidiDevice.NONE;
+            }
+            else
+            {
+                this.selectedMidiInputs[i] = Midi.getInputDevice (name);
+                if (this.selectedMidiInputs[i] == null)
+                    this.selectedMidiInputs[i] = new MissingMidiDevice ("Not present: " + name);
             }
         }
 
+        // Load and set all output devices
         for (int i = 0; i < this.numMidiOutPorts; i++)
         {
-            this.selectedMidiOutputs[i] = Midi.getOutputDevice (this.properties.getString (TAG_MIDI_OUTPUT + i));
-            if (this.selectedMidiOutputs[i] != null)
-                continue;
-            for (final Pair<String [], String []> pair: this.discoveryPairs)
+            final String name = this.properties.getString (TAG_MIDI_OUTPUT + i);
+            if (name == null)
             {
-                this.selectedMidiOutputs[i] = Midi.getOutputDevice (pair.getValue ()[i]);
-                if (this.selectedMidiOutputs[i] != null)
-                    break;
+                // No device selected try auto-detect
+                for (final Pair<String [], String []> pair: this.discoveryPairs)
+                {
+                    this.selectedMidiOutputs[i] = Midi.getOutputDevice (pair.getValue ()[i]);
+                    if (this.selectedMidiOutputs[i] != null)
+                        break;
+                }
+                // If nothing was found add the 'None' device
+                if (this.selectedMidiOutputs[i] == null)
+                    this.selectedMidiOutputs[i] = MissingMidiDevice.NONE;
+            }
+            else
+            {
+                this.selectedMidiOutputs[i] = Midi.getOutputDevice (name);
+                if (this.selectedMidiOutputs[i] == null)
+                    this.selectedMidiOutputs[i] = new MissingMidiDevice ("Not present: " + name);
             }
         }
     }
@@ -226,19 +251,19 @@ public class GlobalSettingsUI extends AbstractSettingsUI
         for (int i = 0; i < this.numMidiInPorts; i++)
         {
             final MidiDevice midiDevice = this.getSelectedMidiInput (i);
-            if (midiDevice == null)
-                properties.remove (TAG_MIDI_INPUT + i);
-            else
-                properties.putString (TAG_MIDI_INPUT + i, midiDevice.getDeviceInfo ().getName ());
+            // Do not overwrite missing devices!
+            if (midiDevice instanceof MissingMidiDevice)
+                continue;
+            properties.putString (TAG_MIDI_INPUT + i, midiDevice.getDeviceInfo ().getName ());
         }
 
         for (int i = 0; i < this.numMidiOutPorts; i++)
         {
             final MidiDevice midiDevice = this.getSelectedMidiOutput (i);
-            if (midiDevice == null)
-                properties.remove (TAG_MIDI_OUTPUT + i);
-            else
-                properties.putString (TAG_MIDI_OUTPUT + i, midiDevice.getDeviceInfo ().getName ());
+            // Do not overwrite missing devices!
+            if (midiDevice instanceof MissingMidiDevice)
+                continue;
+            properties.putString (TAG_MIDI_OUTPUT + i, midiDevice.getDeviceInfo ().getName ());
         }
 
         this.settings.forEach (s -> s.store (properties));

@@ -8,6 +8,7 @@ import de.mossgrabers.reaper.framework.configuration.ActionSettingImpl;
 import de.mossgrabers.reaper.framework.configuration.GlobalSettingsUI;
 import de.mossgrabers.reaper.framework.configuration.IfxSetting;
 import de.mossgrabers.reaper.framework.midi.Midi;
+import de.mossgrabers.reaper.framework.midi.MissingMidiDevice;
 import de.mossgrabers.reaper.ui.utils.LogModel;
 import de.mossgrabers.reaper.ui.widget.BoxPanel;
 import de.mossgrabers.reaper.ui.widget.JComboBoxX;
@@ -30,6 +31,7 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.Window;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -44,8 +46,8 @@ public class ConfigurationDialog extends BasicDialog
 
     private static final int                 MIN_HEIGHT       = 600;
 
-    private List<JComboBoxX<MidiDevice>>     midiInputs;
-    private List<JComboBoxX<MidiDevice>>     midiOutputs;
+    private List<JComboBoxX<MidiDevice>>     midiInputBoxes;
+    private List<JComboBoxX<MidiDevice>>     midiOutputBoxes;
     private final transient LogModel         model;
     private final transient GlobalSettingsUI settings;
 
@@ -102,45 +104,25 @@ public class ConfigurationDialog extends BasicDialog
         final JScrollPane scrollPane = new JScrollPane (wrapper);
         scrollPane.setHorizontalScrollBarPolicy (ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setVerticalScrollBarPolicy (ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-
-        this.midiInputs = this.settings.createMidiInputWidgets ();
-        this.midiOutputs = this.settings.createMidiOutputWidgets ();
-
-        final boolean hasMidiPorts = !this.midiInputs.isEmpty () && !this.midiOutputs.isEmpty ();
-        if (hasMidiPorts)
-            mainColumn.addComponent (new TitledSeparator ("Midi Ports"), BoxPanel.NORMAL);
-
         contentPane.add (scrollPane, BorderLayout.CENTER);
 
-        int index = 1;
-        final List<MidiDevice> inputDevices = Midi.getInputDevices ();
-        for (final JComboBoxX<MidiDevice> device: this.midiInputs)
-        {
-            mainColumn.addComponent (device, new JLabel ("Midi Input " + index), null, BoxPanel.NORMAL);
-            device.setAll (inputDevices);
-            final MidiDevice selectedDevice = this.settings.getSelectedMidiInput (index - 1);
-            if (selectedDevice != null)
-                device.setSelectedItem (selectedDevice);
-            index++;
-        }
+        this.midiInputBoxes = this.settings.createMidiInputWidgets ();
+        this.midiOutputBoxes = this.settings.createMidiOutputWidgets ();
 
-        index = 1;
-        final List<MidiDevice> outputDevices = Midi.getOutputDevices ();
-        for (final JComboBoxX<MidiDevice> device: this.midiOutputs)
+        if (!this.midiInputBoxes.isEmpty () && !this.midiOutputBoxes.isEmpty ())
         {
-            mainColumn.addComponent (device, new JLabel ("Midi Output " + index), null, BoxPanel.NORMAL);
-            device.setAll (outputDevices);
-            final MidiDevice selectedDevice = this.settings.getSelectedMidiOutput (index - 1);
-            if (selectedDevice != null)
-                device.setSelectedItem (selectedDevice);
-            index++;
-        }
+            mainColumn.addComponent (new TitledSeparator ("Midi Ports"), BoxPanel.NORMAL);
 
-        if (hasMidiPorts)
-        {
+            for (int i = 0; i < this.midiInputBoxes.size (); i++)
+                mainColumn.addComponent (this.midiInputBoxes.get (i), new JLabel ("Midi Input " + (i + 1)), null, BoxPanel.NORMAL);
+            for (int i = 0; i < this.midiOutputBoxes.size (); i++)
+                mainColumn.addComponent (this.midiOutputBoxes.get (i), new JLabel ("Midi Output " + (i + 1)), null, BoxPanel.NORMAL);
+
             final JButton rescanButton = new JButton ("Rescan Midi Devices");
             rescanButton.addActionListener (event -> this.updateMidiDevices ());
             mainColumn.addComponent (rescanButton, BoxPanel.NORMAL);
+
+            this.fillAndSetMidiDevices ();
         }
 
         String category = null;
@@ -196,7 +178,9 @@ public class ConfigurationDialog extends BasicDialog
         try
         {
             Midi.readDeviceMetadata ();
-            this.fillMidiDevices ();
+            // Reload the settings
+            this.settings.initMIDI ();
+            this.fillAndSetMidiDevices ();
         }
         catch (final MidiUnavailableException ex)
         {
@@ -205,14 +189,30 @@ public class ConfigurationDialog extends BasicDialog
     }
 
 
-    private void fillMidiDevices ()
+    private void fillAndSetMidiDevices ()
     {
         final List<MidiDevice> inputDevices = Midi.getInputDevices ();
-        final List<MidiDevice> outputDevices = Midi.getOutputDevices ();
+        for (int i = 0; i < this.midiInputBoxes.size (); i++)
+        {
+            final List<MidiDevice> devices = new ArrayList<> (inputDevices);
+            final JComboBoxX<MidiDevice> deviceBox = this.midiInputBoxes.get (i);
+            final MidiDevice selectedDevice = this.settings.getSelectedMidiInput (i);
+            if (selectedDevice instanceof MissingMidiDevice)
+                devices.add (0, selectedDevice);
+            deviceBox.setAll (devices);
+            deviceBox.setSelectedItem (selectedDevice);
+        }
 
-        for (final JComboBoxX<MidiDevice> in: this.midiInputs)
-            in.setAll (inputDevices);
-        for (final JComboBoxX<MidiDevice> out: this.midiOutputs)
-            out.setAll (outputDevices);
+        final List<MidiDevice> outputDevices = Midi.getOutputDevices ();
+        for (int i = 0; i < this.midiOutputBoxes.size (); i++)
+        {
+            final List<MidiDevice> devices = new ArrayList<> (outputDevices);
+            final JComboBoxX<MidiDevice> deviceBox = this.midiOutputBoxes.get (i);
+            final MidiDevice selectedDevice = this.settings.getSelectedMidiOutput (i);
+            if (selectedDevice instanceof MissingMidiDevice)
+                devices.add (0, selectedDevice);
+            deviceBox.setAll (devices);
+            deviceBox.setSelectedItem (selectedDevice);
+        }
     }
 }

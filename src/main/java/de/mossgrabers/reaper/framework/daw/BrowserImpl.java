@@ -243,6 +243,30 @@ public class BrowserImpl extends AbstractBrowser
 
     /** {@inheritDoc} */
     @Override
+    public boolean isPreviewEnabled ()
+    {
+        return false;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void togglePreviewEnabled ()
+    {
+        // Not supported
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void setPreviewEnabled (final boolean isEnabled)
+    {
+        // Not supported
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
     public void replace (final IItem item)
     {
         // Slot and Drum Pad not supported

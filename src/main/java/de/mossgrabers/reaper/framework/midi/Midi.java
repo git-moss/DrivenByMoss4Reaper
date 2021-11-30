@@ -55,6 +55,9 @@ public class Midi
             if (device.getMaxTransmitters () != 0)
                 INPUTS.add (device);
         }
+
+        sortByName (INPUTS);
+        sortByName (OUTPUTS);
     }
 
 
@@ -135,5 +138,11 @@ public class Midi
             if (device.getDeviceInfo ().getName ().equals (name))
                 return device;
         return null;
+    }
+
+
+    private static void sortByName (final List<MidiDevice> devices)
+    {
+        devices.sort ( (o1, o2) -> o1.getDeviceInfo ().getName ().compareTo (o2.getDeviceInfo ().getName ()));
     }
 }
