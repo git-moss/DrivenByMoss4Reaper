@@ -51,7 +51,6 @@ public class ConfigurationDialog extends BasicDialog
     private final transient LogModel         model;
     private final transient GlobalSettingsUI settings;
 
-
     /**
      * Constructor.
      *
@@ -109,7 +108,7 @@ public class ConfigurationDialog extends BasicDialog
         this.midiInputBoxes = this.settings.createMidiInputWidgets ();
         this.midiOutputBoxes = this.settings.createMidiOutputWidgets ();
 
-        if (!this.midiInputBoxes.isEmpty () && !this.midiOutputBoxes.isEmpty ())
+        if (!(this.midiInputBoxes.isEmpty () && this.midiOutputBoxes.isEmpty ()))
         {
             mainColumn.addComponent (new TitledSeparator ("Midi Ports"), BoxPanel.NORMAL);
 
