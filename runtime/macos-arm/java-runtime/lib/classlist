@@ -831,6 +831,9 @@ java/lang/NamedPackage
 java/lang/Package
 java/lang/Package$VersionInfo
 sun/nio/ByteBuffered
+java/util/zip/Checksum
+java/util/zip/CRC32
+java/util/zip/Checksum$1
 java/security/SecureClassLoader$CodeSourceKey
 java/security/SecureClassLoader$1
 java/security/PermissionCollection
@@ -940,6 +943,7 @@ java/nio/DirectIntBufferRU
 jdk/internal/jimage/ImageStrings
 jdk/internal/jimage/ImageStringsReader
 jdk/internal/jimage/decompressor/Decompressor
+jdk/internal/jimage/ImageLocation
 java/util/Collections$EmptyIterator
 java/util/Collections$EmptyEnumeration
 jdk/internal/loader/BuiltinClassLoader$1
@@ -1262,10 +1266,7 @@ sun/util/calendar/ZoneInfoFile
 sun/util/calendar/ZoneInfoFile$1
 java/io/DataInputStream
 sun/util/calendar/ZoneInfoFile$ZoneOffsetTransitionRule
-java/util/zip/Checksum
-java/util/zip/CRC32
 sun/util/calendar/ZoneInfoFile$Checksum
-java/util/zip/Checksum$1
 sun/util/spi/CalendarProvider
 @lambda-proxy sun/util/locale/provider/JRELocaleProviderAdapter run (Lsun/util/locale/provider/JRELocaleProviderAdapter;)Ljava/security/PrivilegedAction; ()Ljava/lang/Object; REF_invokeVirtual sun/util/locale/provider/JRELocaleProviderAdapter lambda$getCalendarProvider$11 ()Lsun/util/spi/CalendarProvider; ()Lsun/util/spi/CalendarProvider;
 sun/util/locale/provider/CalendarProviderImpl
