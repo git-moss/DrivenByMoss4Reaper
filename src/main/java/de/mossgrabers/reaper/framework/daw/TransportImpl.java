@@ -664,6 +664,22 @@ public class TransportImpl extends BaseImpl implements ITransport
     }
 
 
+    /** {@inheritDoc} */
+    @Override
+    public void selectLoopStart ()
+    {
+        this.setPosition (this.loopStart);
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void selectLoopEnd ()
+    {
+        this.setPosition (this.loopLength);
+    }
+
+
     /**
      * Set the text for the loop length (time).
      *
