@@ -546,8 +546,7 @@ public class MessageParser
 
             case TAG_COLOR:
                 final Optional<double []> color = ((ModelImpl) this.model).parseColor (value);
-                if (color.isPresent ())
-                    track.setColorState (color.get ());
+                track.setColorState (color.isPresent () ? color.get () : ColorEx.GRAY.toDoubleRGB ());
                 break;
 
             case "send":
@@ -764,6 +763,10 @@ public class MessageParser
                         sibling.setEnabled (Integer.parseInt (value) == 0);
                         break;
 
+                    case "selected":
+                        sibling.setSelected (Integer.parseInt (value) > 0);
+                        break;
+
                     default:
                         this.host.error ("Unhandled device sibling parameter: " + command);
                         break;
@@ -905,8 +908,7 @@ public class MessageParser
 
             case TAG_COLOR:
                 final Optional<double []> color = ((ModelImpl) this.model).parseColor (value);
-                if (color.isPresent ())
-                    markerImpl.setColorState (color.get ());
+                markerImpl.setColorState (color.isPresent () ? color.get () : ColorEx.GRAY.toDoubleRGB ());
                 break;
 
             default:
@@ -936,8 +938,7 @@ public class MessageParser
 
             case TAG_COLOR:
                 final Optional<double []> color = ((ModelImpl) this.model).parseColor (value);
-                if (color.isPresent ())
-                    sceneImpl.setColor (new ColorEx (color.get ()));
+                sceneImpl.setColor (color.isPresent () ? new ColorEx (color.get ()) : ColorEx.GRAY);
                 break;
 
             default:
@@ -971,8 +972,7 @@ public class MessageParser
 
             case TAG_COLOR:
                 final Optional<double []> color = modelImpl.parseColor (value);
-                if (color.isPresent ())
-                    modelImpl.setCursorClipColorValue (color.get ());
+                modelImpl.setCursorClipColorValue (color.isPresent () ? color.get () : ColorEx.GRAY.toDoubleRGB ());
                 break;
 
             case "loop":

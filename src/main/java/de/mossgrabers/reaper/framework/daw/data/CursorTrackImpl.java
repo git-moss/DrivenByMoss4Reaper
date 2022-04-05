@@ -861,6 +861,24 @@ public class CursorTrackImpl implements ICursorTrack
 
     /** {@inheritDoc} */
     @Override
+    public void swapWithPrevious ()
+    {
+        this.sendPositionedItemOSC ("movePrev");
+        this.model.getTrackBank ().getItem (Math.max (0, this.getIndex () - 1)).select ();
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void swapWithNext ()
+    {
+        this.sendPositionedItemOSC ("moveNext");
+        this.model.getTrackBank ().getItem (Math.min (this.model.getTrackBank ().getPageSize () - 1, this.getIndex () + 1)).select ();
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
     public boolean isPinned ()
     {
         return this.isPinned;
@@ -981,5 +999,13 @@ public class CursorTrackImpl implements ICursorTrack
         final ITrack selectedTrack = this.getSelectedTrack ();
         if (selectedTrack != null)
             ((ChannelImpl) selectedTrack).sendPositionedItemOSC (command, value);
+    }
+
+
+    private void sendPositionedItemOSC (final String command)
+    {
+        final ITrack selectedTrack = this.getSelectedTrack ();
+        if (selectedTrack != null)
+            ((ChannelImpl) selectedTrack).sendPositionedItemOSC (command);
     }
 }

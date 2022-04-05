@@ -479,7 +479,11 @@ public class DeviceParamsMode extends BaseMode<IParameter>
     public void selectPreviousItem ()
     {
         if (this.showDevices)
-            this.model.getCursorDevice ().getDeviceBank ().selectPreviousItem ();
+        {
+            final ICursorDevice cursorDevice = this.model.getCursorDevice ();
+            cursorDevice.getDeviceBank ().selectPreviousItem ();
+            return;
+        }
         super.selectPreviousItem ();
     }
 
@@ -489,7 +493,11 @@ public class DeviceParamsMode extends BaseMode<IParameter>
     public void selectNextItem ()
     {
         if (this.showDevices)
-            this.model.getCursorDevice ().getDeviceBank ().selectNextItem ();
+        {
+            final ICursorDevice cursorDevice = this.model.getCursorDevice ();
+            cursorDevice.getDeviceBank ().selectNextItem ();
+            return;
+        }
         super.selectNextItem ();
     }
 
@@ -499,7 +507,14 @@ public class DeviceParamsMode extends BaseMode<IParameter>
     public void selectPreviousItemPage ()
     {
         if (this.showDevices)
-            this.model.getCursorDevice ().getDeviceBank ().selectPreviousPage ();
+        {
+            final ICursorDevice cursorDevice = this.model.getCursorDevice ();
+            if (this.surface.isShiftPressed ())
+                cursorDevice.swapWithPrevious ();
+            else
+                cursorDevice.getDeviceBank ().selectPreviousPage ();
+            return;
+        }
         super.selectPreviousItemPage ();
     }
 
@@ -509,7 +524,14 @@ public class DeviceParamsMode extends BaseMode<IParameter>
     public void selectNextItemPage ()
     {
         if (this.showDevices)
-            this.model.getCursorDevice ().getDeviceBank ().selectNextPage ();
+        {
+            final ICursorDevice cursorDevice = this.model.getCursorDevice ();
+            if (this.surface.isShiftPressed ())
+                cursorDevice.swapWithNext ();
+            else
+                cursorDevice.getDeviceBank ().selectNextPage ();
+            return;
+        }
         super.selectNextItemPage ();
     }
 
@@ -539,7 +561,12 @@ public class DeviceParamsMode extends BaseMode<IParameter>
     public boolean hasPreviousItemPage ()
     {
         if (this.showDevices)
-            return this.model.getCursorDevice ().getDeviceBank ().canScrollPageBackwards ();
+        {
+            final ICursorDevice cursorDevice = this.model.getCursorDevice ();
+            if (this.surface.isShiftPressed ())
+                return cursorDevice.getIndex () > 0;
+            return cursorDevice.getDeviceBank ().canScrollPageBackwards ();
+        }
         return super.hasPreviousItemPage ();
     }
 
@@ -549,7 +576,12 @@ public class DeviceParamsMode extends BaseMode<IParameter>
     public boolean hasNextItemPage ()
     {
         if (this.showDevices)
-            return this.model.getCursorDevice ().getDeviceBank ().canScrollPageForwards ();
+        {
+            final ICursorDevice cursorDevice = this.model.getCursorDevice ();
+            if (this.surface.isShiftPressed ())
+                return cursorDevice.getIndex () < 7;
+            return cursorDevice.getDeviceBank ().canScrollPageForwards ();
+        }
         return super.hasNextItemPage ();
     }
 
