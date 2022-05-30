@@ -335,12 +335,12 @@ java/lang/StringCoding
 sun/nio/fs/UnixNativeDispatcher
 jdk/internal/loader/BootLoader
 jdk/internal/loader/NativeLibraries
+jdk/internal/loader/ClassLoaderHelper
 java/util/HashSet
 java/util/Queue
 java/util/Deque
 java/util/ArrayDeque
 jdk/internal/loader/NativeLibraries$LibraryPaths
-jdk/internal/loader/ClassLoaderHelper
 jdk/internal/loader/NativeLibraries$1
 java/io/File$PathStatus
 java/util/ArrayDeque$DeqIterator
@@ -1273,6 +1273,7 @@ sun/util/locale/provider/CalendarProviderImpl
 java/util/Calendar$Builder
 java/util/GregorianCalendar
 sun/util/calendar/CalendarSystem
+sun/util/calendar/CalendarSystem$GregorianHolder
 sun/util/calendar/AbstractCalendar
 sun/util/calendar/BaseCalendar
 sun/util/calendar/Gregorian
