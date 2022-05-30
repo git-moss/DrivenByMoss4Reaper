@@ -10,7 +10,7 @@ plugins {
 sourceCompatibility = 17
 targetCompatibility = 17
 
-version = '16.3.2'
+version = '17.0.0'
 
 jar {
     manifest {
@@ -169,6 +169,7 @@ dependencies {
     implementation group: 'net.java.dev.jna', name: 'jna-platform', version: '5.11.0'
     implementation group: 'com.badlogicgames.jamepad', name: 'jamepad', version: '2.0.20.0'
     implementation group: 'com.weblookandfeel', name: 'svg-salamander', version: '1.1.2.2'
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.13.3'
     implementation fileTree(dir: 'libs', include: '**/*.jar')
 }
 
