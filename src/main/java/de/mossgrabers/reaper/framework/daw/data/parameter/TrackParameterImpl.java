@@ -31,6 +31,7 @@ public class TrackParameterImpl extends ParameterImpl
         super (dataSetup, index, defaultValue);
 
         this.paramName = paramName;
+        this.setInternalName ("volume".equals (this.paramName) ? "Volume" : "Pan");
     }
 
 

@@ -30,10 +30,11 @@ public class EqualizerDeviceImpl extends SpecificDeviceImpl implements IEqualize
      * Constructor.
      *
      * @param dataSetup Some configuration variables
+     * @param numParams The number of parameters
      */
-    public EqualizerDeviceImpl (final DataSetupEx dataSetup)
+    public EqualizerDeviceImpl (final DataSetupEx dataSetup, final int numParams)
     {
-        super (dataSetup, Processor.EQ, 0, 3 * NUMBER_OF_BANDS + 2, 0, 0, 0);
+        super (dataSetup, Processor.EQ, 0, numParams, 0, 0, 0);
 
         for (int i = 0; i < this.eqBandTypeParameters.length; i++)
             this.eqBandTypeParameters[i] = new EqBandTypeParameterImpl (dataSetup, i);

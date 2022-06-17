@@ -213,7 +213,7 @@ public class NoteRepeatImpl implements INoteRepeat
 
     /** {@inheritDoc} */
     @Override
-    public void setLatchActive (boolean active)
+    public void setLatchActive (final boolean active)
     {
         // Not supported
     }

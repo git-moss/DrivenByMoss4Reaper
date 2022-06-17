@@ -18,7 +18,9 @@ import de.mossgrabers.reaper.framework.daw.data.parameter.map.RenamedParameter;
 import de.mossgrabers.reaper.framework.device.DeviceManager;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -28,10 +30,12 @@ import java.util.List;
  */
 public class ParameterBankImpl extends AbstractPagedBankImpl<ParameterImpl, IParameter> implements IParameterBank
 {
-    private final Processor     processor;
-    private final IDevice       device;
-    private final IParameter [] mappedParameterCache;
-    private int                 mappedParameterCount;
+    private final Map<String, Integer> selectedDevicePages = new HashMap<> ();
+
+    private final Processor            processor;
+    private final IDevice              device;
+    private final IParameter []        mappedParameterCache;
+    private int                        mappedParameterCount;
 
 
     /**
@@ -61,7 +65,12 @@ public class ParameterBankImpl extends AbstractPagedBankImpl<ParameterImpl, IPar
 
         this.processor = processor;
         this.device = device;
-        this.device.addNameObserver (name -> this.refreshParameterCache ());
+        this.device.addNameObserver (name -> {
+
+            // Restore the offset when switching between devices
+            this.setBankOffset (this.selectedDevicePages.getOrDefault (name.toLowerCase (), Integer.valueOf (0)).intValue ());
+
+        });
 
         this.mappedParameterCache = new IParameter [this.pageSize];
         this.clearParameterCache ();
@@ -92,6 +101,10 @@ public class ParameterBankImpl extends AbstractPagedBankImpl<ParameterImpl, IPar
     protected void setBankOffset (final int bankOffset)
     {
         this.bankOffset = Math.max (0, Math.min (bankOffset, this.getItemCount () - 1));
+
+        // Store the offset for switching between devices
+        this.selectedDevicePages.put (this.device.getName ().toLowerCase (), Integer.valueOf (this.bankOffset));
+
         this.refreshParameterCache ();
     }
 
@@ -202,9 +215,12 @@ public class ParameterBankImpl extends AbstractPagedBankImpl<ParameterImpl, IPar
         final List<ParameterMapPage> pages = parameterMap.getPages ();
         final int page = this.bankOffset / this.pageSize;
         final int numPages = pages.size ();
+        if (numPages == 0)
+            return;
+
         if (page >= numPages)
         {
-            this.bankOffset = 0;
+            this.setBankOffset (0);
             return;
         }
 

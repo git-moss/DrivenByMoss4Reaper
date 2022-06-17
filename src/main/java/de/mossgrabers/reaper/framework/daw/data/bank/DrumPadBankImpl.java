@@ -139,6 +139,15 @@ public class DrumPadBankImpl extends AbstractPagedBankImpl<DrumPadImpl, ILayer> 
 
     /** {@inheritDoc} */
     @Override
+    public boolean hasMutedPads ()
+    {
+        // Not supported
+        return false;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
     public void scrollTo (final int position, final boolean adjustPage)
     {
         this.setBankOffset (position / this.pageSize * this.pageSize);

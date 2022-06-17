@@ -75,6 +75,12 @@ public interface AppCallback
 
 
     /**
+     * Request a rescan of all MIDI ports and update the configuration settings.
+     */
+    void sendMIDIPortRefreshCommand ();
+
+
+    /**
      * Request a full update of the data model.
      */
     void sendRefreshCommand ();

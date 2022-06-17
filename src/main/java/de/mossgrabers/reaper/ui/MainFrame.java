@@ -54,18 +54,18 @@ import java.util.TreeMap;
  */
 public class MainFrame extends JFrame
 {
-    private static final long                                  serialVersionUID = 4251131641194938848L;
-    private static final int                                   GAP              = 14;
+    private static final long                            serialVersionUID = 4251131641194938848L;
+    private static final int                             GAP              = 14;
 
-    private final transient AppCallback                        callback;
-    private final JTextArea                                    loggingTextArea  = new JTextArea ();
-    private final JButton                                      removeButton;
-    private final JButton                                      configButton;
-    private final DefaultListModel<ControllerCheckboxListItem> listModel        = new DefaultListModel<> ();
-    private final JList<ControllerCheckboxListItem>            controllerList   = new JList<> (this.listModel);
+    private final transient AppCallback                  callback;
+    private final JTextArea                              loggingTextArea  = new JTextArea ();
+    private final JButton                                removeButton;
+    private final JButton                                configButton;
+    private DefaultListModel<ControllerCheckboxListItem> listModel        = new DefaultListModel<> ();
+    private final JList<ControllerCheckboxListItem>      controllerList   = new JList<> (this.listModel);
 
-    private final DebugDialog                                  debugDialog;
-    private final BrowserDialog                                browserDialog;
+    private final DebugDialog                            debugDialog;
+    private final BrowserDialog                          browserDialog;
 
 
     /**
@@ -222,7 +222,41 @@ public class MainFrame extends JFrame
     {
         final int selectedIndex = this.controllerList.getSelectionModel ().getLeadSelectionIndex ();
         if (selectedIndex >= 0)
+        {
             this.callback.editController (selectedIndex);
+            this.forceRedraw (selectedIndex);
+        }
+    }
+
+
+    /**
+     * Force a redraw of the controller list.
+     */
+    public void forceRedrawControllerList ()
+    {
+        final int selIndex = this.controllerList.getSelectedIndex ();
+        final DefaultListModel<ControllerCheckboxListItem> newListModel = new DefaultListModel<> ();
+
+        for (int i = 0; i < this.listModel.getSize (); i++)
+        {
+            newListModel.addElement (this.listModel.getElementAt (i));
+            this.controllerList.setModel (newListModel);
+        }
+
+        if (selIndex >= 0)
+            this.controllerList.setSelectedIndex (selIndex);
+    }
+
+
+    /**
+     * Force a redraw of the given index in the controller list.
+     *
+     * @param selectedIndex The index of the item to redraw
+     */
+    void forceRedraw (final int selectedIndex)
+    {
+        final ControllerCheckboxListItem item = this.listModel.getElementAt (selectedIndex);
+        this.listModel.setElementAt (item, selectedIndex);
     }
 
 
@@ -282,8 +316,7 @@ public class MainFrame extends JFrame
         final ControllerCheckboxListItem item = this.listModel.getElementAt (selectedIndex);
         item.setSelected (!item.isSelected ());
         this.callback.toggleEnableController (selectedIndex);
-        // Force a redraw
-        this.listModel.setElementAt (item, selectedIndex);
+        this.forceRedraw (selectedIndex);
     }
 
 
@@ -378,6 +411,10 @@ public class MainFrame extends JFrame
         disableTrackChunkItem.setToolTipText ("Improves performance with sample heavy devices. Loses track deactivation state and track record quantization.");
         disableTrackChunkItem.addActionListener (event -> this.callback.toggleTrackChunkReading ());
         popup.add (disableTrackChunkItem);
+
+        final JMenuItem refreshMIDIPortsItem = new JMenuItem ("Refresh MIDI Ports");
+        refreshMIDIPortsItem.addActionListener (event -> this.callback.sendMIDIPortRefreshCommand ());
+        popup.add (refreshMIDIPortsItem);
 
         final JMenuItem refreshItem = new JMenuItem ("Data Refresh");
         refreshItem.addActionListener (event -> this.callback.sendRefreshCommand ());

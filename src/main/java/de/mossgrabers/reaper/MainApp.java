@@ -608,6 +608,16 @@ public class MainApp implements MessageSender, AppCallback, WindowManager
 
     /** {@inheritDoc} */
     @Override
+    public void sendMIDIPortRefreshCommand ()
+    {
+        this.instanceManager.refreshMIDIAll ();
+        this.restartControllers ();
+        SafeRunLater.execute (this.logModel, () -> this.mainFrame.forceRedrawControllerList ());
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
     public void clearLogMessage ()
     {
         this.logModel.clearLogMessage ();

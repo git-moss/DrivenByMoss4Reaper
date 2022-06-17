@@ -276,7 +276,7 @@ public class ParameterMappingDialog extends BasicDialog
         final int selectedIndex = this.pageParametersListBox.getSelectedIndex ();
         final boolean hasSelection = selectedIndex >= 0;
         final DefaultListModel<ParameterMapPageParameter> model = this.pageParametersListBox.getModel ();
-        boolean isAssigned = hasSelection && model.get (selectedIndex).isAssigned ();
+        final boolean isAssigned = hasSelection && model.get (selectedIndex).isAssigned ();
 
         this.assignParamButton.setEnabled (hasSelection);
         this.clearParamButton.setEnabled (hasSelection && isAssigned);
@@ -338,7 +338,7 @@ public class ParameterMappingDialog extends BasicDialog
     {
         final int selectedIndex = this.pagesListBox.getSelectedIndex ();
         if (selectedIndex >= 0 && selectedIndex < this.pagesListBox.getModel ().getSize () - 1)
-            swapParamPage (selectedIndex, selectedIndex + 1);
+            this.swapParamPage (selectedIndex, selectedIndex + 1);
     }
 
 
@@ -349,7 +349,7 @@ public class ParameterMappingDialog extends BasicDialog
     {
         final int selectedIndex = this.pagesListBox.getSelectedIndex ();
         if (selectedIndex > 0)
-            swapParamPage (selectedIndex, selectedIndex - 1);
+            this.swapParamPage (selectedIndex, selectedIndex - 1);
     }
 
 
@@ -422,7 +422,7 @@ public class ParameterMappingDialog extends BasicDialog
     {
         final int selectedIndex = this.pageParametersListBox.getSelectedIndex ();
         if (selectedIndex >= 0 && selectedIndex < this.pageParametersListBox.getModel ().getSize () - 1)
-            swapParam (selectedIndex, selectedIndex + 1);
+            this.swapParam (selectedIndex, selectedIndex + 1);
     }
 
 
@@ -433,7 +433,7 @@ public class ParameterMappingDialog extends BasicDialog
     {
         final int selectedIndex = this.pageParametersListBox.getSelectedIndex ();
         if (selectedIndex > 0)
-            swapParam (selectedIndex, selectedIndex - 1);
+            this.swapParam (selectedIndex, selectedIndex - 1);
     }
 
 

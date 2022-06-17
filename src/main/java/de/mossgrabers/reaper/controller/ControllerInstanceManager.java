@@ -57,6 +57,7 @@ import de.mossgrabers.reaper.framework.daw.data.parameter.map.ParameterMap;
 import de.mossgrabers.reaper.framework.daw.data.parameter.map.ParameterMapPage;
 import de.mossgrabers.reaper.framework.daw.data.parameter.map.ParameterMapPageParameter;
 import de.mossgrabers.reaper.framework.device.DeviceManager;
+import de.mossgrabers.reaper.framework.midi.Midi;
 import de.mossgrabers.reaper.ui.WindowManager;
 import de.mossgrabers.reaper.ui.dialog.ParameterMappingDialog;
 import de.mossgrabers.reaper.ui.dialog.ProjectSettingsDialog;
@@ -67,6 +68,7 @@ import de.mossgrabers.reaper.ui.widget.Functions;
 import com.nikhaldimann.inieditor.IniEditor;
 
 import javax.sound.midi.MidiDevice;
+import javax.sound.midi.MidiUnavailableException;
 
 import java.io.IOException;
 import java.lang.reflect.Constructor;
@@ -196,6 +198,24 @@ public class ControllerInstanceManager
     public void stopAll ()
     {
         this.instances.forEach (IControllerInstance::stop);
+    }
+
+
+    /**
+     * Refresh the MIDI settings of all configured controllers.
+     */
+    public void refreshMIDIAll ()
+    {
+        try
+        {
+            Midi.readDeviceMetadata ();
+        }
+        catch (final MidiUnavailableException ex)
+        {
+            this.logModel.error ("Could not update MIDI devices.", ex);
+        }
+
+        this.instances.forEach (IControllerInstance::restart);
     }
 
 

@@ -62,7 +62,21 @@ public class ConfigurationDialog extends BasicDialog
      */
     public ConfigurationDialog (final LogModel model, final Window owner, final GlobalSettingsUI settings)
     {
-        super ((JFrame) owner, "Configuration", true, true);
+        this (model, owner, settings, true);
+    }
+
+
+    /**
+     * Constructor.
+     *
+     * @param model For displaying error
+     * @param owner The owner of the dialog
+     * @param settings The configuration settings
+     * @param isModal Should the dialog be modal ?
+     */
+    public ConfigurationDialog (final LogModel model, final Window owner, final GlobalSettingsUI settings, final boolean isModal)
+    {
+        super ((JFrame) owner, "Configuration", isModal, true);
 
         this.setMinimumSize (new Dimension (400, MIN_HEIGHT));
         this.setSize (400, MIN_HEIGHT);

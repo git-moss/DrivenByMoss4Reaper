@@ -119,7 +119,7 @@ public class ModelImpl extends AbstractModel
                     break;
 
                 case EQ:
-                    this.specificDevices.put (deviceID, new EqualizerDeviceImpl (dataSetup));
+                    this.specificDevices.put (deviceID, new EqualizerDeviceImpl (dataSetup, numParams));
                     break;
 
                 default:

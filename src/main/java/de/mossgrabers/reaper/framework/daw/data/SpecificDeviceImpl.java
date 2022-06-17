@@ -237,7 +237,7 @@ public class SpecificDeviceImpl extends DeviceImpl implements ISpecificDevice
 
 
     /**
-     * Set if the UI window displays the fx chain.
+     * Set if the UI window displays the FX chain.
      *
      * @param isExpanded True if expanded
      */

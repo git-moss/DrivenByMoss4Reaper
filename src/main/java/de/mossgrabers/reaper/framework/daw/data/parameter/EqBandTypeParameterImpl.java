@@ -22,6 +22,8 @@ import java.util.Map;
  */
 public class EqBandTypeParameterImpl extends AbstractParameterImpl
 {
+    private static final String                          BAND                = "band/";
+
     private static final Map<EqualizerBandType, Integer> EQ_TYPE_INDICES     = new EnumMap<> (EqualizerBandType.class);
     private static final Map<Integer, EqualizerBandType> EQ_TYPE_INDICES_INV = new HashMap<> ();
 
@@ -91,7 +93,7 @@ public class EqBandTypeParameterImpl extends AbstractParameterImpl
      */
     public void setType (final EqualizerBandType type)
     {
-        this.dataSetup.getSender ().processStringArg (Processor.EQ, "band/" + this.bandIndex, EQ_TYPE_INDICES.get (type).toString ());
+        this.dataSetup.getSender ().processStringArg (Processor.EQ, BAND + this.bandIndex, EQ_TYPE_INDICES.get (type).toString ());
     }
 
 
@@ -135,7 +137,7 @@ public class EqBandTypeParameterImpl extends AbstractParameterImpl
     @Override
     public void resetValue ()
     {
-        this.dataSetup.getSender ().processIntArg (Processor.EQ, "band/" + this.index, -1);
+        this.dataSetup.getSender ().processIntArg (Processor.EQ, BAND + this.index, -1);
     }
 
 
@@ -145,7 +147,7 @@ public class EqBandTypeParameterImpl extends AbstractParameterImpl
     {
         final int idValue = Math.min (Math.max (0, (int) (this.bandType.ordinal () + increment)), 6);
         final Integer id = EQ_TYPE_INDICES.get (EqualizerBandType.values ()[idValue]);
-        this.dataSetup.getSender ().processStringArg (Processor.EQ, "band/" + this.bandIndex, id.toString ());
+        this.dataSetup.getSender ().processStringArg (Processor.EQ, BAND + this.bandIndex, id.toString ());
     }
 
 
