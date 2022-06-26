@@ -12,12 +12,14 @@ import de.mossgrabers.framework.controller.ContinuousID;
 import de.mossgrabers.framework.controller.color.ColorEx;
 import de.mossgrabers.framework.controller.display.ITextDisplay;
 import de.mossgrabers.framework.daw.IModel;
+import de.mossgrabers.framework.daw.data.IChannel;
 import de.mossgrabers.framework.daw.data.ICursorDevice;
 import de.mossgrabers.framework.daw.data.IItem;
 import de.mossgrabers.framework.daw.data.IMasterTrack;
 import de.mossgrabers.framework.daw.data.IParameter;
 import de.mossgrabers.framework.daw.data.ITrack;
 import de.mossgrabers.framework.daw.data.bank.IBank;
+import de.mossgrabers.framework.daw.data.bank.IChannelBank;
 import de.mossgrabers.framework.daw.data.bank.ITrackBank;
 import de.mossgrabers.framework.daw.data.empty.EmptyTrack;
 import de.mossgrabers.framework.featuregroup.AbstractMode;
@@ -336,16 +338,29 @@ public abstract class BaseMode<B extends IItem> extends AbstractMode<MCUControlS
 
         final ITrackBank tb = this.getTrackBank ();
 
-        // Format track names
         final ITextDisplay d2 = this.surface.getTextDisplay (1);
         final int extenderOffset = this.getExtenderOffset ();
 
         final boolean isMainDevice = this.surface.isMainDevice ();
 
-        for (int i = 0; i < 8; i++)
+        final boolean isLayerMode = Modes.isLayerMode (this.surface.getModeManager ().getActiveID ());
+        if (isLayerMode)
         {
-            final ITrack t = tb.getItem (extenderOffset + i);
-            d2.setCell (0, i, StringUtils.shortenAndFixASCII (t.getName (), isMainDevice ? 6 : 7));
+            final ICursorDevice cursorDevice = this.model.getCursorDevice ();
+            final IChannelBank<? extends IChannel> layerBank = cursorDevice.hasDrumPads () ? cursorDevice.getDrumPadBank () : cursorDevice.getLayerBank ();
+            for (int i = 0; i < 8; i++)
+            {
+                final IChannel c = layerBank.getItem (extenderOffset + i);
+                d2.setCell (0, i, StringUtils.shortenAndFixASCII (c.getName (), isMainDevice ? 6 : 7));
+            }
+        }
+        else
+        {
+            for (int i = 0; i < 8; i++)
+            {
+                final ITrack t = tb.getItem (extenderOffset + i);
+                d2.setCell (0, i, StringUtils.shortenAndFixASCII (t.getName (), isMainDevice ? 6 : 7));
+            }
         }
 
         if (isMainDevice)
