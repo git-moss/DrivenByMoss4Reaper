@@ -10,6 +10,7 @@ import de.mossgrabers.framework.daw.data.bank.AbstractItemBank;
 import de.mossgrabers.reaper.communication.MessageSender;
 import de.mossgrabers.reaper.framework.daw.DataSetupEx;
 
+import java.util.List;
 import java.util.Optional;
 
 
@@ -38,6 +39,23 @@ public abstract class AbstractBankImpl<T extends IItem> extends AbstractItemBank
     protected AbstractBankImpl (final DataSetupEx dataSetup, final int pageSize)
     {
         super (dataSetup == null ? null : dataSetup.getHost (), pageSize);
+
+        this.dataSetup = dataSetup;
+        this.sender = dataSetup != null ? dataSetup.getSender () : null;
+        this.valueChanger = dataSetup != null ? dataSetup.getValueChanger () : null;
+    }
+
+
+    /**
+     * Constructor.
+     *
+     * @param dataSetup Some configuration variables
+     * @param pageSize The number of elements in a page of the bank
+     * @param items The pre-configured bank items
+     */
+    protected AbstractBankImpl (final DataSetupEx dataSetup, final int pageSize, final List<T> items)
+    {
+        super (dataSetup == null ? null : dataSetup.getHost (), pageSize, items);
 
         this.dataSetup = dataSetup;
         this.sender = dataSetup != null ? dataSetup.getSender () : null;

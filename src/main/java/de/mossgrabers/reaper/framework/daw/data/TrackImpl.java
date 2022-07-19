@@ -532,6 +532,14 @@ public class TrackImpl extends ChannelImpl implements ITrack
     }
 
 
+    /** {@inheritDoc} */
+    @Override
+    public void launchLastClipImmediately ()
+    {
+        // Not supported
+    }
+
+
     /**
      * Set the 'depth' of the track.
      *

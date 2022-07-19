@@ -935,6 +935,14 @@ public class CursorTrackImpl implements ICursorTrack
     }
 
 
+    /** {@inheritDoc} */
+    @Override
+    public void launchLastClipImmediately ()
+    {
+        // Not supported
+    }
+
+
     private ITrack getPinnedOrSelectedTrack ()
     {
         if (this.isPinned)

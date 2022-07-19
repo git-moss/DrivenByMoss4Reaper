@@ -15,6 +15,7 @@ import de.mossgrabers.framework.daw.data.ISlot;
 import de.mossgrabers.framework.daw.data.ISpecificDevice;
 import de.mossgrabers.framework.daw.data.ITrack;
 import de.mossgrabers.framework.daw.data.bank.ISceneBank;
+import de.mossgrabers.framework.daw.data.bank.ISlotBank;
 import de.mossgrabers.framework.daw.data.bank.ITrackBank;
 import de.mossgrabers.framework.scale.Scales;
 import de.mossgrabers.framework.utils.FrameworkException;
@@ -27,6 +28,7 @@ import de.mossgrabers.reaper.framework.daw.data.MasterTrackImpl;
 import de.mossgrabers.reaper.framework.daw.data.SlotImpl;
 import de.mossgrabers.reaper.framework.daw.data.TrackImpl;
 import de.mossgrabers.reaper.framework.daw.data.bank.MarkerBankImpl;
+import de.mossgrabers.reaper.framework.daw.data.bank.ResizedSlotBank;
 import de.mossgrabers.reaper.framework.daw.data.bank.SlotBankImpl;
 import de.mossgrabers.reaper.framework.daw.data.bank.TrackBankImpl;
 import de.mossgrabers.reaper.framework.daw.data.bank.UserParameterBankImpl;
@@ -48,6 +50,7 @@ public class ModelImpl extends AbstractModel
     private final DataSetupEx              dataSetup;
     private final List<ITrackBank>         trackBanks = new ArrayList<> ();
     private final Map<Integer, ISceneBank> sceneBanks = new HashMap<> (1);
+    private final Map<Integer, ISlotBank>  slotBanks  = new HashMap<> (1);
 
 
     /**
@@ -94,17 +97,19 @@ public class ModelImpl extends AbstractModel
 
         // Drum Machine
         final List<IDrumDevice> drumDevices = new ArrayList<> ();
-        if (modelSetup.wantsDrumDevice ())
+        if (modelSetup.wantsMainDrumDevice ())
         {
             this.drumDevice = new DrumDeviceImpl (dataSetup, numSends, numParams, numDevicesInBank, numDeviceLayers, numDrumPadLayers);
             drumDevices.add (this.drumDevice);
 
-            // Drum Machine 64 pads
-            if (modelSetup.wantsDrum64Device ())
+            // Additional drum machines with different drum pad page sizes
+            final int [] additionalDrumDevicePageSizes = modelSetup.wantsAdditionalDrumDevices ();
+            for (final int pageSize: additionalDrumDevicePageSizes)
             {
-                this.drumDevice64 = new DrumDeviceImpl (dataSetup, 0, 0, 0, 64, 64);
-                drumDevices.add (this.drumDevice64);
+                final DrumDeviceImpl addDrumDevice = new DrumDeviceImpl (dataSetup, numSends, 0, 0, pageSize, pageSize);
+                this.additionalDrumDevices.put (Integer.valueOf (pageSize), addDrumDevice);
             }
+            drumDevices.addAll (this.additionalDrumDevices.values ());
         }
 
         for (final DeviceID deviceID: modelSetup.getDeviceIDs ())
@@ -157,6 +162,14 @@ public class ModelImpl extends AbstractModel
             this.trackBanks.add (tb);
             return tb.getSceneBank ();
         });
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public ISlotBank createSlotBank (final int numSlots)
+    {
+        return this.slotBanks.computeIfAbsent (Integer.valueOf (numSlots), key -> new ResizedSlotBank (this.cursorTrack, numSlots));
     }
 
 

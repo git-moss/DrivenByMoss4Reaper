@@ -7,6 +7,7 @@ package de.mossgrabers.reaper.framework.daw.data.bank;
 import de.mossgrabers.framework.daw.data.IItem;
 import de.mossgrabers.reaper.framework.daw.DataSetupEx;
 
+import java.util.List;
 import java.util.Optional;
 
 
@@ -39,11 +40,27 @@ public abstract class AbstractPagedBankImpl<S extends T, T extends IItem> extend
     }
 
 
+    /**
+     * Constructor.
+     *
+     * @param dataSetup Some configuration variables
+     * @param pageSize The number of elements in a page of the bank
+     * @param emptyItem The empty item object
+     * @param items The pre-configured bank items
+     */
+    protected AbstractPagedBankImpl (final DataSetupEx dataSetup, final int pageSize, final T emptyItem, final List<T> items)
+    {
+        super (dataSetup, pageSize, items);
+
+        this.emptyItem = emptyItem;
+    }
+
+
     /** {@inheritDoc} */
     @Override
     public boolean canScrollPageBackwards ()
     {
-        return this.bankOffset - this.pageSize >= 0;
+        return this.bankOffset - this.getPageSize () >= 0;
     }
 
 
@@ -51,7 +68,7 @@ public abstract class AbstractPagedBankImpl<S extends T, T extends IItem> extend
     @Override
     public boolean canScrollPageForwards ()
     {
-        return this.bankOffset + this.pageSize < this.getItemCount ();
+        return this.bankOffset + this.getPageSize () < this.getItemCount ();
     }
 
 
@@ -72,8 +89,9 @@ public abstract class AbstractPagedBankImpl<S extends T, T extends IItem> extend
     public void setItemCount (final int itemCount)
     {
         this.itemCount = itemCount;
-        if (this.pageSize > 0)
-            this.setBankOffset (Math.min (this.bankOffset, this.itemCount / this.pageSize * this.pageSize));
+        final int ps = this.getPageSize ();
+        if (ps > 0)
+            this.setBankOffset (Math.min (this.bankOffset, this.itemCount / ps * ps));
     }
 
 
@@ -123,7 +141,7 @@ public abstract class AbstractPagedBankImpl<S extends T, T extends IItem> extend
     {
         final Optional<T> sel = this.getSelectedItem ();
         final int index = sel.isEmpty () ? 0 : sel.get ().getIndex () + 1;
-        if (index == this.pageSize)
+        if (index == this.getPageSize ())
             this.selectNextPage ();
         else
             this.getItem (index).select ();
@@ -150,7 +168,7 @@ public abstract class AbstractPagedBankImpl<S extends T, T extends IItem> extend
         if (!this.canScrollPageBackwards ())
             return;
         this.scrollPageBackwards ();
-        this.host.scheduleTask ( () -> this.getItem (this.pageSize - 1).select (), 75);
+        this.host.scheduleTask ( () -> this.getItem (this.getPageSize () - 1).select (), 75);
     }
 
 
@@ -167,13 +185,13 @@ public abstract class AbstractPagedBankImpl<S extends T, T extends IItem> extend
 
     protected void scrollPageBackwards ()
     {
-        this.setBankOffset (this.bankOffset - this.pageSize);
+        this.setBankOffset (this.bankOffset - this.getPageSize ());
     }
 
 
     protected void scrollPageForwards ()
     {
-        this.setBankOffset (this.bankOffset + this.pageSize);
+        this.setBankOffset (this.bankOffset + this.getPageSize ());
     }
 
 

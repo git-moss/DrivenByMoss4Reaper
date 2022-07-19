@@ -242,7 +242,7 @@ public class CursorClipImpl extends BaseImpl implements INoteClip
 
     /** {@inheritDoc} */
     @Override
-    public void setLoopLength (final int length)
+    public void setLoopLength (final double length)
     {
         this.setPlayEnd (this.getPlayStart () + length);
     }

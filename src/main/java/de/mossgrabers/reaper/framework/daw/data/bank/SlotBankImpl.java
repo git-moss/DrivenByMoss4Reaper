@@ -39,6 +39,22 @@ public class SlotBankImpl extends AbstractPagedBankImpl<SlotImpl, ISlot> impleme
         super (dataSetup, numSlots, EmptySlot.INSTANCE);
 
         this.sceneBank = sceneBank;
+        this.trackIndex = trackIndex;
+    }
+
+
+    /**
+     * Copy constructor for slot banks with a different page size.
+     *
+     * @param slotBankImpl The slot bank to wrap
+     * @param numSlots The new page size
+     */
+    protected SlotBankImpl (final SlotBankImpl slotBankImpl, final int numSlots)
+    {
+        super (slotBankImpl.dataSetup, numSlots, EmptySlot.INSTANCE, slotBankImpl.items);
+
+        this.sceneBank = slotBankImpl.sceneBank;
+        this.trackIndex = slotBankImpl.trackIndex;
     }
 
 

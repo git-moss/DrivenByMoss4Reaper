@@ -20,6 +20,7 @@ import de.mossgrabers.reaper.framework.daw.data.DrumPadImpl;
 import de.mossgrabers.reaper.framework.daw.data.TrackImpl;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -66,7 +67,7 @@ public class TrackBankImpl extends AbstractTrackBankImpl
      */
     public TrackBankImpl (final DataSetupEx dataSetup, final ApplicationImpl application, final int numTracks, final int numScenes, final int numSends, final boolean hasFlatTrackList, final boolean hasFullFlatTrackList)
     {
-        this (dataSetup, application, null, numTracks, numScenes, numSends, hasFlatTrackList, hasFullFlatTrackList);
+        this (dataSetup, application, Collections.emptyList (), numTracks, numScenes, numSends, hasFlatTrackList, hasFullFlatTrackList);
     }
 
 

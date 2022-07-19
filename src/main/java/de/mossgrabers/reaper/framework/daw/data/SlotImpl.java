@@ -132,6 +132,22 @@ public class SlotImpl extends ItemImpl implements ISlot
 
     /** {@inheritDoc} */
     @Override
+    public void launchImmediately ()
+    {
+        this.launch ();
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean testAndClearLaunchedImmediately ()
+    {
+        return false;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
     public void startRecording ()
     {
         if (this.getIndex () >= 0)
