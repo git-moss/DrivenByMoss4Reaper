@@ -380,22 +380,25 @@ public class MessageParser
     {
         final TrackBankImpl tb = (TrackBankImpl) this.model.getTrackBank ();
         final String part = parts.poll ();
-        try
+        switch (part)
         {
-            final int position = Integer.parseInt (part);
-            this.parseTrackValue (tb, tb.getUnpagedItem (position), parts, value);
-        }
-        catch (final NumberFormatException ex)
-        {
-            // The number of tracks
-            if (TAG_COUNT.equals (part))
-            {
+            case TAG_COUNT:
                 tb.setItemCount (Integer.parseInt (value));
                 tb.markDirty ();
                 this.rebindKnobs ();
-            }
-            else
-                this.host.error ("Unhandled Track command: " + part);
+                break;
+
+            default:
+                try
+                {
+                    final int position = Integer.parseInt (part);
+                    this.parseTrackValue (tb, tb.getUnpagedItem (position), parts, value);
+                }
+                catch (final NumberFormatException ex)
+                {
+                    this.host.error ("Unhandled Track command: " + part);
+                }
+                break;
         }
     }
 
