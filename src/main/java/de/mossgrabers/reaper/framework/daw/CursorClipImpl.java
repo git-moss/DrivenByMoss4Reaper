@@ -422,15 +422,15 @@ public class CursorClipImpl extends BaseImpl implements INoteClip
 
     /** {@inheritDoc} */
     @Override
-    public void changeMuteState (final int channel, final int step, final int row, final int control)
+    public void changeStepMuteState (final int channel, final int step, final int row, final int control)
     {
-        this.updateMuteState (channel, step, row, this.valueChanger.isIncrease (control));
+        this.updateStepMuteState (channel, step, row, this.valueChanger.isIncrease (control));
     }
 
 
     /** {@inheritDoc} */
     @Override
-    public void updateMuteState (final int channel, final int step, final int row, final boolean isMuted)
+    public void updateStepMuteState (final int channel, final int step, final int row, final boolean isMuted)
     {
         final StepInfoImpl stepInfo = this.getStep (channel, step, row);
         if (stepInfo.getState () == StepState.OFF)
@@ -608,7 +608,7 @@ public class CursorClipImpl extends BaseImpl implements INoteClip
 
     /** {@inheritDoc}} */
     @Override
-    public void updateVelocitySpread (final int channel, final int step, final int row, final double velocitySpread)
+    public void updateStepVelocitySpread (final int channel, final int step, final int row, final double velocitySpread)
     {
         // Not supported
     }
@@ -616,7 +616,7 @@ public class CursorClipImpl extends BaseImpl implements INoteClip
 
     /** {@inheritDoc}} */
     @Override
-    public void changeVelocitySpread (final int channel, final int step, final int row, final int control)
+    public void changeStepVelocitySpread (final int channel, final int step, final int row, final int control)
     {
         // Not supported
     }
@@ -624,7 +624,7 @@ public class CursorClipImpl extends BaseImpl implements INoteClip
 
     /** {@inheritDoc}} */
     @Override
-    public void updateIsChanceEnabled (final int channel, final int step, final int row, final boolean isEnabled)
+    public void updateStepIsChanceEnabled (final int channel, final int step, final int row, final boolean isEnabled)
     {
         // Not supported
     }
@@ -632,7 +632,7 @@ public class CursorClipImpl extends BaseImpl implements INoteClip
 
     /** {@inheritDoc}} */
     @Override
-    public void updateChance (final int channel, final int step, final int row, final double chance)
+    public void updateStepChance (final int channel, final int step, final int row, final double chance)
     {
         // Not supported
     }
@@ -640,7 +640,7 @@ public class CursorClipImpl extends BaseImpl implements INoteClip
 
     /** {@inheritDoc}} */
     @Override
-    public void changeChance (final int channel, final int step, final int row, final int control)
+    public void changeStepChance (final int channel, final int step, final int row, final int control)
     {
         // Not supported
     }
@@ -648,7 +648,7 @@ public class CursorClipImpl extends BaseImpl implements INoteClip
 
     /** {@inheritDoc}} */
     @Override
-    public void updateIsOccurrenceEnabled (final int channel, final int step, final int row, final boolean isEnabled)
+    public void updateStepIsOccurrenceEnabled (final int channel, final int step, final int row, final boolean isEnabled)
     {
         // Not supported
     }
@@ -656,7 +656,7 @@ public class CursorClipImpl extends BaseImpl implements INoteClip
 
     /** {@inheritDoc}} */
     @Override
-    public void setPrevNextOccurrence (final int channel, final int step, final int row, final boolean increase)
+    public void setStepPrevNextOccurrence (final int channel, final int step, final int row, final boolean increase)
     {
         // Not supported
     }
@@ -664,7 +664,7 @@ public class CursorClipImpl extends BaseImpl implements INoteClip
 
     /** {@inheritDoc}} */
     @Override
-    public void setOccurrence (final int channel, final int step, final int row, final NoteOccurrenceType occurrence)
+    public void setStepOccurrence (final int channel, final int step, final int row, final NoteOccurrenceType occurrence)
     {
         // Not supported
     }
@@ -672,7 +672,7 @@ public class CursorClipImpl extends BaseImpl implements INoteClip
 
     /** {@inheritDoc}} */
     @Override
-    public void updateIsRecurrenceEnabled (final int channel, final int step, final int row, final boolean isEnabled)
+    public void updateStepIsRecurrenceEnabled (final int channel, final int step, final int row, final boolean isEnabled)
     {
         // Not supported
     }
@@ -680,7 +680,7 @@ public class CursorClipImpl extends BaseImpl implements INoteClip
 
     /** {@inheritDoc}} */
     @Override
-    public void updateRecurrenceLength (final int channel, final int step, final int row, final int recurrenceLength)
+    public void updateStepRecurrenceLength (final int channel, final int step, final int row, final int recurrenceLength)
     {
         // Not supported
     }
@@ -688,7 +688,7 @@ public class CursorClipImpl extends BaseImpl implements INoteClip
 
     /** {@inheritDoc}} */
     @Override
-    public void updateRecurrenceMask (final int channel, final int step, final int row, final int mask)
+    public void updateStepRecurrenceMask (final int channel, final int step, final int row, final int mask)
     {
         // Not supported
     }
@@ -696,7 +696,7 @@ public class CursorClipImpl extends BaseImpl implements INoteClip
 
     /** {@inheritDoc}} */
     @Override
-    public void changeRecurrenceLength (final int channel, final int step, final int row, final int control)
+    public void changeStepRecurrenceLength (final int channel, final int step, final int row, final int control)
     {
         // Not supported
     }
@@ -704,7 +704,7 @@ public class CursorClipImpl extends BaseImpl implements INoteClip
 
     /** {@inheritDoc}} */
     @Override
-    public void updateIsRepeatEnabled (final int channel, final int step, final int row, final boolean isEnabled)
+    public void updateStepIsRepeatEnabled (final int channel, final int step, final int row, final boolean isEnabled)
     {
         // Not supported
     }
@@ -712,7 +712,7 @@ public class CursorClipImpl extends BaseImpl implements INoteClip
 
     /** {@inheritDoc}} */
     @Override
-    public void updateRepeatCount (final int channel, final int step, final int row, final int value)
+    public void updateStepRepeatCount (final int channel, final int step, final int row, final int value)
     {
         // Not supported
     }
@@ -720,7 +720,7 @@ public class CursorClipImpl extends BaseImpl implements INoteClip
 
     /** {@inheritDoc}} */
     @Override
-    public void changeRepeatCount (final int channel, final int step, final int row, final int control)
+    public void changeStepRepeatCount (final int channel, final int step, final int row, final int control)
     {
         // Not supported
     }
@@ -728,7 +728,7 @@ public class CursorClipImpl extends BaseImpl implements INoteClip
 
     /** {@inheritDoc}} */
     @Override
-    public void updateRepeatCurve (final int channel, final int step, final int row, final double value)
+    public void updateStepRepeatCurve (final int channel, final int step, final int row, final double value)
     {
         // Not supported
     }
@@ -736,7 +736,7 @@ public class CursorClipImpl extends BaseImpl implements INoteClip
 
     /** {@inheritDoc}} */
     @Override
-    public void changeRepeatCurve (final int channel, final int step, final int row, final int control)
+    public void changeStepRepeatCurve (final int channel, final int step, final int row, final int control)
     {
         // Not supported
     }
@@ -744,7 +744,7 @@ public class CursorClipImpl extends BaseImpl implements INoteClip
 
     /** {@inheritDoc}} */
     @Override
-    public void updateRepeatVelocityCurve (final int channel, final int step, final int row, final double value)
+    public void updateStepRepeatVelocityCurve (final int channel, final int step, final int row, final double value)
     {
         // Not supported
     }
@@ -752,7 +752,7 @@ public class CursorClipImpl extends BaseImpl implements INoteClip
 
     /** {@inheritDoc}} */
     @Override
-    public void changeRepeatVelocityCurve (final int channel, final int step, final int row, final int control)
+    public void changeStepRepeatVelocityCurve (final int channel, final int step, final int row, final int control)
     {
         // Not supported
     }
@@ -760,7 +760,7 @@ public class CursorClipImpl extends BaseImpl implements INoteClip
 
     /** {@inheritDoc}} */
     @Override
-    public void updateRepeatVelocityEnd (final int channel, final int step, final int row, final double value)
+    public void updateStepRepeatVelocityEnd (final int channel, final int step, final int row, final double value)
     {
         // Not supported
     }
@@ -768,7 +768,7 @@ public class CursorClipImpl extends BaseImpl implements INoteClip
 
     /** {@inheritDoc}} */
     @Override
-    public void changeRepeatVelocityEnd (final int channel, final int step, final int row, final int control)
+    public void changeStepRepeatVelocityEnd (final int channel, final int step, final int row, final int control)
     {
         // Not supported
     }
