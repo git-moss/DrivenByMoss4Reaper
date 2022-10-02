@@ -6,11 +6,10 @@ package de.mossgrabers.reaper.framework.daw.data;
 
 import de.mossgrabers.framework.daw.constants.AutomationMode;
 import de.mossgrabers.framework.daw.constants.RecordQuantization;
-import de.mossgrabers.framework.daw.data.IParameter;
 import de.mossgrabers.framework.daw.data.ITrack;
 import de.mossgrabers.framework.daw.data.bank.ISlotBank;
 import de.mossgrabers.framework.daw.resource.ChannelType;
-import de.mossgrabers.reaper.communication.Processor;
+import de.mossgrabers.framework.parameter.IParameter;
 import de.mossgrabers.reaper.framework.daw.DataSetupEx;
 import de.mossgrabers.reaper.framework.daw.data.bank.AbstractTrackBankImpl;
 import de.mossgrabers.reaper.framework.daw.data.bank.SceneBankImpl;
@@ -494,14 +493,6 @@ public class TrackImpl extends ChannelImpl implements ITrack
         // The related method in cursor device always returns true to support sequencers but this
         // one is used for track info, e.g. displaying a track icon. Therefore, return false.
         return false;
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void addEqualizerDevice ()
-    {
-        this.sender.processNoArg (Processor.EQ, "add");
     }
 
 

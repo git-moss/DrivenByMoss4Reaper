@@ -16,9 +16,9 @@ import de.mossgrabers.framework.controller.valuechanger.SignedBit2RelativeValueC
 import de.mossgrabers.framework.controller.valuechanger.SignedBitRelativeValueChanger;
 import de.mossgrabers.framework.controller.valuechanger.TwosComplementValueChanger;
 import de.mossgrabers.framework.daw.IHost;
-import de.mossgrabers.framework.daw.data.IParameter;
 import de.mossgrabers.framework.daw.midi.IMidiInput;
 import de.mossgrabers.framework.graphics.IGraphicsContext;
+import de.mossgrabers.framework.parameter.IParameter;
 import de.mossgrabers.reaper.framework.daw.data.parameter.ParameterImpl;
 import de.mossgrabers.reaper.framework.graphics.GraphicsContextImpl;
 import de.mossgrabers.reaper.framework.midi.MidiInputImpl;

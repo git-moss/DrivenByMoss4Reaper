@@ -5,9 +5,9 @@
 package de.mossgrabers.framework.daw.data.empty;
 
 import de.mossgrabers.framework.daw.constants.RecordQuantization;
-import de.mossgrabers.framework.daw.data.IParameter;
 import de.mossgrabers.framework.daw.data.ITrack;
 import de.mossgrabers.framework.daw.data.bank.ISlotBank;
+import de.mossgrabers.framework.parameter.IParameter;
 
 
 /**
@@ -225,14 +225,6 @@ public class EmptyTrack extends EmptyChannel implements ITrack
     /** {@inheritDoc} */
     @Override
     public void setRecordQuantizationGrid (final RecordQuantization recordQuantization)
-    {
-        // Intentionally empty
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void addEqualizerDevice ()
     {
         // Intentionally empty
     }

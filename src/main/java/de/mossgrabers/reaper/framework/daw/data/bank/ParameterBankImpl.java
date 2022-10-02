@@ -5,9 +5,9 @@
 package de.mossgrabers.reaper.framework.daw.data.bank;
 
 import de.mossgrabers.framework.daw.data.IDevice;
-import de.mossgrabers.framework.daw.data.IParameter;
 import de.mossgrabers.framework.daw.data.bank.IParameterBank;
 import de.mossgrabers.framework.daw.data.empty.EmptyParameter;
+import de.mossgrabers.framework.parameter.IParameter;
 import de.mossgrabers.reaper.communication.Processor;
 import de.mossgrabers.reaper.framework.daw.DataSetupEx;
 import de.mossgrabers.reaper.framework.daw.data.parameter.ParameterImpl;

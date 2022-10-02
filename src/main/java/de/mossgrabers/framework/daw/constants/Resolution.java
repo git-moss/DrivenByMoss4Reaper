@@ -88,7 +88,7 @@ public enum Resolution
     /**
      * Get the value of the resolution.
      *
-     * @param index The index of the resolution enum
+     * @param index The index of the resolution enumeration
      * @return The value
      */
     public static double getValueAt (final int index)
@@ -100,7 +100,7 @@ public enum Resolution
     /**
      * Get the name of the resolution.
      *
-     * @param index The index of the resolution enum
+     * @param index The index of the resolution enumeration
      * @return The name
      */
     public static String getNameAt (final int index)
@@ -138,7 +138,7 @@ public enum Resolution
      * Get the resolution which matches the given value (the difference is less than 0.001).
      *
      * @param value A resolution value
-     * @return The index
+     * @return The index (ordinal) of the resolution
      */
     public static int getMatch (final double value)
     {

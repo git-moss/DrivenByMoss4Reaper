@@ -7,10 +7,10 @@ package de.mossgrabers.reaper.framework.daw.data;
 import de.mossgrabers.framework.controller.color.ColorEx;
 import de.mossgrabers.framework.daw.data.IChannel;
 import de.mossgrabers.framework.daw.data.IDeviceMetadata;
-import de.mossgrabers.framework.daw.data.IParameter;
 import de.mossgrabers.framework.daw.data.bank.ISendBank;
 import de.mossgrabers.framework.daw.resource.ChannelType;
 import de.mossgrabers.framework.observer.IValueObserver;
+import de.mossgrabers.framework.parameter.IParameter;
 import de.mossgrabers.reaper.communication.Processor;
 import de.mossgrabers.reaper.framework.Actions;
 import de.mossgrabers.reaper.framework.daw.DataSetupEx;
@@ -625,6 +625,14 @@ public class ChannelImpl extends ItemImpl implements IChannel
     public void addDevice (final IDeviceMetadata metadata)
     {
         this.sender.processStringArg (Processor.DEVICE, "add/0", ((Device) metadata).getCreationName ());
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void addEqualizerDevice ()
+    {
+        this.sender.processNoArg (Processor.EQ, "add");
     }
 
 

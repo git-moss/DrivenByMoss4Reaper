@@ -51,6 +51,7 @@ import de.mossgrabers.reaper.controller.novation.slmkiii.SLMkIIIControllerInstan
 import de.mossgrabers.reaper.controller.osc.OSCControllerInstance;
 import de.mossgrabers.reaper.controller.utilities.autocolor.AutoColorInstance;
 import de.mossgrabers.reaper.controller.utilities.midimonitor.MidiMonitorInstance;
+import de.mossgrabers.reaper.controller.yaeltex.turn.YaeltexTurnControllerInstance;
 import de.mossgrabers.reaper.framework.IniFiles;
 import de.mossgrabers.reaper.framework.configuration.GlobalSettingsUI;
 import de.mossgrabers.reaper.framework.daw.data.CursorDeviceImpl;
@@ -137,6 +138,7 @@ public class ControllerInstanceManager
         DEF_TO_CLASS.put (SLMkIControllerInstance.CONTROLLER_DEFINITION, SLMkIControllerInstance.class);
         DEF_TO_CLASS.put (SLMkIIControllerInstance.CONTROLLER_DEFINITION, SLMkIIControllerInstance.class);
         DEF_TO_CLASS.put (SLMkIIIControllerInstance.CONTROLLER_DEFINITION, SLMkIIIControllerInstance.class);
+        DEF_TO_CLASS.put (YaeltexTurnControllerInstance.CONTROLLER_DEFINITION, YaeltexTurnControllerInstance.class);
 
         for (final Class<?> clazz: DEF_TO_CLASS.values ())
             NAME_TO_CLASS.put (clazz.getName (), clazz);

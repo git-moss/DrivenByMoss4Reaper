@@ -8,9 +8,9 @@ import de.mossgrabers.controller.ableton.push.PushConfiguration;
 import de.mossgrabers.controller.ableton.push.controller.PushColorManager;
 import de.mossgrabers.controller.ableton.push.controller.PushControlSurface;
 import de.mossgrabers.framework.controller.ButtonID;
-import de.mossgrabers.framework.daw.IClip;
 import de.mossgrabers.framework.daw.IModel;
-import de.mossgrabers.framework.daw.INoteClip;
+import de.mossgrabers.framework.daw.clip.IClip;
+import de.mossgrabers.framework.daw.clip.INoteClip;
 import de.mossgrabers.framework.daw.constants.Resolution;
 import de.mossgrabers.framework.featuregroup.AbstractFeatureGroup;
 import de.mossgrabers.framework.utils.ButtonEvent;
@@ -97,7 +97,7 @@ public class ClipView extends AbstractSequencerView<PushControlSurface, PushConf
         // Clip length/loop area
         final int step = clip.getCurrentStep ();
         final double quartersPerPad = this.getQuartersPerPad ();
-        final int stepsPerMeasure = (int) Math.round (quartersPerPad / Resolution.getValueAt (this.selectedResolutionIndex));
+        final int stepsPerMeasure = (int) Math.round (quartersPerPad / Resolution.getValueAt (this.getResolutionIndex ()));
         final int currentMeasure = step / stepsPerMeasure;
         final double maxQuarters = quartersPerPad * 64;
         final double start = clip.getLoopStart ();

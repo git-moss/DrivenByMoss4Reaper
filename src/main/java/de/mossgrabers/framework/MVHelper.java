@@ -8,18 +8,22 @@ import de.mossgrabers.framework.configuration.Configuration;
 import de.mossgrabers.framework.controller.IControlSurface;
 import de.mossgrabers.framework.controller.display.IDisplay;
 import de.mossgrabers.framework.daw.IModel;
-import de.mossgrabers.framework.daw.INoteClip;
 import de.mossgrabers.framework.daw.ITransport;
+import de.mossgrabers.framework.daw.clip.INoteClip;
+import de.mossgrabers.framework.daw.constants.DeviceID;
 import de.mossgrabers.framework.daw.data.ICursorDevice;
 import de.mossgrabers.framework.daw.data.ILayer;
-import de.mossgrabers.framework.daw.data.IParameter;
 import de.mossgrabers.framework.daw.data.IScene;
+import de.mossgrabers.framework.daw.data.ISpecificDevice;
 import de.mossgrabers.framework.daw.data.ITrack;
+import de.mossgrabers.framework.daw.data.bank.IDrumPadBank;
+import de.mossgrabers.framework.daw.data.bank.ILayerBank;
 import de.mossgrabers.framework.daw.data.bank.IParameterBank;
 import de.mossgrabers.framework.daw.data.bank.ISceneBank;
 import de.mossgrabers.framework.daw.data.bank.ISendBank;
 import de.mossgrabers.framework.daw.data.bank.ITrackBank;
 import de.mossgrabers.framework.featuregroup.IMode;
+import de.mossgrabers.framework.parameter.IParameter;
 import de.mossgrabers.framework.scale.Scales;
 
 import java.util.Optional;
@@ -84,8 +88,58 @@ public class MVHelper<S extends IControlSurface<C>, C extends Configuration>
 
 
     /**
+     * Display the range of the track page.
+     */
+    public void notifyTrackRange ()
+    {
+        this.delayDisplay ( () -> {
+
+            final ITrackBank currentTrackBank = this.model.getCurrentTrackBank ();
+            final int scrollPosition = currentTrackBank.getScrollPosition ();
+            return "Tracks: " + (scrollPosition + 1) + "-" + (scrollPosition + currentTrackBank.getPageSize ());
+
+        });
+    }
+
+
+    /**
+     * Display the range of the layer page.
+     */
+    public void notifyLayerRange ()
+    {
+        this.delayDisplay ( () -> {
+
+            final ISpecificDevice specificDevice = this.model.getSpecificDevice (DeviceID.FIRST_INSTRUMENT);
+            final ILayerBank layerBank = specificDevice.getLayerBank ();
+            final int scrollPosition = layerBank.getScrollPosition ();
+            if (specificDevice.hasLayers () && scrollPosition >= 0)
+                return "Layers: " + (scrollPosition + 1) + "-" + (scrollPosition + layerBank.getPageSize ());
+            return "";
+        });
+    }
+
+
+    /**
+     * Display the range of the drum pad page.
+     */
+    public void notifyDrumPadRange ()
+    {
+        this.delayDisplay ( () -> {
+
+            final ISpecificDevice specificDevice = this.model.getDrumDevice ();
+            final IDrumPadBank drumPadBank = specificDevice.getDrumPadBank ();
+            final int scrollPosition = drumPadBank.getScrollPosition ();
+            if (specificDevice.hasDrumPads () && scrollPosition >= 0)
+                return "Drum Pads: " + scrollPosition + "-" + (scrollPosition + drumPadBank.getPageSize ());
+            return "";
+
+        });
+    }
+
+
+    /**
      * Display the range of the sends page.
-     * 
+     *
      * @param sendBank The send bank
      */
     public void notifySelectedSends (final ISendBank sendBank)
@@ -139,6 +193,27 @@ public class MVHelper<S extends IControlSurface<C>, C extends Configuration>
         this.delayDisplay ( () -> {
 
             final ICursorDevice cursorDevice = this.model.getCursorDevice ();
+            if (cursorDevice.doesExist ())
+            {
+                final Optional<String> selectedItem = cursorDevice.getParameterPageBank ().getSelectedItem ();
+                if (selectedItem.isPresent ())
+                    return cursorDevice.getName () + " - " + selectedItem.get ();
+            }
+
+            return "No device selected";
+
+        });
+    }
+
+
+    /**
+     * Display the name of the first device on the device chain and parameter page.
+     */
+    public void notifyFirstDeviceAndParameterPage ()
+    {
+        this.delayDisplay ( () -> {
+
+            final ISpecificDevice cursorDevice = this.model.getSpecificDevice (DeviceID.FIRST_INSTRUMENT);
             if (cursorDevice.doesExist ())
             {
                 final Optional<String> selectedItem = cursorDevice.getParameterPageBank ().getSelectedItem ();
@@ -298,7 +373,8 @@ public class MVHelper<S extends IControlSurface<C>, C extends Configuration>
         this.surface.scheduleTask ( () -> {
 
             final String message = supplier.get ();
-            this.display.notify (message);
+            if (message != null && !message.isBlank ())
+                this.display.notify (message);
 
         }, DISPLAY_DELAY);
     }

@@ -5,7 +5,7 @@
 package de.mossgrabers.reaper.framework.daw.data;
 
 import de.mossgrabers.framework.controller.valuechanger.IValueChanger;
-import de.mossgrabers.framework.daw.data.AbstractParameterImpl;
+import de.mossgrabers.framework.parameter.AbstractParameterImpl;
 
 
 /**

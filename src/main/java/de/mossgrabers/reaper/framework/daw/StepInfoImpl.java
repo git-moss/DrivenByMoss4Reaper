@@ -4,7 +4,7 @@
 
 package de.mossgrabers.reaper.framework.daw;
 
-import de.mossgrabers.framework.daw.DefaultStepInfo;
+import de.mossgrabers.framework.daw.clip.DefaultStepInfo;
 
 
 /**
