@@ -43,8 +43,16 @@ public class MetronomeVolumeParameterImpl extends AbstractParameterImpl
     @Override
     public void setValue (final IValueChanger valueChanger, final int value)
     {
-        this.metronomeVolume = valueChanger.toNormalizedValue (value);
-        this.dataSetup.getSender ().processIntArg (Processor.METRO_VOL, valueChanger.toMidiValue (value));
+        this.setNormalizedValue (valueChanger.toNormalizedValue (value));
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void setNormalizedValue (final double value)
+    {
+        this.metronomeVolume = value;
+        this.dataSetup.getSender ().processIntArg (Processor.METRO_VOL, (int) Math.round (this.metronomeVolume * 127));
     }
 
 

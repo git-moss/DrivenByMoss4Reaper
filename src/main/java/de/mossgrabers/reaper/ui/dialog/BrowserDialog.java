@@ -26,6 +26,7 @@ import javax.swing.event.ListSelectionEvent;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
@@ -52,6 +53,7 @@ public class BrowserDialog extends BasicDialog
     private final List<JListX<String>> filterListBox      = new ArrayList<> ();
     private final List<BoxPanel>       filterPanels       = new ArrayList<> ();
     private final List<JLabel>         filterColumnLabels = new ArrayList<> ();
+    private final JLabel               infoTextLabel      = new JLabel ();
     private JListX<String>             resultListBox;
     private transient BrowserImpl      browser;
     private final transient Object     browserLock        = new Object ();
@@ -123,6 +125,12 @@ public class BrowserDialog extends BasicDialog
 
         columnWidgets.addComponent (columnPanel, BoxPanel.NONE);
 
+        final BoxPanel infoPane = new BoxPanel (BoxLayout.X_AXIS, true);
+        infoPane.add (this.infoTextLabel);
+
+        final Font f = this.infoTextLabel.getFont ();
+        this.infoTextLabel.setFont (f.deriveFont (f.getStyle () | Font.BOLD));
+        contentPane.add (infoPane, BorderLayout.NORTH);
         contentPane.add (columnWidgets, BorderLayout.CENTER);
 
         // Cancel and OK buttons
@@ -163,6 +171,8 @@ public class BrowserDialog extends BasicDialog
                 this.close (false, false);
 
             this.browser = browser;
+
+            this.infoTextLabel.setText (this.browser.getInfoText ());
 
             this.setVisible (true);
             this.toFront ();
