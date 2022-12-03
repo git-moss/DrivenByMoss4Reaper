@@ -294,7 +294,8 @@ public class BrowserImpl extends AbstractBrowser
     @Override
     public void insertBeforeCursorDevice ()
     {
-        this.infoText = "Insert device before: " + this.cursorDevice.getName ();
+        // TODO
+        this.infoText = "Insert device before: " + this.cursorDevice.getName (100);
 
         this.browse (ContentType.DEVICE, this.cursorDevice.getPosition ());
     }
@@ -304,7 +305,8 @@ public class BrowserImpl extends AbstractBrowser
     @Override
     public void insertAfterCursorDevice ()
     {
-        this.infoText = "Insert device after: " + this.cursorDevice.getName ();
+        // TODO
+        this.infoText = "Insert device after: " + this.cursorDevice.getName (100);
 
         this.browse (ContentType.DEVICE, this.cursorDevice.getPosition () + 1);
     }

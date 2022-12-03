@@ -18,7 +18,6 @@ import de.mossgrabers.reaper.ui.widget.Functions;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -54,18 +53,18 @@ import java.util.TreeMap;
  */
 public class MainFrame extends JFrame
 {
-    private static final long                            serialVersionUID = 4251131641194938848L;
-    private static final int                             GAP              = 14;
+    private static final long                                  serialVersionUID = 4251131641194938848L;
+    private static final int                                   GAP              = 14;
 
-    private final transient AppCallback                  callback;
-    private final JTextArea                              loggingTextArea  = new JTextArea ();
-    private final JButton                                removeButton;
-    private final JButton                                configButton;
+    private final transient AppCallback                        callback;
+    private final JTextArea                                    loggingTextArea  = new JTextArea ();
+    private final JButton                                      removeButton;
+    private final JButton                                      configButton;
     private final DefaultListModel<ControllerCheckboxListItem> listModel        = new DefaultListModel<> ();
-    private final JList<ControllerCheckboxListItem>      controllerList   = new JList<> (this.listModel);
+    private final JList<ControllerCheckboxListItem>            controllerList   = new JList<> (this.listModel);
 
-    private final DebugDialog                            debugDialog;
-    private final BrowserDialog                          browserDialog;
+    private final DebugDialog                                  debugDialog;
+    private final BrowserDialog                                browserDialog;
 
 
     /**
@@ -74,9 +73,8 @@ public class MainFrame extends JFrame
      * @param callback The callback from the user interface
      * @param instanceManager The available controller definitions
      * @param logModel The logging model
-     * @param disableChunkReading Disable reading of the track chunk
      */
-    public MainFrame (final AppCallback callback, final ControllerInstanceManager instanceManager, final LogModel logModel, final boolean disableChunkReading)
+    public MainFrame (final AppCallback callback, final ControllerInstanceManager instanceManager, final LogModel logModel)
     {
         this.callback = callback;
 
@@ -146,7 +144,7 @@ public class MainFrame extends JFrame
         final ImageIcon debugIcon = Functions.getIcon ("Debug");
         final JButton debugButton = new JButton ("Debug");
         addIcon (debugButton, debugIcon);
-        this.configureDebugButton (debugButton, disableChunkReading);
+        this.configureDebugButton (debugButton);
 
         // Button panel
         final JPanel deviceButtonContainer = new JPanel ();
@@ -403,14 +401,9 @@ public class MainFrame extends JFrame
     }
 
 
-    private void configureDebugButton (final JButton debugButton, final boolean disableChunkReading)
+    private void configureDebugButton (final JButton debugButton)
     {
         final JPopupMenu popup = new JPopupMenu ();
-
-        final JCheckBoxMenuItem disableTrackChunkItem = new JCheckBoxMenuItem ("Disable track chunk", null, disableChunkReading);
-        disableTrackChunkItem.setToolTipText ("Improves performance with sample heavy devices. Loses track deactivation state and track record quantization.");
-        disableTrackChunkItem.addActionListener (event -> this.callback.toggleTrackChunkReading ());
-        popup.add (disableTrackChunkItem);
 
         final JMenuItem refreshMIDIPortsItem = new JMenuItem ("Refresh MIDI Ports");
         refreshMIDIPortsItem.addActionListener (event -> this.callback.sendMIDIPortRefreshCommand ());

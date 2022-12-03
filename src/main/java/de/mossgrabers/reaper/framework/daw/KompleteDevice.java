@@ -108,6 +108,14 @@ public class KompleteDevice implements ISpecificDevice
 
     /** {@inheritDoc} */
     @Override
+    public void toggleMultiSelect ()
+    {
+        this.instrumentDevice.toggleMultiSelect ();
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
     public String getName ()
     {
         return this.instrumentDevice.getName ();

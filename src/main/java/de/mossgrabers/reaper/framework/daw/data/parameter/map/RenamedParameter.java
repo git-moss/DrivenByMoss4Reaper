@@ -84,6 +84,14 @@ public class RenamedParameter implements IParameter
 
     /** {@inheritDoc} */
     @Override
+    public void toggleMultiSelect ()
+    {
+        this.parameter.toggleMultiSelect ();
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
     public String getName ()
     {
         return this.newName == null || this.newName.isBlank () ? this.parameter.getName () : this.newName;

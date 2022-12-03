@@ -67,8 +67,5 @@ public enum Processor
     /** Single commands - refresh. */
     REFRESH,
     /** Single commands - INI file. */
-    INIFILE,
-
-    /** Option to disable reading the track chunk. */
-    CHUNK;
+    INIFILE
 }

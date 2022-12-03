@@ -99,10 +99,4 @@ public interface AppCallback
      * @param enable True to enable processor updates, false to disable
      */
     void enableUpdates (final Processor processor, final boolean enable);
-
-
-    /**
-     * Toggle reading (slow) track chunk reading.
-     */
-    void toggleTrackChunkReading ();
 }

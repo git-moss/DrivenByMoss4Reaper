@@ -454,6 +454,14 @@ public class ChannelImpl extends ItemImpl implements IChannel
     }
 
 
+    /** {@inheritDoc} */
+    @Override
+    public void toggleMultiSelect ()
+    {
+        throw new UnsupportedOperationException ("ChannelImpl.toggleMultiSelect not implemented. Only use with TrackImpl!");
+    }
+
+
     /**
      * Store the type of the track.
      *

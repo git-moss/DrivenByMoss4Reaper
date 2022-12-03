@@ -789,6 +789,16 @@ public class CursorTrackImpl implements ICursorTrack
 
     /** {@inheritDoc} */
     @Override
+    public void toggleMultiSelect ()
+    {
+        final ITrack selectedTrack = this.getPinnedOrSelectedTrack ();
+        if (selectedTrack != null)
+            selectedTrack.toggleMultiSelect ();
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
     public String getName ()
     {
         final ITrack selectedTrack = this.getPinnedOrSelectedTrack ();

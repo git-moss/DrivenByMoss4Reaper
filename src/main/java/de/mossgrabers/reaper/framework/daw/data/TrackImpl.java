@@ -329,6 +329,15 @@ public class TrackImpl extends ChannelImpl implements ITrack
     }
 
 
+    /** {@inheritDoc} */
+    @Override
+    public void toggleMultiSelect ()
+    {
+        if (this.doesExist ())
+            this.sendPositionedItemOSC ("toggleMultiSelect", 1);
+    }
+
+
     /**
      * Set recording arm state.
      *

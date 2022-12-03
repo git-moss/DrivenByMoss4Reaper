@@ -81,6 +81,14 @@ public class ParameterProxy implements IParameter
 
     /** {@inheritDoc} */
     @Override
+    public void toggleMultiSelect ()
+    {
+        this.getParam ().toggleMultiSelect ();
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
     public String getName ()
     {
         return this.getParam ().getName ();

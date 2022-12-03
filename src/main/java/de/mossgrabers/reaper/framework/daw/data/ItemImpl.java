@@ -172,6 +172,14 @@ public abstract class ItemImpl extends BaseImpl implements IItem
     }
 
 
+    /** {@inheritDoc} */
+    @Override
+    public void toggleMultiSelect ()
+    {
+        // Intentionally empty
+    }
+
+
     protected void sendPositionedItemOSC (final String command)
     {
         this.sender.processNoArg (this.getProcessor (), this.createCommand (command));
