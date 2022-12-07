@@ -7,6 +7,7 @@ package de.mossgrabers.reaper;
 import de.mossgrabers.framework.controller.IControllerDefinition;
 import de.mossgrabers.reaper.communication.Processor;
 import de.mossgrabers.reaper.controller.IControllerInstance;
+import de.mossgrabers.reaper.framework.daw.BrowserContentType;
 
 import java.util.List;
 
@@ -98,5 +99,23 @@ public interface AppCallback
      * @param processor The processor to The processor to disable/enable
      * @param enable True to enable processor updates, false to disable
      */
-    void enableUpdates (final Processor processor, final boolean enable);
+    void enableUpdates (Processor processor, boolean enable);
+
+
+    /**
+     * Get the visibility configuration for the given browser content type.
+     *
+     * @param browserContentType The content type
+     * @return The visibility configuration
+     */
+    boolean [] getBrowserColumnsVisibility (BrowserContentType browserContentType);
+
+
+    /**
+     * Set the visibility configuration for the given browser content type.
+     *
+     * @param browserContentType The content type
+     * @param visibilities The visibility configuration
+     */
+    void setBrowserColumnsVisibility (BrowserContentType browserContentType, boolean [] visibilities);
 }

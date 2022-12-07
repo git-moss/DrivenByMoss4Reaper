@@ -72,7 +72,7 @@ public class ModelImpl extends AbstractModel
         this.arranger = new ArrangerImpl (dataSetup);
         this.mixer = new MixerImpl (dataSetup);
         this.project = new ProjectImpl (dataSetup, this, configuration);
-        this.transport = new TransportImpl (dataSetup, this, iniFiles);
+        this.transport = new TransportImpl (dataSetup, this);
         this.groove = new GrooveImpl (dataSetup);
         this.markerBank = new MarkerBankImpl (dataSetup, modelSetup.getNumMarkers ());
         this.cursorTrack = new CursorTrackImpl (this);

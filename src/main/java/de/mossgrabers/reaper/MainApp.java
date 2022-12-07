@@ -15,6 +15,7 @@ import de.mossgrabers.reaper.framework.Actions;
 import de.mossgrabers.reaper.framework.IniFiles;
 import de.mossgrabers.reaper.framework.configuration.DocumentSettingsUI;
 import de.mossgrabers.reaper.framework.configuration.IfxSetting;
+import de.mossgrabers.reaper.framework.daw.BrowserContentType;
 import de.mossgrabers.reaper.framework.device.DeviceManager;
 import de.mossgrabers.reaper.framework.graphics.SVGImage;
 import de.mossgrabers.reaper.framework.midi.Midi;
@@ -831,5 +832,27 @@ public class MainApp implements MessageSender, AppCallback, WindowManager
         {
             // Ignore
         }
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean [] getBrowserColumnsVisibility (final BrowserContentType browserContentType)
+    {
+        final boolean [] visibilities = new boolean [8];
+        final String key = "BROWSER_FILTER_COLUMN_" + browserContentType.name ();
+        for (int i = 0; i < visibilities.length; i++)
+            visibilities[i] = this.mainConfiguration.getBoolean (key + i, browserContentType != BrowserContentType.PRESET);
+        return visibilities;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void setBrowserColumnsVisibility (final BrowserContentType browserContentType, final boolean [] visibilities)
+    {
+        final String key = "BROWSER_FILTER_COLUMN_" + browserContentType.name ();
+        for (int i = 0; i < visibilities.length; i++)
+            this.mainConfiguration.putBoolean (key + i, visibilities[i]);
     }
 }

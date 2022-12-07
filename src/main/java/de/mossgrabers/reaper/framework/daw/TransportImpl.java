@@ -14,7 +14,6 @@ import de.mossgrabers.framework.daw.data.ITrack;
 import de.mossgrabers.framework.parameter.IParameter;
 import de.mossgrabers.reaper.communication.Processor;
 import de.mossgrabers.reaper.framework.Actions;
-import de.mossgrabers.reaper.framework.IniFiles;
 import de.mossgrabers.reaper.framework.daw.data.MasterTrackImpl;
 import de.mossgrabers.reaper.framework.daw.data.TrackImpl;
 import de.mossgrabers.reaper.framework.daw.data.parameter.MetronomeVolumeParameterImpl;
@@ -38,7 +37,6 @@ public class TransportImpl extends BaseImpl implements ITransport
     private static final Object                UPDATE_LOCK        = new Object ();
 
     private final IModel                       model;
-    private final IniFiles                     iniFiles;
 
     private double                             position           = 0;            // Time
     private String                             positionStr        = "";
@@ -57,8 +55,8 @@ public class TransportImpl extends BaseImpl implements ITransport
 
     private int                                numerator          = 4;
     private int                                denominator        = 4;
-    private boolean                            prerollClick       = false;
-    private int                                preroll            = 2;
+    private boolean                            prerollMetronome   = false;
+    private int                                prerollMeasures    = 2;
 
     private int                                punchMode          = PUNCH_OFF;
     private final MetronomeVolumeParameterImpl metronomeVolumeParameter;
@@ -70,13 +68,11 @@ public class TransportImpl extends BaseImpl implements ITransport
      *
      * @param dataSetup Some configuration variables
      * @param model The DAW model
-     * @param iniFiles The INI configuration files
      */
-    public TransportImpl (final DataSetupEx dataSetup, final IModel model, final IniFiles iniFiles)
+    public TransportImpl (final DataSetupEx dataSetup, final IModel model)
     {
         super (dataSetup);
 
-        this.iniFiles = iniFiles;
         this.model = model;
 
         this.metronomeVolumeParameter = new MetronomeVolumeParameterImpl (dataSetup);
@@ -313,7 +309,7 @@ public class TransportImpl extends BaseImpl implements ITransport
     @Override
     public boolean isPrerollMetronomeEnabled ()
     {
-        return this.prerollClick;
+        return this.prerollMetronome;
     }
 
 
@@ -326,69 +322,44 @@ public class TransportImpl extends BaseImpl implements ITransport
     }
 
 
-    /** {@inheritDoc} */
-    @Override
-    public String getPreroll ()
+    /**
+     * Disable/Enable the preroll click.
+     *
+     * @param enable True to enable
+     */
+    public void setPrerollMetronomeInternal (final boolean enable)
     {
-        this.preroll = (int) Math.floor (this.iniFiles.getMainIniDouble ("reaper", "prerollmeas", 2.0));
-
-        switch (this.preroll)
-        {
-            case 0:
-                return TransportConstants.PREROLL_NONE;
-            case 1:
-                return TransportConstants.PREROLL_1_BAR;
-            case 2:
-                return TransportConstants.PREROLL_2_BARS;
-            case 4:
-                return TransportConstants.PREROLL_4_BARS;
-            default:
-                // Other values are not supported, set to the default value
-                this.setPreroll (TransportConstants.PREROLL_2_BARS);
-                return TransportConstants.PREROLL_2_BARS;
-        }
+        this.prerollMetronome = enable;
     }
 
 
     /** {@inheritDoc} */
     @Override
-    public void setPreroll (final String preroll)
+    public int getPrerollMeasures ()
     {
-        switch (preroll)
-        {
-            case TransportConstants.PREROLL_NONE:
-                this.setPrerollAsBars (0);
-                break;
-            case TransportConstants.PREROLL_1_BAR:
-                this.setPrerollAsBars (1);
-                break;
-            case TransportConstants.PREROLL_2_BARS:
-                this.setPrerollAsBars (2);
-                break;
-            case TransportConstants.PREROLL_4_BARS:
-                this.setPrerollAsBars (4);
-                break;
-            default:
-                // Other values are not supported
-                break;
-        }
+        return this.prerollMeasures;
     }
 
 
     /** {@inheritDoc} */
     @Override
-    public int getPrerollAsBars ()
+    public void setPrerollMeasures (final int measures)
     {
-        return this.preroll;
+        this.prerollMeasures = measures;
+        this.sender.processIntArg (Processor.INIFILE, "reaper/prerollmeas", measures);
     }
 
 
-    /** {@inheritDoc} */
-    @Override
-    public void setPrerollAsBars (final int preroll)
+    /**
+     * Set the preroll measures.
+     *
+     * @param measures The preroll measures
+     */
+    public void setPrerollMeasuresInternal (final int measures)
     {
-        this.sender.processIntArg (Processor.INIFILE, "reaper/prerollmeas", preroll);
-        this.iniFiles.updateMainIniInteger ("reaper", "prerollmeas", preroll);
+        this.prerollMeasures = measures;
+        if (this.prerollMeasures < 0 || this.prerollMeasures > 4)
+            this.prerollMeasures = 2;
     }
 
 
@@ -1004,17 +975,6 @@ public class TransportImpl extends BaseImpl implements ITransport
     public void setDenominator (final int denominator)
     {
         this.denominator = denominator;
-    }
-
-
-    /**
-     * Disable/Enable the preroll click.
-     *
-     * @param enable True to enable
-     */
-    public void setPrerollClick (final boolean enable)
-    {
-        this.prerollClick = enable;
     }
 
 

@@ -251,7 +251,11 @@ public class MessageParser
         switch (clickCommand)
         {
             case "preroll":
-                this.transport.setPrerollClick (Integer.parseInt (value) > 0);
+                this.transport.setPrerollMetronomeInternal ((Integer.parseInt (value) & 2) > 0);
+                break;
+
+            case "prerollMeasures":
+                this.transport.setPrerollMeasuresInternal ((int) Double.parseDouble (value));
                 break;
 
             case TAG_VOLUME:
@@ -822,12 +826,8 @@ public class MessageParser
         final String command = parts.poll ();
         switch (command)
         {
-            case "result":
-                final int resultNo = Integer.parseInt (parts.poll ()) - 1;
-                if (TAG_NAME.equals (parts.poll ()))
-                    ((BrowserImpl) this.browser).setPreset (resultNo, value == null || value.isEmpty () ? null : value);
-                else
-                    this.host.error ("Unhandled Browser Result: " + command);
+            case "presetsfile":
+                ((BrowserImpl) this.browser).setPresetsFile (value);
                 break;
 
             case "selected":

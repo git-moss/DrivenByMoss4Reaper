@@ -5,12 +5,12 @@
 package de.mossgrabers.reaper.framework.daw;
 
 import de.mossgrabers.framework.daw.AbstractBrowser;
-import de.mossgrabers.framework.daw.IHost;
 import de.mossgrabers.framework.daw.data.IBrowserColumn;
 import de.mossgrabers.framework.daw.data.IBrowserColumnItem;
 import de.mossgrabers.framework.daw.data.IChannel;
 import de.mossgrabers.framework.daw.data.ICursorDevice;
 import de.mossgrabers.framework.daw.data.IItem;
+import de.mossgrabers.framework.utils.FrameworkException;
 import de.mossgrabers.framework.utils.StringUtils;
 import de.mossgrabers.reaper.communication.MessageSender;
 import de.mossgrabers.reaper.communication.Processor;
@@ -33,12 +33,19 @@ import de.mossgrabers.reaper.framework.device.column.DeviceTypeFilterColumn;
 import de.mossgrabers.reaper.framework.device.column.EmptyFilterColumn;
 import de.mossgrabers.reaper.ui.dialog.BrowserDialog;
 
+import com.nikhaldimann.inieditor.IniEditor;
+
+import javax.swing.DefaultListModel;
 import javax.swing.SwingUtilities;
 
-import java.util.ArrayList;
+import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 
 /**
@@ -49,41 +56,60 @@ import java.util.Locale;
  */
 public class BrowserImpl extends AbstractBrowser
 {
-    private enum ContentType
-    {
-        DEVICE,
-        PRESET
-    }
-
-
-    private static final String []     CONTENT_TYPE_NAMES = new String []
+    private static final String [] CONTENT_TYPE_NAMES = new String []
     {
         "Devices",
         "Presets"
     };
 
-    private ContentType                contentType        = ContentType.PRESET;
-    private final ICursorDevice        cursorDevice;
 
-    final DeviceCollectionFilterColumn deviceCollectionFilterColumn;
-    final DeviceLocationFilterColumn   deviceLocationFilterColumn;
-    final DeviceFileTypeFilterColumn   deviceFileTypeFilterColumn;
-    final DeviceCategoryFilterColumn   deviceCategoryFilterColumn;
-    final DeviceTagsFilterColumn       deviceTagsFilterColumn;
-    final DeviceCreatorFilterColumn    deviceCreatorFilterColumn;
-    final DeviceTypeFilterColumn       deviceTypeFilterColumn;
+    /** Cached preset files. */
+    private static class PresetFileCacheItem
+    {
+        IniEditor iniFile = new IniEditor (true);
+        long      time;
+        String [] presets;
+    }
 
-    private boolean                    isBrowserActive    = false;
-    String []                          presets            = new String [128];
-    private int                        presetCount        = 0;
-    int                                selectedIndex;
-    List<Device>                       filteredDevices    = Collections.emptyList ();
 
-    private final MessageSender        sender;
-    private final IBrowserColumn [] [] columnDataContentTypes;
-    private final BrowserDialog        browserWindow;
-    private final IHost                host;
-    private int                        insertPosition;
+    /** Model for dynamically updating the presets. */
+    private static class PresetModel extends DefaultListModel<String>
+    {
+        private static final long serialVersionUID = 1893811425744940327L;
+
+
+        public void update ()
+        {
+            this.fireContentsChanged (this, 0, this.getSize () - 1);
+        }
+    }
+
+
+    private static final Map<String, PresetFileCacheItem> presetFileCache     = new HashMap<> ();
+
+    private BrowserContentType                            contentType         = BrowserContentType.PRESET;
+    private final ICursorDevice                           cursorDevice;
+
+    final DeviceCollectionFilterColumn                    deviceCollectionFilterColumn;
+    final DeviceLocationFilterColumn                      deviceLocationFilterColumn;
+    final DeviceFileTypeFilterColumn                      deviceFileTypeFilterColumn;
+    final DeviceCategoryFilterColumn                      deviceCategoryFilterColumn;
+    final DeviceTagsFilterColumn                          deviceTagsFilterColumn;
+    final DeviceCreatorFilterColumn                       deviceCreatorFilterColumn;
+    final DeviceTypeFilterColumn                          deviceTypeFilterColumn;
+
+    private boolean                                       isBrowserActive     = false;
+
+    private final PresetModel                             presetModel         = new PresetModel ();
+
+    int                                                   selectedIndex;
+    List<Device>                                          filteredDevices     = Collections.emptyList ();
+
+    private final MessageSender                           sender;
+    private final IBrowserColumn [] []                    columnDataContentTypes;
+    private final BrowserDialog                           browserWindow;
+    private int                                           insertPosition;
+    private Object                                        parsePresetFileLock = new Object ();
 
 
     /**
@@ -101,8 +127,6 @@ public class BrowserImpl extends AbstractBrowser
         this.cursorDevice = cursorDevice;
         this.sender = dataSetup.getSender ();
 
-        this.host = dataSetup.getHost ();
-
         this.deviceCollectionFilterColumn = new DeviceCollectionFilterColumn (0, numFilterColumnEntries);
         this.deviceLocationFilterColumn = new DeviceLocationFilterColumn (1, numFilterColumnEntries);
         this.deviceFileTypeFilterColumn = new DeviceFileTypeFilterColumn (2, numFilterColumnEntries);
@@ -112,7 +136,7 @@ public class BrowserImpl extends AbstractBrowser
         this.deviceTypeFilterColumn = new DeviceTypeFilterColumn (6, numFilterColumnEntries);
 
         this.columnDataContentTypes = new IBrowserColumn [2] [];
-        this.columnDataContentTypes[ContentType.DEVICE.ordinal ()] = new IBrowserColumn []
+        this.columnDataContentTypes[BrowserContentType.DEVICE.ordinal ()] = new IBrowserColumn []
         {
             this.deviceCollectionFilterColumn,
             this.deviceLocationFilterColumn,
@@ -122,7 +146,7 @@ public class BrowserImpl extends AbstractBrowser
             this.deviceCreatorFilterColumn,
             this.deviceTypeFilterColumn
         };
-        this.columnDataContentTypes[ContentType.PRESET.ordinal ()] = new IBrowserColumn []
+        this.columnDataContentTypes[BrowserContentType.PRESET.ordinal ()] = new IBrowserColumn []
         {
             new EmptyFilterColumn (0, numFilterColumnEntries),
             new EmptyFilterColumn (1, numFilterColumnEntries),
@@ -133,12 +157,12 @@ public class BrowserImpl extends AbstractBrowser
             new EmptyFilterColumn (6, numFilterColumnEntries),
             new EmptyFilterColumn (7, numFilterColumnEntries)
         };
-        this.columnData = this.columnDataContentTypes[ContentType.PRESET.ordinal ()];
+        this.columnData = this.columnDataContentTypes[BrowserContentType.PRESET.ordinal ()];
 
         this.resultData = this.createResultData (this.numResults);
 
-        for (final IBrowserColumn column: this.columnDataContentTypes[ContentType.DEVICE.ordinal ()])
-            ((BaseColumn) column).addSelectionListener (this::updateFilteredDevices);
+        for (final IBrowserColumn column: this.columnDataContentTypes[BrowserContentType.DEVICE.ordinal ()])
+            ((BaseColumn) column).addSelectionListener ( () -> this.updateFilteredDevices (true));
 
         this.browserWindow = ((HostImpl) dataSetup.getHost ()).getWindowManager ().getMainFrame ().getBrowserDialog ();
 
@@ -158,7 +182,7 @@ public class BrowserImpl extends AbstractBrowser
     @Override
     public boolean isPresetContentType ()
     {
-        return this.contentType == ContentType.PRESET;
+        return this.contentType == BrowserContentType.PRESET;
     }
 
 
@@ -212,6 +236,17 @@ public class BrowserImpl extends AbstractBrowser
     }
 
 
+    /**
+     * Get the content type object.
+     *
+     * @return THe content type
+     */
+    public BrowserContentType getContentType ()
+    {
+        return this.contentType;
+    }
+
+
     /** {@inheritDoc} */
     @Override
     public String [] getContentTypeNames ()
@@ -223,20 +258,22 @@ public class BrowserImpl extends AbstractBrowser
     }
 
 
-    private void setContentType (final ContentType contentType)
+    private void setContentType (final BrowserContentType contentType)
     {
-        final ContentType [] values = ContentType.values ();
+        final BrowserContentType [] values = BrowserContentType.values ();
         final int id = contentType.ordinal ();
         this.contentType = values[Math.min (Math.max (0, id), values.length - 1)];
         this.columnData = this.columnDataContentTypes[id];
         this.selectedIndex = 0;
 
-        if (contentType == ContentType.DEVICE)
-            this.updateFilteredDevices ();
+        if (contentType == BrowserContentType.DEVICE)
+            this.updateFilteredDevices (false);
 
         SwingUtilities.invokeLater ( () -> {
             this.browserWindow.updateFilters ();
-            this.host.scheduleTask ( () -> this.browserWindow.updateResults (this.selectedIndex), 1000);
+            this.browserWindow.updateResults (this.selectedIndex);
+            this.browserWindow.setVisible (true);
+            this.browserWindow.toFront ();
         });
     }
 
@@ -275,7 +312,7 @@ public class BrowserImpl extends AbstractBrowser
             final String name = item.getName ();
             this.infoText = "Replace: " + (name.length () == 0 ? "Empty" : name);
 
-            this.browse (ContentType.PRESET, cdi.getPosition ());
+            this.browse (BrowserContentType.PRESET, cdi.getPosition ());
         }
     }
 
@@ -286,7 +323,7 @@ public class BrowserImpl extends AbstractBrowser
     {
         this.infoText = "Add device to: " + channel.getName ();
 
-        this.browse (ContentType.DEVICE, 0);
+        this.browse (BrowserContentType.DEVICE, 0);
     }
 
 
@@ -294,10 +331,9 @@ public class BrowserImpl extends AbstractBrowser
     @Override
     public void insertBeforeCursorDevice ()
     {
-        // TODO
-        this.infoText = "Insert device before: " + this.cursorDevice.getName (100);
+        this.infoText = "Insert device before: " + this.cursorDevice.getName ();
 
-        this.browse (ContentType.DEVICE, this.cursorDevice.getPosition ());
+        this.browse (BrowserContentType.DEVICE, this.cursorDevice.getPosition ());
     }
 
 
@@ -305,14 +341,13 @@ public class BrowserImpl extends AbstractBrowser
     @Override
     public void insertAfterCursorDevice ()
     {
-        // TODO
-        this.infoText = "Insert device after: " + this.cursorDevice.getName (100);
+        this.infoText = "Insert device after: " + this.cursorDevice.getName ();
 
-        this.browse (ContentType.DEVICE, this.cursorDevice.getPosition () + 1);
+        this.browse (BrowserContentType.DEVICE, this.cursorDevice.getPosition () + 1);
     }
 
 
-    private void browse (final ContentType contentType, final int insertPos)
+    private void browse (final BrowserContentType contentType, final int insertPos)
     {
         this.stopBrowsing (false);
 
@@ -419,7 +454,7 @@ public class BrowserImpl extends AbstractBrowser
      */
     public void setSelectedResult (final int index)
     {
-        final int length = this.isPresetContentType () ? this.presetCount : this.filteredDevices.size ();
+        final int length = this.isPresetContentType () ? this.presetModel.getSize () : this.filteredDevices.size ();
         this.selectedIndex = Math.min (Math.max (0, index), length - 1);
         SwingUtilities.invokeLater ( () -> this.browserWindow.updateResultSelection (this.selectedIndex));
     }
@@ -453,30 +488,6 @@ public class BrowserImpl extends AbstractBrowser
 
 
     /**
-     * Set a preset.
-     *
-     * @param index The index of the preset
-     * @param name The name of the preset
-     */
-    public void setPreset (final int index, final String name)
-    {
-        this.presets[index] = name;
-
-        // Update number of available presets
-        for (int i = 0; i < this.presets.length; i++)
-        {
-            if (this.presets[i] == null)
-            {
-                this.presetCount = i;
-                break;
-            }
-        }
-        if (this.selectedIndex >= this.presetCount)
-            this.selectedIndex = this.presetCount - 1;
-    }
-
-
-    /**
      * Set the selected preset.
      *
      * @param index The index of the preset to select
@@ -493,7 +504,7 @@ public class BrowserImpl extends AbstractBrowser
     }
 
 
-    private void updateFilteredDevices ()
+    private void updateFilteredDevices (final boolean alsoUpdateResults)
     {
         // There are 2 modes: presets and devices
         if (this.isPresetContentType ())
@@ -513,7 +524,8 @@ public class BrowserImpl extends AbstractBrowser
         if (this.selectedIndex >= this.filteredDevices.size ())
             this.selectedIndex = 0;
 
-        SwingUtilities.invokeLater ( () -> this.browserWindow.updateResults (this.selectedIndex));
+        if (alsoUpdateResults)
+            SwingUtilities.invokeLater ( () -> this.browserWindow.updateResults (this.selectedIndex));
     }
 
 
@@ -546,9 +558,10 @@ public class BrowserImpl extends AbstractBrowser
         @Override
         public boolean doesExist ()
         {
+            final int resultIndex = this.getIndex ();
             if (BrowserImpl.this.isPresetContentType ())
-                return BrowserImpl.this.presets[this.getIndex ()] != null;
-            return this.getIndex () < BrowserImpl.this.filteredDevices.size ();
+                return resultIndex < BrowserImpl.this.presetModel.getSize ();
+            return resultIndex < BrowserImpl.this.filteredDevices.size ();
         }
 
 
@@ -558,7 +571,7 @@ public class BrowserImpl extends AbstractBrowser
         {
             final int index = this.getIndex ();
             if (BrowserImpl.this.isPresetContentType ())
-                return BrowserImpl.this.presets[index] == null ? "" : BrowserImpl.this.presets[index];
+                return index < BrowserImpl.this.presetModel.getSize () ? BrowserImpl.this.presetModel.get (index) : "";
             final int id = BrowserImpl.this.translateBankIndexToPageOfSelectedIndex (index);
             return id < BrowserImpl.this.filteredDevices.size () ? BrowserImpl.this.filteredDevices.get (id).getDisplayName () : "";
         }
@@ -610,11 +623,55 @@ public class BrowserImpl extends AbstractBrowser
      *
      * @return The names of the presets
      */
-    public List<String> getPresets ()
+    public DefaultListModel<String> getPresets ()
     {
-        final List<String> results = new ArrayList<> (this.presetCount);
-        for (int i = 0; i < this.presetCount; i++)
-            results.add (this.presets[i]);
-        return results;
+        return this.presetModel;
+    }
+
+
+    /**
+     * Set the file which contains the presets of the currently selected device.
+     *
+     * @param filename The preset filename
+     */
+    public void setPresetsFile (final String filename)
+    {
+        synchronized (this.parsePresetFileLock)
+        {
+            PresetFileCacheItem presetFileCacheItem;
+
+            try
+            {
+                final File file = new File (filename);
+                if (!file.exists ())
+                    return;
+
+                presetFileCacheItem = presetFileCache.get (filename);
+                if (presetFileCacheItem == null || presetFileCacheItem.time != file.lastModified ())
+                {
+                    if (presetFileCacheItem == null)
+                    {
+                        presetFileCacheItem = new PresetFileCacheItem ();
+                        presetFileCache.put (filename, presetFileCacheItem);
+                    }
+                    presetFileCacheItem.iniFile.load (file.getAbsolutePath ());
+                    final int presetCount = Integer.parseInt (presetFileCacheItem.iniFile.get ("General", "NbPresets"));
+                    presetFileCacheItem.presets = new String [presetCount];
+                    for (int i = 0; i < presetCount; i++)
+                        presetFileCacheItem.presets[i] = presetFileCacheItem.iniFile.get ("Preset" + i, "Name");
+                    presetFileCacheItem.time = file.lastModified ();
+                }
+            }
+            catch (final IOException | NumberFormatException ex)
+            {
+                throw new FrameworkException ("Could not load file: " + filename, ex);
+            }
+
+            this.presetModel.clear ();
+            this.presetModel.addAll (Arrays.asList (presetFileCacheItem.presets));
+            this.presetModel.update ();
+
+            this.selectedIndex = 0;
+        }
     }
 }

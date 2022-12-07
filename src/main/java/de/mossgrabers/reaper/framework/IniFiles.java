@@ -23,8 +23,6 @@ import java.nio.file.Files;
 public class IniFiles
 {
     private static final String OPTION_FORMAT_NO_SPACES = "%s%s%s";
-    private static final String REAPER_MAIN             = "REAPER.ini";
-    private static final String REAPER_MAIN2            = "reaper.ini";
     private static final String AU_PLUGINS_64           = "reaper-auplugins64.ini";
     private static final String AU_PLUGINS_ARM64        = "reaper-auplugins_arm64.ini";
     private static final String CLAP_PLUGINS_WIN64      = "reaper-clap-win64.ini";
@@ -37,7 +35,6 @@ public class IniFiles
     private static final String FX_FOLDERS              = "reaper-fxfolders.ini";
     private static final String PARAM_MAPS              = "DrivenByMoss4Reaper-ParameterMaps.ini";
 
-    private final IniEditor     iniReaperMain           = new IniEditor ();
     private final IniEditor     iniClapPlugins64        = new IniEditor (true);
     private final IniEditor     iniClapPluginsARM64     = new IniEditor (true);
     private final IniEditor     iniVstPlugins64         = new IniEditor ();
@@ -61,12 +58,12 @@ public class IniFiles
     private boolean             isParamMapsPresent;
     private String              paramMapsFilename;
 
+
     /**
      * Constructor.
      */
     public IniFiles ()
     {
-        this.iniReaperMain.setOptionFormatString (OPTION_FORMAT_NO_SPACES);
         this.iniVstPlugins64.setOptionFormatString (OPTION_FORMAT_NO_SPACES);
         this.iniVstPluginsARM64.setOptionFormatString (OPTION_FORMAT_NO_SPACES);
         this.iniFxTags.setOptionFormatString (OPTION_FORMAT_NO_SPACES);
@@ -95,15 +92,6 @@ public class IniFiles
     public void init (final String iniPath, final LogModel logModel)
     {
         this.iniPath = iniPath;
-
-        synchronized (this.iniReaperMain)
-        {
-            loadINIFile (new String []
-            {
-                iniPath + File.separator + REAPER_MAIN,
-                iniPath + File.separator + REAPER_MAIN2
-            }, this.iniReaperMain, logModel);
-        }
 
         this.isVstPresent = loadINIFile (iniPath + File.separator + VST_PLUGINS_64, this.iniVstPlugins64, logModel);
 
@@ -423,95 +411,5 @@ public class IniFiles
 
         logModel.info (filenames[0] + " not present, skipped loading.");
         return false;
-    }
-
-
-    /**
-     * Get an option value from the main INI file as an integer.
-     *
-     * @param section The section in the INI file
-     * @param option The option name
-     * @param defaultValue The default value to return if the value could not be read
-     * @return The value
-     */
-    public int getMainIniInteger (final String section, final String option, final int defaultValue)
-    {
-        String value;
-        synchronized (this.iniReaperMain)
-        {
-            try
-            {
-                value = this.iniReaperMain.get (section, option);
-            }
-            catch (final com.nikhaldimann.inieditor.IniEditor.NoSuchSectionException ex)
-            {
-                return defaultValue;
-            }
-        }
-        if (value == null)
-            return defaultValue;
-        try
-        {
-            return Integer.parseInt (value);
-        }
-        catch (final NumberFormatException ex)
-        {
-            return defaultValue;
-        }
-    }
-
-
-    /**
-     * Set an integer option value in the main INI file. Does not write to the file, only updates
-     * the cached value!
-     *
-     * @param section The section in the INI file
-     * @param option The option name
-     * @param value The value to set
-     */
-    public void updateMainIniInteger (final String section, final String option, final int value)
-    {
-        // Updated the cached values as well
-        synchronized (this.iniReaperMain)
-        {
-            if (!this.iniReaperMain.hasSection (section))
-                this.iniReaperMain.addSection (section);
-            this.iniReaperMain.set (section, option, Integer.toString (value));
-        }
-    }
-
-
-    /**
-     * Get an option value from the main INI file as a double.
-     *
-     * @param section The section in the INI file
-     * @param option The option name
-     * @param defaultValue The default value to return if the value could not be read
-     * @return The value
-     */
-    public double getMainIniDouble (final String section, final String option, final double defaultValue)
-    {
-        String value;
-        synchronized (this.iniReaperMain)
-        {
-            try
-            {
-                value = this.iniReaperMain.get (section, option);
-            }
-            catch (final com.nikhaldimann.inieditor.IniEditor.NoSuchSectionException ex)
-            {
-                return defaultValue;
-            }
-        }
-        if (value == null)
-            return defaultValue;
-        try
-        {
-            return Double.parseDouble (value);
-        }
-        catch (final NumberFormatException ex)
-        {
-            return defaultValue;
-        }
     }
 }

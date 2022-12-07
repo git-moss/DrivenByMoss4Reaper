@@ -5,6 +5,8 @@
 package de.mossgrabers.reaper.ui.dialog;
 
 import de.mossgrabers.framework.daw.data.IBrowserColumn;
+import de.mossgrabers.reaper.AppCallback;
+import de.mossgrabers.reaper.framework.daw.BrowserContentType;
 import de.mossgrabers.reaper.framework.daw.BrowserImpl;
 import de.mossgrabers.reaper.framework.device.Device;
 import de.mossgrabers.reaper.framework.device.column.BaseColumn;
@@ -15,9 +17,13 @@ import de.mossgrabers.reaper.ui.widget.JListX;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
@@ -46,27 +52,32 @@ import java.util.List;
  */
 public class BrowserDialog extends BasicDialog
 {
-    private static final long          serialVersionUID   = -4991119574575580454L;
+    private static final long           serialVersionUID   = -4991119574575580454L;
 
-    private static final int           MAX_FILTER_COLUMNS = 7;
+    private static final int            MAX_FILTER_COLUMNS = 7;
 
-    private final List<JListX<String>> filterListBox      = new ArrayList<> ();
-    private final List<BoxPanel>       filterPanels       = new ArrayList<> ();
-    private final List<JLabel>         filterColumnLabels = new ArrayList<> ();
-    private final JLabel               infoTextLabel      = new JLabel ();
-    private JListX<String>             resultListBox;
-    private transient BrowserImpl      browser;
-    private final transient Object     browserLock        = new Object ();
+    private final transient AppCallback callback;
+    private final List<JListX<String>>  filterListBox      = new ArrayList<> ();
+    private final List<BoxPanel>        filterPanels       = new ArrayList<> ();
+    private final List<JLabel>          filterColumnLabels = new ArrayList<> ();
+    private final JLabel                infoTextLabel      = new JLabel ();
+    private JListX<String>              resultListBox;
+    private transient BrowserImpl       browser;
+    private final transient Object      browserLock        = new Object ();
+    private JMenu                       displayMenu        = null;
 
 
     /**
      * Constructor.
      *
      * @param owner The owner of the dialog
+     * @param callback Callback to set/get browser settings
      */
-    public BrowserDialog (final JFrame owner)
+    public BrowserDialog (final JFrame owner, final AppCallback callback)
     {
         super (owner, "Browser", false, false);
+
+        this.callback = callback;
 
         // Replace the default Java logo
         final URL resource = this.getClass ().getResource ("/images/AppIcon.gif");
@@ -79,7 +90,7 @@ public class BrowserDialog extends BasicDialog
 
         this.setMinimumSize (new Dimension (800, 600));
         this.basicInit ();
-
+        this.createMenu ();
         this.pack ();
         this.setLocationRelativeTo (null);
     }
@@ -147,6 +158,88 @@ public class BrowserDialog extends BasicDialog
     }
 
 
+    private void createMenu ()
+    {
+        final JMenuBar menuBar = new JMenuBar ();
+        this.displayMenu = new JMenu ("View");
+        menuBar.add (this.displayMenu);
+        this.setJMenuBar (menuBar);
+        for (int i = 0; i < MAX_FILTER_COLUMNS; i++)
+        {
+            final JMenuItem menuItem = new JCheckBoxMenuItem ("FILTER_COLUMN " + i);
+            final int col = i;
+            menuItem.addActionListener (e -> this.toggleFilterColumnVisibility (col));
+            this.displayMenu.add (menuItem);
+        }
+        this.displayMenu.addSeparator ();
+
+        final JMenuItem allMenuItem = new JMenuItem ("All");
+        allMenuItem.addActionListener (e -> this.toggleFilterColumnVisibilityAll (true));
+        this.displayMenu.add (allMenuItem);
+        final JMenuItem noneMenuItem = new JMenuItem ("None");
+        noneMenuItem.addActionListener (e -> this.toggleFilterColumnVisibilityAll (false));
+        this.displayMenu.add (noneMenuItem);
+    }
+
+
+    private void updateMenu ()
+    {
+        final boolean [] browserColumnsVisibility = this.callback.getBrowserColumnsVisibility (this.browser.getContentType ());
+
+        final int filterColumnCount = this.browser.getFilterColumnCount ();
+        for (int col = 0; col < MAX_FILTER_COLUMNS; col++)
+        {
+            final JMenuItem menuItem = this.displayMenu.getItem (col);
+            if (col < filterColumnCount)
+            {
+                final String name = this.browser.getFilterColumn (col).getName ();
+                menuItem.setText (name.isBlank () ? "No filter" : name);
+                this.setFilterColumnVisible (col, browserColumnsVisibility[col]);
+                ((JCheckBoxMenuItem) menuItem).setSelected (browserColumnsVisibility[col]);
+                setFilterColumnVisible (col, browserColumnsVisibility[col]);
+            }
+            menuItem.setVisible (col < filterColumnCount);
+        }
+    }
+
+
+    private void toggleFilterColumnVisibilityAll (final boolean all)
+    {
+        for (int col = 0; col < this.browser.getFilterColumnCount (); col++)
+        {
+            this.setFilterColumnVisible (col, all);
+            this.updateColumnSettings (col, all);
+        }
+    }
+
+
+    private void toggleFilterColumnVisibility (final int column)
+    {
+        final BoxPanel filterCol = this.filterPanels.get (column);
+        final boolean show = !filterCol.isVisible ();
+        this.setFilterColumnVisible (column, show);
+        this.updateColumnSettings (column, show);
+    }
+
+
+    private void setFilterColumnVisible (final int column, final boolean show)
+    {
+        final BoxPanel filterCol = this.filterPanels.get (column);
+        filterCol.setVisible (show);
+        filterCol.getParent ().getComponent (column * 2 + 1).setVisible (show);
+    }
+
+
+    protected void updateColumnSettings (final int column, final boolean show)
+    {
+        // Update settings
+        final BrowserContentType contentType = this.browser.getContentType ();
+        final boolean [] browserColumnsVisibility = this.callback.getBrowserColumnsVisibility (contentType);
+        browserColumnsVisibility[column] = show;
+        this.callback.setBrowserColumnsVisibility (contentType, browserColumnsVisibility);
+    }
+
+
     /** {@inheritDoc} */
     @Override
     protected void processWindowEvent (final WindowEvent e)
@@ -173,9 +266,6 @@ public class BrowserDialog extends BasicDialog
             this.browser = browser;
 
             this.infoTextLabel.setText (this.browser.getInfoText ());
-
-            this.setVisible (true);
-            this.toFront ();
         }
     }
 
@@ -232,19 +322,16 @@ public class BrowserDialog extends BasicDialog
 
             this.updateFilterSelections ();
 
-            final DefaultListModel<String> model = this.resultListBox.getModel ();
-            model.clear ();
-
+            final DefaultListModel<String> model;
             if (this.browser.isPresetContentType ())
-            {
-                for (final String preset: this.browser.getPresets ())
-                    model.addElement (preset);
-            }
+                model = this.browser.getPresets ();
             else
             {
+                model = new DefaultListModel<> ();
                 for (final Device device: this.browser.getFilteredDevices ())
                     model.addElement (device.fullName ());
             }
+            this.resultListBox.setModel (model);
 
             this.updateResultSelection (selectedIndex);
         }
@@ -285,6 +372,8 @@ public class BrowserDialog extends BasicDialog
                     this.filterColumnLabels.get (i).setText (name.isBlank () ? "No filter:" : name + ":");
                 }
             }
+
+            this.updateMenu ();
         }
     }
 

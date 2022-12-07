@@ -90,7 +90,7 @@ public class MainFrame extends JFrame
         this.setTitle ();
 
         this.debugDialog = new DebugDialog (this, callback);
-        this.browserDialog = new BrowserDialog (this);
+        this.browserDialog = new BrowserDialog (this, this.callback);
 
         // Top pane
 
