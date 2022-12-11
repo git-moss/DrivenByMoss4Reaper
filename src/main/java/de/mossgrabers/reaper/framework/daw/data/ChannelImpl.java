@@ -18,7 +18,7 @@ import de.mossgrabers.reaper.framework.daw.data.bank.SendBankImpl;
 import de.mossgrabers.reaper.framework.daw.data.parameter.PanoramaParameterImpl;
 import de.mossgrabers.reaper.framework.daw.data.parameter.ParameterImpl;
 import de.mossgrabers.reaper.framework.daw.data.parameter.VolumeParameterImpl;
-import de.mossgrabers.reaper.framework.device.Device;
+import de.mossgrabers.reaper.framework.device.DeviceMetadataImpl;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -632,7 +632,7 @@ public class ChannelImpl extends ItemImpl implements IChannel
     @Override
     public void addDevice (final IDeviceMetadata metadata)
     {
-        this.sender.processStringArg (Processor.DEVICE, "add/0", ((Device) metadata).getCreationName ());
+        this.sender.processStringArg (Processor.DEVICE, "add/0", ((DeviceMetadataImpl) metadata).getCreationName ());
     }
 
 

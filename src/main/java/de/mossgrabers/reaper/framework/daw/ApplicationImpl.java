@@ -12,7 +12,7 @@ import de.mossgrabers.framework.parameter.IParameter;
 import de.mossgrabers.framework.parameter.ZoomParameter;
 import de.mossgrabers.reaper.communication.Processor;
 import de.mossgrabers.reaper.framework.Actions;
-import de.mossgrabers.reaper.framework.device.Device;
+import de.mossgrabers.reaper.framework.device.DeviceMetadataImpl;
 import de.mossgrabers.reaper.ui.utils.RobotUtil;
 
 import java.awt.event.KeyEvent;
@@ -354,7 +354,7 @@ public class ApplicationImpl extends BaseImpl implements IApplication
         params.add (colorTxt);
 
         for (final IDeviceMetadata device: devices)
-            params.add (((Device) device).getCreationName ());
+            params.add (((DeviceMetadataImpl) device).getCreationName ());
 
         this.sender.processStringArgs (Processor.TRACK, "addTrack", params.toArray (new String [params.size ()]));
     }

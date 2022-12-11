@@ -7,36 +7,25 @@ package de.mossgrabers.reaper.framework.device;
 import de.mossgrabers.framework.daw.data.IDeviceMetadata;
 
 import java.util.Collection;
-import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Set;
 
 
 /**
- * Base class for an item in a filter column.
+ * Implementation of a metadata description of a device.
  *
  * @author J&uuml;rgen Mo&szlig;graber
  */
-public class Device implements IDeviceMetadata
+public class DeviceMetadataImpl implements IDeviceMetadata
 {
-    private static final Set<DeviceFileType> INSTRUMENT_TYPES = EnumSet.of (DeviceFileType.VSTI, DeviceFileType.VST3I, DeviceFileType.AUI);
-
-
-    protected enum Architecture
-    {
-        SCRIPT,
-        X64,
-        ARM
-    }
-
-
-    private final String         name;
-    private final String         module;
-    private final DeviceFileType fileType;
-    private final Architecture   architecture;
-    private final String         creationName;
-    private String               vendor;
-    private final Set<String>    categories = new HashSet<> (1);
+    private final String             name;
+    private final String             module;
+    private final DeviceFileType     fileType;
+    private final DeviceArchitecture architecture;
+    private DeviceType               deviceType;
+    private final String             creationName;
+    private String                   vendor;
+    private final Set<String>        categories = new HashSet<> (1);
 
 
     /**
@@ -45,15 +34,17 @@ public class Device implements IDeviceMetadata
      * @param creationName The name which can trigger adding the device in Reaper
      * @param name The name of the device
      * @param module The name of the library module
-     * @param type The type of the device (plugin type)
+     * @param deviceType The type of the device
+     * @param fileType The plugin type of the device
      * @param architecture The architecture
      */
-    public Device (final String creationName, final String name, final String module, final DeviceFileType type, final Architecture architecture)
+    public DeviceMetadataImpl (final String creationName, final String name, final String module, final DeviceType deviceType, final DeviceFileType fileType, final DeviceArchitecture architecture)
     {
         this.creationName = creationName;
         this.name = name;
         this.module = module;
-        this.fileType = type;
+        this.deviceType = deviceType;
+        this.fileType = fileType;
         this.architecture = architecture;
     }
 
@@ -142,22 +133,13 @@ public class Device implements IDeviceMetadata
 
 
     /**
-     * Get the location of the device.
+     * Get the architecture of the device.
      *
-     * @return JS or VST
+     * @return Script, x64, ...
      */
-    public DeviceLocation getLocation ()
+    public DeviceArchitecture getArchitecture ()
     {
-        if (this.fileType == DeviceFileType.JS)
-            return DeviceLocation.JS;
-
-        if (this.fileType == DeviceFileType.AU || this.fileType == DeviceFileType.AUI)
-            return DeviceLocation.AU;
-
-        if (this.fileType == DeviceFileType.CLAP || this.fileType == DeviceFileType.CLAPI)
-            return DeviceLocation.CLAP;
-
-        return DeviceLocation.VST;
+        return this.architecture;
     }
 
 
@@ -173,7 +155,7 @@ public class Device implements IDeviceMetadata
 
 
     /**
-     * Returns true if the device has assigned the given catory.
+     * Returns true if the device has assigned the given category.
      *
      * @param category The category to test
      * @return True if the device has the category assigned
@@ -191,8 +173,17 @@ public class Device implements IDeviceMetadata
      */
     public DeviceType getType ()
     {
-        if (INSTRUMENT_TYPES.contains (this.fileType))
-            return DeviceType.INSTRUMENT;
-        return this.hasCategory ("MIDI") ? DeviceType.MIDI_EFFECT : DeviceType.AUDIO_EFFECT;
+        return this.deviceType;
+    }
+
+
+    /**
+     * Get the type.
+     *
+     * @param type The type
+     */
+    public void setType (final DeviceType type)
+    {
+        this.deviceType = type;
     }
 }

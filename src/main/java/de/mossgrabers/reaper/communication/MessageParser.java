@@ -8,11 +8,9 @@ import de.mossgrabers.framework.controller.IControlSurface;
 import de.mossgrabers.framework.controller.IControllerSetup;
 import de.mossgrabers.framework.controller.color.ColorEx;
 import de.mossgrabers.framework.daw.GrooveParameterID;
-import de.mossgrabers.framework.daw.IBrowser;
 import de.mossgrabers.framework.daw.IGroove;
 import de.mossgrabers.framework.daw.IHost;
 import de.mossgrabers.framework.daw.IModel;
-import de.mossgrabers.framework.daw.IProject;
 import de.mossgrabers.framework.daw.constants.AutomationMode;
 import de.mossgrabers.framework.daw.constants.DeviceID;
 import de.mossgrabers.framework.daw.data.IMarker;
@@ -78,7 +76,7 @@ public class MessageParser
     private final IControllerSetup<?, ?> controllerSetup;
 
     private final IHost                  host;
-    private final IProject               project;
+    private final ProjectImpl            project;
     private final ApplicationImpl        application;
     private final ArrangerImpl           arranger;
     private final MasterTrackImpl        masterTrack;
@@ -86,7 +84,7 @@ public class MessageParser
     private final CursorDeviceImpl       cursorDevice;
     private final CursorDeviceImpl       instrumentDevice;
     private final EqualizerDeviceImpl    eqDevice;
-    private final IBrowser               browser;
+    private final BrowserImpl            browser;
     private final IModel                 model;
 
 
@@ -115,7 +113,7 @@ public class MessageParser
         else
         {
             this.host = this.model.getHost ();
-            this.project = this.model.getProject ();
+            this.project = (ProjectImpl) this.model.getProject ();
             this.application = (ApplicationImpl) this.model.getApplication ();
             this.arranger = (ArrangerImpl) this.model.getArranger ();
             this.transport = (TransportImpl) this.model.getTransport ();
@@ -123,7 +121,7 @@ public class MessageParser
             this.cursorDevice = (CursorDeviceImpl) this.model.getCursorDevice ();
             this.instrumentDevice = (CursorDeviceImpl) this.model.getSpecificDevice (DeviceID.FIRST_INSTRUMENT);
             this.eqDevice = (EqualizerDeviceImpl) this.model.getSpecificDevice (DeviceID.EQ);
-            this.browser = this.model.getBrowser ();
+            this.browser = (BrowserImpl) this.model.getBrowser ();
         }
     }
 
@@ -155,7 +153,7 @@ public class MessageParser
                 switch (projectCmd)
                 {
                     case TAG_NAME:
-                        ((ProjectImpl) this.project).setInternalName (value);
+                        this.project.setInternalName (value);
                         this.updateNoteMapping ();
                         break;
                     case "engine":
@@ -166,6 +164,9 @@ public class MessageParser
                         break;
                     case "canRedo":
                         this.application.setCanRedoState (Integer.parseInt (value) > 0);
+                        break;
+                    case "isDirty":
+                        this.project.setDirty (Integer.parseInt (value) > 0);
                         break;
                     default:
                         this.host.error ("Unhandled Project parameter: " + projectCmd);
@@ -827,7 +828,7 @@ public class MessageParser
         switch (command)
         {
             case "presetsfile":
-                ((BrowserImpl) this.browser).setPresetsFile (value);
+                this.browser.setPresetsFile (value);
                 break;
 
             case "selected":
@@ -837,7 +838,7 @@ public class MessageParser
                         // Not used
                         break;
                     case "index":
-                        ((BrowserImpl) this.browser).setPresetSelected (Integer.parseInt (value));
+                        this.browser.setPresetSelected (Integer.parseInt (value));
                         break;
                     default:
                         this.host.error ("Unhandled Browser Parameter Selected: " + command);

@@ -4,7 +4,7 @@
 
 package de.mossgrabers.reaper.framework.device.column;
 
-import de.mossgrabers.reaper.framework.device.DeviceLocation;
+import de.mossgrabers.reaper.framework.device.DeviceArchitecture;
 import de.mossgrabers.reaper.framework.device.DeviceManager;
 
 import java.util.ArrayList;
@@ -26,7 +26,7 @@ public class DeviceLocationFilterColumn extends BaseColumn
      */
     public DeviceLocationFilterColumn (final int columnIndex, final int numFilterColumnEntries)
     {
-        super (columnIndex, "Location", numFilterColumnEntries);
+        super (columnIndex, "Architecture", numFilterColumnEntries);
 
         for (int i = 0; i < numFilterColumnEntries; i++)
             this.items[i] = new DeviceLocationBrowserColumnItem (i);
@@ -45,9 +45,9 @@ public class DeviceLocationFilterColumn extends BaseColumn
     @Override
     public List<String> getAllItems ()
     {
-        final List<DeviceLocation> locations = DeviceManager.get ().getAvailableLocations ();
+        final List<DeviceArchitecture> locations = DeviceManager.get ().getAvailableLocations ();
         final List<String> result = new ArrayList<> (locations.size ());
-        for (final DeviceLocation location: locations)
+        for (final DeviceArchitecture location: locations)
             result.add (location.getName ());
         return result;
     }
@@ -89,7 +89,7 @@ public class DeviceLocationFilterColumn extends BaseColumn
         {
             if (this.position == 0)
                 return WILDCARD;
-            final List<DeviceLocation> locations = DeviceManager.get ().getAvailableLocations ();
+            final List<DeviceArchitecture> locations = DeviceManager.get ().getAvailableLocations ();
             final int pos = this.position - 1;
             return pos < locations.size () ? locations.get (pos).getName () : "";
         }
@@ -101,7 +101,7 @@ public class DeviceLocationFilterColumn extends BaseColumn
         {
             if (this.position == 0)
                 return DeviceManager.get ().getNumDevices ();
-            final List<DeviceLocation> locations = DeviceManager.get ().getAvailableLocations ();
+            final List<DeviceArchitecture> locations = DeviceManager.get ().getAvailableLocations ();
             final int pos = this.position - 1;
             return pos < locations.size () ? DeviceManager.get ().filterByLocation (locations.get (pos)).size () : 0;
         }

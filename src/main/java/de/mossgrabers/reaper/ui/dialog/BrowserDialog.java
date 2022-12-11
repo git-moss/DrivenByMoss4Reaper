@@ -8,7 +8,7 @@ import de.mossgrabers.framework.daw.data.IBrowserColumn;
 import de.mossgrabers.reaper.AppCallback;
 import de.mossgrabers.reaper.framework.daw.BrowserContentType;
 import de.mossgrabers.reaper.framework.daw.BrowserImpl;
-import de.mossgrabers.reaper.framework.device.Device;
+import de.mossgrabers.reaper.framework.device.DeviceMetadataImpl;
 import de.mossgrabers.reaper.framework.device.column.BaseColumn;
 import de.mossgrabers.reaper.ui.widget.BoxPanel;
 import de.mossgrabers.reaper.ui.widget.Functions;
@@ -196,7 +196,7 @@ public class BrowserDialog extends BasicDialog
                 menuItem.setText (name.isBlank () ? "No filter" : name);
                 this.setFilterColumnVisible (col, browserColumnsVisibility[col]);
                 ((JCheckBoxMenuItem) menuItem).setSelected (browserColumnsVisibility[col]);
-                setFilterColumnVisible (col, browserColumnsVisibility[col]);
+                this.setFilterColumnVisible (col, browserColumnsVisibility[col]);
             }
             menuItem.setVisible (col < filterColumnCount);
         }
@@ -209,6 +209,7 @@ public class BrowserDialog extends BasicDialog
         {
             this.setFilterColumnVisible (col, all);
             this.updateColumnSettings (col, all);
+            ((JCheckBoxMenuItem) this.displayMenu.getMenuComponent (col)).setSelected (all);
         }
     }
 
@@ -328,7 +329,7 @@ public class BrowserDialog extends BasicDialog
             else
             {
                 model = new DefaultListModel<> ();
-                for (final Device device: this.browser.getFilteredDevices ())
+                for (final DeviceMetadataImpl device: this.browser.getFilteredDevices ())
                     model.addElement (device.fullName ());
             }
             this.resultListBox.setModel (model);

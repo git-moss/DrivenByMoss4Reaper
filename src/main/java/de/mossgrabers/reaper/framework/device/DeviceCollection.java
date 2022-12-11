@@ -73,9 +73,15 @@ public class DeviceCollection
                 for (final String part: item.split (" OR "))
                 {
                     final String [] notParts = part.split (" NOT ");
-                    mustMatch.add (notParts[0].toLowerCase (Locale.US));
+                    mustMatch.add (notParts[0].trim ().toLowerCase (Locale.US));
                     for (int i = 1; i < notParts.length; i++)
-                        mustNotMatch.add (notParts[i].toLowerCase (Locale.US));
+                    {
+                        String notStr = notParts[i].trim ().toLowerCase (Locale.US);
+                        final int length = notStr.length ();
+                        if (length > 2 && notStr.charAt (0) == '(' && notStr.charAt (length - 1) == ')')
+                            notStr = notStr.substring (1, length - 2).trim ();
+                        mustNotMatch.add (notStr);
+                    }
                 }
                 this.queryItems.put (item, new Pair<> (mustMatch, mustNotMatch));
                 break;
@@ -104,10 +110,10 @@ public class DeviceCollection
      * @param devices The devices to filter
      * @return All devices contained in the folder (or match the search query)
      */
-    public List<Device> filter (final List<Device> devices)
+    public List<DeviceMetadataImpl> filter (final List<DeviceMetadataImpl> devices)
     {
-        final List<Device> results = new ArrayList<> ();
-        for (final Device d: devices)
+        final List<DeviceMetadataImpl> results = new ArrayList<> ();
+        for (final DeviceMetadataImpl d: devices)
         {
             if (this.testDevice (d))
                 results.add (d);
@@ -122,7 +128,7 @@ public class DeviceCollection
      * @param device The device to test
      * @return True if matches
      */
-    private boolean testDevice (final Device device)
+    private boolean testDevice (final DeviceMetadataImpl device)
     {
         final boolean isJS = device.getFileType ().equals (DeviceFileType.JS);
         final String module = device.getModule ();
@@ -156,7 +162,7 @@ public class DeviceCollection
      * @param device The device to test
      * @return True if matches
      */
-    private static boolean compareQuery (final Set<String> mustMatch, final Set<String> mustNotMatch, final Device device)
+    private static boolean compareQuery (final Set<String> mustMatch, final Set<String> mustNotMatch, final DeviceMetadataImpl device)
     {
         // Compare all texts at once
         final String text = (device.name () + " " + device.getVendor () + " " + device.getFileType ()).toLowerCase (Locale.US);

@@ -11,22 +11,16 @@ package de.mossgrabers.reaper.framework.device;
  */
 public enum DeviceFileType
 {
-    /** A VST 2 instrument. */
-    VSTI("VSTi"),
-    /** A VST 3 instrument. */
-    VST3I("VST3i"),
-    /** A VST 2 effect. */
-    VST("VST"),
-    /** A VST 3 effect. */
+    /** A VST 2 devices. */
+    VST2("VST2"),
+    /** A VST 3 devices. */
     VST3("VST3"),
-    /** CLAP effects. */
+    /** CLAP devices. */
     CLAP("CLAP"),
-    /** AU instruments. */
-    CLAPI("CLAPi"),
-    /** AU effects. */
+    /** AU devices. */
     AU("AU"),
-    /** AU instruments. */
-    AUI("AUi"),
+    /** LV2 devices. */
+    LV2("LV2"),
     /** JS devices. */
     JS("JS");
 

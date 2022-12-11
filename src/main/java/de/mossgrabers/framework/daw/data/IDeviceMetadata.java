@@ -5,7 +5,7 @@
 package de.mossgrabers.framework.daw.data;
 
 /**
- * Description of a device.
+ * Metadata description of a device.
  *
  * @author J&uuml;rgen Mo&szlig;graber
  */

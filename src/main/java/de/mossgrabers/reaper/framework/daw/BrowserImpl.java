@@ -16,11 +16,11 @@ import de.mossgrabers.reaper.communication.MessageSender;
 import de.mossgrabers.reaper.communication.Processor;
 import de.mossgrabers.reaper.framework.daw.data.CursorDeviceImpl;
 import de.mossgrabers.reaper.framework.daw.data.ItemImpl;
-import de.mossgrabers.reaper.framework.device.Device;
+import de.mossgrabers.reaper.framework.device.DeviceArchitecture;
 import de.mossgrabers.reaper.framework.device.DeviceCollection;
 import de.mossgrabers.reaper.framework.device.DeviceFileType;
-import de.mossgrabers.reaper.framework.device.DeviceLocation;
 import de.mossgrabers.reaper.framework.device.DeviceManager;
+import de.mossgrabers.reaper.framework.device.DeviceMetadataImpl;
 import de.mossgrabers.reaper.framework.device.DeviceType;
 import de.mossgrabers.reaper.framework.device.column.BaseColumn;
 import de.mossgrabers.reaper.framework.device.column.DeviceCategoryFilterColumn;
@@ -103,13 +103,13 @@ public class BrowserImpl extends AbstractBrowser
     private final PresetModel                             presetModel         = new PresetModel ();
 
     int                                                   selectedIndex;
-    List<Device>                                          filteredDevices     = Collections.emptyList ();
+    List<DeviceMetadataImpl>                              filteredDevices     = Collections.emptyList ();
 
     private final MessageSender                           sender;
     private final IBrowserColumn [] []                    columnDataContentTypes;
     private final BrowserDialog                           browserWindow;
     private int                                           insertPosition;
-    private Object                                        parsePresetFileLock = new Object ();
+    private final Object                                  parsePresetFileLock = new Object ();
 
 
     /**
@@ -378,7 +378,7 @@ public class BrowserImpl extends AbstractBrowser
                     final ResultItem result = this.getSelectedResultDevice ();
                     if (result != null)
                     {
-                        final Device device = result.getDevice ();
+                        final DeviceMetadataImpl device = result.getDevice ();
                         if (device != null)
                             this.sender.processStringArg (Processor.DEVICE, "add/" + this.insertPosition + "/", device.getCreationName ());
                     }
@@ -514,7 +514,7 @@ public class BrowserImpl extends AbstractBrowser
         final DeviceCollection folder = this.deviceCollectionFilterColumn.getCursorIndex () == 0 ? null : deviceManager.getCollection (this.deviceCollectionFilterColumn.getCursorName ());
         final String category = this.deviceCategoryFilterColumn.getCursorIndex () == 0 ? null : this.deviceCategoryFilterColumn.getCursorName ();
         final DeviceFileType fileType = this.deviceFileTypeFilterColumn.getCursorIndex () == 0 ? null : DeviceFileType.valueOf (this.deviceFileTypeFilterColumn.getCursorName ().toUpperCase (Locale.US));
-        final DeviceLocation location = this.deviceLocationFilterColumn.getCursorIndex () == 0 ? null : DeviceLocation.valueOf (this.deviceLocationFilterColumn.getCursorName ().toUpperCase (Locale.US));
+        final DeviceArchitecture location = this.deviceLocationFilterColumn.getCursorIndex () == 0 ? null : DeviceArchitecture.valueOf (this.deviceLocationFilterColumn.getCursorName ().toUpperCase (Locale.US));
         // Note: this.deviceTagsFilterColumn currently does nothing
         final String vendor = this.deviceCreatorFilterColumn.getCursorIndex () == 0 ? null : this.deviceCreatorFilterColumn.getCursorName ();
         final DeviceType type = this.deviceTypeFilterColumn.getCursorIndex () == 0 ? null : DeviceType.valueOf (this.deviceTypeFilterColumn.getCursorName ().toUpperCase (Locale.US).replace (' ', '_'));
@@ -534,7 +534,7 @@ public class BrowserImpl extends AbstractBrowser
      *
      * @return The filtered devices
      */
-    public List<Device> getFilteredDevices ()
+    public List<DeviceMetadataImpl> getFilteredDevices ()
     {
         return this.filteredDevices;
     }
@@ -601,7 +601,7 @@ public class BrowserImpl extends AbstractBrowser
         }
 
 
-        public Device getDevice ()
+        public DeviceMetadataImpl getDevice ()
         {
             final int id = BrowserImpl.this.translateBankIndexToPageOfSelectedIndex (this.getIndex ());
             return id < BrowserImpl.this.filteredDevices.size () ? BrowserImpl.this.filteredDevices.get (id) : null;

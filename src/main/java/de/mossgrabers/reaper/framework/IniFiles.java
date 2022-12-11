@@ -34,6 +34,8 @@ public class IniFiles
     private static final String FX_TAGS                 = "reaper-fxtags.ini";
     private static final String FX_FOLDERS              = "reaper-fxfolders.ini";
     private static final String PARAM_MAPS              = "DrivenByMoss4Reaper-ParameterMaps.ini";
+    private static final String REAPER_MAIN             = "REAPER.ini";
+    private static final String REAPER_MAIN2            = "reaper.ini";
 
     private final IniEditor     iniClapPlugins64        = new IniEditor (true);
     private final IniEditor     iniClapPluginsARM64     = new IniEditor (true);
@@ -42,10 +44,12 @@ public class IniFiles
     private final IniEditor     iniFxTags               = new IniEditor ();
     private final IniEditor     iniFxFolders            = new IniEditor ();
     private final IniEditor     iniDeviceMaps           = new IniEditor ();
+    private final IniEditor     iniReaperMain           = new IniEditor ();
     private String              iniAuPlugins64Content;
     private String              iniAuPluginsARM64Content;
 
     private String              iniPath;
+    private LogModel            logModel;
 
     private boolean             isAuPresent;
     private boolean             isAuARMPresent;
@@ -57,6 +61,8 @@ public class IniFiles
     private boolean             isFxFoldersPresent;
     private boolean             isParamMapsPresent;
     private String              paramMapsFilename;
+    private File                reaperINIFile;
+    private long                reaperINILastChange     = -1;
 
 
     /**
@@ -69,6 +75,7 @@ public class IniFiles
         this.iniFxTags.setOptionFormatString (OPTION_FORMAT_NO_SPACES);
         this.iniFxFolders.setOptionFormatString (OPTION_FORMAT_NO_SPACES);
         this.iniDeviceMaps.setOptionFormatString (OPTION_FORMAT_NO_SPACES);
+        this.iniReaperMain.setOptionFormatString (OPTION_FORMAT_NO_SPACES);
     }
 
 
@@ -92,22 +99,28 @@ public class IniFiles
     public void init (final String iniPath, final LogModel logModel)
     {
         this.iniPath = iniPath;
+        this.logModel = logModel;
 
-        this.isVstPresent = loadINIFile (iniPath + File.separator + VST_PLUGINS_64, this.iniVstPlugins64, logModel);
+        this.reaperINIFile = new File (iniPath + File.separator + REAPER_MAIN);
+        if (!this.reaperINIFile.exists ())
+            this.reaperINIFile = new File (iniPath + File.separator + REAPER_MAIN2);
+        this.loadReaperINI ();
+
+        this.isVstPresent = this.loadINIFile (iniPath + File.separator + VST_PLUGINS_64, this.iniVstPlugins64);
 
         final OperatingSystem os = OperatingSystem.get ();
         switch (os)
         {
             case WINDOWS:
-                this.isClapPresent = loadINIFile (iniPath + File.separator + CLAP_PLUGINS_WIN64, this.iniClapPlugins64, logModel);
+                this.isClapPresent = this.loadINIFile (iniPath + File.separator + CLAP_PLUGINS_WIN64, this.iniClapPlugins64);
                 break;
 
             case LINUX:
-                this.isClapPresent = loadINIFile (iniPath + File.separator + CLAP_PLUGINS_LINUX64, this.iniClapPlugins64, logModel);
+                this.isClapPresent = this.loadINIFile (iniPath + File.separator + CLAP_PLUGINS_LINUX64, this.iniClapPlugins64);
                 break;
 
             case MAC, MAC_ARM:
-                this.isClapPresent = loadINIFile (iniPath + File.separator + CLAP_PLUGINS_MAC_64, this.iniClapPlugins64, logModel);
+                this.isClapPresent = this.loadINIFile (iniPath + File.separator + CLAP_PLUGINS_MAC_64, this.iniClapPlugins64);
 
                 final File iniAuPlugins64 = new File (iniPath + File.separator + AU_PLUGINS_64);
                 if (iniAuPlugins64.exists ())
@@ -125,8 +138,8 @@ public class IniFiles
 
                 if (os == OperatingSystem.MAC_ARM)
                 {
-                    this.isVstARMPresent = loadINIFile (iniPath + File.separator + VST_PLUGINS_ARM64, this.iniVstPluginsARM64, logModel);
-                    this.isClapARMPresent = loadINIFile (iniPath + File.separator + CLAP_PLUGINS_MAC_ARM64, this.iniClapPluginsARM64, logModel);
+                    this.isVstARMPresent = this.loadINIFile (iniPath + File.separator + VST_PLUGINS_ARM64, this.iniVstPluginsARM64);
+                    this.isClapARMPresent = this.loadINIFile (iniPath + File.separator + CLAP_PLUGINS_MAC_ARM64, this.iniClapPluginsARM64);
 
                     final File iniAuPluginsARM64 = new File (iniPath + File.separator + AU_PLUGINS_ARM64);
                     if (iniAuPluginsARM64.exists ())
@@ -148,10 +161,10 @@ public class IniFiles
                 break;
         }
 
-        this.isFxTagsPresent = loadINIFile (iniPath + File.separator + FX_TAGS, this.iniFxTags, logModel);
-        this.isFxFoldersPresent = loadINIFile (iniPath + File.separator + FX_FOLDERS, this.iniFxFolders, logModel);
+        this.isFxTagsPresent = this.loadINIFile (iniPath + File.separator + FX_TAGS, this.iniFxTags);
+        this.isFxFoldersPresent = this.loadINIFile (iniPath + File.separator + FX_FOLDERS, this.iniFxFolders);
         this.paramMapsFilename = iniPath + File.separator + PARAM_MAPS;
-        this.isParamMapsPresent = loadINIFile (this.paramMapsFilename, this.iniDeviceMaps, logModel);
+        this.isParamMapsPresent = this.loadINIFile (this.paramMapsFilename, this.iniDeviceMaps);
     }
 
 
@@ -365,51 +378,93 @@ public class IniFiles
 
 
     /**
-     * Load an INI file.
+     * Get an option value from the main INI file as an integer.
      *
-     * @param filename The absolute filename to try
-     * @param iniFile The INI file
-     * @param logModel For logging
-     * @return True if successfully loaded
+     * @param section The section in the INI file
+     * @param option The option name
+     * @param defaultValue The default value to return if the value could not be read
+     * @return The value
      */
-    private static boolean loadINIFile (final String filename, final IniEditor iniFile, final LogModel logModel)
+    public int getMainIniInteger (final String section, final String option, final int defaultValue)
     {
-        return loadINIFile (new String []
+        String value;
+        synchronized (this.iniReaperMain)
         {
-            filename
-        }, iniFile, logModel);
+            this.loadReaperINI ();
+
+            try
+            {
+                value = this.iniReaperMain.get (section, option);
+            }
+            catch (final com.nikhaldimann.inieditor.IniEditor.NoSuchSectionException ex)
+            {
+                return defaultValue;
+            }
+        }
+        if (value == null)
+            return defaultValue;
+        try
+        {
+            return Integer.parseInt (value);
+        }
+        catch (final NumberFormatException ex)
+        {
+            return defaultValue;
+        }
+    }
+
+
+    private void loadReaperINI ()
+    {
+        synchronized (this.iniReaperMain)
+        {
+            final long modified = this.reaperINIFile.lastModified ();
+            if (this.reaperINILastChange != modified)
+            {
+                this.reaperINILastChange = modified;
+                this.loadINIFile (this.reaperINIFile, this.iniReaperMain);
+            }
+        }
     }
 
 
     /**
      * Load an INI file.
      *
-     * @param filenames The absolute filenames to try
+     * @param filename The absolute filename to try
      * @param iniFile The INI file
-     * @param logModel For logging
      * @return True if successfully loaded
      */
-    private static boolean loadINIFile (final String [] filenames, final IniEditor iniFile, final LogModel logModel)
+    private boolean loadINIFile (final String filename, final IniEditor iniFile)
     {
-        for (final String filename: filenames)
-        {
-            try
-            {
-                final File file = new File (filename);
-                if (file.exists ())
-                {
-                    iniFile.load (file.getAbsolutePath ());
-                    return true;
-                }
-            }
-            catch (final IOException ex)
-            {
-                logModel.error ("Could not load file: " + filename, ex);
-                return false;
-            }
-        }
+        return this.loadINIFile (new File (filename), iniFile);
+    }
 
-        logModel.info (filenames[0] + " not present, skipped loading.");
-        return false;
+
+    /**
+     * Load an INI file.
+     *
+     * @param file The file to load
+     * @param iniFile The INI file
+     * @return True if successfully loaded
+     */
+    private boolean loadINIFile (final File file, final IniEditor iniFile)
+    {
+        try
+        {
+            if (file.exists ())
+            {
+                iniFile.load (file.getAbsolutePath ());
+                return true;
+            }
+
+            this.logModel.info (file.getName () + " not present, skipped loading.");
+            return false;
+        }
+        catch (final IOException ex)
+        {
+            this.logModel.error ("Could not load file: " + file.getName (), ex);
+            return false;
+        }
     }
 }

@@ -21,6 +21,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -28,6 +29,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -40,21 +42,28 @@ import java.util.regex.Pattern;
  */
 public class DeviceManager
 {
-    private static final String              SECTION_FOLDERS                = "Folders";
-    private static final Pattern             PATTERN_VST                    = Pattern.compile (".+?,.+?,(.+?)(\\!\\!\\!VSTi)?");
-    private static final Pattern             PATTERN_COMPANY                = Pattern.compile ("(.*?)\\s*\\((.*?)\\)");
-    private static final Pattern             PATTERN_AU_COMPANY_DEVICE_NAME = Pattern.compile ("(.+?):\\s*(.+)");
-    private static final Pattern             PATTERN_JSFX                   = Pattern.compile ("NAME\\s?((\")?.+?(\")?)\\s?\"(.+?)\"");
-    private static final Pattern             PATTERN_CLAP                   = Pattern.compile ("(.*?)\\|(.*?)\\s*\\((.*?)\\)");
-    private static final String              IS_INSTRUMENT_TAG              = "<inst>";
-    private static final Map<String, String> JS_CATEGORY_MAP                = new HashMap<> ();
+    private static final String                       SECTION_FOLDERS                = "Folders";
+    private static final Pattern                      PATTERN_VST                    = Pattern.compile (".+?,.+?,(.+?)(\\!\\!\\!VSTi)?");
+    private static final Pattern                      PATTERN_COMPANY                = Pattern.compile ("(.*?)\\s*\\((.*?)\\)");
+    private static final Pattern                      PATTERN_AU_COMPANY_DEVICE_NAME = Pattern.compile ("(.+?):\\s*(.+)");
+    private static final Pattern                      PATTERN_JSFX                   = Pattern.compile ("NAME\\s?((\")?.+?(\")?)\\s?\"(.+?)\"");
+    private static final Pattern                      PATTERN_CLAP                   = Pattern.compile ("(.*?)\\|(.*?)\\s*\\((.*?)\\)");
+    private static final String                       IS_INSTRUMENT_TAG              = "<inst>";
+    private static final Map<String, String>          JS_CATEGORY_MAP                = new HashMap<> ();
 
-    private static final DeviceManager       INSTANCE                       = new DeviceManager ();
+    private static final DeviceManager                INSTANCE                       = new DeviceManager ();
 
-    private static final Set<String>         NON_CATEGORIES                 = Set.of ("ix", "till", "loser", "liteon", "sstillwell", "teej", "schwa", "u-he", "remaincalm_org");
+    private static final Set<String>                  NON_CATEGORIES                 = Set.of ("ix", "till", "loser", "liteon", "sstillwell", "teej", "schwa", "u-he", "remaincalm_org");
 
+    private static final Map<Integer, DeviceFileType> TYPE_CODES                     = new HashMap<> (5);
     static
     {
+        TYPE_CODES.put (Integer.valueOf (1), DeviceFileType.VST3);
+        TYPE_CODES.put (Integer.valueOf (2), DeviceFileType.VST2);
+        TYPE_CODES.put (Integer.valueOf (3), DeviceFileType.AU);
+        TYPE_CODES.put (Integer.valueOf (4), DeviceFileType.LV2);
+        TYPE_CODES.put (Integer.valueOf (5), DeviceFileType.CLAP);
+
         JS_CATEGORY_MAP.put ("analysis", "Analysis");
         JS_CATEGORY_MAP.put ("delay", "Delay");
         JS_CATEGORY_MAP.put ("dynamics", "Dynamics");
@@ -71,15 +80,18 @@ public class DeviceManager
         JS_CATEGORY_MAP.put ("waveshapers", "Modulation");
     }
 
-    private final List<Device>              devices            = new ArrayList<> ();
-    private final List<Device>              instruments        = new ArrayList<> ();
-    private final List<Device>              effects            = new ArrayList<> ();
-    private final List<String>              categories         = new ArrayList<> ();
-    private final List<String>              vendors            = new ArrayList<> ();
-    private final List<DeviceCollection>    collections        = new ArrayList<> ();
-    private final List<DeviceFileType>      availableFileTypes = new ArrayList<> ();
-    private final List<DeviceLocation>      availableLocations = new ArrayList<> ();
-    private final Map<String, ParameterMap> parameterMaps      = new HashMap<> ();
+    private final List<DeviceMetadataImpl>  devices                = new ArrayList<> ();
+    private final List<DeviceMetadataImpl>  instruments            = new ArrayList<> ();
+    private final List<DeviceMetadataImpl>  effects                = new ArrayList<> ();
+    private final List<String>              categories             = new ArrayList<> ();
+    private final List<String>              vendors                = new ArrayList<> ();
+    private final List<DeviceCollection>    collections            = new ArrayList<> ();
+    private final List<DeviceFileType>      availableFileTypes     = new ArrayList<> ();
+    private final Set<DeviceArchitecture>   availableArchitectures = new TreeSet<> ();
+    private final Map<String, ParameterMap> parameterMaps          = new HashMap<> ();
+    private final List<DeviceFileType>      preferredTypes         = new ArrayList<> ();
+    private IniFiles                        iniFiles;
+
 
     /**
      * Private due to singleton.
@@ -120,7 +132,7 @@ public class DeviceManager
      *
      * @return The devices
      */
-    public List<Device> getAll ()
+    public List<DeviceMetadataImpl> getAll ()
     {
         synchronized (this.devices)
         {
@@ -134,7 +146,7 @@ public class DeviceManager
      *
      * @return The instrument devices
      */
-    public List<Device> getInstruments ()
+    public List<DeviceMetadataImpl> getInstruments ()
     {
         synchronized (this.devices)
         {
@@ -148,7 +160,7 @@ public class DeviceManager
      *
      * @return The effect devices
      */
-    public List<Device> getEffects ()
+    public List<DeviceMetadataImpl> getEffects ()
     {
         synchronized (this.devices)
         {
@@ -163,7 +175,7 @@ public class DeviceManager
      * @param deviceFileType Filter by device type (plugin format), may be null
      * @return The devices matching the filter criteria
      */
-    public List<Device> filterByFileType (final DeviceFileType deviceFileType)
+    public List<DeviceMetadataImpl> filterByFileType (final DeviceFileType deviceFileType)
     {
         return this.filterBy (deviceFileType, null, null, null, null, null);
     }
@@ -175,7 +187,7 @@ public class DeviceManager
      * @param category Filter by device category, may be null
      * @return The devices matching the filter criteria
      */
-    public List<Device> filterByCategory (final String category)
+    public List<DeviceMetadataImpl> filterByCategory (final String category)
     {
         return this.filterBy (null, category, null, null, null, null);
     }
@@ -187,7 +199,7 @@ public class DeviceManager
      * @param vendor Filter by device vendor, may be null
      * @return The devices matching the filter criteria
      */
-    public List<Device> filterByVendor (final String vendor)
+    public List<DeviceMetadataImpl> filterByVendor (final String vendor)
     {
         return this.filterBy (null, null, vendor, null, null, null);
     }
@@ -199,7 +211,7 @@ public class DeviceManager
      * @param collection Filter by device collection, may be null
      * @return The devices matching the filter criteria
      */
-    public List<Device> filterByCollection (final DeviceCollection collection)
+    public List<DeviceMetadataImpl> filterByCollection (final DeviceCollection collection)
     {
         return this.filterBy (null, null, null, collection, null, null);
     }
@@ -211,7 +223,7 @@ public class DeviceManager
      * @param location Filter by device location, may be null
      * @return The devices matching the filter criteria
      */
-    public List<Device> filterByLocation (final DeviceLocation location)
+    public List<DeviceMetadataImpl> filterByLocation (final DeviceArchitecture location)
     {
         return this.filterBy (null, null, null, null, location, null);
     }
@@ -223,7 +235,7 @@ public class DeviceManager
      * @param deviceType Filter by device type, may be null
      * @return The devices matching the filter criteria
      */
-    public List<Device> filterByType (final DeviceType deviceType)
+    public List<DeviceMetadataImpl> filterByType (final DeviceType deviceType)
     {
         return this.filterBy (null, null, null, null, null, deviceType);
     }
@@ -240,30 +252,100 @@ public class DeviceManager
      * @param deviceType Filter by device type, may be null
      * @return The devices matching the filter criteria
      */
-    public List<Device> filterBy (final DeviceFileType fileType, final String category, final String vendor, final DeviceCollection collection, final DeviceLocation location, final DeviceType deviceType)
+    public List<DeviceMetadataImpl> filterBy (final DeviceFileType fileType, final String category, final String vendor, final DeviceCollection collection, final DeviceArchitecture location, final DeviceType deviceType)
     {
-        final List<Device> results = new ArrayList<> ();
+        List<DeviceMetadataImpl> results = new ArrayList<> ();
         synchronized (this.devices)
         {
-            for (final Device d: this.devices)
+            for (final DeviceMetadataImpl d: this.devices)
             {
                 if (accept (d, fileType, category, vendor, location, deviceType))
                     results.add (d);
             }
         }
-        return collection == null ? results : collection.filter (results);
+
+        if (collection != null)
+            results = collection.filter (results);
+        return filterPreferredFileTypes (results);
     }
 
 
-    private static boolean accept (final Device d, final DeviceFileType fileType, final String category, final String vendor, final DeviceLocation location, final DeviceType deviceType)
+    /**
+     * Filter by preferred types.
+     * 
+     * @param results The devices to filter
+     * @return The filtered list
+     */
+    private List<DeviceMetadataImpl> filterPreferredFileTypes (final List<DeviceMetadataImpl> results)
+    {
+        final List<DeviceFileType> prefTypes = this.getPreferredTypes ();
+        if (prefTypes.isEmpty () || results.size () <= 1)
+            return results;
+
+        // Group identical devices (= with the same name) into a map
+        final Map<String, Map<DeviceFileType, DeviceMetadataImpl>> identicalDevices = new TreeMap<> ();
+        for (final DeviceMetadataImpl device: results)
+        {
+            final String deviceName = device.name ();
+            identicalDevices.computeIfAbsent (deviceName, name -> new EnumMap<> (DeviceFileType.class)).put (device.getFileType (), device);
+        }
+
+        // Choose the preferred devices by their file type
+        final List<DeviceMetadataImpl> resultsFiltered = new ArrayList<> ();
+        for (final Map<DeviceFileType, DeviceMetadataImpl> deviceOptions: identicalDevices.values ())
+        {
+            // Find the device of the preferred type
+            DeviceMetadataImpl deviceMetadata = null;
+            for (final DeviceFileType prefType: prefTypes)
+            {
+                deviceMetadata = deviceOptions.get (prefType);
+                if (deviceMetadata != null)
+                    break;
+            }
+
+            // If no preferred type was found, add all
+            if (deviceMetadata == null)
+                resultsFiltered.addAll (deviceOptions.values ());
+            else
+                resultsFiltered.add (deviceMetadata);
+        }
+        return resultsFiltered;
+    }
+
+
+    private static boolean accept (final DeviceMetadataImpl d, final DeviceFileType fileType, final String category, final String vendor, final DeviceArchitecture architecture, final DeviceType deviceType)
     {
         if (fileType != null && d.getFileType () != fileType || category != null && !d.hasCategory (category))
             return false;
 
-        if (vendor != null && !vendor.equals (d.getVendor ()) || location != null && d.getLocation () != location)
+        if (vendor != null && !vendor.equals (d.getVendor ()) || architecture != null && d.getArchitecture () != architecture)
             return false;
 
         return deviceType == null || d.getType () == deviceType;
+    }
+
+
+    private List<DeviceFileType> getPreferredTypes ()
+    {
+        if (this.iniFiles == null)
+            return Collections.emptyList ();
+
+        final int pattern = this.iniFiles.getMainIniInteger ("REAPER-fxadd", "dupefilter", 0);
+
+        // The pattern is a 16 bit integer consisting of four 4-bit values providing the potential
+        // four preferred plugin types. Priority 1 is LSB. The values for the plugin types are:
+        // Off: 0, VST3: 1, VST2: 2, AU: 3, LV2: 4, CLAP: 5
+
+        this.preferredTypes.clear ();
+        for (int i = 0; i < 4; i++)
+        {
+            final int code = pattern >> i * 4 & 15;
+            final DeviceFileType type = TYPE_CODES.get (Integer.valueOf (code));
+            if (type != null)
+                this.preferredTypes.add (type);
+        }
+
+        return this.preferredTypes;
     }
 
 
@@ -276,60 +358,23 @@ public class DeviceManager
      */
     public void parseINIFiles (final IniFiles iniFiles, final LogModel logModel)
     {
+        this.iniFiles = iniFiles;
+
         synchronized (this.devices)
         {
             this.clearCache ();
 
-            // Load all VST devices
-            if (iniFiles.isVstPresent ())
-                this.parseVstDevicesFile (Device.Architecture.X64, iniFiles.getIniVstPlugins64 ());
-            if (iniFiles.isVstARMPresent ())
-                this.parseVstDevicesFile (Device.Architecture.ARM, iniFiles.getIniVstPluginsARM64 ());
-            if (iniFiles.isVstPresent () || iniFiles.isVstARMPresent ())
-            {
-                this.availableFileTypes.addAll (List.of (DeviceFileType.VST, DeviceFileType.VSTI, DeviceFileType.VST3, DeviceFileType.VST3I));
-                this.availableLocations.add (DeviceLocation.VST);
-            }
-
-            // Load all CLAP devices
-            final boolean isClapPresent = iniFiles.isClapPresent ();
-            final boolean isClapARMPresent = iniFiles.isClapARMPresent ();
-            if (isClapPresent)
-                this.parseClapDevicesFile (Device.Architecture.X64, iniFiles.getIniClapPlugins64 ());
-            if (isClapARMPresent)
-                this.parseClapDevicesFile (Device.Architecture.ARM, iniFiles.getIniClapPluginsARM64 ());
-            if (isClapPresent || isClapARMPresent)
-            {
-                this.availableFileTypes.addAll (List.of (DeviceFileType.CLAP, DeviceFileType.CLAPI));
-                this.availableLocations.add (DeviceLocation.CLAP);
-            }
-
-            // Load all AU devices
-            final boolean isAuPresent = iniFiles.isAuPresent ();
-            final boolean isAuARMPresent = iniFiles.isAuARMPresent ();
-            if (isAuPresent)
-                this.parseAuDevicesFile (Device.Architecture.X64, iniFiles.getIniAuPlugins64 ());
-            if (isAuARMPresent)
-                this.parseAuDevicesFile (Device.Architecture.ARM, iniFiles.getIniAuPluginsARM64 ());
-            if (isAuPresent || isAuARMPresent)
-            {
-                this.availableFileTypes.addAll (List.of (DeviceFileType.AU, DeviceFileType.AUI));
-                this.availableLocations.add (DeviceLocation.AU);
-            }
-
-            // Load all JS devices
-            this.availableFileTypes.add (DeviceFileType.JS);
-            this.availableLocations.add (DeviceLocation.JS);
-
-            final Set<String> categoriesSet = new TreeSet<> ();
-            final Set<String> vendorsSet = new TreeSet<> ();
+            this.parseVST (iniFiles);
+            this.parseCLAP (iniFiles);
+            this.parseAU (iniFiles);
 
             // Load categories and vendor information
+            final Set<String> categoriesSet = new TreeSet<> ();
+            final Set<String> vendorsSet = new TreeSet<> ();
             if (iniFiles.isFxTagsPresent ())
                 this.parseFXTagsFile (iniFiles.getIniFxTags (), categoriesSet, vendorsSet);
 
-            // Load JS devices
-            this.loadJSDevices (iniFiles.getIniPath () + File.separator + "reaper-jsfx.ini", logModel, categoriesSet, vendorsSet);
+            this.parseJS (iniFiles, logModel, categoriesSet, vendorsSet);
 
             this.categories.addAll (categoriesSet);
             this.vendors.addAll (vendorsSet);
@@ -342,8 +387,17 @@ public class DeviceManager
             if (iniFiles.isParamMapsPresent ())
                 this.parseParameterMaps (iniFiles.getIniParamMaps ());
 
+            // Set MIDI device type
+            for (final DeviceMetadataImpl device: this.devices)
+            {
+                if (device.hasCategory ("MIDI"))
+                    device.setType (DeviceType.MIDI_EFFECT);
+            }
+
+            // Finally sort the devices by their display name
             this.devices.sort ( (d1, d2) -> d1.getDisplayName ().compareToIgnoreCase (d2.getDisplayName ()));
 
+            // Split them into instruments and effects
             this.devices.forEach (device -> {
                 final DeviceType type = device.getType ();
                 if (type == DeviceType.INSTRUMENT)
@@ -352,6 +406,74 @@ public class DeviceManager
                     this.effects.add (device);
             });
         }
+    }
+
+
+    private void parseVST (final IniFiles iniFiles)
+    {
+        final boolean isVstPresent = iniFiles.isVstPresent ();
+        final boolean isVstARMPresent = iniFiles.isVstARMPresent ();
+        if (!isVstPresent && !isVstARMPresent)
+            return;
+        if (isVstPresent)
+        {
+            this.parseVstDevicesFile (DeviceArchitecture.X64, iniFiles.getIniVstPlugins64 ());
+            this.availableArchitectures.add (DeviceArchitecture.X64);
+        }
+        if (isVstARMPresent)
+        {
+            this.parseVstDevicesFile (DeviceArchitecture.ARM, iniFiles.getIniVstPluginsARM64 ());
+            this.availableArchitectures.add (DeviceArchitecture.ARM);
+        }
+        this.availableFileTypes.addAll (List.of (DeviceFileType.VST2, DeviceFileType.VST3));
+    }
+
+
+    private void parseCLAP (final IniFiles iniFiles)
+    {
+        final boolean isClapPresent = iniFiles.isClapPresent ();
+        final boolean isClapARMPresent = iniFiles.isClapARMPresent ();
+        if (!isClapPresent && !isClapARMPresent)
+            return;
+        if (isClapPresent)
+        {
+            this.parseCLAPDevicesFile (DeviceArchitecture.X64, iniFiles.getIniClapPlugins64 ());
+            this.availableArchitectures.add (DeviceArchitecture.X64);
+        }
+        if (isClapARMPresent)
+        {
+            this.parseCLAPDevicesFile (DeviceArchitecture.ARM, iniFiles.getIniClapPluginsARM64 ());
+            this.availableArchitectures.add (DeviceArchitecture.ARM);
+        }
+        this.availableFileTypes.addAll (List.of (DeviceFileType.CLAP));
+    }
+
+
+    private void parseAU (final IniFiles iniFiles)
+    {
+        final boolean isAuPresent = iniFiles.isAuPresent ();
+        final boolean isAuARMPresent = iniFiles.isAuARMPresent ();
+        if (!isAuPresent && !isAuARMPresent)
+            return;
+        if (isAuPresent)
+        {
+            this.parseAuDevicesFile (DeviceArchitecture.X64, iniFiles.getIniAuPlugins64 ());
+            this.availableArchitectures.add (DeviceArchitecture.X64);
+        }
+        if (isAuARMPresent)
+        {
+            this.parseAuDevicesFile (DeviceArchitecture.ARM, iniFiles.getIniAuPluginsARM64 ());
+            this.availableArchitectures.add (DeviceArchitecture.ARM);
+        }
+        this.availableFileTypes.addAll (List.of (DeviceFileType.AU));
+    }
+
+
+    private void parseJS (final IniFiles iniFiles, final LogModel logModel, final Set<String> categoriesSet, final Set<String> vendorsSet)
+    {
+        this.availableFileTypes.add (DeviceFileType.JS);
+        this.availableArchitectures.add (DeviceArchitecture.SCRIPT);
+        this.loadJSDevices (iniFiles.getIniPath () + File.separator + "reaper-jsfx.ini", logModel, categoriesSet, vendorsSet);
     }
 
 
@@ -371,9 +493,9 @@ public class DeviceManager
      *
      * @return The file types
      */
-    public List<DeviceLocation> getAvailableLocations ()
+    public List<DeviceArchitecture> getAvailableLocations ()
     {
-        return this.availableLocations;
+        return new ArrayList<> (this.availableArchitectures);
     }
 
 
@@ -456,7 +578,7 @@ public class DeviceManager
      * @param architecture The processor architecture for which the device is compiled
      * @param iniFileContent The content of the INI file from which to parse
      */
-    private void parseAuDevicesFile (final Device.Architecture architecture, final String iniFileContent)
+    private void parseAuDevicesFile (final DeviceArchitecture architecture, final String iniFileContent)
     {
         iniFileContent.lines ().forEach (line -> {
 
@@ -467,7 +589,7 @@ public class DeviceManager
             if (split.length != 2)
                 return;
 
-            final Device device = parseAuDevice (architecture, split[0], split[1]);
+            final DeviceMetadataImpl device = parseAuDevice (architecture, split[0], split[1]);
             if (device != null)
                 this.devices.add (device);
 
@@ -481,12 +603,12 @@ public class DeviceManager
      * @param architecture The processor architecture for which the device is compiled
      * @param iniFile The INI file from which to parse
      */
-    private void parseClapDevicesFile (final Device.Architecture architecture, final IniEditor iniFile)
+    private void parseCLAPDevicesFile (final DeviceArchitecture architecture, final IniEditor iniFile)
     {
         for (final String fileName: iniFile.sectionNames ())
         {
             final Map<String, String> sectionMap = iniFile.getSectionMap (fileName);
-            final Device device = parseClapDevice (architecture, fileName, sectionMap);
+            final DeviceMetadataImpl device = parseCLAPDevice (architecture, sectionMap);
             if (device != null)
                 this.devices.add (device);
         }
@@ -499,12 +621,12 @@ public class DeviceManager
      * @param architecture The processor architecture for which the device is compiled
      * @param iniFile The INI file from which to parse
      */
-    private void parseVstDevicesFile (final Device.Architecture architecture, final IniEditor iniFile)
+    private void parseVstDevicesFile (final DeviceArchitecture architecture, final IniEditor iniFile)
     {
         final Map<String, String> section = iniFile.getSectionMap ("vstcache");
         for (final Entry<String, String> entry: section.entrySet ())
         {
-            final Device device = parseVstDevice (architecture, entry.getKey (), entry.getValue ());
+            final DeviceMetadataImpl device = parseVstDevice (architecture, entry.getKey (), entry.getValue ());
             if (device != null)
                 this.devices.add (device);
         }
@@ -520,7 +642,7 @@ public class DeviceManager
      */
     private void parseFXTagsFile (final IniEditor iniFile, final Set<String> categoriesSet, final Set<String> vendorsSet)
     {
-        for (final Device d: this.devices)
+        for (final DeviceMetadataImpl d: this.devices)
         {
             final String categoriesStr = iniFile.get ("category", d.getModule ());
             if (categoriesStr != null)
@@ -626,61 +748,44 @@ public class DeviceManager
 
 
     /**
-     * Get a value from the INI file and convert it to an integer.
-     *
-     * @param iniFile The INI file
-     * @param category The category section
-     * @param name The name of the entry
-     * @param def The default value
-     * @return The integer value
-     */
-    private static int getInt (final IniEditor iniFile, final String category, final String name, final int def)
-    {
-        final String value = iniFile.get (category, name);
-        try
-        {
-            return value == null ? def : Integer.parseInt (value);
-        }
-        catch (final NumberFormatException ex)
-        {
-            return def;
-        }
-    }
-
-
-    /**
-     * Parse the information of a AU device.
+     * Parse the information of a VST device.
      *
      * @param architecture The processor architecture for which the device is compiled
      * @param module The module name
-     * @param isInstrument The encoded instrument tag (&lt;!inst&gt; or &lt;!inst&gt;)
+     * @param nameAndCompany The name and company
      * @return The created device or null if the information cannot be parsed
      */
-    private static Device parseAuDevice (final Device.Architecture architecture, final String module, final String isInstrument)
+    private static DeviceMetadataImpl parseVstDevice (final DeviceArchitecture architecture, final String module, final String nameAndCompany)
     {
-        final Matcher matcher = PATTERN_AU_COMPANY_DEVICE_NAME.matcher (module);
+        final Matcher matcher = PATTERN_VST.matcher (nameAndCompany);
         if (!matcher.matches ())
             return null;
 
-        final String company = matcher.group (1);
-        final String deviceName = matcher.group (2);
+        final String creationName = matcher.group (1);
+        if ("<SHELL>".equals (creationName))
+            return null;
 
-        final DeviceFileType dt = IS_INSTRUMENT_TAG.equals (isInstrument) ? DeviceFileType.AUI : DeviceFileType.AU;
-        final Device device = new Device (module, deviceName, module, dt, architecture);
-        device.setVendor (company);
-        return device;
+        final Matcher companyMatcher = PATTERN_COMPANY.matcher (creationName);
+        if (!companyMatcher.matches ())
+            return null;
+
+        final String name = companyMatcher.group (1);
+        final String type = matcher.group (2);
+
+        final DeviceType deviceType = "!!!VSTi".equals (type) ? DeviceType.INSTRUMENT : DeviceType.AUDIO_EFFECT;
+        final DeviceFileType fileType = module.endsWith ("vst3") ? DeviceFileType.VST3 : DeviceFileType.VST2;
+        return new DeviceMetadataImpl (creationName, name, module, deviceType, fileType, architecture);
     }
 
 
     /**
-     * Parse the information of a AU device.
+     * Parse the information of a CLAP device.
      *
      * @param architecture The processor architecture for which the device is compiled
-     * @param fileName The filename of the CLAP plugin
      * @param sectionMap The INI section which contains the info about a CLAP plugin
      * @return The created device or null if the information cannot be parsed
      */
-    private static Device parseClapDevice (final Device.Architecture architecture, final String fileName, final Map<String, String> sectionMap)
+    private static DeviceMetadataImpl parseCLAPDevice (final DeviceArchitecture architecture, final Map<String, String> sectionMap)
     {
         if (sectionMap.size () != 2)
             return null;
@@ -713,45 +818,74 @@ public class DeviceManager
         if (uuid == null || module == null || deviceType == null || deviceName == null || company == null)
             return null;
 
-        final DeviceFileType dt = "0".equals (deviceType) ? DeviceFileType.CLAP : DeviceFileType.CLAPI;
-        final Device device = new Device (module, deviceName, module, dt, architecture);
+        final DeviceType dt = "0".equals (deviceType) ? DeviceType.AUDIO_EFFECT : DeviceType.INSTRUMENT;
+        final DeviceMetadataImpl device = new DeviceMetadataImpl (module, deviceName, module, dt, DeviceFileType.CLAP, architecture);
         device.setVendor (company);
         return device;
     }
 
 
     /**
-     * Parse the information of a VST device.
+     * Parse the information of a AU device.
      *
      * @param architecture The processor architecture for which the device is compiled
      * @param module The module name
-     * @param nameAndCompany The name and company
+     * @param isInstrument The encoded instrument tag (&lt;!inst&gt; or &lt;!inst&gt;)
      * @return The created device or null if the information cannot be parsed
      */
-    private static Device parseVstDevice (final Device.Architecture architecture, final String module, final String nameAndCompany)
+    private static DeviceMetadataImpl parseAuDevice (final DeviceArchitecture architecture, final String module, final String isInstrument)
     {
-        final Matcher matcher = PATTERN_VST.matcher (nameAndCompany);
+        final Matcher matcher = PATTERN_AU_COMPANY_DEVICE_NAME.matcher (module);
         if (!matcher.matches ())
             return null;
 
-        final String creationName = matcher.group (1);
-        if ("<SHELL>".equals (creationName))
-            return null;
+        final String company = matcher.group (1);
+        final String deviceName = matcher.group (2);
 
-        final Matcher companyMatcher = PATTERN_COMPANY.matcher (creationName);
-        if (!companyMatcher.matches ())
-            return null;
+        final DeviceType dt = IS_INSTRUMENT_TAG.equals (isInstrument) ? DeviceType.INSTRUMENT : DeviceType.AUDIO_EFFECT;
+        final DeviceMetadataImpl device = new DeviceMetadataImpl (module, deviceName, module, dt, DeviceFileType.AU, architecture);
+        device.setVendor (company);
+        return device;
+    }
 
-        final String name = companyMatcher.group (1);
-        final String type = matcher.group (2);
 
-        final DeviceFileType dt;
-        if ("!!!VSTi".equals (type))
-            dt = module.endsWith ("vst3") ? DeviceFileType.VST3I : DeviceFileType.VSTI;
+    /**
+     * Parses the information about a JS plugin.
+     *
+     * @param line The line to parse
+     * @param categoriesSet The categories set
+     * @param vendorsSet The vendors set
+     */
+    private void parseJSDevice (final String line, final Set<String> categoriesSet, final Set<String> vendorsSet)
+    {
+        final Matcher matcher = PATTERN_JSFX.matcher (line);
+        if (!matcher.matches ())
+            return;
+        final String name = matcher.group (4).substring (4);
+        final String module = matcher.group (1);
+        final DeviceMetadataImpl device = new DeviceMetadataImpl (module, name, module, DeviceType.AUDIO_EFFECT, DeviceFileType.JS, DeviceArchitecture.SCRIPT);
+        this.devices.add (device);
+
+        final String [] modulePath = module.split ("/");
+        if (modulePath.length <= 1)
+            return;
+        final String o = modulePath[0].startsWith ("\"") ? modulePath[0].substring (1) : modulePath[0];
+        if (NON_CATEGORIES.contains (o.toLowerCase (Locale.US)))
+        {
+            device.setVendor (o);
+            vendorsSet.add (o);
+        }
         else
-            dt = module.endsWith ("vst3") ? DeviceFileType.VST3 : DeviceFileType.VST;
-
-        return new Device (creationName, name, module, dt, architecture);
+        {
+            final String mapped = JS_CATEGORY_MAP.get (o);
+            if (mapped == null)
+            {
+                device.setCategories (Collections.singleton (o));
+                categoriesSet.add (o);
+            }
+            else
+                device.setCategories (Collections.singleton (mapped));
+        }
     }
 
 
@@ -770,12 +904,12 @@ public class DeviceManager
 
 
     /**
-     * Parses the FX tags file.
+     * Load and parse the JS file.
      *
-     * @param filename The file from which to parse
-     * @param logModel The host for logging
-     * @param categoriesSet The categories set
-     * @param vendorsSet The vendors set
+     * @param filename The name of the file from which to parse
+     * @param logModel For logging
+     * @param categoriesSet The categories
+     * @param vendorsSet The vendors
      */
     private void loadJSDevices (final String filename, final LogModel logModel, final Set<String> categoriesSet, final Set<String> vendorsSet)
     {
@@ -808,41 +942,24 @@ public class DeviceManager
 
 
     /**
-     * Parses the information about a JS plugin.
+     * Get a value from the INI file and convert it to an integer.
      *
-     * @param line The line to parse
-     * @param categoriesSet The categories set
-     * @param vendorsSet The vendors set
+     * @param iniFile The INI file
+     * @param category The category section
+     * @param name The name of the entry
+     * @param def The default value
+     * @return The integer value
      */
-    private void parseJSDevice (final String line, final Set<String> categoriesSet, final Set<String> vendorsSet)
+    private static int getInt (final IniEditor iniFile, final String category, final String name, final int def)
     {
-        final Matcher matcher = PATTERN_JSFX.matcher (line);
-        if (!matcher.matches ())
-            return;
-        final String name = matcher.group (4).substring (4);
-        final String module = matcher.group (1);
-        final Device device = new Device (module, name, module, DeviceFileType.JS, Device.Architecture.SCRIPT);
-        this.devices.add (device);
-
-        final String [] modulePath = module.split ("/");
-        if (modulePath.length <= 1)
-            return;
-        final String o = modulePath[0].startsWith ("\"") ? modulePath[0].substring (1) : modulePath[0];
-        if (NON_CATEGORIES.contains (o.toLowerCase (Locale.US)))
+        final String value = iniFile.get (category, name);
+        try
         {
-            device.setVendor (o);
-            vendorsSet.add (o);
+            return value == null ? def : Integer.parseInt (value);
         }
-        else
+        catch (final NumberFormatException ex)
         {
-            final String mapped = JS_CATEGORY_MAP.get (o);
-            if (mapped == null)
-            {
-                device.setCategories (Collections.singleton (o));
-                categoriesSet.add (o);
-            }
-            else
-                device.setCategories (Collections.singleton (mapped));
+            return def;
         }
     }
 }

@@ -24,6 +24,7 @@ public class ProjectImpl extends BaseImpl implements IProject
     private final IModel        model;
     private final Configuration configuration;
     private String              name = "None";
+    private boolean             isDirtyFlag;
 
 
     /**
@@ -99,6 +100,25 @@ public class ProjectImpl extends BaseImpl implements IProject
     public void setInternalName (final String name)
     {
         this.name = name;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean isDirty ()
+    {
+        return this.isDirtyFlag;
+    }
+
+
+    /**
+     * Set the dirty flag.
+     *
+     * @param isDirty True to set the project dirty
+     */
+    public void setDirty (final boolean isDirty)
+    {
+        this.isDirtyFlag = isDirty;
     }
 
 
