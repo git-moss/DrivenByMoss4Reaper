@@ -324,6 +324,9 @@ public class TrackImpl extends ChannelImpl implements ITrack
     @Override
     public void select ()
     {
+        // Note: There is a setting in the Reaper mixer to automatically scroll
+        // to the selected track. Therefore, this function does only select the track.
+
         if (this.doesExist ())
             this.sendPositionedItemOSC ("select", 1);
     }
