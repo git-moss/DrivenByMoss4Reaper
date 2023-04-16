@@ -398,7 +398,7 @@ public class TrackImpl extends ChannelImpl implements ITrack
 
     /** {@inheritDoc} */
     @Override
-    public void stop ()
+    public void stop (final boolean isAlternative)
     {
         // Not supported
     }

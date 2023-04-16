@@ -97,14 +97,6 @@ public class DrumPadBankImpl extends AbstractPagedBankImpl<DrumPadImpl, ILayer> 
 
     /** {@inheritDoc} */
     @Override
-    public void stop ()
-    {
-        // No clips in layers.
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
     public ISceneBank getSceneBank ()
     {
         // Not supported

@@ -45,14 +45,6 @@ public class LayerBankImpl extends AbstractBankImpl<ILayer> implements ILayerBan
 
     /** {@inheritDoc} */
     @Override
-    public void stop ()
-    {
-        // No clips in layers.
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
     public ISceneBank getSceneBank ()
     {
         // No clips in layers.

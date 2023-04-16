@@ -113,7 +113,7 @@ public abstract class AbstractTrackBankImpl extends AbstractPagedBankImpl<TrackI
 
     /** {@inheritDoc} */
     @Override
-    public void stop ()
+    public void stop (final boolean isAlternative)
     {
         // Not supported
     }

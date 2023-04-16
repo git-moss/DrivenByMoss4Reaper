@@ -246,11 +246,11 @@ public class CursorTrackImpl implements ICursorTrack
 
     /** {@inheritDoc} */
     @Override
-    public void stop ()
+    public void stop (final boolean isAlternative)
     {
         final ITrack selectedTrack = this.getPinnedOrSelectedTrack ();
         if (selectedTrack != null)
-            selectedTrack.stop ();
+            selectedTrack.stop (isAlternative);
     }
 
 

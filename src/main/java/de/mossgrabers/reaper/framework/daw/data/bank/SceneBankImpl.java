@@ -55,14 +55,6 @@ public class SceneBankImpl extends AbstractPagedBankImpl<SceneImpl, IScene> impl
 
     /** {@inheritDoc} */
     @Override
-    public void stop ()
-    {
-        // Intentionally empty
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
     public boolean canScrollBackwards ()
     {
         // There is no selected scene, therefore use the bank offset
