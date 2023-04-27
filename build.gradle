@@ -9,7 +9,7 @@ plugins {
 sourceCompatibility = 17
 targetCompatibility = 17
 
-version = '20.1.0'
+version = '20.2.0'
 
 jar {
     manifest {
@@ -166,9 +166,9 @@ dependencies {
     implementation group: 'com.nikhaldimann', name: 'inieditor', version: 'r6'
     implementation group: 'net.java.dev.jna', name: 'jna', version: '5.13.0'
     implementation group: 'net.java.dev.jna', name: 'jna-platform', version: '5.13.0'
-    implementation group: 'com.badlogicgames.jamepad', name: 'jamepad', version: '2.0.20.0'
+    implementation group: 'com.badlogicgames.jamepad', name: 'jamepad', version: '2.26.4.0'
     implementation group: 'com.weblookandfeel', name: 'svg-salamander', version: '1.1.2.2'
-    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.14.2'
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.15.0'
     implementation fileTree(dir: 'libs', include: '**/*.jar')
 }
 

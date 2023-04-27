@@ -17,6 +17,7 @@ import de.mossgrabers.reaper.controller.akai.apcmini.APCminiControllerInstance;
 import de.mossgrabers.reaper.controller.akai.fire.FireControllerInstance;
 import de.mossgrabers.reaper.controller.arturia.beatstep.BeatstepControllerInstance;
 import de.mossgrabers.reaper.controller.electra.one.ElectraOneControllerInstance;
+import de.mossgrabers.reaper.controller.esi.xjam.XjamControllerInstance;
 import de.mossgrabers.reaper.controller.gamepad.GamepadControllerInstance;
 import de.mossgrabers.reaper.controller.generic.GenericFlexiControllerInstance;
 import de.mossgrabers.reaper.controller.mackie.hui.HUI1ControllerInstance;
@@ -140,6 +141,7 @@ public class ControllerInstanceManager
         DEF_TO_CLASS.put (SLMkIControllerInstance.CONTROLLER_DEFINITION, SLMkIControllerInstance.class);
         DEF_TO_CLASS.put (SLMkIIControllerInstance.CONTROLLER_DEFINITION, SLMkIIControllerInstance.class);
         DEF_TO_CLASS.put (SLMkIIIControllerInstance.CONTROLLER_DEFINITION, SLMkIIIControllerInstance.class);
+        DEF_TO_CLASS.put (XjamControllerInstance.CONTROLLER_DEFINITION, XjamControllerInstance.class);
         DEF_TO_CLASS.put (YaeltexTurnControllerInstance.CONTROLLER_DEFINITION, YaeltexTurnControllerInstance.class);
 
         for (final Class<?> clazz: DEF_TO_CLASS.values ())

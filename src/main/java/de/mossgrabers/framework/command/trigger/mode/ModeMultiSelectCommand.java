@@ -69,7 +69,6 @@ public class ModeMultiSelectCommand<S extends IControlSurface<C>, C extends Conf
     public void executeShifted (final ButtonEvent event)
     {
         this.switchMode (false, event);
-
     }
 
 
@@ -84,7 +83,6 @@ public class ModeMultiSelectCommand<S extends IControlSurface<C>, C extends Conf
         // If coming from a mode not on the list, activate the last one
         if (this.currentModeID.equals (activeModeId))
         {
-            final ITrackBank trackBank = this.model.getTrackBank ();
             int index = this.modeIds.indexOf (activeModeId);
             final int startIndex = index;
             // Select the previous/next mode. Skips send modes for which no send exists.
@@ -93,10 +91,20 @@ public class ModeMultiSelectCommand<S extends IControlSurface<C>, C extends Conf
             {
                 index = this.changeIndex (selectNext, index);
                 newMode = this.modeIds.get (index);
-            } while (Modes.isSendMode (newMode) && !trackBank.canEditSend (newMode.ordinal () - Modes.SEND1.ordinal ()) && index != startIndex);
+            } while (this.sendDoesNotExist (newMode) && index != startIndex);
         }
 
         this.activateMode (newMode);
+    }
+
+
+    private boolean sendDoesNotExist (final Modes mode)
+    {
+        if (Modes.isSendMode (mode))
+            return !this.model.getTrackBank ().canEditSend (mode.ordinal () - Modes.SEND1.ordinal ());
+        if (Modes.isLayerSendMode (mode))
+            return !this.model.getTrackBank ().canEditSend (mode.ordinal () - Modes.DEVICE_LAYER_SEND1.ordinal ());
+        return false;
     }
 
 
