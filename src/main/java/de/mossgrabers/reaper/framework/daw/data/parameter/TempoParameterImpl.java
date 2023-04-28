@@ -18,7 +18,7 @@ import java.text.DecimalFormat;
  *
  * @author Jürgen Moßgraber
  */
-public class TempoParameterImpl extends AbstractParameterImpl
+public class TempoParameterImpl extends AbstractParameterImpl implements IParameterEx
 {
     private static final double DEFAULT_TEMPO = 120.0;
 
@@ -43,7 +43,7 @@ public class TempoParameterImpl extends AbstractParameterImpl
     @Override
     public void setValue (final IValueChanger valueChanger, final int value)
     {
-        this.setInternalTempo (value);
+        this.setInternalValue (value);
     }
 
 
@@ -67,7 +67,7 @@ public class TempoParameterImpl extends AbstractParameterImpl
     @Override
     public void resetValue ()
     {
-        this.setInternalTempo (DEFAULT_TEMPO);
+        this.setInternalValue (DEFAULT_TEMPO);
     }
 
 
@@ -79,22 +79,16 @@ public class TempoParameterImpl extends AbstractParameterImpl
     }
 
 
-    /**
-     * Set the internal tempo value.
-     *
-     * @param tempo The value
-     */
-    public void setInternalTempo (final double tempo)
+    /** {@inheritDoc} */
+    @Override
+    public void setInternalValue (final double value)
     {
-        this.tempo = tempo;
+        this.tempo = value;
     }
 
 
-    /**
-     * Get the internal tempo value.
-     *
-     * @return The value
-     */
+    /** {@inheritDoc} */
+    @Override
     public double getInternalValue ()
     {
         return this.tempo;

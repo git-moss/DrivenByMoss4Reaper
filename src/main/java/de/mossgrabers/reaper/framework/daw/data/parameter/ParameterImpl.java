@@ -5,7 +5,6 @@
 package de.mossgrabers.reaper.framework.daw.data.parameter;
 
 import de.mossgrabers.framework.controller.valuechanger.IValueChanger;
-import de.mossgrabers.framework.parameter.IParameter;
 import de.mossgrabers.reaper.communication.Processor;
 import de.mossgrabers.reaper.framework.daw.DataSetupEx;
 import de.mossgrabers.reaper.framework.daw.data.ItemImpl;
@@ -16,7 +15,7 @@ import de.mossgrabers.reaper.framework.daw.data.ItemImpl;
  *
  * @author Jürgen Moßgraber
  */
-public class ParameterImpl extends ItemImpl implements IParameter
+public class ParameterImpl extends ItemImpl implements IParameterEx
 {
     private String          valueStr          = "";
     private boolean         isBeingTouched;
@@ -92,11 +91,8 @@ public class ParameterImpl extends ItemImpl implements IParameter
     }
 
 
-    /**
-     * Get the normalized internal value.
-     *
-     * @return The value in the range of [0..1]
-     */
+    /** {@inheritDoc} */
+    @Override
     public double getInternalValue ()
     {
         return Math.max (this.value, 0);
@@ -197,11 +193,8 @@ public class ParameterImpl extends ItemImpl implements IParameter
     }
 
 
-    /**
-     * Set the value.
-     *
-     * @param value The value normalized to 0..1
-     */
+    /** {@inheritDoc} */
+    @Override
     public void setInternalValue (final double value)
     {
         if (this.isBeingTouched)

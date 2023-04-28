@@ -19,7 +19,7 @@ import de.mossgrabers.framework.daw.IHost;
 import de.mossgrabers.framework.daw.midi.IMidiInput;
 import de.mossgrabers.framework.graphics.IGraphicsContext;
 import de.mossgrabers.framework.parameter.IParameter;
-import de.mossgrabers.reaper.framework.daw.data.parameter.ParameterImpl;
+import de.mossgrabers.reaper.framework.daw.data.parameter.IParameterEx;
 import de.mossgrabers.reaper.framework.graphics.GraphicsContextImpl;
 import de.mossgrabers.reaper.framework.midi.MidiInputImpl;
 
@@ -190,7 +190,7 @@ public class HwRelativeKnobImpl extends AbstractHwContinuousControl implements I
         final double centerY = (bounds.y () + radius) * scale;
         gc.fillCircle (centerX, centerY, radius * scale, ColorEx.BLACK);
 
-        if (this.parameter instanceof final ParameterImpl pi)
+        if (this.parameter instanceof final IParameterEx pi)
         {
             final double paramValue = pi.getInternalValue ();
             final int l = (int) Math.round (paramValue * 360.0);

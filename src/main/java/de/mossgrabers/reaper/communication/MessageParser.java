@@ -295,7 +295,7 @@ public class MessageParser
                 break;
 
             case "tempo":
-                this.transport.getTempoParameter ().setInternalTempo (Double.parseDouble (value));
+                this.transport.getTempoParameter ().setInternalValue (Double.parseDouble (value));
                 break;
 
             case "time":

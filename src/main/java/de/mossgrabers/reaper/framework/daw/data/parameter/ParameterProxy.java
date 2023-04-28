@@ -12,7 +12,7 @@ import de.mossgrabers.reaper.framework.daw.data.bank.ParameterBankImpl;
  *
  * @author Jürgen Moßgraber
  */
-public class ParameterProxy implements IParameter
+public class ParameterProxy implements IParameterEx
 {
     private final ParameterBankImpl bank;
     private final int               index;
@@ -236,6 +236,23 @@ public class ParameterProxy implements IParameter
     public void setIndication (final boolean enable)
     {
         this.getParam ().setIndication (enable);
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public double getInternalValue ()
+    {
+        return this.getParam () instanceof IParameterEx paramEx ? paramEx.getInternalValue () : 0;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void setInternalValue (final double value)
+    {
+        if (this.getParam () instanceof IParameterEx paramEx)
+            paramEx.setInternalValue (value);
     }
 
 

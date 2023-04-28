@@ -11,7 +11,7 @@ import de.mossgrabers.framework.controller.hardware.IHwAbsoluteKnob;
 import de.mossgrabers.framework.daw.IHost;
 import de.mossgrabers.framework.daw.midi.IMidiInput;
 import de.mossgrabers.framework.graphics.IGraphicsContext;
-import de.mossgrabers.reaper.framework.daw.data.parameter.ParameterImpl;
+import de.mossgrabers.reaper.framework.daw.data.parameter.IParameterEx;
 import de.mossgrabers.reaper.framework.graphics.GraphicsContextImpl;
 
 import javax.sound.midi.InvalidMidiDataException;
@@ -70,7 +70,7 @@ public class HwAbsoluteKnobImpl extends AbstractHwAbsoluteControl implements IHw
         ((GraphicsContextImpl) gc).fillArc (centerX, centerY, radius, ColorEx.WHITE, 270 - length, length);
         gc.fillCircle (centerX, centerY, radius * 0.8, ColorEx.BLACK);
 
-        if (this.parameter instanceof final ParameterImpl pi)
+        if (this.parameter instanceof final IParameterEx pi)
         {
             final double paramValue = pi.getInternalValue ();
             final int l = (int) Math.round (paramValue * 360.0);
