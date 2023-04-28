@@ -6,7 +6,6 @@ package de.mossgrabers.reaper.framework.daw.data.parameter;
 
 import de.mossgrabers.framework.controller.valuechanger.IValueChanger;
 import de.mossgrabers.framework.daw.data.EqualizerBandType;
-import de.mossgrabers.framework.parameter.AbstractParameterImpl;
 import de.mossgrabers.reaper.communication.Processor;
 import de.mossgrabers.reaper.framework.daw.DataSetupEx;
 
@@ -20,7 +19,7 @@ import java.util.Map;
  *
  * @author Jürgen Moßgraber
  */
-public class EqBandTypeParameterImpl extends AbstractParameterImpl
+public class EqBandTypeParameterImpl extends ParameterImpl
 {
     private static final String                          BAND                = "band/";
 
@@ -54,7 +53,6 @@ public class EqBandTypeParameterImpl extends AbstractParameterImpl
         EQ_TYPE_INDICES_INV.put (Integer.valueOf (7), EqualizerBandType.BELL);
     }
 
-    private final DataSetupEx dataSetup;
     private final int         bandIndex;
     private EqualizerBandType bandType = EqualizerBandType.OFF;
 
@@ -67,9 +65,8 @@ public class EqBandTypeParameterImpl extends AbstractParameterImpl
      */
     public EqBandTypeParameterImpl (final DataSetupEx dataSetup, final int bandIndex)
     {
-        super (dataSetup.getValueChanger (), -1);
+        super (dataSetup, Processor.EQ, -1, 0);
 
-        this.dataSetup = dataSetup;
         this.bandIndex = bandIndex;
     }
 
@@ -146,7 +143,7 @@ public class EqBandTypeParameterImpl extends AbstractParameterImpl
     @Override
     public void resetValue ()
     {
-        this.dataSetup.getSender ().processIntArg (Processor.EQ, BAND + this.index, -1);
+        this.sendOSC (BAND + this.index, -1);
     }
 
 
@@ -156,7 +153,7 @@ public class EqBandTypeParameterImpl extends AbstractParameterImpl
     {
         final int idValue = Math.min (Math.max (0, (int) (this.bandType.ordinal () + increment)), 6);
         final Integer id = EQ_TYPE_INDICES.get (EqualizerBandType.values ()[idValue]);
-        this.dataSetup.getSender ().processStringArg (Processor.EQ, BAND + this.bandIndex, id.toString ());
+        this.sendOSC (BAND + this.bandIndex, id.toString ());
     }
 
 
