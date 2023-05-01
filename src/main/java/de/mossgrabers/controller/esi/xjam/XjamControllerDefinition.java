@@ -21,7 +21,6 @@ public class XjamControllerDefinition extends DefaultControllerDefinition
 {
     private static final UUID EXTENSION_ID = UUID.fromString ("3883D79D-141C-4AD6-912C-1E74FFBE6CD7");
 
-
     /**
      * Constructor.
      */
@@ -40,17 +39,12 @@ public class XjamControllerDefinition extends DefaultControllerDefinition
         {
             default:
             case WINDOWS:
-                midiDiscoveryPairs.add (this.addDeviceDiscoveryPair ("Xjam", "Xjam"));
-                break;
-
-            // TODO Test
             case MAC:
                 midiDiscoveryPairs.add (this.addDeviceDiscoveryPair ("Xjam", "Xjam"));
                 break;
 
-            // TODO Test
             case LINUX:
-                midiDiscoveryPairs.add (this.addDeviceDiscoveryPair ("Xjam", "Xjam"));
+                midiDiscoveryPairs.addAll (this.createLinuxDeviceDiscoveryPairs ("Xjam", "Xjam"));
                 break;
         }
         return midiDiscoveryPairs;
