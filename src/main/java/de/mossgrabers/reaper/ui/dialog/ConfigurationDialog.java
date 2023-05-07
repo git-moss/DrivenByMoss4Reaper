@@ -119,6 +119,9 @@ public class ConfigurationDialog extends BasicDialog
         final JScrollPane scrollPane = new JScrollPane (wrapper);
         scrollPane.setHorizontalScrollBarPolicy (ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setVerticalScrollBarPolicy (ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+        // Speed up vertical scrolling of the dialog
+        scrollPane.getVerticalScrollBar ().setUnitIncrement (40);
+
         contentPane.add (scrollPane, BorderLayout.CENTER);
 
         this.midiInputBoxes = this.settings.createMidiInputWidgets ();

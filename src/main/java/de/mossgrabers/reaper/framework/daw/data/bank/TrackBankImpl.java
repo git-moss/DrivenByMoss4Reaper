@@ -186,7 +186,7 @@ public class TrackBankImpl extends AbstractTrackBankImpl
 
                 // Is track on current page? If not adjust the page
                 if (position >= 0 && !this.isOnSelectedPage (position))
-                    this.bankOffset = position / this.pageSize * this.pageSize;
+                    this.setBankOffset (position / this.pageSize * this.pageSize);
             }
         }
         else
@@ -226,7 +226,7 @@ public class TrackBankImpl extends AbstractTrackBankImpl
             if (track.isSelected ())
             {
                 this.currentFolder = node;
-                this.bankOffset = i / this.pageSize * this.pageSize;
+                this.setBankOffset (i / this.pageSize * this.pageSize);
                 return true;
             }
 
