@@ -31,7 +31,6 @@ import de.mossgrabers.reaper.framework.daw.data.bank.MarkerBankImpl;
 import de.mossgrabers.reaper.framework.daw.data.bank.ResizedSlotBank;
 import de.mossgrabers.reaper.framework.daw.data.bank.SlotBankImpl;
 import de.mossgrabers.reaper.framework.daw.data.bank.TrackBankImpl;
-import de.mossgrabers.reaper.framework.daw.data.bank.UserParameterBankImpl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -137,14 +136,12 @@ public class ModelImpl extends AbstractModel
         //////////////////////////////////////////////////////////////////////////////
         // Create track banks
 
-        final TrackBankImpl trackBankImpl = new TrackBankImpl (dataSetup, (ApplicationImpl) this.application, drumDevices, numTracks, numScenes, numSends, modelSetup.hasFlatTrackList (), modelSetup.hasFullFlatTrackList ());
+        final TrackBankImpl trackBankImpl = new TrackBankImpl (dataSetup, (ApplicationImpl) this.application, drumDevices, numTracks, numScenes, numSends, numParams, modelSetup.hasFlatTrackList (), modelSetup.hasFullFlatTrackList ());
         this.trackBank = trackBankImpl;
-        this.masterTrack = new MasterTrackImpl (dataSetup, trackBankImpl, numSends);
+        this.masterTrack = new MasterTrackImpl (dataSetup, trackBankImpl, numSends, numParams);
         trackBankImpl.setMasterTrack ((TrackImpl) this.masterTrack);
         this.trackBanks.add (this.trackBank);
         this.effectTrackBank = null;
-
-        this.userParameterBank = new UserParameterBankImpl (dataSetup, modelSetup.getNumUserPageSize (), this);
 
         final int numResults = modelSetup.getNumResults ();
         if (numResults > 0)
@@ -159,7 +156,7 @@ public class ModelImpl extends AbstractModel
     public ISceneBank getSceneBank (final int numScenes)
     {
         return this.sceneBanks.computeIfAbsent (Integer.valueOf (numScenes), key -> {
-            final TrackBankImpl tb = new TrackBankImpl (this.dataSetup, (ApplicationImpl) this.application, 1, numScenes, this.modelSetup.getNumSends (), true, false);
+            final TrackBankImpl tb = new TrackBankImpl (this.dataSetup, (ApplicationImpl) this.application, 1, numScenes, this.modelSetup.getNumSends (), this.modelSetup.getNumParams (), true, false);
             this.trackBanks.add (tb);
             return tb.getSceneBank ();
         });

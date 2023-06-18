@@ -16,6 +16,7 @@ import de.mossgrabers.framework.daw.constants.DeviceID;
 import de.mossgrabers.framework.daw.data.IMarker;
 import de.mossgrabers.framework.daw.data.IScene;
 import de.mossgrabers.framework.daw.data.ISend;
+import de.mossgrabers.framework.daw.data.ITrack;
 import de.mossgrabers.framework.daw.data.bank.IDeviceBank;
 import de.mossgrabers.framework.daw.data.bank.ITrackBank;
 import de.mossgrabers.framework.daw.midi.IMidiInput;
@@ -43,7 +44,6 @@ import de.mossgrabers.reaper.framework.daw.data.bank.ParameterBankImpl;
 import de.mossgrabers.reaper.framework.daw.data.bank.SceneBankImpl;
 import de.mossgrabers.reaper.framework.daw.data.bank.SendBankImpl;
 import de.mossgrabers.reaper.framework.daw.data.bank.TrackBankImpl;
-import de.mossgrabers.reaper.framework.daw.data.bank.UserParameterBankImpl;
 import de.mossgrabers.reaper.framework.daw.data.parameter.GrooveParameter;
 import de.mossgrabers.reaper.framework.daw.data.parameter.IParameterEx;
 import de.mossgrabers.reaper.framework.daw.data.parameter.MetronomeVolumeParameterImpl;
@@ -764,8 +764,12 @@ public class MessageParser
             return;
         }
 
+        final Optional<ITrack> selectedTrack = this.model.getTrackBank ().getSelectedItem ();
+        if (selectedTrack.isEmpty ())
+            return;
+
         final String cmd = parts.poll ();
-        final UserParameterBankImpl parameterBank = (UserParameterBankImpl) this.model.getUserParameterBank ();
+        final ParameterBankImpl parameterBank = (ParameterBankImpl) ((TrackImpl) selectedTrack.get ()).getParameterBank ();
         try
         {
             final int paramNo = Integer.parseInt (cmd);

@@ -35,6 +35,7 @@ public abstract class AbstractTrackBankImpl extends AbstractPagedBankImpl<TrackI
     private final ApplicationImpl application;
     private final int             numScenes;
     private final int             numSends;
+    private final int             numParams;
     private final ISceneBank      sceneBank;
 
 
@@ -46,8 +47,9 @@ public abstract class AbstractTrackBankImpl extends AbstractPagedBankImpl<TrackI
      * @param numTracks The number of tracks of a bank page
      * @param numScenes The number of scenes of a bank page
      * @param numSends The number of sends of a bank page
+     * @param numParams The number of parameters
      */
-    protected AbstractTrackBankImpl (final DataSetupEx dataSetup, final ApplicationImpl application, final int numTracks, final int numScenes, final int numSends)
+    protected AbstractTrackBankImpl (final DataSetupEx dataSetup, final ApplicationImpl application, final int numTracks, final int numScenes, final int numSends, final int numParams)
     {
         super (dataSetup, numTracks, EmptyTrack.INSTANCE);
 
@@ -55,6 +57,7 @@ public abstract class AbstractTrackBankImpl extends AbstractPagedBankImpl<TrackI
 
         this.numScenes = numScenes;
         this.numSends = numSends;
+        this.numParams = numParams;
 
         this.sceneBank = new SceneBankImpl (dataSetup, this, this.numScenes);
     }
@@ -64,7 +67,7 @@ public abstract class AbstractTrackBankImpl extends AbstractPagedBankImpl<TrackI
     @Override
     protected TrackImpl createItem (final int position)
     {
-        return new TrackImpl (this.dataSetup, this, position, this.getPageSize (), this.numSends, this.numScenes);
+        return new TrackImpl (this.dataSetup, this, position, this.getPageSize (), this.numSends, this.numScenes, this.numParams);
     }
 
 

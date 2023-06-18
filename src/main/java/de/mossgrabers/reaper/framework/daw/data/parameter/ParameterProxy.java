@@ -243,7 +243,7 @@ public class ParameterProxy implements IParameterEx
     @Override
     public double getInternalValue ()
     {
-        return this.getParam () instanceof IParameterEx paramEx ? paramEx.getInternalValue () : 0;
+        return this.getParam () instanceof final IParameterEx paramEx ? paramEx.getInternalValue () : 0;
     }
 
 
@@ -251,7 +251,7 @@ public class ParameterProxy implements IParameterEx
     @Override
     public void setInternalValue (final double value)
     {
-        if (this.getParam () instanceof IParameterEx paramEx)
+        if (this.getParam () instanceof final IParameterEx paramEx)
             paramEx.setInternalValue (value);
     }
 
@@ -260,7 +260,7 @@ public class ParameterProxy implements IParameterEx
     @Override
     public void setValueStr (final String value)
     {
-        if (this.getParam () instanceof IParameterEx paramEx)
+        if (this.getParam () instanceof final IParameterEx paramEx)
             paramEx.setValueStr (value);
     }
 
@@ -269,7 +269,7 @@ public class ParameterProxy implements IParameterEx
     @Override
     public void setInternalName (final String name)
     {
-        if (this.getParam () instanceof IParameterEx paramEx)
+        if (this.getParam () instanceof final IParameterEx paramEx)
             paramEx.setInternalName (name);
     }
 
@@ -278,7 +278,7 @@ public class ParameterProxy implements IParameterEx
     @Override
     public void setPosition (final int position)
     {
-        if (this.getParam () instanceof IParameterEx paramEx)
+        if (this.getParam () instanceof final IParameterEx paramEx)
             paramEx.setPosition (position);
     }
 
@@ -287,7 +287,7 @@ public class ParameterProxy implements IParameterEx
     @Override
     public void setExists (final boolean exists)
     {
-        if (this.getParam () instanceof IParameterEx paramEx)
+        if (this.getParam () instanceof final IParameterEx paramEx)
             paramEx.setExists (exists);
     }
 

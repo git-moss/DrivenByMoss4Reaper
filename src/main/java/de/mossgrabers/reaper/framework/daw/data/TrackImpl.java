@@ -7,11 +7,14 @@ package de.mossgrabers.reaper.framework.daw.data;
 import de.mossgrabers.framework.daw.constants.AutomationMode;
 import de.mossgrabers.framework.daw.constants.RecordQuantization;
 import de.mossgrabers.framework.daw.data.ITrack;
+import de.mossgrabers.framework.daw.data.bank.IParameterBank;
 import de.mossgrabers.framework.daw.data.bank.ISlotBank;
 import de.mossgrabers.framework.daw.resource.ChannelType;
 import de.mossgrabers.framework.parameter.IParameter;
+import de.mossgrabers.reaper.communication.Processor;
 import de.mossgrabers.reaper.framework.daw.DataSetupEx;
 import de.mossgrabers.reaper.framework.daw.data.bank.AbstractTrackBankImpl;
+import de.mossgrabers.reaper.framework.daw.data.bank.ParameterBankImpl;
 import de.mossgrabers.reaper.framework.daw.data.bank.SceneBankImpl;
 import de.mossgrabers.reaper.framework.daw.data.bank.SlotBankImpl;
 import de.mossgrabers.reaper.framework.daw.data.bank.TrackBankImpl;
@@ -51,6 +54,7 @@ public class TrackImpl extends ChannelImpl implements ITrack
     private RecordQuantization            recordQuantization;
     private final IParameter              crossfadeParameter;
     private boolean                       isOverdub       = false;
+    private final ParameterBankImpl       parameterBank;
 
 
     /**
@@ -62,14 +66,16 @@ public class TrackImpl extends ChannelImpl implements ITrack
      * @param numTracks The number of tracks of a bank
      * @param numSends The number of sends of a bank
      * @param numScenes The number of scenes of a bank
+     * @param numParams The number of parameters
      */
-    public TrackImpl (final DataSetupEx dataSetup, final AbstractTrackBankImpl trackBank, final int index, final int numTracks, final int numSends, final int numScenes)
+    public TrackImpl (final DataSetupEx dataSetup, final AbstractTrackBankImpl trackBank, final int index, final int numTracks, final int numSends, final int numScenes, final int numParams)
     {
         super (dataSetup, index, numSends);
 
         this.trackBank = trackBank;
         this.slotBank = new SlotBankImpl (dataSetup, (SceneBankImpl) trackBank.getSceneBank (), index, numScenes);
         this.crossfadeParameter = new CrossfadeParameter (this.valueChanger, index);
+        this.parameterBank = numParams > 0 ? new ParameterBankImpl (dataSetup, Processor.TRACK, numParams, null) : null;
     }
 
 
@@ -82,16 +88,18 @@ public class TrackImpl extends ChannelImpl implements ITrack
      * @param numTracks The number of tracks of a bank
      * @param numSends The number of sends of a bank
      * @param numScenes The number of scenes of a bank
+     * @param numParams The number of parameters
      * @param volumeParameter The volume parameter
      * @param panParameter The panorama parameter
      */
-    public TrackImpl (final DataSetupEx dataSetup, final AbstractTrackBankImpl trackBank, final int index, final int numTracks, final int numSends, final int numScenes, final ParameterImpl volumeParameter, final ParameterImpl panParameter)
+    public TrackImpl (final DataSetupEx dataSetup, final AbstractTrackBankImpl trackBank, final int index, final int numTracks, final int numSends, final int numScenes, final int numParams, final ParameterImpl volumeParameter, final ParameterImpl panParameter)
     {
         super (dataSetup, index, numSends, volumeParameter, panParameter);
 
         this.trackBank = trackBank;
         this.slotBank = new SlotBankImpl (dataSetup, (SceneBankImpl) trackBank.getSceneBank (), index, numScenes);
         this.crossfadeParameter = new CrossfadeParameter (this.valueChanger, index);
+        this.parameterBank = numParams > 0 ? new ParameterBankImpl (dataSetup, Processor.TRACK, numParams, null) : null;
     }
 
 
@@ -513,6 +521,17 @@ public class TrackImpl extends ChannelImpl implements ITrack
         // The related method in cursor device always returns true to support sequencers but this
         // one is used for track info, e.g. displaying a track icon. Therefore, return false.
         return false;
+    }
+
+
+    /**
+     * Get the track wide parameter bank.
+     *
+     * @return The bank
+     */
+    public IParameterBank getParameterBank ()
+    {
+        return this.parameterBank;
     }
 
 

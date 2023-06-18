@@ -23,10 +23,11 @@ public class EffectTrackBankImpl extends AbstractTrackBankImpl
      * @param application The application
      * @param numTracks The number of track of a bank page
      * @param numScenes The number of scenes of a bank page
+     * @param numParams The number of parameters
      */
-    public EffectTrackBankImpl (final DataSetupEx dataSetup, final ApplicationImpl application, final int numTracks, final int numScenes)
+    public EffectTrackBankImpl (final DataSetupEx dataSetup, final ApplicationImpl application, final int numTracks, final int numScenes, final int numParams)
     {
-        super (dataSetup, application, numTracks, numScenes, 0);
+        super (dataSetup, application, numTracks, numScenes, 0, numParams);
     }
 
 

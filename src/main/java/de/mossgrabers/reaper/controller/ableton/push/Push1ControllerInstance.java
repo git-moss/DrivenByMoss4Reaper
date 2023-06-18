@@ -4,9 +4,10 @@
 
 package de.mossgrabers.reaper.controller.ableton.push;
 
+import de.mossgrabers.controller.ableton.push.Push1ControllerDefinition;
 import de.mossgrabers.controller.ableton.push.PushConfiguration;
-import de.mossgrabers.controller.ableton.push.PushControllerDefinition;
 import de.mossgrabers.controller.ableton.push.PushControllerSetup;
+import de.mossgrabers.controller.ableton.push.PushVersion;
 import de.mossgrabers.controller.ableton.push.controller.PushControlSurface;
 import de.mossgrabers.framework.controller.IControllerSetup;
 import de.mossgrabers.reaper.communication.MessageSender;
@@ -25,7 +26,7 @@ import de.mossgrabers.reaper.ui.utils.LogModel;
 public class Push1ControllerInstance extends AbstractControllerInstance<PushControlSurface, PushConfiguration>
 {
     /** The controller definition instance. */
-    public static final PushControllerDefinition CONTROLLER_DEFINITION = new PushControllerDefinition (false);
+    public static final Push1ControllerDefinition CONTROLLER_DEFINITION = new Push1ControllerDefinition ();
 
 
     /**
@@ -46,6 +47,6 @@ public class Push1ControllerInstance extends AbstractControllerInstance<PushCont
     @Override
     protected IControllerSetup<PushControlSurface, PushConfiguration> createControllerSetup (final ReaperSetupFactory setupFactory)
     {
-        return new PushControllerSetup (this.host, setupFactory, this.globalSettingsUI, this.documentSettingsUI, false);
+        return new PushControllerSetup (this.host, setupFactory, this.globalSettingsUI, this.documentSettingsUI, PushVersion.VERSION_1);
     }
 }

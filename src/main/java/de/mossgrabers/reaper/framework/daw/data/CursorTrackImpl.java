@@ -11,6 +11,7 @@ import de.mossgrabers.framework.daw.data.ICursorTrack;
 import de.mossgrabers.framework.daw.data.IDeviceMetadata;
 import de.mossgrabers.framework.daw.data.IMasterTrack;
 import de.mossgrabers.framework.daw.data.ITrack;
+import de.mossgrabers.framework.daw.data.bank.IParameterBank;
 import de.mossgrabers.framework.daw.data.bank.ISendBank;
 import de.mossgrabers.framework.daw.data.bank.ISlotBank;
 import de.mossgrabers.framework.daw.data.bank.ITrackBank;
@@ -20,6 +21,7 @@ import de.mossgrabers.framework.daw.data.empty.EmptySlotBank;
 import de.mossgrabers.framework.daw.resource.ChannelType;
 import de.mossgrabers.framework.observer.IValueObserver;
 import de.mossgrabers.framework.parameter.IParameter;
+import de.mossgrabers.reaper.framework.daw.data.bank.ParameterBankDelegator;
 
 import java.util.Optional;
 
@@ -31,10 +33,11 @@ import java.util.Optional;
  */
 public class CursorTrackImpl implements ICursorTrack
 {
-    private final IModel model;
-    private boolean      isGroupExpanded = true;
-    private boolean      isPinned        = false;
-    private ITrack       pinnedTrack     = null;
+    private final IModel                 model;
+    private final ParameterBankDelegator parameterBankDelegator;
+    private boolean                      isGroupExpanded = true;
+    private boolean                      isPinned        = false;
+    private ITrack                       pinnedTrack     = null;
 
 
     /**
@@ -45,6 +48,8 @@ public class CursorTrackImpl implements ICursorTrack
     public CursorTrackImpl (final IModel model)
     {
         this.model = model;
+
+        this.parameterBankDelegator = new ParameterBankDelegator (this);
     }
 
 
@@ -953,7 +958,20 @@ public class CursorTrackImpl implements ICursorTrack
     }
 
 
-    private ITrack getPinnedOrSelectedTrack ()
+    /** {@inheritDoc} */
+    @Override
+    public IParameterBank getParameterBank ()
+    {
+        return this.parameterBankDelegator;
+    }
+
+
+    /**
+     * If there is a pinned track, it is returned. Otherwise the selected track.
+     *
+     * @return The pinned or selected track
+     */
+    public ITrack getPinnedOrSelectedTrack ()
     {
         if (this.isPinned)
             return this.pinnedTrack;

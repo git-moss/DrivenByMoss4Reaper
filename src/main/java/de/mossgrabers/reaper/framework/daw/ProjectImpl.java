@@ -23,11 +23,11 @@ import de.mossgrabers.reaper.framework.daw.data.bank.TrackBankImpl;
  */
 public class ProjectImpl extends BaseImpl implements IProject
 {
-    private final IModel        model;
-    private final Configuration configuration;
-    private String              name = "None";
-    private boolean             isDirtyFlag;
-    private ParameterBankImpl   parameterBank;
+    private final IModel            model;
+    private final Configuration     configuration;
+    private String                  name = "None";
+    private boolean                 isDirtyFlag;
+    private final ParameterBankImpl parameterBank;
 
 
     /**
@@ -44,11 +44,7 @@ public class ProjectImpl extends BaseImpl implements IProject
 
         this.model = model;
         this.configuration = configuration;
-
-        if (numParams > 0)
-            this.parameterBank = new ParameterBankImpl (dataSetup, Processor.MASTER, numParams, null);
-        else
-            this.parameterBank = null;
+        this.parameterBank = numParams > 0 ? new ParameterBankImpl (dataSetup, Processor.MASTER, numParams, null) : null;
     }
 
 

@@ -60,14 +60,15 @@ public class TrackBankImpl extends AbstractTrackBankImpl
      * @param numTracks The number of tracks in a bank page
      * @param numScenes The number of scenes in a bank page
      * @param numSends The number of sends in a bank page
+     * @param numParams The number of parameters
      * @param hasFlatTrackList True if group navigation should not be supported, instead all tracks
      *            are flat
      * @param hasFullFlatTrackList True if the track navigation should include effect and master
      *            tracks if flat
      */
-    public TrackBankImpl (final DataSetupEx dataSetup, final ApplicationImpl application, final int numTracks, final int numScenes, final int numSends, final boolean hasFlatTrackList, final boolean hasFullFlatTrackList)
+    public TrackBankImpl (final DataSetupEx dataSetup, final ApplicationImpl application, final int numTracks, final int numScenes, final int numSends, final int numParams, final boolean hasFlatTrackList, final boolean hasFullFlatTrackList)
     {
-        this (dataSetup, application, Collections.emptyList (), numTracks, numScenes, numSends, hasFlatTrackList, hasFullFlatTrackList);
+        this (dataSetup, application, Collections.emptyList (), numTracks, numScenes, numSends, numParams, hasFlatTrackList, hasFullFlatTrackList);
     }
 
 
@@ -80,14 +81,15 @@ public class TrackBankImpl extends AbstractTrackBankImpl
      * @param numTracks The number of tracks in a bank page
      * @param numScenes The number of scenes in a bank page
      * @param numSends The number of sends in a bank page
+     * @param numParams The number of parameters
      * @param hasFlatTrackList True if group navigation should not be supported, instead all tracks
      *            are flat
      * @param hasFullFlatTrackList True if the track navigation should include effect and master
      *            tracks if flat
      */
-    public TrackBankImpl (final DataSetupEx dataSetup, final ApplicationImpl application, final List<IDrumDevice> drumDevices, final int numTracks, final int numScenes, final int numSends, final boolean hasFlatTrackList, final boolean hasFullFlatTrackList)
+    public TrackBankImpl (final DataSetupEx dataSetup, final ApplicationImpl application, final List<IDrumDevice> drumDevices, final int numTracks, final int numScenes, final int numSends, final int numParams, final boolean hasFlatTrackList, final boolean hasFullFlatTrackList)
     {
-        super (dataSetup, application, numTracks, numScenes, numSends);
+        super (dataSetup, application, numTracks, numScenes, numSends, numParams);
 
         this.drumDevices = drumDevices;
 

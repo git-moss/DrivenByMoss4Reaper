@@ -5,6 +5,7 @@
 package de.mossgrabers.reaper.framework.daw.data.parameter;
 
 import de.mossgrabers.framework.controller.valuechanger.IValueChanger;
+import de.mossgrabers.framework.daw.data.ITrack;
 import de.mossgrabers.reaper.communication.Processor;
 import de.mossgrabers.reaper.framework.daw.DataSetupEx;
 import de.mossgrabers.reaper.framework.daw.data.ItemImpl;
@@ -225,7 +226,16 @@ public class ParameterImpl extends ItemImpl implements IParameterEx
     @Override
     protected String createCommand (final String command)
     {
-        return "param/" + super.createCommand (command);
+        String cmd = "param/" + super.createCommand (command);
+
+        if (this.processor == Processor.TRACK)
+        {
+            final ITrack pinnedOrSelectedTrack = this.dataSetup.getCursorTrack ().getPinnedOrSelectedTrack ();
+            if (pinnedOrSelectedTrack != null)
+                cmd = pinnedOrSelectedTrack.getPosition () + "/" + cmd;
+        }
+
+        return cmd;
     }
 
 

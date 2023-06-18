@@ -36,10 +36,11 @@ public class MasterTrackImpl extends TrackImpl implements IMasterTrack
      * @param dataSetup Some configuration variables
      * @param trackBank The track bank for calculating the index
      * @param numSends The number of sends on a page
+     * @param numParams The number of parameters
      */
-    public MasterTrackImpl (final DataSetupEx dataSetup, final TrackBankImpl trackBank, final int numSends)
+    public MasterTrackImpl (final DataSetupEx dataSetup, final TrackBankImpl trackBank, final int numSends, final int numParams)
     {
-        super (dataSetup, trackBank, 0, 1, numSends, 0, new MasterVolumeParameterImpl (dataSetup, 0.716), new MasterPanoramaParameterImpl (dataSetup, 0.5));
+        super (dataSetup, trackBank, 0, 1, numSends, 0, numParams, new MasterVolumeParameterImpl (dataSetup, 0.716), new MasterPanoramaParameterImpl (dataSetup, 0.5));
 
         this.crossfaderParameter = new UserParameterImpl (dataSetup, 0, null)
         {
