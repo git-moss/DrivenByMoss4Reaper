@@ -7,12 +7,17 @@ package de.mossgrabers.controller.osc.module;
 import de.mossgrabers.controller.osc.exception.IllegalParameterException;
 import de.mossgrabers.controller.osc.exception.MissingCommandException;
 import de.mossgrabers.controller.osc.exception.UnknownCommandException;
+import de.mossgrabers.framework.daw.IApplication;
 import de.mossgrabers.framework.daw.IHost;
 import de.mossgrabers.framework.daw.IModel;
 import de.mossgrabers.framework.daw.IProject;
+import de.mossgrabers.framework.daw.data.bank.IParameterBank;
+import de.mossgrabers.framework.daw.data.bank.IParameterPageBank;
 import de.mossgrabers.framework.osc.IOpenSoundControlWriter;
+import de.mossgrabers.framework.parameter.IParameter;
 
 import java.util.LinkedList;
+import java.util.Optional;
 
 
 /**
@@ -66,18 +71,108 @@ public class ProjectModule extends AbstractModule
                 break;
 
             case "engine":
+                final IApplication application = this.model.getApplication ();
                 if (value == null)
-                    this.model.getApplication ().toggleEngineActive ();
+                    application.toggleEngineActive ();
                 else
-                    this.model.getApplication ().setEngineActive (isTrigger (value));
+                    application.setEngineActive (isTrigger (value));
                 break;
 
             case "save":
                 project.save ();
                 break;
 
+            case "param":
+                this.parseParamValue (path, value);
+                break;
+
+            case "page":
+                this.parsePageValue (path, value);
+                break;
+
             default:
                 throw new UnknownCommandException (subCommand);
+        }
+    }
+
+
+    private void parseParamValue (final LinkedList<String> path, final Object value) throws UnknownCommandException, MissingCommandException, IllegalParameterException
+    {
+        final IParameterBank parameterBank = this.model.getProject ().getParameterBank ();
+        final String subCommand = getSubCommand (path);
+        try
+        {
+            final int paramNo = Integer.parseInt (subCommand) - 1;
+            parseFXParamValue (parameterBank.getItem (paramNo), path, value);
+        }
+        catch (final NumberFormatException ex)
+        {
+            switch (subCommand)
+            {
+                case "+":
+                    if (isTrigger (value))
+                        parameterBank.selectNextPage ();
+                    break;
+
+                case "-":
+                    if (isTrigger (value))
+                        parameterBank.selectPreviousPage ();
+                    break;
+
+                default:
+                    throw new UnknownCommandException (subCommand);
+            }
+        }
+    }
+
+
+    private void parsePageValue (final LinkedList<String> path, final Object value) throws UnknownCommandException, MissingCommandException, IllegalParameterException
+    {
+        final IParameterBank parameterBank = this.model.getProject ().getParameterBank ();
+        final IParameterPageBank parameterPageBank = parameterBank.getPageBank ();
+        final String subCommand = getSubCommand (path);
+        if ("select".equals (subCommand) || "selected".equals (subCommand))
+        {
+            parameterPageBank.selectPage (toInteger (value) - 1);
+        }
+        else
+        {
+            try
+            {
+                final int index = Integer.parseInt (subCommand) - 1;
+                parameterPageBank.selectPage (index);
+            }
+            catch (final NumberFormatException ex2)
+            {
+                throw new UnknownCommandException (subCommand);
+            }
+        }
+    }
+
+
+    private static void parseFXParamValue (final IParameter param, final LinkedList<String> path, final Object value) throws MissingCommandException, IllegalParameterException, UnknownCommandException
+    {
+        final String command = getSubCommand (path);
+        switch (command)
+        {
+            case "value":
+                param.setValue (toInteger (value));
+                break;
+
+            case TAG_INDICATE:
+                param.setIndication (isTrigger (value));
+                break;
+
+            case "reset":
+                param.resetValue ();
+                break;
+
+            case TAG_TOUCHED:
+                param.touchValue (isTrigger (value));
+                break;
+
+            default:
+                throw new UnknownCommandException (command);
         }
     }
 
@@ -88,5 +183,28 @@ public class ProjectModule extends AbstractModule
     {
         this.writer.sendOSC ("/project/name", this.model.getProject ().getName (), dump);
         this.writer.sendOSC ("/project/engine", this.model.getApplication ().isEngineActive (), dump);
+
+        final String paramAddress = "/project/param/";
+        final IParameterBank parameterBank = this.model.getProject ().getParameterBank ();
+        for (int i = 0; i < parameterBank.getPageSize (); i++)
+        {
+            final int oneplus = i + 1;
+            this.flushParameterData (this.writer, paramAddress + oneplus + "/", parameterBank.getItem (i), dump);
+        }
+
+        final IParameterPageBank parameterPageBank = parameterBank.getPageBank ();
+        final int selectedParameterPage = parameterPageBank.getSelectedItemIndex ();
+        for (int i = 0; i < parameterPageBank.getPageSize (); i++)
+        {
+            final int oneplus = i + 1;
+            final String pageName = parameterPageBank.getItem (i);
+            final String pageAddress = "/project/page/" + oneplus + "/";
+            this.writer.sendOSC (pageAddress + TAG_EXISTS, !pageName.isBlank (), dump);
+            this.writer.sendOSC (pageAddress, pageName, dump);
+            this.writer.sendOSC (pageAddress + TAG_NAME, pageName, dump);
+            this.writer.sendOSC (pageAddress + TAG_SELECTED, selectedParameterPage == i, dump);
+        }
+        final Optional<String> selectedItem = parameterPageBank.getSelectedItem ();
+        this.writer.sendOSC ("/project/page/selected/" + TAG_NAME, selectedItem.isPresent () ? selectedItem.get () : "", dump);
     }
 }
