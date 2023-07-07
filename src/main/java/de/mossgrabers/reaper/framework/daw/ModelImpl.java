@@ -68,6 +68,12 @@ public class ModelImpl extends AbstractModel
         this.dataSetup = dataSetup;
 
         final int numParams = modelSetup.getNumParams ();
+        final int numTracks = modelSetup.getNumTracks ();
+        final int numSends = modelSetup.getNumSends ();
+        final int numScenes = modelSetup.getNumScenes ();
+        final int numDevicesInBank = modelSetup.getNumDevicesInBank ();
+        final int numDeviceLayers = modelSetup.getNumDeviceLayers ();
+        final int numDrumPadLayers = modelSetup.getNumDrumPadLayers ();
 
         this.application = new ApplicationImpl (dataSetup);
         this.arranger = new ArrangerImpl (dataSetup);
@@ -76,21 +82,13 @@ public class ModelImpl extends AbstractModel
         this.transport = new TransportImpl (dataSetup, this);
         this.groove = new GrooveImpl (dataSetup);
         this.markerBank = new MarkerBankImpl (dataSetup, modelSetup.getNumMarkers ());
-        this.cursorTrack = new CursorTrackImpl (this);
+        this.cursorTrack = new CursorTrackImpl (this, numParams, numSends, numScenes);
 
         dataSetup.setCursorTrack ((CursorTrackImpl) this.cursorTrack);
         dataSetup.setTransport (this.transport);
 
-        final int numTracks = modelSetup.getNumTracks ();
-        final int numSends = modelSetup.getNumSends ();
-        final int numScenes = modelSetup.getNumScenes ();
-
         //////////////////////////////////////////////////////////////////////////////
         // Create devices
-
-        final int numDevicesInBank = modelSetup.getNumDevicesInBank ();
-        final int numDeviceLayers = modelSetup.getNumDeviceLayers ();
-        final int numDrumPadLayers = modelSetup.getNumDrumPadLayers ();
 
         // Cursor device
         this.cursorDevice = new CursorDeviceImpl (dataSetup, numSends, numParams, numDevicesInBank, numDeviceLayers, numDrumPadLayers);

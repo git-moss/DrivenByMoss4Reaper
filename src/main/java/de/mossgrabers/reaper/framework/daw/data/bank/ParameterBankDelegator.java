@@ -25,16 +25,19 @@ import java.util.Optional;
 public class ParameterBankDelegator implements IParameterBank
 {
     private final CursorTrackImpl cursorTrack;
+    private final int             numPageSize;
 
 
     /**
      * Constructor.
      *
      * @param cursorTrack The cursor track
+     * @param numPageSize The size of a parameter page
      */
-    public ParameterBankDelegator (final CursorTrackImpl cursorTrack)
+    public ParameterBankDelegator (final CursorTrackImpl cursorTrack, final int numPageSize)
     {
         this.cursorTrack = cursorTrack;
+        this.numPageSize = numPageSize;
     }
 
 
@@ -265,6 +268,6 @@ public class ParameterBankDelegator implements IParameterBank
     private IParameterBank getBank ()
     {
         final TrackImpl selectedTrack = (TrackImpl) this.cursorTrack.getPinnedOrSelectedTrack ();
-        return selectedTrack == null ? EmptyParameterBank.INSTANCE : selectedTrack.getParameterBank ();
+        return selectedTrack == null ? EmptyParameterBank.getInstance (this.numPageSize) : selectedTrack.getParameterBank ();
     }
 }

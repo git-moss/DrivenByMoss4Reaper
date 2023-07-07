@@ -38,18 +38,25 @@ public class CursorTrackImpl implements ICursorTrack
     private boolean                      isGroupExpanded = true;
     private boolean                      isPinned        = false;
     private ITrack                       pinnedTrack     = null;
+    private int                          numSends;
+    private int                          numSlots;
 
 
     /**
      * Constructor.
      *
      * @param model The model
+     * @param numParams The number of parameters on a page
+     * @param numSends The number of sends on a page
+     * @param numSlots The number of slots on a page
      */
-    public CursorTrackImpl (final IModel model)
+    public CursorTrackImpl (final IModel model, final int numParams, final int numSends, final int numSlots)
     {
         this.model = model;
+        this.numSends = numSends;
+        this.numSlots = numSlots;
 
-        this.parameterBankDelegator = new ParameterBankDelegator (this);
+        this.parameterBankDelegator = new ParameterBankDelegator (this, numParams);
     }
 
 
@@ -226,7 +233,7 @@ public class CursorTrackImpl implements ICursorTrack
     public ISlotBank getSlotBank ()
     {
         final ITrack selectedTrack = this.getPinnedOrSelectedTrack ();
-        return selectedTrack != null ? selectedTrack.getSlotBank () : EmptySlotBank.INSTANCE;
+        return selectedTrack != null ? selectedTrack.getSlotBank () : EmptySlotBank.getInstance (this.numSlots);
     }
 
 
@@ -710,7 +717,7 @@ public class CursorTrackImpl implements ICursorTrack
     public ISendBank getSendBank ()
     {
         final ITrack selectedTrack = this.getPinnedOrSelectedTrack ();
-        return selectedTrack != null ? selectedTrack.getSendBank () : EmptySendBank.INSTANCE;
+        return selectedTrack != null ? selectedTrack.getSendBank () : EmptySendBank.getInstance (this.numSends);
     }
 
 

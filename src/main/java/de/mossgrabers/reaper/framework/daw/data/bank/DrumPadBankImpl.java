@@ -18,7 +18,7 @@ import java.util.Optional;
 
 
 /**
- * Encapsulates the data of a drumpad bank.
+ * Encapsulates the data of a drum pad bank.
  *
  * @author Jürgen Moßgraber
  */
@@ -36,7 +36,7 @@ public class DrumPadBankImpl extends AbstractPagedBankImpl<DrumPadImpl, ILayer> 
      */
     public DrumPadBankImpl (final DataSetupEx dataSetup, final int numLayers, final int numSends)
     {
-        super (dataSetup, numLayers, EmptyDrumPad.INSTANCE);
+        super (dataSetup, numLayers, EmptyDrumPad.getInstance (numSends));
 
         this.numSends = numSends;
 

@@ -51,7 +51,7 @@ public abstract class AbstractTrackBankImpl extends AbstractPagedBankImpl<TrackI
      */
     protected AbstractTrackBankImpl (final DataSetupEx dataSetup, final ApplicationImpl application, final int numTracks, final int numScenes, final int numSends, final int numParams)
     {
-        super (dataSetup, numTracks, EmptyTrack.INSTANCE);
+        super (dataSetup, numTracks, EmptyTrack.getInstance (numSends));
 
         this.application = application;
 
