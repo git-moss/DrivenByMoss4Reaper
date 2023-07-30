@@ -422,6 +422,8 @@ public class MessageParser
             if (TAG_PARAM.equals (cmd))
             {
                 final ParameterBankImpl parameterBank = (ParameterBankImpl) this.model.getProject ().getParameterBank ();
+                if (parameterBank == null)
+                    return;
                 final String paramCmd = parts.poll ();
 
                 try

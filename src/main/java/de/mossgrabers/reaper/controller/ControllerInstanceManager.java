@@ -10,6 +10,7 @@ import de.mossgrabers.framework.daw.data.ICursorDevice;
 import de.mossgrabers.reaper.communication.MessageSender;
 import de.mossgrabers.reaper.controller.ableton.push.Push1ControllerInstance;
 import de.mossgrabers.reaper.controller.ableton.push.Push2ControllerInstance;
+import de.mossgrabers.reaper.controller.ableton.push.Push3ControllerInstance;
 import de.mossgrabers.reaper.controller.akai.acvs.ACVSLiveControllerInstance;
 import de.mossgrabers.reaper.controller.akai.apc.APC40mkIControllerInstance;
 import de.mossgrabers.reaper.controller.akai.apc.APC40mkIIControllerInstance;
@@ -138,9 +139,7 @@ public class ControllerInstanceManager
         DEF_TO_CLASS.put (OSCControllerInstance.CONTROLLER_DEFINITION, OSCControllerInstance.class);
         DEF_TO_CLASS.put (Push1ControllerInstance.CONTROLLER_DEFINITION, Push1ControllerInstance.class);
         DEF_TO_CLASS.put (Push2ControllerInstance.CONTROLLER_DEFINITION, Push2ControllerInstance.class);
-        // TODO add Push 3
-        // DEF_TO_CLASS.put (Push3ControllerInstance.CONTROLLER_DEFINITION,
-        // Push3ControllerInstance.class);
+        DEF_TO_CLASS.put (Push3ControllerInstance.CONTROLLER_DEFINITION, Push3ControllerInstance.class);
         DEF_TO_CLASS.put (SLMkIControllerInstance.CONTROLLER_DEFINITION, SLMkIControllerInstance.class);
         DEF_TO_CLASS.put (SLMkIIControllerInstance.CONTROLLER_DEFINITION, SLMkIIControllerInstance.class);
         DEF_TO_CLASS.put (SLMkIIIControllerInstance.CONTROLLER_DEFINITION, SLMkIIIControllerInstance.class);

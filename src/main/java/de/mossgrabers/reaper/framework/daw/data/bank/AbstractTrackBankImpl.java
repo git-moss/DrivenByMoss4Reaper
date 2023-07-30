@@ -73,6 +73,19 @@ public abstract class AbstractTrackBankImpl extends AbstractPagedBankImpl<TrackI
 
     /** {@inheritDoc} */
     @Override
+    public void toggleRecArm ()
+    {
+        if (this.items.isEmpty ())
+            return;
+
+        final boolean state = !this.items.get (0).isRecArm ();
+        for (final ITrack track: this.items)
+            track.setRecArm (state);
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
     public void selectParent ()
     {
         // Intentionally empty

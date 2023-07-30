@@ -15,7 +15,10 @@ import de.mossgrabers.reaper.framework.Actions;
 import de.mossgrabers.reaper.framework.device.DeviceMetadataImpl;
 import de.mossgrabers.reaper.ui.utils.RobotUtil;
 
+import java.awt.Desktop;
 import java.awt.event.KeyEvent;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -481,6 +484,29 @@ public class ApplicationImpl extends BaseImpl implements IApplication
     public void invokeAction (final String id)
     {
         this.sendOSC ("", id);
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void showHelp ()
+    {
+        final Desktop desktop = Desktop.getDesktop ();
+        if (desktop.isSupported (Desktop.Action.OPEN))
+        {
+            final File file = new File ("./docs/DrivenByMoss-Manual.pdf");
+            if (file.exists ())
+            {
+                try
+                {
+                    desktop.open (file);
+                }
+                catch (final IOException ex)
+                {
+                    // Ignore
+                }
+            }
+        }
     }
 
 
