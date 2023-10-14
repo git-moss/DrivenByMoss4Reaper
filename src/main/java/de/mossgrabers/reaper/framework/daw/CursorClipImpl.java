@@ -1151,6 +1151,7 @@ public class CursorClipImpl extends BaseImpl implements INoteClip
         if (!this.editSteps.isEmpty ())
             return;
 
+        stepInfo.setSelected (note.isSelected ());
         stepInfo.setMuted (note.isMuted ());
         stepInfo.setState (StepState.START);
         stepInfo.setDuration (note.getEnd () - note.getStart ());
@@ -1159,7 +1160,11 @@ public class CursorClipImpl extends BaseImpl implements INoteClip
         // Extend longer notes
         final int endStep = Math.min ((int) Math.floor (note.getEnd () / this.stepLength) - pageOffset, this.numSteps);
         for (int i = relToPage + 1; i < endStep; i++)
+        {
             this.data[i][row].setState (StepState.CONTINUE);
+            this.data[i][row].setSelected (note.isSelected ());
+            this.data[i][row].setMuted (note.isMuted ());
+        }
     }
 
 

@@ -9,7 +9,7 @@ plugins {
 sourceCompatibility = 17
 targetCompatibility = 17
 
-version = '21.3.0'
+version = '21.4.0'
 
 jar {
     manifest {
