@@ -51,6 +51,8 @@ public class ChannelImpl extends ItemImpl implements IChannel
 
     private final ParameterImpl                volumeParameter;
     private final ParameterImpl                panParameter;
+    private final IParameter                   muteParameter;
+    private final IParameter                   soloParameter;
     private final ISendBank                    sendBank;
 
 
@@ -84,6 +86,8 @@ public class ChannelImpl extends ItemImpl implements IChannel
 
         this.volumeParameter = volumeParameter;
         this.panParameter = panParameter;
+        this.muteParameter = new MuteParameterImpl (this.valueChanger, this, index);
+        this.soloParameter = new MuteParameterImpl (this.valueChanger, this, index);
         this.sendBank = new SendBankImpl (dataSetup, this, numSends);
     }
 
@@ -304,9 +308,25 @@ public class ChannelImpl extends ItemImpl implements IChannel
 
     /** {@inheritDoc} */
     @Override
+    public IParameter getMuteParameter ()
+    {
+        return this.muteParameter;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
     public boolean isMute ()
     {
         return this.doesExist () && this.isMute;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public IParameter getSoloParameter ()
+    {
+        return this.soloParameter;
     }
 
 

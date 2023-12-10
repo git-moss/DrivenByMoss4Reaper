@@ -573,6 +573,15 @@ public class CursorTrackImpl implements ICursorTrack
 
     /** {@inheritDoc} */
     @Override
+    public IParameter getMuteParameter ()
+    {
+        final ITrack selectedTrack = this.getPinnedOrSelectedTrack ();
+        return selectedTrack != null ? selectedTrack.getMuteParameter () : EmptyParameter.INSTANCE;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
     public boolean isMute ()
     {
         final ITrack selectedTrack = this.getPinnedOrSelectedTrack ();
@@ -597,6 +606,15 @@ public class CursorTrackImpl implements ICursorTrack
         final ITrack selectedTrack = this.getPinnedOrSelectedTrack ();
         if (selectedTrack != null)
             selectedTrack.toggleMute ();
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public IParameter getSoloParameter ()
+    {
+        final ITrack selectedTrack = this.getPinnedOrSelectedTrack ();
+        return selectedTrack != null ? selectedTrack.getSoloParameter () : EmptyParameter.INSTANCE;
     }
 
 
