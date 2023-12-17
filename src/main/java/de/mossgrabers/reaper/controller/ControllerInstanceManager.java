@@ -19,6 +19,7 @@ import de.mossgrabers.reaper.controller.akai.fire.FireControllerInstance;
 import de.mossgrabers.reaper.controller.arturia.beatstep.BeatstepControllerInstance;
 import de.mossgrabers.reaper.controller.electra.one.ElectraOneControllerInstance;
 import de.mossgrabers.reaper.controller.esi.xjam.XjamControllerInstance;
+import de.mossgrabers.reaper.controller.faderfox.ec4.EC4ControllerInstance;
 import de.mossgrabers.reaper.controller.gamepad.GamepadControllerInstance;
 import de.mossgrabers.reaper.controller.generic.GenericFlexiControllerInstance;
 import de.mossgrabers.reaper.controller.mackie.hui.HUI1ControllerInstance;
@@ -105,6 +106,7 @@ public class ControllerInstanceManager
         DEF_TO_CLASS.put (BeatstepControllerInstance.CONTROLLER_DEFINITION, BeatstepControllerInstance.class);
         DEF_TO_CLASS.put (ElectraOneControllerInstance.CONTROLLER_DEFINITION, ElectraOneControllerInstance.class);
         DEF_TO_CLASS.put (FireControllerInstance.CONTROLLER_DEFINITION, FireControllerInstance.class);
+        DEF_TO_CLASS.put (EC4ControllerInstance.CONTROLLER_DEFINITION, EC4ControllerInstance.class);
         DEF_TO_CLASS.put (GamepadControllerInstance.CONTROLLER_DEFINITION, GamepadControllerInstance.class);
         DEF_TO_CLASS.put (GenericFlexiControllerInstance.CONTROLLER_DEFINITION, GenericFlexiControllerInstance.class);
         DEF_TO_CLASS.put (HUI1ControllerInstance.CONTROLLER_DEFINITION, HUI1ControllerInstance.class);
