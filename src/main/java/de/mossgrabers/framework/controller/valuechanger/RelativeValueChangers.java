@@ -2,14 +2,7 @@
 // (c) 2017-2023
 // Licensed under LGPLv3 - http://www.gnu.org/licenses/lgpl-3.0.txt
 
-package de.mossgrabers.reaper.framework.hardware;
-
-import de.mossgrabers.framework.controller.valuechanger.IValueChanger;
-import de.mossgrabers.framework.controller.valuechanger.OffsetBinaryRelativeValueChanger;
-import de.mossgrabers.framework.controller.valuechanger.RelativeEncoding;
-import de.mossgrabers.framework.controller.valuechanger.SignedBit2RelativeValueChanger;
-import de.mossgrabers.framework.controller.valuechanger.SignedBitRelativeValueChanger;
-import de.mossgrabers.framework.controller.valuechanger.TwosComplementValueChanger;
+package de.mossgrabers.framework.controller.valuechanger;
 
 import java.util.EnumMap;
 import java.util.Map;

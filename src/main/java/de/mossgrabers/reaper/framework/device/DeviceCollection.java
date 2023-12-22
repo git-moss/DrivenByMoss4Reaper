@@ -22,14 +22,23 @@ import java.util.Set;
  */
 public class DeviceCollection
 {
-    private static final int                                  TYPE_JS    = 2;
-    private static final int                                  TYPE_VST   = 3;
-    private static final int                                  TYPE_QUERY = 1048576;
+    private static final int                                  TYPE_JS                 = 2;
+    private static final int                                  TYPE_VST                = 3;
+    private static final int                                  TYPE_QUERY              = 1048576;
+
+    private static final char []                              MODULE_CHARS_TO_REPLACE =
+    {
+        ' ',
+        '(',
+        ')',
+        '-',
+        '+'
+    };
 
     private final String                                      name;
-    private final Set<String>                                 jsItems    = new HashSet<> ();
-    private final Set<String>                                 vstItems   = new HashSet<> ();
-    private final Map<String, Pair<Set<String>, Set<String>>> queryItems = new HashMap<> ();
+    private final Set<String>                                 jsItems                 = new HashSet<> ();
+    private final Set<String>                                 vstItems                = new HashSet<> ();
+    private final Map<String, Pair<Set<String>, Set<String>>> queryItems              = new HashMap<> ();
 
 
     /**
@@ -54,15 +63,13 @@ public class DeviceCollection
         switch (type)
         {
             case TYPE_JS:
-                this.jsItems.add (item);
+                this.jsItems.add (item.startsWith ("\"") && item.endsWith ("\"") ? item.substring (1, item.length () - 2) : item);
                 break;
 
             case TYPE_VST:
                 final String [] split = item.split ("[\\\\/]");
-                if (split == null || split.length == 0)
-                    return;
-                final String filename = split[split.length - 1].replace (' ', '_').replace ('(', '_').replace (')', '_');
-                this.vstItems.add (filename.toLowerCase (Locale.US));
+                if (split != null && split.length > 0)
+                    this.vstItems.add (cleanupFilename (split[split.length - 1]));
                 break;
 
             case TYPE_QUERY:
@@ -90,6 +97,15 @@ public class DeviceCollection
                 // Unsupported folder type
                 break;
         }
+    }
+
+
+    private static String cleanupFilename (final String filename)
+    {
+        String fn = filename;
+        for (final char c: MODULE_CHARS_TO_REPLACE)
+            fn = fn.replace (c, '_');
+        return fn.toLowerCase (Locale.US);
     }
 
 
@@ -135,7 +151,7 @@ public class DeviceCollection
 
         if (isJS)
         {
-            if (this.jsItems.contains (module))
+            if (this.jsItems.contains (module.startsWith ("\"") && module.endsWith ("\"") ? module.substring (1, module.length () - 1) : module))
                 return true;
         }
         else

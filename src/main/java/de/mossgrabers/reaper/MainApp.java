@@ -244,7 +244,7 @@ public class MainApp implements MessageSender, AppCallback, WindowManager
     /**
      * Restart all configured controllers.
      */
-    private void restartControllers ()
+    public void restartControllers ()
     {
         this.instanceManager.stopAll ();
         this.startControllers ();

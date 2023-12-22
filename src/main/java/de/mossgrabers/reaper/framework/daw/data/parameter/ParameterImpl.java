@@ -5,11 +5,11 @@
 package de.mossgrabers.reaper.framework.daw.data.parameter;
 
 import de.mossgrabers.framework.controller.valuechanger.IValueChanger;
+import de.mossgrabers.framework.controller.valuechanger.RelativeValueChangers;
 import de.mossgrabers.framework.daw.data.ITrack;
 import de.mossgrabers.reaper.communication.Processor;
 import de.mossgrabers.reaper.framework.daw.DataSetupEx;
 import de.mossgrabers.reaper.framework.daw.data.ItemImpl;
-import de.mossgrabers.reaper.framework.hardware.RelativeValueChangers;
 
 
 /**

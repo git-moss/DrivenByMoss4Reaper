@@ -10,8 +10,10 @@ import de.mossgrabers.reaper.ui.utils.LogModel;
 import com.nikhaldimann.inieditor.IniEditor;
 
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 
 
@@ -454,7 +456,10 @@ public class IniFiles
         {
             if (file.exists ())
             {
-                iniFile.load (file.getAbsolutePath ());
+                try (final FileReader reader = new FileReader (file.getAbsolutePath (), StandardCharsets.UTF_8))
+                {
+                    iniFile.load (reader);
+                }
                 return true;
             }
 

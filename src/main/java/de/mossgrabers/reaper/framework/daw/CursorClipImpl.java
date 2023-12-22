@@ -95,6 +95,14 @@ public class CursorClipImpl extends BaseImpl implements INoteClip
     }
 
 
+    /** {@inheritDoc}} */
+    @Override
+    public void setName (final String name)
+    {
+        this.sendOSC ("name", name);
+    }
+
+
     /** {@inheritDoc} */
     @Override
     public void setColor (final ColorEx color)

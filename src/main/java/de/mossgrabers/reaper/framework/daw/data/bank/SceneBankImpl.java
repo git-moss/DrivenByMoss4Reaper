@@ -19,21 +19,15 @@ import de.mossgrabers.reaper.framework.daw.data.SceneImpl;
  */
 public class SceneBankImpl extends AbstractPagedBankImpl<SceneImpl, IScene> implements ISceneBank
 {
-    private final AbstractTrackBankImpl trackBank;
-
-
     /**
      * Constructor.
      *
      * @param dataSetup Some configuration variables
-     * @param trackBank The track bank to which the scene bank belongs
      * @param numScenes The number of scenes in the page of the bank
      */
-    public SceneBankImpl (final DataSetupEx dataSetup, final AbstractTrackBankImpl trackBank, final int numScenes)
+    public SceneBankImpl (final DataSetupEx dataSetup, final int numScenes)
     {
         super (dataSetup, numScenes, EmptyScene.INSTANCE);
-
-        this.trackBank = trackBank;
     }
 
 
@@ -73,54 +67,9 @@ public class SceneBankImpl extends AbstractPagedBankImpl<SceneImpl, IScene> impl
 
     /** {@inheritDoc} */
     @Override
-    public void scrollBackwards ()
-    {
-        this.bankOffset = Math.max (0, this.bankOffset - 1);
-        this.trackBank.updateSlotBanks (this.bankOffset);
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void scrollForwards ()
-    {
-        if (this.bankOffset + 1 < this.getItemCount ())
-        {
-            this.bankOffset += 1;
-            this.trackBank.updateSlotBanks (this.bankOffset);
-        }
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void selectPreviousPage ()
-    {
-        this.bankOffset = Math.max (0, this.bankOffset - this.pageSize);
-        this.trackBank.updateSlotBanks (this.bankOffset);
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void selectNextPage ()
-    {
-        if (this.bankOffset + this.pageSize < this.getItemCount ())
-        {
-            this.bankOffset += this.pageSize;
-            this.trackBank.updateSlotBanks (this.bankOffset);
-        }
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
     public void scrollTo (final int position, final boolean adjustPage)
     {
         if (position < this.getItemCount ())
-        {
-            this.bankOffset = position;
-            this.trackBank.updateSlotBanks (this.bankOffset);
-        }
+            this.setBankOffset (position);
     }
 }

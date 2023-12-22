@@ -12,6 +12,7 @@ import de.mossgrabers.framework.daw.data.bank.ISceneBank;
 import de.mossgrabers.framework.daw.data.bank.ITrackBank;
 import de.mossgrabers.framework.daw.data.empty.EmptyTrack;
 import de.mossgrabers.framework.daw.resource.ChannelType;
+import de.mossgrabers.framework.observer.IBankPageObserver;
 import de.mossgrabers.framework.observer.IIndexedValueObserver;
 import de.mossgrabers.reaper.communication.Processor;
 import de.mossgrabers.reaper.framework.daw.ApplicationImpl;
@@ -28,7 +29,7 @@ import java.util.Optional;
  *
  * @author Jürgen Moßgraber
  */
-public abstract class AbstractTrackBankImpl extends AbstractPagedBankImpl<TrackImpl, ITrack> implements ITrackBank
+public abstract class AbstractTrackBankImpl extends AbstractPagedBankImpl<TrackImpl, ITrack> implements ITrackBank, IBankPageObserver
 {
     private static final String   SELECT_COMMAND = "/select";
 
@@ -45,11 +46,12 @@ public abstract class AbstractTrackBankImpl extends AbstractPagedBankImpl<TrackI
      * @param dataSetup Some configuration variables
      * @param application The application
      * @param numTracks The number of tracks of a bank page
+     * @param sceneBank The scene bank
      * @param numScenes The number of scenes of a bank page
      * @param numSends The number of sends of a bank page
      * @param numParams The number of parameters
      */
-    protected AbstractTrackBankImpl (final DataSetupEx dataSetup, final ApplicationImpl application, final int numTracks, final int numScenes, final int numSends, final int numParams)
+    protected AbstractTrackBankImpl (final DataSetupEx dataSetup, final ApplicationImpl application, final int numTracks, final ISceneBank sceneBank, final int numScenes, final int numSends, final int numParams)
     {
         super (dataSetup, numTracks, EmptyTrack.getInstance (numSends));
 
@@ -59,7 +61,8 @@ public abstract class AbstractTrackBankImpl extends AbstractPagedBankImpl<TrackI
         this.numSends = numSends;
         this.numParams = numParams;
 
-        this.sceneBank = new SceneBankImpl (dataSetup, this, this.numScenes);
+        this.sceneBank = sceneBank;
+        this.sceneBank.addPageObserver (this);
     }
 
 
@@ -68,6 +71,15 @@ public abstract class AbstractTrackBankImpl extends AbstractPagedBankImpl<TrackI
     protected TrackImpl createItem (final int position)
     {
         return new TrackImpl (this.dataSetup, this, position, this.getPageSize (), this.numSends, this.numScenes, this.numParams);
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void pageAdjusted ()
+    {
+        // Callback from scene bank
+        this.updateSlotBanks (this.sceneBank.getScrollPosition ());
     }
 
 
@@ -181,7 +193,7 @@ public abstract class AbstractTrackBankImpl extends AbstractPagedBankImpl<TrackI
     {
         super.scrollPageBackwards ();
 
-        // Unselect previous selected track (if any)
+        // Un-select previous selected track (if any)
         final Optional<ITrack> selectedTrack = this.getSelectedItem ();
         if (selectedTrack.isPresent ())
             this.sendTrackOSC (selectedTrack.get ().getPosition () + SELECT_COMMAND, 0);

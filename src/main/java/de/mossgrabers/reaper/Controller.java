@@ -97,6 +97,16 @@ public class Controller
 
 
     /**
+     * Restart all configured controllers.
+     */
+    public static void restartControllers ()
+    {
+        if (app != null)
+            app.restartControllers ();
+    }
+
+
+    /**
      * Set the default initial settings for the document/project.
      */
     public static void setDefaultDocumentSettings ()

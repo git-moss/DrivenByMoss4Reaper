@@ -18,7 +18,6 @@ import de.mossgrabers.framework.daw.data.IScene;
 import de.mossgrabers.framework.daw.data.ISend;
 import de.mossgrabers.framework.daw.data.ITrack;
 import de.mossgrabers.framework.daw.data.bank.IDeviceBank;
-import de.mossgrabers.framework.daw.data.bank.ITrackBank;
 import de.mossgrabers.framework.daw.midi.IMidiInput;
 import de.mossgrabers.framework.daw.resource.ChannelType;
 import de.mossgrabers.framework.featuregroup.IMode;
@@ -917,23 +916,25 @@ public class MessageParser
 
     private void parseScene (final Queue<String> parts, final String value)
     {
-        for (final ITrackBank tb: ((ModelImpl) this.model).getTrackBanks ())
+        for (final SceneBankImpl sceneBank: ((ModelImpl) this.model).getSceneBanks ())
         {
             final Queue<String> partsCopy = new LinkedBlockingDeque<> (parts);
-            final SceneBankImpl sceneBank = (SceneBankImpl) tb.getSceneBank ();
             final String part = partsCopy.poll ();
+
+            // The number of scenes
+            if (TAG_COUNT.equals (part))
+            {
+                sceneBank.setItemCount (Integer.parseInt (value));
+                continue;
+            }
+
             try
             {
-                final int position = Integer.parseInt (part);
-                this.parseSceneValue (sceneBank.getUnpagedItem (position), partsCopy, value);
+                this.parseSceneValue (sceneBank.getUnpagedItem (Integer.parseInt (part)), partsCopy, value);
             }
             catch (final NumberFormatException ex)
             {
-                // The number of scenes
-                if (TAG_COUNT.equals (part))
-                    sceneBank.setItemCount (Integer.parseInt (value));
-                else
-                    this.host.error ("Unhandled Scene command: " + part);
+                this.host.error ("Unhandled Scene command: " + part);
             }
         }
     }
@@ -989,7 +990,7 @@ public class MessageParser
 
             case TAG_COLOR:
                 final Optional<double []> color = ((ModelImpl) this.model).parseColor (value);
-                sceneImpl.setColor (color.isPresent () ? new ColorEx (color.get ()) : ColorEx.GRAY);
+                sceneImpl.setColorState (color.isPresent () ? new ColorEx (color.get ()) : ColorEx.GRAY);
                 break;
 
             default:

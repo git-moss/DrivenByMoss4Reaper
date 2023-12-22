@@ -16,7 +16,6 @@ import de.mossgrabers.framework.daw.data.ISpecificDevice;
 import de.mossgrabers.framework.daw.data.ITrack;
 import de.mossgrabers.framework.daw.data.bank.ISceneBank;
 import de.mossgrabers.framework.daw.data.bank.ISlotBank;
-import de.mossgrabers.framework.daw.data.bank.ITrackBank;
 import de.mossgrabers.framework.scale.Scales;
 import de.mossgrabers.framework.utils.FrameworkException;
 import de.mossgrabers.reaper.framework.IniFiles;
@@ -29,10 +28,12 @@ import de.mossgrabers.reaper.framework.daw.data.SlotImpl;
 import de.mossgrabers.reaper.framework.daw.data.TrackImpl;
 import de.mossgrabers.reaper.framework.daw.data.bank.MarkerBankImpl;
 import de.mossgrabers.reaper.framework.daw.data.bank.ResizedSlotBank;
+import de.mossgrabers.reaper.framework.daw.data.bank.SceneBankImpl;
 import de.mossgrabers.reaper.framework.daw.data.bank.SlotBankImpl;
 import de.mossgrabers.reaper.framework.daw.data.bank.TrackBankImpl;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,10 +47,9 @@ import java.util.Optional;
  */
 public class ModelImpl extends AbstractModel
 {
-    private final DataSetupEx              dataSetup;
-    private final List<ITrackBank>         trackBanks = new ArrayList<> ();
-    private final Map<Integer, ISceneBank> sceneBanks = new HashMap<> (1);
-    private final Map<Integer, ISlotBank>  slotBanks  = new HashMap<> (1);
+    private final DataSetupEx                 dataSetup;
+    private final Map<Integer, SceneBankImpl> sceneBanks = new HashMap<> (1);
+    private final Map<Integer, ISlotBank>     slotBanks  = new HashMap<> (1);
 
 
     /**
@@ -137,11 +137,10 @@ public class ModelImpl extends AbstractModel
         //////////////////////////////////////////////////////////////////////////////
         // Create track banks
 
-        final TrackBankImpl trackBankImpl = new TrackBankImpl (dataSetup, (ApplicationImpl) this.application, drumDevices, numTracks, numScenes, numSends, numParams, modelSetup.hasFlatTrackList (), modelSetup.hasFullFlatTrackList ());
-        this.trackBank = trackBankImpl;
-        this.masterTrack = new MasterTrackImpl (dataSetup, trackBankImpl, numSends, numParams);
-        trackBankImpl.setMasterTrack ((TrackImpl) this.masterTrack);
-        this.trackBanks.add (this.trackBank);
+        final ISceneBank sceneBank = this.getSceneBank (numScenes);
+        this.trackBank = new TrackBankImpl (dataSetup, (ApplicationImpl) this.application, drumDevices, numTracks, sceneBank, numScenes, numSends, numParams, modelSetup.hasFlatTrackList (), modelSetup.hasFullFlatTrackList ());
+        this.masterTrack = new MasterTrackImpl (dataSetup, (TrackBankImpl) this.trackBank, numSends, numParams);
+        ((TrackBankImpl) this.trackBank).setMasterTrack ((TrackImpl) this.masterTrack);
         this.effectTrackBank = null;
 
         final int numResults = modelSetup.getNumResults ();
@@ -156,11 +155,7 @@ public class ModelImpl extends AbstractModel
     @Override
     public ISceneBank getSceneBank (final int numScenes)
     {
-        return this.sceneBanks.computeIfAbsent (Integer.valueOf (numScenes), key -> {
-            final TrackBankImpl tb = new TrackBankImpl (this.dataSetup, (ApplicationImpl) this.application, 1, numScenes, this.modelSetup.getNumSends (), this.modelSetup.getNumParams (), true, false);
-            this.trackBanks.add (tb);
-            return tb.getSceneBank ();
-        });
+        return this.sceneBanks.computeIfAbsent (Integer.valueOf (numScenes), key -> new SceneBankImpl (this.dataSetup, numScenes));
     }
 
 
@@ -445,12 +440,12 @@ public class ModelImpl extends AbstractModel
 
 
     /**
-     * Get all track banks.
+     * Get all scene banks.
      *
-     * @return The track banks
+     * @return The scene banks
      */
-    public List<ITrackBank> getTrackBanks ()
+    public Collection<SceneBankImpl> getSceneBanks ()
     {
-        return this.trackBanks;
+        return this.sceneBanks.values ();
     }
 }

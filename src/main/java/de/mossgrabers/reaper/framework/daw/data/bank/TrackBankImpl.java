@@ -9,6 +9,7 @@ import de.mossgrabers.framework.daw.data.IMasterTrack;
 import de.mossgrabers.framework.daw.data.ISend;
 import de.mossgrabers.framework.daw.data.ITrack;
 import de.mossgrabers.framework.daw.data.bank.IDrumPadBank;
+import de.mossgrabers.framework.daw.data.bank.ISceneBank;
 import de.mossgrabers.framework.daw.data.bank.ISendBank;
 import de.mossgrabers.framework.observer.INoteObserver;
 import de.mossgrabers.reaper.communication.Processor;
@@ -58,6 +59,7 @@ public class TrackBankImpl extends AbstractTrackBankImpl
      * @param dataSetup Some configuration variables
      * @param application The application
      * @param numTracks The number of tracks in a bank page
+     * @param sceneBank The scene bank
      * @param numScenes The number of scenes in a bank page
      * @param numSends The number of sends in a bank page
      * @param numParams The number of parameters
@@ -66,9 +68,9 @@ public class TrackBankImpl extends AbstractTrackBankImpl
      * @param hasFullFlatTrackList True if the track navigation should include effect and master
      *            tracks if flat
      */
-    public TrackBankImpl (final DataSetupEx dataSetup, final ApplicationImpl application, final int numTracks, final int numScenes, final int numSends, final int numParams, final boolean hasFlatTrackList, final boolean hasFullFlatTrackList)
+    public TrackBankImpl (final DataSetupEx dataSetup, final ApplicationImpl application, final int numTracks, final ISceneBank sceneBank, final int numScenes, final int numSends, final int numParams, final boolean hasFlatTrackList, final boolean hasFullFlatTrackList)
     {
-        this (dataSetup, application, Collections.emptyList (), numTracks, numScenes, numSends, numParams, hasFlatTrackList, hasFullFlatTrackList);
+        this (dataSetup, application, Collections.emptyList (), numTracks, sceneBank, numScenes, numSends, numParams, hasFlatTrackList, hasFullFlatTrackList);
     }
 
 
@@ -79,6 +81,7 @@ public class TrackBankImpl extends AbstractTrackBankImpl
      * @param application The application
      * @param drumDevices The drum devices to update the drum pads
      * @param numTracks The number of tracks in a bank page
+     * @param sceneBank The scene bank
      * @param numScenes The number of scenes in a bank page
      * @param numSends The number of sends in a bank page
      * @param numParams The number of parameters
@@ -87,9 +90,9 @@ public class TrackBankImpl extends AbstractTrackBankImpl
      * @param hasFullFlatTrackList True if the track navigation should include effect and master
      *            tracks if flat
      */
-    public TrackBankImpl (final DataSetupEx dataSetup, final ApplicationImpl application, final List<IDrumDevice> drumDevices, final int numTracks, final int numScenes, final int numSends, final int numParams, final boolean hasFlatTrackList, final boolean hasFullFlatTrackList)
+    public TrackBankImpl (final DataSetupEx dataSetup, final ApplicationImpl application, final List<IDrumDevice> drumDevices, final int numTracks, final ISceneBank sceneBank, final int numScenes, final int numSends, final int numParams, final boolean hasFlatTrackList, final boolean hasFullFlatTrackList)
     {
-        super (dataSetup, application, numTracks, numScenes, numSends, numParams);
+        super (dataSetup, application, numTracks, sceneBank, numScenes, numSends, numParams);
 
         this.drumDevices = drumDevices;
 

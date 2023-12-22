@@ -44,6 +44,14 @@ public class SceneImpl extends ItemImpl implements IScene
 
     /** {@inheritDoc} */
     @Override
+    public void setName (final String name)
+    {
+        this.sendPositionedItemOSC ("name", name);
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
     public ColorEx getColor ()
     {
         return this.color;
@@ -53,6 +61,18 @@ public class SceneImpl extends ItemImpl implements IScene
     /** {@inheritDoc} */
     @Override
     public void setColor (final ColorEx color)
+    {
+        final int [] rgb = color.toIntRGB255 ();
+        this.sendPositionedItemOSC ("color", "RGB(" + rgb[0] + "," + rgb[1] + "," + rgb[2] + ")");
+    }
+
+
+    /**
+     * Set the internal color.
+     *
+     * @param color The internal color
+     */
+    public void setColorState (final ColorEx color)
     {
         this.color = color;
     }

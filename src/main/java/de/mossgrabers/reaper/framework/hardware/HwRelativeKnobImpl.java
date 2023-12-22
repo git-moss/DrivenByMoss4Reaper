@@ -10,6 +10,7 @@ import de.mossgrabers.framework.controller.hardware.AbstractHwContinuousControl;
 import de.mossgrabers.framework.controller.hardware.BindType;
 import de.mossgrabers.framework.controller.hardware.IHwRelativeKnob;
 import de.mossgrabers.framework.controller.valuechanger.RelativeEncoding;
+import de.mossgrabers.framework.controller.valuechanger.RelativeValueChangers;
 import de.mossgrabers.framework.daw.IHost;
 import de.mossgrabers.framework.daw.midi.IMidiInput;
 import de.mossgrabers.framework.graphics.IGraphicsContext;
@@ -140,14 +141,16 @@ public class HwRelativeKnobImpl extends AbstractHwContinuousControl implements I
         // scale back to [0..127]
         final int intValue = (int) Math.round (value * 127);
 
-        // Decode with the hardware encoding and re-encode with default encoding, which is used for
-        // the direct binding
-        final int cv = RelativeValueChangers.getDefault ().encode (RelativeValueChangers.get (this.encoding).decode (intValue));
-
         if (this.parameter != null)
+        {
+            // Decode with the hardware encoding and re-encode with default encoding, which is used
+            // for the direct binding
+            final int cv = RelativeValueChangers.getDefault ().encode (RelativeValueChangers.get (this.encoding).decode (intValue));
+
             this.parameter.changeValue (cv);
+        }
         else if (this.command != null)
-            this.command.execute (cv);
+            this.command.execute (intValue);
     }
 
 

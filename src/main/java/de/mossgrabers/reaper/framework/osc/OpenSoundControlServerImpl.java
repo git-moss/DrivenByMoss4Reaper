@@ -33,6 +33,7 @@ public class OpenSoundControlServerImpl implements IOpenSoundControlServer
     private final Object                    receiverLock = new Object ();
     private final LogModel                  logModel;
     private OSCPortIn                       oscReceiver;
+    private int                             port         = -1;
 
 
     /**
@@ -54,11 +55,21 @@ public class OpenSoundControlServerImpl implements IOpenSoundControlServer
     {
         synchronized (this.receiverLock)
         {
+            this.port = port;
+
             this.close ();
             this.oscReceiver = new OSCPortIn (port);
             this.oscReceiver.addPacketListener (new PacketListener ());
             this.oscReceiver.startListening ();
         }
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public int getListeningPort ()
+    {
+        return this.port;
     }
 
 
