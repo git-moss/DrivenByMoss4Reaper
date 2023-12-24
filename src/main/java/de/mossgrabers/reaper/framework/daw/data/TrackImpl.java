@@ -43,17 +43,17 @@ public class TrackImpl extends ChannelImpl implements ITrack
 
     protected final AbstractTrackBankImpl trackBank;
 
-    private boolean                       isGroupExpanded = true;
+    private boolean                       isGroupExpanded    = true;
     private boolean                       isRecArm;
     private boolean                       monitor;
     private boolean                       autoMonitor;
-    private AutomationMode                automationMode  = AutomationMode.TRIM_READ;
+    private AutomationMode                automationMode     = AutomationMode.TRIM_READ;
     private final ISlotBank               slotBank;
     private int                           depth;
     private boolean                       recordQuantizationNoteLength;
-    private RecordQuantization            recordQuantization;
+    private RecordQuantization            recordQuantization = RecordQuantization.RES_OFF;
     private final IParameter              crossfadeParameter;
-    private boolean                       isOverdub       = false;
+    private boolean                       isOverdub          = false;
     private final ParameterBankImpl       parameterBank;
 
 
