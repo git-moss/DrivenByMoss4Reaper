@@ -502,11 +502,11 @@ public class MidiInputImpl implements IMidiInput
 
     protected boolean handleControlsPitchbend (final int channel, final int data1, final int data2)
     {
-        final IHwContinuousControl ccContinuous = this.pitchbendContinuousMatchers.get (Integer.valueOf (channel));
-        if (ccContinuous != null && ccContinuous.isBound ())
+        final IHwContinuousControl pbContinuous = this.pitchbendContinuousMatchers.get (Integer.valueOf (channel));
+        if (pbContinuous != null && pbContinuous.isBound ())
         {
             final int pitchbendValue = data2 * 128 + data1;
-            ccContinuous.handleValue (pitchbendValue / 16383.0);
+            pbContinuous.handleValue (pitchbendValue / 16383.0);
             return true;
         }
         return false;

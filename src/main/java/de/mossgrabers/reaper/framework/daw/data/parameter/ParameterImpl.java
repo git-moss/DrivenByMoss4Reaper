@@ -5,7 +5,6 @@
 package de.mossgrabers.reaper.framework.daw.data.parameter;
 
 import de.mossgrabers.framework.controller.valuechanger.IValueChanger;
-import de.mossgrabers.framework.controller.valuechanger.RelativeValueChangers;
 import de.mossgrabers.framework.daw.data.ITrack;
 import de.mossgrabers.reaper.communication.Processor;
 import de.mossgrabers.reaper.framework.daw.DataSetupEx;
@@ -105,9 +104,7 @@ public class ParameterImpl extends ItemImpl implements IParameterEx
     @Override
     public void changeValue (final int control)
     {
-        // Must always use the default encoder since this is called from the bind framework and
-        // already re-encoded!
-        this.changeValue (RelativeValueChangers.getDefault (), control);
+        this.changeValue (this.valueChanger, control);
     }
 
 

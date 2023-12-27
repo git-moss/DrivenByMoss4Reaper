@@ -136,19 +136,12 @@ public class HwRelativeKnobImpl extends AbstractHwContinuousControl implements I
     @Override
     public void handleValue (final double value)
     {
-        // value is scaled to [0..1] but still encoded
-
-        // scale back to [0..127]
-        final int intValue = (int) Math.round (value * 127);
+        // value is scaled to [0..1] but still encoded, scale back to [0..127]
+        // Note: there are no relative pitchbend values, therefore no check for that
+        final int intValue = (int) Math.round (value * 127.0);
 
         if (this.parameter != null)
-        {
-            // Decode with the hardware encoding and re-encode with default encoding, which is used
-            // for the direct binding
-            final int cv = RelativeValueChangers.getDefault ().encode (RelativeValueChangers.get (this.encoding).decode (intValue));
-
-            this.parameter.changeValue (cv);
-        }
+            this.parameter.changeValue (intValue);
         else if (this.command != null)
             this.command.execute (intValue);
     }
