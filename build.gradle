@@ -1,6 +1,6 @@
 plugins {
     id 'com.github.jk1.dependency-license-report' version '2.5'
-    id 'com.github.ben-manes.versions' version '0.50.0'
+    id 'com.github.ben-manes.versions' version '0.51.0'
     id 'java'
     id 'application'
     id 'eclipse'
@@ -9,7 +9,7 @@ plugins {
 sourceCompatibility = 17
 targetCompatibility = 17
 
-version = '22.2.1'
+version = '22.2.2'
 
 jar {
     manifest {
@@ -168,7 +168,7 @@ dependencies {
     implementation group: 'net.java.dev.jna', name: 'jna-platform', version: '5.14.0'
     implementation group: 'com.badlogicgames.jamepad', name: 'jamepad', version: '2.26.5.0'
     implementation group: 'com.weblookandfeel', name: 'svg-salamander', version: '1.1.2.2'
-    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.16.0'
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.16.1'
     implementation fileTree(dir: 'libs', include: '**/*.jar')
 }
 

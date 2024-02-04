@@ -1,4 +1,4 @@
-// (c) 2017-2023
+// (c) 2017-2024
 // Written by Jürgen Moßgraber - mossgrabers.de
 // Licensed under LGPLv3 - http://www.gnu.org/licenses/lgpl-3.0.txt
 
