@@ -113,15 +113,19 @@ public class ModelImpl extends AbstractModel
             drumDevices.addAll (this.additionalDrumDevices.values ());
         }
 
+        ISpecificDevice firstInstrumentDevice = null;
         for (final DeviceID deviceID: modelSetup.getDeviceIDs ())
         {
             switch (deviceID)
             {
                 case FIRST_INSTRUMENT, NI_KOMPLETE:
-                    final ISpecificDevice specificDevice = new CursorDeviceImpl (dataSetup, numSends, numParams, numDevicesInBank, numDeviceLayers, numDrumPadLayers);
-                    this.specificDevices.put (DeviceID.FIRST_INSTRUMENT, specificDevice);
+                    if (firstInstrumentDevice == null)
+                    {
+                        firstInstrumentDevice = new CursorDeviceImpl (dataSetup, numSends, numParams, numDevicesInBank, numDeviceLayers, numDrumPadLayers);
+                        this.specificDevices.put (DeviceID.FIRST_INSTRUMENT, firstInstrumentDevice);
+                    }
                     if (deviceID == DeviceID.NI_KOMPLETE)
-                        this.specificDevices.put (deviceID, new KompleteDevice (specificDevice));
+                        this.specificDevices.put (deviceID, new KompleteDevice (firstInstrumentDevice));
                     break;
 
                 case EQ:

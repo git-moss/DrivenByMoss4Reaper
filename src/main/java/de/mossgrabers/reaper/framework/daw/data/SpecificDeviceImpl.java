@@ -90,9 +90,21 @@ public class SpecificDeviceImpl extends DeviceImpl implements ISpecificDevice
     @Override
     public String getID ()
     {
-        if (this.parameterBank == null || this.parameterBank.getItemCount () == 0)
+        return getUnpagedParameterName (0);
+    }
+
+
+    /**
+     * Get the name of an unpaged parameter.
+     *
+     * @param index The index of the parameter
+     * @return The name
+     */
+    public String getUnpagedParameterName (final int index)
+    {
+        if (this.parameterBank == null || this.parameterBank.getItemCount () <= index)
             return "";
-        final String name = this.parameterBank.getUnpagedItem (0).getName ();
+        final String name = this.parameterBank.getUnpagedItem (index).getName ();
         return name == null ? "" : name;
     }
 

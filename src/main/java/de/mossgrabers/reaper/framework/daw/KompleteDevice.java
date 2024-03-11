@@ -9,6 +9,7 @@ import de.mossgrabers.framework.daw.data.bank.IDrumPadBank;
 import de.mossgrabers.framework.daw.data.bank.ILayerBank;
 import de.mossgrabers.framework.daw.data.bank.IParameterBank;
 import de.mossgrabers.framework.observer.IValueObserver;
+import de.mossgrabers.reaper.framework.daw.data.SpecificDeviceImpl;
 
 
 /**
@@ -37,7 +38,7 @@ public class KompleteDevice implements ISpecificDevice
     public boolean doesExist ()
     {
         final String name = this.getName ();
-        return "Komplete Kontrol".equals (name);
+        return name.contains ("Komplete Kontrol") || name.contains ("Kontakt 7");
     }
 
 
@@ -45,7 +46,12 @@ public class KompleteDevice implements ISpecificDevice
     @Override
     public String getID ()
     {
-        return this.instrumentDevice.getID ();
+        final String name = this.getName ();
+        if (name.contains ("Komplete Kontrol"))
+            return this.instrumentDevice.getID ();
+        else if (name.contains ("Kontakt 7") && this.instrumentDevice instanceof SpecificDeviceImpl deviceImpl)
+            return deviceImpl.getUnpagedParameterName (2048);
+        return "";
     }
 
 
