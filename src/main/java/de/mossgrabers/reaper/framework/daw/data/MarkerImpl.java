@@ -34,6 +34,17 @@ public class MarkerImpl extends ItemImpl implements IMarker
 
     /** {@inheritDoc} */
     @Override
+    public String getName ()
+    {
+        final String n = super.getName ();
+        if (this.exists && n.isBlank ())
+            return "Marker " + (this.index + 1);
+        return n;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
     public ColorEx getColor ()
     {
         return this.color;
