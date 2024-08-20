@@ -20,6 +20,14 @@ import java.util.List;
 public interface AppCallback
 {
     /**
+     * Returns true if the full infrastructure has been started.
+     *
+     * @return True if everything is up and running
+     */
+    boolean isFullyInitialised ();
+
+
+    /**
      * Detect controllers.
      *
      * @return The detected instances

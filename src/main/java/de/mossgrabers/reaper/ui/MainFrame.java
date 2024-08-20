@@ -61,14 +61,23 @@ public class MainFrame extends JFrame
 
     private final transient AppCallback                        callback;
     private final JTextPane                                    loggingTextArea  = new JTextPane ();
+
     private final JButton                                      removeButton;
     private final JButton                                      configButton;
     private final JButton                                      enableButton;
+    private final JButton                                      detectButton;
+    private final JButton                                      addButton;
+    private final JButton                                      projectButton;
+    private final JButton                                      parameterButton;
+    private final JButton                                      debugButton;
+
     private final DefaultListModel<ControllerCheckboxListItem> listModel        = new DefaultListModel<> ();
     private final JList<ControllerCheckboxListItem>            controllerList   = new JList<> (this.listModel);
 
     private final DebugDialog                                  debugDialog;
     private final BrowserDialog                                browserDialog;
+    private final LogModel                                     logModel;
+    private ControllerInstanceManager                          instanceManager;
 
 
     /**
@@ -83,6 +92,7 @@ public class MainFrame extends JFrame
         this.callback = callback;
 
         logModel.setTextArea (this.loggingTextArea);
+        this.logModel = logModel;
 
         final Class<? extends MainFrame> clazz = this.getClass ();
         final URL resource = clazz.getResource ("/images/AppIcon.gif");
@@ -109,14 +119,14 @@ public class MainFrame extends JFrame
 
         // Add and Detect button
         final ImageIcon addIcon = Functions.getIcon ("Add");
-        final JButton addButton = new JButton ("Add");
-        addIcon (addButton, addIcon);
-        addButton.setToolTipText ("Not all controllers can be detected automatically. Use the Add button and select the controller to add from the appearing menu.");
-        this.configureAddButton (addButton, instanceManager.getDefinitions ());
-        final JButton detectButton = new JButton ("Detect");
-        addIcon (detectButton, addIcon);
-        detectButton.setToolTipText ("Automatically adds connected controllers.");
-        detectButton.addActionListener (event -> this.detectControllers ());
+        this.addButton = new JButton ("Add");
+        addIcon (this.addButton, addIcon);
+        this.addButton.setToolTipText ("Not all controllers can be detected automatically. Use the Add button and select the controller to add from the appearing menu.");
+        this.configureAddButton (this.addButton, instanceManager.getDefinitions ());
+        this.detectButton = new JButton ("Detect");
+        addIcon (this.detectButton, addIcon);
+        this.detectButton.setToolTipText ("Automatically adds connected controllers.");
+        this.detectButton.addActionListener (event -> this.detectControllers ());
 
         // Remove button
         final ImageIcon removeIcon = Functions.getIcon ("Remove");
@@ -126,16 +136,16 @@ public class MainFrame extends JFrame
         this.removeButton.setToolTipText ("Removes the controller which is selected in the list.");
 
         // Project button
-        final JButton projectButton = new JButton ("Project");
-        addIcon (projectButton, configureIcon);
-        projectButton.setToolTipText ("Configure the controller settings which are stored individually with each Reaper project, e.g. Scale settings.");
-        projectButton.addActionListener (event -> this.projectSettings ());
+        this.projectButton = new JButton ("Project");
+        addIcon (this.projectButton, configureIcon);
+        this.projectButton.setToolTipText ("Configure the controller settings which are stored individually with each Reaper project, e.g. Scale settings.");
+        this.projectButton.addActionListener (event -> this.projectSettings ());
 
         // Parameter button
-        final JButton parameterButton = new JButton ("Parameters");
-        addIcon (parameterButton, configureIcon);
-        parameterButton.setToolTipText ("Arrange the parameters of the currently selected device into pages.");
-        parameterButton.addActionListener (event -> this.parameterMapping ());
+        this.parameterButton = new JButton ("Parameters");
+        addIcon (this.parameterButton, configureIcon);
+        this.parameterButton.setToolTipText ("Arrange the parameters of the currently selected device into pages.");
+        this.parameterButton.addActionListener (event -> this.parameterMapping ());
 
         // Disable/Enable controller button
         final ImageIcon enableIcon = Functions.getIcon ("OnOff");
@@ -146,22 +156,22 @@ public class MainFrame extends JFrame
 
         // Debug button
         final ImageIcon debugIcon = Functions.getIcon ("Debug");
-        final JButton debugButton = new JButton ("Debug");
-        addIcon (debugButton, debugIcon);
-        this.configureDebugButton (debugButton);
+        this.debugButton = new JButton ("Debug");
+        addIcon (this.debugButton, debugIcon);
+        this.configureDebugButton (this.debugButton);
 
         // Button panel
         final JPanel deviceButtonContainer = new JPanel ();
         deviceButtonContainer.setBorder (new EmptyBorder (0, GAP, 0, 0));
         deviceButtonContainer.setLayout (new GridLayout (8, 1, 0, GAP));
-        deviceButtonContainer.add (detectButton);
-        deviceButtonContainer.add (addButton);
+        deviceButtonContainer.add (this.detectButton);
+        deviceButtonContainer.add (this.addButton);
         deviceButtonContainer.add (this.removeButton);
         deviceButtonContainer.add (this.configButton);
-        deviceButtonContainer.add (projectButton);
-        deviceButtonContainer.add (parameterButton);
+        deviceButtonContainer.add (this.projectButton);
+        deviceButtonContainer.add (this.parameterButton);
         deviceButtonContainer.add (this.enableButton);
-        deviceButtonContainer.add (debugButton);
+        deviceButtonContainer.add (this.debugButton);
 
         this.controllerList.setMinimumSize (new Dimension (300, 200));
         this.controllerList.setCellRenderer (new CheckboxListRenderer ());
@@ -207,10 +217,21 @@ public class MainFrame extends JFrame
 
         this.configureFrame (this);
 
-        for (final IControllerInstance instance: instanceManager.getInstances ())
-            this.listModel.addElement (new ControllerCheckboxListItem (instance));
+        this.instanceManager = instanceManager;
+        this.fillControllerList ();
 
         this.updateWidgetStates ();
+    }
+
+
+    /**
+     * Populate the controller list from the instance manager.
+     */
+    public void fillControllerList ()
+    {
+        this.listModel.clear ();
+        for (final IControllerInstance instance: this.instanceManager.getInstances ())
+            this.listModel.addElement (new ControllerCheckboxListItem (instance));
     }
 
 
@@ -228,7 +249,6 @@ public class MainFrame extends JFrame
 
         this.controllerList.setSelectedValue (detectedControllers.get (0), true);
         this.updateWidgetStates ();
-
     }
 
 
@@ -499,7 +519,10 @@ public class MainFrame extends JFrame
     }
 
 
-    private void updateWidgetStates ()
+    /**
+     * Updates all widget states.
+     */
+    public void updateWidgetStates ()
     {
         final boolean isEmpty = this.controllerList.getModel ().getSize () == 0;
         boolean hasSelection = this.controllerList.getSelectedIndex () != -1;
@@ -509,9 +532,23 @@ public class MainFrame extends JFrame
             hasSelection = true;
         }
 
-        this.configButton.setEnabled (hasSelection);
-        this.removeButton.setEnabled (hasSelection);
-        this.enableButton.setEnabled (hasSelection);
+        final boolean fullyInitialised = this.callback.isFullyInitialised ();
+        if (!fullyInitialised)
+        {
+            // First trigger buffered info messages
+            this.logModel.info ("");
+            this.logModel.error ("Close all Reaper configuration dialogs to enable the DrivenByMoss window!", null);
+        }
+
+        this.configButton.setEnabled (hasSelection && fullyInitialised);
+        this.removeButton.setEnabled (hasSelection && fullyInitialised);
+        this.enableButton.setEnabled (hasSelection && fullyInitialised);
+
+        this.detectButton.setEnabled (fullyInitialised);
+        this.addButton.setEnabled (fullyInitialised);
+        this.projectButton.setEnabled (fullyInitialised);
+        this.parameterButton.setEnabled (fullyInitialised);
+        this.debugButton.setEnabled (fullyInitialised);
     }
 
 

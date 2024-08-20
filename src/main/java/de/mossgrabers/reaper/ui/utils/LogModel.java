@@ -95,14 +95,15 @@ public class LogModel
      */
     public void log (final String message, final boolean isError)
     {
-        if (message.length () == 0)
+        if (message.length () == 0 && this.buffer.isEmpty ())
             return;
 
         SafeRunLater.execute (null, () -> {
 
             synchronized (this.updateLock)
             {
-                this.buffer.append (message).append ("\n");
+                if (message.length () > 0)
+                    this.buffer.append (message).append ("\n");
 
                 if (this.textPane != null)
                 {

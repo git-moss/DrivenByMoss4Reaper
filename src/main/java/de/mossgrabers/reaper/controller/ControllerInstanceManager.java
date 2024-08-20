@@ -85,6 +85,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -498,8 +499,11 @@ public class ControllerInstanceManager
         final Set<String> classNames = new TreeSet<> ();
         int counter = 0;
         String clazz;
+        String foundDuplicate = null;
         while ((clazz = properties.getString (CONTROLLER_INSTANCE_TAG + counter)) != null)
         {
+            if (classNames.contains (clazz))
+                foundDuplicate = clazz;
             classNames.add (clazz);
             counter++;
         }
@@ -509,26 +513,50 @@ public class ControllerInstanceManager
         {
             final Class<?> controllerClass = NAME_TO_CLASS.get (className);
             if (controllerClass == null)
-                this.logModel.info ("Unknown controller  class: " + className);
+                this.logModel.info ("Unknown controller class: " + className);
             else
                 this.instantiateController (controllerClass);
+        }
+
+        if (foundDuplicate != null)
+        {
+            this.logModel.error ("Found duplicate controller class in configuration file: " + foundDuplicate + ". Fixing and resaving the file.", null);
+            this.save (properties);
         }
     }
 
 
     /**
-     * Wrote all configured controller instances to the properties.
+     * Write all configured controller instances to the properties.
      *
      * @param properties The properties to parse
      */
     public void save (final PropertiesEx properties)
     {
-        for (int i = 0; i < this.instances.size (); i++)
+        // Clean the previous controller instances
+        final List<String> oldEntries = new ArrayList<> ();
+        for (Entry<Object, Object> e: properties.entrySet ())
         {
-            final IControllerInstance inst = this.instances.get (i);
-            properties.putString (CONTROLLER_INSTANCE_TAG + i, inst.getClass ().getName ());
+            if (e.getKey () instanceof String key)
+                oldEntries.add (key);
         }
-        properties.remove (CONTROLLER_INSTANCE_TAG + this.instances.size ());
+        for (final String key: oldEntries)
+            properties.remove (key);
+
+        // Add the current ones
+        final Set<String> classNames = new TreeSet<> ();
+        int counter = 0;
+        for (final IControllerInstance inst: this.instances)
+        {
+            final String clazz = inst.getClass ().getName ();
+            // Just to be sure...
+            if (!classNames.contains (clazz))
+            {
+                properties.putString (CONTROLLER_INSTANCE_TAG + counter, clazz);
+                classNames.add (clazz);
+                counter++;
+            }
+        }
     }
 
 

@@ -219,6 +219,13 @@ public class MainApp implements MessageSender, AppCallback, WindowManager
             this.updateMidiDevices ();
             this.instanceManager.load (this.mainConfiguration);
             this.startControllers ();
+
+            // This is required for the first startup of the plugin when it gets added to Reaper!
+            if (this.mainFrame != null)
+            {
+                this.mainFrame.updateWidgetStates ();
+                this.mainFrame.fillControllerList ();
+            }
         }
     }
 
@@ -548,7 +555,8 @@ public class MainApp implements MessageSender, AppCallback, WindowManager
     public void editController (final int controllerIndex)
     {
         this.instanceManager.edit (controllerIndex);
-        this.restartControllers ();
+        this.instanceManager.getInstances ().get (controllerIndex).restart ();
+        this.sendRefreshCommand ();
     }
 
 
@@ -876,5 +884,13 @@ public class MainApp implements MessageSender, AppCallback, WindowManager
     public void setPopupWindowNotification (final boolean enabled)
     {
         this.mainConfiguration.putBoolean ("ENABLE_POPUP_WINDOW_NOTIFICATION", enabled);
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean isFullyInitialised ()
+    {
+        return this.animationTimer != null;
     }
 }
