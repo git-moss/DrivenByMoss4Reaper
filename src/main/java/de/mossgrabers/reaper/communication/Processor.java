@@ -52,6 +52,8 @@ public enum Processor
     TIME,
     /** Single commands - tempo. */
     TEMPO,
+    /** Single commands - automation. */
+    AUTOMATION,
     /** Single commands - action. */
     ACTION,
     /** Single commands - quantize. */

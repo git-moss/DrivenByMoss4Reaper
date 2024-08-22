@@ -726,7 +726,14 @@ public class MCUConfiguration extends AbstractConfiguration
             assignableSetting.addValueObserver (value -> this.assignableFunctions[pos] = lookupIndex (ASSIGNABLE_VALUES, value));
 
             final IActionSetting actionSetting = settingsUI.getActionSetting (ASSIGNABLE_BUTTON_NAMES[i] + " - Action", CATEGORY_ASSIGNABLE_BUTTONS);
-            actionSetting.addValueObserver (value -> this.assignableFunctionActions[pos] = actionSetting.get ());
+            actionSetting.addValueObserver (value -> {
+
+                final String actioName = actionSetting.get ();
+                if (this.assignableFunctionActions[pos] != null && this.assignableFunctionActions[pos].length () == 0 && actioName != null && actioName.length () > 0)
+                    assignableSetting.set ("Action");
+                this.assignableFunctionActions[pos] = actioName;
+
+            });
         }
     }
 

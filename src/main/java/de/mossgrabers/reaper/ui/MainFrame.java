@@ -11,6 +11,7 @@ import de.mossgrabers.reaper.controller.IControllerInstance;
 import de.mossgrabers.reaper.ui.dialog.BrowserDialog;
 import de.mossgrabers.reaper.ui.dialog.DebugDialog;
 import de.mossgrabers.reaper.ui.utils.LogModel;
+import de.mossgrabers.reaper.ui.utils.SafeRunLater;
 import de.mossgrabers.reaper.ui.widget.CheckboxListRenderer;
 import de.mossgrabers.reaper.ui.widget.ControllerCheckboxListItem;
 import de.mossgrabers.reaper.ui.widget.Functions;
@@ -219,8 +220,6 @@ public class MainFrame extends JFrame
 
         this.instanceManager = instanceManager;
         this.fillControllerList ();
-
-        this.updateWidgetStates ();
     }
 
 
@@ -232,6 +231,8 @@ public class MainFrame extends JFrame
         this.listModel.clear ();
         for (final IControllerInstance instance: this.instanceManager.getInstances ())
             this.listModel.addElement (new ControllerCheckboxListItem (instance));
+
+        this.updateWidgetStates ();
     }
 
 
@@ -257,7 +258,7 @@ public class MainFrame extends JFrame
      */
     private void editController ()
     {
-        final int selectedIndex = this.controllerList.getSelectionModel ().getLeadSelectionIndex ();
+        final int selectedIndex = this.getSelectedController ();
         if (selectedIndex >= 0)
         {
             this.getCallback ().editController (selectedIndex);
@@ -271,7 +272,7 @@ public class MainFrame extends JFrame
      */
     public void forceRedrawControllerList ()
     {
-        final int selIndex = this.controllerList.getSelectedIndex ();
+        final int selIndex = this.getSelectedController ();
         final DefaultListModel<ControllerCheckboxListItem> newListModel = new DefaultListModel<> ();
 
         for (int i = 0; i < this.listModel.getSize (); i++)
@@ -302,7 +303,7 @@ public class MainFrame extends JFrame
      */
     private void removeController ()
     {
-        final int selectedIndex = this.controllerList.getSelectionModel ().getLeadSelectionIndex ();
+        final int selectedIndex = this.getSelectedController ();
         if (selectedIndex < 0)
             return;
         this.listModel.remove (selectedIndex);
@@ -325,7 +326,7 @@ public class MainFrame extends JFrame
      */
     public void parameterMapping ()
     {
-        final int selectedIndex = this.controllerList.getSelectionModel ().getLeadSelectionIndex ();
+        final int selectedIndex = this.getSelectedController ();
         if (selectedIndex >= 0)
             this.getCallback ().parameterSettings (selectedIndex);
     }
@@ -347,7 +348,7 @@ public class MainFrame extends JFrame
      */
     private void toggleEnableController ()
     {
-        final int selectedIndex = this.controllerList.getSelectionModel ().getLeadSelectionIndex ();
+        final int selectedIndex = this.getSelectedController ();
         if (selectedIndex < 0)
             return;
         final ControllerCheckboxListItem item = this.listModel.getElementAt (selectedIndex);
@@ -475,7 +476,7 @@ public class MainFrame extends JFrame
 
     private void displaySimulatorWindow ()
     {
-        final int selectedIndex = this.controllerList.getSelectionModel ().getLeadSelectionIndex ();
+        final int selectedIndex = this.getSelectedController ();
         if (selectedIndex < 0)
             return;
         final ControllerCheckboxListItem checkboxListItem = this.listModel.get (selectedIndex);
@@ -489,7 +490,7 @@ public class MainFrame extends JFrame
 
     private void testAllControllers ()
     {
-        final int selectedIndex = this.controllerList.getSelectionModel ().getLeadSelectionIndex ();
+        final int selectedIndex = this.getSelectedController ();
         if (selectedIndex < 0)
             return;
         final ControllerCheckboxListItem checkboxListItem = this.listModel.get (selectedIndex);
@@ -510,6 +511,9 @@ public class MainFrame extends JFrame
         this.listModel.addElement (inst);
         this.controllerList.setSelectedValue (inst, true);
         this.updateWidgetStates ();
+
+        // Required to redraw the icon of the list item!
+        SafeRunLater.execute (this.logModel, this.controllerList::repaint);
     }
 
 
@@ -525,7 +529,7 @@ public class MainFrame extends JFrame
     public void updateWidgetStates ()
     {
         final boolean isEmpty = this.controllerList.getModel ().getSize () == 0;
-        boolean hasSelection = this.controllerList.getSelectedIndex () != -1;
+        boolean hasSelection = this.getSelectedController () != -1;
         if (!hasSelection && !isEmpty)
         {
             this.controllerList.setSelectedIndex (0);
@@ -540,14 +544,15 @@ public class MainFrame extends JFrame
             this.logModel.error ("Close all Reaper configuration dialogs to enable the DrivenByMoss window!", null);
         }
 
-        this.configButton.setEnabled (hasSelection && fullyInitialised);
-        this.removeButton.setEnabled (hasSelection && fullyInitialised);
-        this.enableButton.setEnabled (hasSelection && fullyInitialised);
+        final boolean isEnabled = hasSelection && fullyInitialised;
+        this.configButton.setEnabled (isEnabled);
+        this.removeButton.setEnabled (isEnabled);
+        this.enableButton.setEnabled (isEnabled);
+        this.projectButton.setEnabled (isEnabled);
+        this.parameterButton.setEnabled (isEnabled);
 
         this.detectButton.setEnabled (fullyInitialised);
         this.addButton.setEnabled (fullyInitialised);
-        this.projectButton.setEnabled (fullyInitialised);
-        this.parameterButton.setEnabled (fullyInitialised);
         this.debugButton.setEnabled (fullyInitialised);
     }
 
@@ -568,5 +573,11 @@ public class MainFrame extends JFrame
     public AppCallback getCallback ()
     {
         return this.callback;
+    }
+
+
+    private int getSelectedController ()
+    {
+        return this.controllerList.getSelectedIndex ();
     }
 }

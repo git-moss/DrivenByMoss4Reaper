@@ -318,6 +318,33 @@ public class MessageParser
                 this.arranger.setPlaybackFollow (Double.parseDouble (value) > 0);
                 break;
 
+            case "automode":
+                switch ((int) Double.parseDouble (value))
+                {
+                    case 0:
+                        this.transport.setAutomationWriteModeState (AutomationMode.TRIM_READ);
+                        break;
+                    case 1:
+                        this.transport.setAutomationWriteModeState (AutomationMode.READ);
+                        break;
+                    case 2:
+                        this.transport.setAutomationWriteModeState (AutomationMode.TOUCH);
+                        break;
+                    case 3:
+                        this.transport.setAutomationWriteModeState (AutomationMode.WRITE);
+                        break;
+                    case 4:
+                        this.transport.setAutomationWriteModeState (AutomationMode.LATCH);
+                        break;
+                    case 5:
+                        this.transport.setAutomationWriteModeState (AutomationMode.LATCH_PREVIEW);
+                        break;
+                    default:
+                        // Not used
+                        break;
+                }
+                break;
+
             default:
                 // Not a Transport command
                 return false;
@@ -545,33 +572,6 @@ public class MessageParser
 
             case "autoMonitor":
                 track.setAutoMonitorState (Double.parseDouble (value) > 0);
-                break;
-
-            case "automode":
-                switch ((int) Double.parseDouble (value))
-                {
-                    case 0:
-                        track.setAutomation (AutomationMode.TRIM_READ);
-                        break;
-                    case 1:
-                        track.setAutomation (AutomationMode.READ);
-                        break;
-                    case 2:
-                        track.setAutomation (AutomationMode.TOUCH);
-                        break;
-                    case 3:
-                        track.setAutomation (AutomationMode.WRITE);
-                        break;
-                    case 4:
-                        track.setAutomation (AutomationMode.LATCH);
-                        break;
-                    case 5:
-                        track.setAutomation (AutomationMode.LATCH_PREVIEW);
-                        break;
-                    default:
-                        // Not used
-                        break;
-                }
                 break;
 
             case "overdub":

@@ -51,7 +51,7 @@ public class ArrangerImpl extends BaseImpl implements IArranger
     @Override
     public void toggleCueMarkerVisibility ()
     {
-        // Not used
+        this.sender.invokeAction (Actions.TOGGLE_MARKER_LANE);
     }
 
 
@@ -95,7 +95,7 @@ public class ArrangerImpl extends BaseImpl implements IArranger
     @Override
     public void toggleTrackRowHeight ()
     {
-        // Not used
+        this.sender.invokeAction (Actions.CYCLE_TRACK_ZOOM);
     }
 
 

@@ -90,7 +90,7 @@ public class SpecificDeviceImpl extends DeviceImpl implements ISpecificDevice
     @Override
     public String getID ()
     {
-        return getUnpagedParameterName (0);
+        return this.getUnpagedParameterName (0);
     }
 
 

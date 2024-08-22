@@ -38,8 +38,8 @@ public class CursorTrackImpl implements ICursorTrack
     private boolean                      isGroupExpanded = true;
     private boolean                      isPinned        = false;
     private ITrack                       pinnedTrack     = null;
-    private final int                          numSends;
-    private final int                          numSlots;
+    private final int                    numSends;
+    private final int                    numSlots;
 
 
     /**

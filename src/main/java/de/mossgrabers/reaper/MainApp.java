@@ -73,6 +73,7 @@ public class MainApp implements MessageSender, AppCallback, WindowManager
     private final String                    iniPath;
     private final IniFiles                  iniFiles           = new IniFiles ();
     private final Object                    startupLock        = new Object ();
+    private final Map<String, String>       instanceSettings   = new HashMap<> ();
 
 
     /**
@@ -219,13 +220,11 @@ public class MainApp implements MessageSender, AppCallback, WindowManager
             this.updateMidiDevices ();
             this.instanceManager.load (this.mainConfiguration);
             this.startControllers ();
+            this.processInstanceSettings ();
 
             // This is required for the first startup of the plugin when it gets added to Reaper!
             if (this.mainFrame != null)
-            {
-                this.mainFrame.updateWidgetStates ();
                 this.mainFrame.fillControllerList ();
-            }
         }
     }
 
@@ -713,25 +712,47 @@ public class MainApp implements MessageSender, AppCallback, WindowManager
     {
         final Matcher matcher = TAG_PATTERN.matcher (data);
         final Decoder decoder = Base64.getDecoder ();
-        final Map<String, String> found = new HashMap<> ();
-        while (matcher.find ())
-        {
-            if (matcher.groupCount () != 2)
-                break;
 
-            final String tag = matcher.group (1);
-            final String propertiesText = new String (decoder.decode (matcher.group (2)), StandardCharsets.UTF_8);
-            found.put (tag, propertiesText);
+        synchronized (this.instanceSettings)
+        {
+            this.instanceSettings.clear ();
+            while (matcher.find ())
+            {
+                if (matcher.groupCount () != 2)
+                    break;
+
+                final String tag = matcher.group (1);
+                final String propertiesText = new String (decoder.decode (matcher.group (2)), StandardCharsets.UTF_8);
+                this.instanceSettings.put (tag, propertiesText);
+            }
+
+            if (this.isFullyInitialised ())
+                this.processInstanceSettings ();
         }
+    }
 
-        for (final IControllerInstance instance: this.instanceManager.getInstances ())
+
+    /**
+     * These need to be applied later since the instances might not be instantiated at the time the
+     * settings are loaded.
+     */
+    private void processInstanceSettings ()
+    {
+        synchronized (this.instanceSettings)
         {
-            final IControllerDefinition definition = instance.getDefinition ();
-            final String tag = definition.getHardwareModel ().replace (' ', '_').replace ('/', '_').toUpperCase (Locale.US);
+            if (this.instanceSettings.isEmpty ())
+                return;
 
-            final String propertiesText = found.get (tag);
-            if (propertiesText != null)
-                instance.getDocumentSettingsUI ().parse (propertiesText);
+            for (final IControllerInstance instance: this.instanceManager.getInstances ())
+            {
+                final IControllerDefinition definition = instance.getDefinition ();
+                final String tag = definition.getHardwareModel ().replace (' ', '_').replace ('/', '_').toUpperCase (Locale.US);
+
+                final String propertiesText = this.instanceSettings.get (tag);
+                if (propertiesText != null)
+                    instance.getDocumentSettingsUI ().parse (propertiesText);
+            }
+            this.instanceSettings.clear ();
         }
     }
 

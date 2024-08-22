@@ -504,7 +504,8 @@ public class ControllerInstanceManager
         {
             if (classNames.contains (clazz))
                 foundDuplicate = clazz;
-            classNames.add (clazz);
+            else
+                classNames.add (clazz);
             counter++;
         }
 
@@ -535,9 +536,9 @@ public class ControllerInstanceManager
     {
         // Clean the previous controller instances
         final List<String> oldEntries = new ArrayList<> ();
-        for (Entry<Object, Object> e: properties.entrySet ())
+        for (final Entry<Object, Object> e: properties.entrySet ())
         {
-            if (e.getKey () instanceof String key)
+            if (e.getKey () instanceof final String key)
                 oldEntries.add (key);
         }
         for (final String key: oldEntries)

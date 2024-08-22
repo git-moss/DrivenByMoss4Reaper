@@ -38,7 +38,7 @@ public class TransportImpl extends BaseImpl implements ITransport
 
     private final IModel                       model;
 
-    private double                             position           = 0;            // Time
+    private double                             position           = 0;                       // Time
     private String                             positionStr        = "";
     private String                             beatsStr           = "";
     private double                             loopStart          = 0;
@@ -61,6 +61,7 @@ public class TransportImpl extends BaseImpl implements ITransport
     private int                                punchMode          = PUNCH_OFF;
     private final MetronomeVolumeParameterImpl metronomeVolumeParameter;
     private final TempoParameterImpl           tempoParameter;
+    private AutomationMode                     automationMode     = AutomationMode.TRIM_READ;
 
 
     /**
@@ -418,14 +419,18 @@ public class TransportImpl extends BaseImpl implements ITransport
     @Override
     public AutomationMode getAutomationWriteMode ()
     {
-        // Get from selected track
-        final Optional<ITrack> selectedTrackOpt = this.model.getCurrentTrackBank ().getSelectedItem ();
-        final TrackImpl selectedTrack;
-        if (selectedTrackOpt.isEmpty ())
-            selectedTrack = (TrackImpl) this.model.getMasterTrack ();
-        else
-            selectedTrack = (TrackImpl) selectedTrackOpt.get ();
-        return selectedTrack.getAutomation ();
+        return this.automationMode;
+    }
+
+
+    /**
+     * Set the automation state.
+     *
+     * @param mode The automation mode to set
+     */
+    public void setAutomationWriteModeState (final AutomationMode mode)
+    {
+        this.automationMode = mode;
     }
 
 
@@ -433,12 +438,31 @@ public class TransportImpl extends BaseImpl implements ITransport
     @Override
     public void setAutomationWriteMode (final AutomationMode mode)
     {
-        final Optional<ITrack> selectedTrackOpt = this.model.getCurrentTrackBank ().getSelectedItem ();
-        final String modeName = "auto" + mode.getIdentifier ();
-        if (selectedTrackOpt.isEmpty ())
-            this.sender.processIntArg (Processor.MASTER, modeName, 1);
-        else
-            this.sender.processIntArg (Processor.TRACK, selectedTrackOpt.get ().getPosition () + "/" + modeName, 1);
+        final int automationMode;
+        switch (mode)
+        {
+            default:
+            case TRIM_READ:
+                automationMode = 0;
+                break;
+            case READ:
+                automationMode = 1;
+                break;
+            case TOUCH:
+                automationMode = 2;
+                break;
+            case WRITE:
+                automationMode = 3;
+                break;
+            case LATCH:
+                automationMode = 4;
+                break;
+            case LATCH_PREVIEW:
+                automationMode = 5;
+                break;
+        }
+
+        this.sender.processIntArg (Processor.AUTOMATION, automationMode);
     }
 
 

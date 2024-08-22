@@ -31,13 +31,21 @@ import java.util.List;
  */
 public class ApplicationImpl extends BaseImpl implements IApplication
 {
-    private String              panelLayout  = IApplication.PANEL_LAYOUT_ARRANGE;
-    private boolean             engineActive = true;
-    private int                 windowLayout = 0;
-    private boolean             canUndoState = true;
-    private boolean             canRedoState = true;
-    private final ZoomParameter horizontalZoomParameter;
-    private final ZoomParameter verticalZoomParameter;
+    private static final String [] PANEL_LAYOUTS = new String []
+    {
+        PANEL_LAYOUT_ARRANGE,
+        PANEL_LAYOUT_MIX,
+        PANEL_LAYOUT_EDIT,
+        PANEL_LAYOUT_PLAY
+    };
+
+    private String                 panelLayout   = IApplication.PANEL_LAYOUT_ARRANGE;
+    private boolean                engineActive  = true;
+    private int                    windowLayout  = 0;
+    private boolean                canUndoState  = true;
+    private boolean                canRedoState  = true;
+    private final ZoomParameter    horizontalZoomParameter;
+    private final ZoomParameter    verticalZoomParameter;
 
 
     /**
@@ -85,17 +93,21 @@ public class ApplicationImpl extends BaseImpl implements IApplication
         this.panelLayout = panelLayout;
         switch (panelLayout)
         {
-            case "ARRANGE":
+            case PANEL_LAYOUT_ARRANGE:
                 this.windowLayout = 0;
                 this.sender.invokeAction (Actions.LOAD_WINDOW_SET_1);
                 break;
-            case "MIX":
+            case PANEL_LAYOUT_MIX:
                 this.windowLayout = 1;
                 this.sender.invokeAction (Actions.LOAD_WINDOW_SET_2);
                 break;
-            case "EDIT":
+            case PANEL_LAYOUT_EDIT:
                 this.windowLayout = 2;
                 this.sender.invokeAction (Actions.LOAD_WINDOW_SET_3);
+                break;
+            case PANEL_LAYOUT_PLAY:
+                this.windowLayout = 3;
+                this.sender.invokeAction (Actions.LOAD_WINDOW_SET_4);
                 break;
             default:
                 this.host.println ("Not a supported layout: " + panelLayout);
@@ -116,8 +128,7 @@ public class ApplicationImpl extends BaseImpl implements IApplication
     @Override
     public void previousPanelLayout ()
     {
-        this.windowLayout = (3 + this.windowLayout - 1) % 3;
-        this.sender.invokeAction (Actions.LOAD_WINDOW_SET_1 + this.windowLayout);
+        this.setPanelLayout (this.windowLayout - 1);
     }
 
 
@@ -125,7 +136,14 @@ public class ApplicationImpl extends BaseImpl implements IApplication
     @Override
     public void nextPanelLayout ()
     {
-        this.windowLayout = (this.windowLayout + 1) % 3;
+        this.setPanelLayout (this.windowLayout + 1);
+    }
+
+
+    private void setPanelLayout (final int index)
+    {
+        this.windowLayout = index % 4;
+        this.panelLayout = PANEL_LAYOUTS[this.windowLayout];
         this.sender.invokeAction (Actions.LOAD_WINDOW_SET_1 + this.windowLayout);
     }
 
@@ -134,7 +152,7 @@ public class ApplicationImpl extends BaseImpl implements IApplication
     @Override
     public boolean isArrangeLayout ()
     {
-        return false;
+        return PANEL_LAYOUT_ARRANGE.equals (this.panelLayout);
     }
 
 
@@ -142,7 +160,7 @@ public class ApplicationImpl extends BaseImpl implements IApplication
     @Override
     public boolean isMixerLayout ()
     {
-        return true;
+        return PANEL_LAYOUT_MIX.equals (this.panelLayout);
     }
 
 
@@ -150,7 +168,7 @@ public class ApplicationImpl extends BaseImpl implements IApplication
     @Override
     public boolean isEditLayout ()
     {
-        return false;
+        return PANEL_LAYOUT_EDIT.equals (this.panelLayout);
     }
 
 
@@ -158,7 +176,7 @@ public class ApplicationImpl extends BaseImpl implements IApplication
     @Override
     public boolean isPlayLayout ()
     {
-        return false;
+        return PANEL_LAYOUT_PLAY.equals (this.panelLayout);
     }
 
 

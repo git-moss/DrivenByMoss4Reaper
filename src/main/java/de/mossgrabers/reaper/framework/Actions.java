@@ -57,6 +57,8 @@ public final class Actions
     public static final int           LOAD_WINDOW_SET_2               = 40455;
     /** Load the 3rd window set. */
     public static final int           LOAD_WINDOW_SET_3               = 40456;
+    /** Load the 4th window set. */
+    public static final int           LOAD_WINDOW_SET_4               = 40457;
 
     /** Envelope: Toggle show all active envelopes. */
     public static final int           SHOW_ALL_ACTIVE_ENVELOPES       = 40926;
@@ -102,6 +104,11 @@ public final class Actions
 
     /** View: Toggle auto-view-scroll during playback */
     public static final int           TOGGLE_FOLLOW_PLAYBACK          = 40036;
+
+    /** Ruler: Display project regions/markers as gridlines in arrange view. */
+    public static final int           TOGGLE_MARKER_LANE              = 42328;
+    /** View: Cycle track zoom between minimum, default, and maximum height (limit to 100%). */
+    public static final int           CYCLE_TRACK_ZOOM                = 42698;
 
     private static final Set<Integer> IGNORE_IF_TEST_IS_ACTIVE        = new HashSet<> ();
     static
