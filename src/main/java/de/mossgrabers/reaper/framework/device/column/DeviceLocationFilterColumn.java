@@ -4,10 +4,9 @@
 
 package de.mossgrabers.reaper.framework.device.column;
 
-import de.mossgrabers.reaper.framework.device.DeviceArchitecture;
 import de.mossgrabers.reaper.framework.device.DeviceManager;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -37,7 +36,7 @@ public class DeviceLocationFilterColumn extends BaseColumn
     @Override
     protected int getMaxNumItems ()
     {
-        return DeviceManager.get ().getAvailableLocations ().size ();
+        return 0;
     }
 
 
@@ -45,11 +44,7 @@ public class DeviceLocationFilterColumn extends BaseColumn
     @Override
     public List<String> getAllItems ()
     {
-        final List<DeviceArchitecture> locations = DeviceManager.get ().getAvailableLocations ();
-        final List<String> result = new ArrayList<> (locations.size ());
-        for (final DeviceArchitecture location: locations)
-            result.add (location.getName ());
-        return result;
+        return Collections.emptyList ();
     }
 
 
@@ -87,11 +82,7 @@ public class DeviceLocationFilterColumn extends BaseColumn
         @Override
         protected String getCachedName ()
         {
-            if (this.position == 0)
-                return WILDCARD;
-            final List<DeviceArchitecture> locations = DeviceManager.get ().getAvailableLocations ();
-            final int pos = this.position - 1;
-            return pos < locations.size () ? locations.get (pos).getName () : "";
+            return this.position == 0 ? WILDCARD : "";
         }
 
 
@@ -99,11 +90,7 @@ public class DeviceLocationFilterColumn extends BaseColumn
         @Override
         protected int getCachedHitCount ()
         {
-            if (this.position == 0)
-                return DeviceManager.get ().getNumDevices ();
-            final List<DeviceArchitecture> locations = DeviceManager.get ().getAvailableLocations ();
-            final int pos = this.position - 1;
-            return pos < locations.size () ? DeviceManager.get ().filterByLocation (locations.get (pos)).size () : 0;
+            return this.position == 0 ? DeviceManager.get ().getNumDevices () : 0;
         }
     }
 }

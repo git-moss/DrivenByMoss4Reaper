@@ -24,7 +24,7 @@ public abstract class ItemImpl extends BaseImpl implements IItem
     protected int                             index;
     protected int                             position;
     protected boolean                         exists        = false;
-    protected String                          name          = "";
+    protected String                          name          = null;
     private boolean                           selected;
     private final Set<IValueObserver<String>> nameObservers = new HashSet<> ();
 
@@ -140,7 +140,7 @@ public abstract class ItemImpl extends BaseImpl implements IItem
      */
     public void setInternalName (final String name)
     {
-        if (this.name.equals (name))
+        if (this.name != null && this.name.equals (name))
             return;
 
         this.name = name == null ? "" : name;

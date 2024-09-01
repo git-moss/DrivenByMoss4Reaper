@@ -52,7 +52,7 @@ public abstract class BaseColumnItem extends ItemImpl implements IBrowserColumnI
     public String getName ()
     {
         final int idx = this.getIndex ();
-        if (idx != this.position)
+        if (this.name == null || idx != this.position)
             this.updateCache (idx);
         return this.name;
     }

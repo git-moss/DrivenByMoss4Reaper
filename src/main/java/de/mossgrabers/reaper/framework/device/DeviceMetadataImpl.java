@@ -18,13 +18,12 @@ import java.util.Set;
  */
 public class DeviceMetadataImpl implements IDeviceMetadata
 {
-    private final String             name;
-    private final String             module;
-    private final DeviceFileType     fileType;
-    private final DeviceArchitecture architecture;
-    private DeviceType               deviceType;
-    private String                   vendor;
-    private final Set<String>        categories = new HashSet<> (1);
+    private final String         name;
+    private final String         module;
+    private final DeviceFileType fileType;
+    private DeviceType           deviceType;
+    private String               vendor;
+    private final Set<String>    categories = new HashSet<> (1);
 
 
     /**
@@ -34,15 +33,13 @@ public class DeviceMetadataImpl implements IDeviceMetadata
      * @param module The name of the library module or creation ID
      * @param deviceType The type of the device
      * @param fileType The plugin type of the device
-     * @param architecture The architecture
      */
-    public DeviceMetadataImpl (final String name, final String module, final DeviceType deviceType, final DeviceFileType fileType, final DeviceArchitecture architecture)
+    public DeviceMetadataImpl (final String name, final String module, final DeviceType deviceType, final DeviceFileType fileType)
     {
         this.name = name;
         this.module = module;
         this.deviceType = deviceType;
         this.fileType = fileType;
-        this.architecture = architecture;
     }
 
 
@@ -58,7 +55,7 @@ public class DeviceMetadataImpl implements IDeviceMetadata
     @Override
     public String fullName ()
     {
-        return String.format ("%s (%s - %s)", this.name, this.fileType.getName (), this.architecture);
+        return String.format ("%s (%s)", this.name, this.fileType.getName ());
     }
 
 
@@ -130,24 +127,36 @@ public class DeviceMetadataImpl implements IDeviceMetadata
 
 
     /**
-     * Get the architecture of the device.
+     * Add the categories to the device.
      *
-     * @return Script, x64, ...
+     * @param categories The categories
      */
-    public DeviceArchitecture getArchitecture ()
+    public void addCategories (final Collection<String> categories)
     {
-        return this.architecture;
+        this.categories.addAll (categories);
     }
 
 
     /**
-     * Set the categories of the device.
+     * Add the category to the device.
      *
-     * @param categories The categories
+     * @param category The category
      */
-    public void setCategories (final Collection<String> categories)
+    public void addCategory (final String category)
     {
-        this.categories.addAll (categories);
+        this.categories.add (category);
+    }
+
+
+    /**
+     * Set the category for the device. Removes all other categories.
+     *
+     * @param category The category
+     */
+    public void setCategory (final String category)
+    {
+        this.categories.clear ();
+        this.categories.add (category);
     }
 
 
@@ -160,6 +169,17 @@ public class DeviceMetadataImpl implements IDeviceMetadata
     public boolean hasCategory (final String category)
     {
         return this.categories.contains (category);
+    }
+
+
+    /**
+     * Returns true if the device has assigned at least one category.
+     *
+     * @return True if the device is categorized
+     */
+    public boolean isCategorized ()
+    {
+        return !this.categories.isEmpty ();
     }
 
 

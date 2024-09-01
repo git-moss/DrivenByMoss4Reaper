@@ -34,15 +34,16 @@ import java.util.regex.Pattern;
  */
 public class DeviceManager
 {
-    private static final DeviceManager                INSTANCE             = new DeviceManager ();
+    private static final DeviceManager                INSTANCE                    = new DeviceManager ();
 
-    private static final String                       SECTION_FOLDERS      = "Folders";
-    private static final Pattern                      PATTERN_NAME         = Pattern.compile ("(?<type>\\w+?)(?<instrument>i?):\\s*(?<name>(\\w|\\s)+)\\s*(\\((?<company>[^)]+)\\))?");
-    private static final Set<String>                  NON_CATEGORIES       = Set.of ("ix", "till", "loser", "liteon", "sstillwell", "teej", "schwa", "u-he", "remaincalm_org");
+    private static final String                       SECTION_FOLDERS             = "Folders";
+    private static final Pattern                      PATTERN_NAME                = Pattern.compile ("(?<type>[^:]+?)(?<instrument>i?):\\s*(?<name>([^)])+)(\\s*\\((?<company>[^)]+?)\\))?(\\s*\\((?<channels>[^)]+)\\))?");
+    private static final Set<String>                  NON_CATEGORIES              = Set.of ("ix", "till", "loser", "liteon", "sstillwell", "teej", "schwa", "u-he", "remaincalm_org");
 
-    private static final Map<Integer, DeviceFileType> TYPE_CODES           = new HashMap<> (5);
-    private static final Map<String, DeviceFileType>  DEVICE_FILE_TYPE_MAP = new HashMap<> ();
-    private static final Map<String, String>          JS_CATEGORY_MAP      = new HashMap<> ();
+    private static final Map<Integer, DeviceFileType> TYPE_CODES                  = new HashMap<> (5);
+    private static final Map<String, DeviceFileType>  DEVICE_FILE_TYPE_MAP        = new HashMap<> ();
+    private static final Map<String, String>          JS_CATEGORY_MAP             = new HashMap<> ();
+    private static final Map<String, List<String>>    KNOWN_PLUGIN_CATEGORIES_MAP = new HashMap<> ();
     static
     {
         TYPE_CODES.put (Integer.valueOf (1), DeviceFileType.VST3);
@@ -72,18 +73,35 @@ public class DeviceManager
         JS_CATEGORY_MAP.put ("synthesis", "Synth");
         JS_CATEGORY_MAP.put ("utility", "Tools");
         JS_CATEGORY_MAP.put ("waveshapers", "Modulation");
+
+        KNOWN_PLUGIN_CATEGORIES_MAP.put ("Delay", List.of ("ColourCopy", "Delay", "MFM2", "ReaDelay", "Replika", "ValhallaDelay", "Ping Pong"));
+        KNOWN_PLUGIN_CATEGORIES_MAP.put ("Distortion", List.of ("Bite", "Dirt", "COLDFIRE", "Dist", "Trash", "Saturation", "Vinyl", "Paranoia Mangler", "Tape MELLO-FI"));
+        KNOWN_PLUGIN_CATEGORIES_MAP.put ("Dynamics", List.of ("Bus", "Comp", "Expander", "Exciter", "Nectar", "Neutron", "Ozone", "ReaLimit", "Satin", "Solid Bus Comp", "Solid Dynamics", "Supercharger", "Limiter", "Gate", "Transient", "Presswerk", "ReaComp", "ReaXcomp", "Vari Comp", "Enhancer", "Loud", "Satin", "Compciter", "Stereo Upmix", "Zero Crossing Maximizer", "Event Horizon Clipper", "Stereo Width", "Thunderkick", "Booster", "De-esser"));
+        KNOWN_PLUGIN_CATEGORIES_MAP.put ("EQ", List.of ("EQ", "Equalizer", "Kicker"));
+        KNOWN_PLUGIN_CATEGORIES_MAP.put ("Filter", List.of ("Driver", "Filter", "ReaFir"));
+        KNOWN_PLUGIN_CATEGORIES_MAP.put ("Granular", List.of ("FRAGMENTS", "REFRACT"));
+        KNOWN_PLUGIN_CATEGORIES_MAP.put ("Guitar", List.of ("Pre", "VC"));
+        KNOWN_PLUGIN_CATEGORIES_MAP.put ("MIDI", List.of ("Captain", "SChord", "MIDI"));
+        KNOWN_PLUGIN_CATEGORIES_MAP.put ("Misc", List.of ("RX", "SpectraLayers", "Lorenz Attractor", "WaveLab"));
+        KNOWN_PLUGIN_CATEGORIES_MAP.put ("Modulation", List.of ("Choral", "Chorus", "MOTIONS", "Flair", "Flange", "Stutter", "Ring Modulator", "Waveshaper", "Phasis", "Modulator", "Phaser", "Rotary"));
+        KNOWN_PLUGIN_CATEGORIES_MAP.put ("Multi", List.of ("Guitar Rig", "KAOSS", "Surge XT Effects"));
+        KNOWN_PLUGIN_CATEGORIES_MAP.put ("Pitch", List.of ("Melodyne", "ReaPitch", "ReaTune"));
+        KNOWN_PLUGIN_CATEGORIES_MAP.put ("Reverb", List.of ("Raum", "RC", "ReaVerb", "ReaVerbate", "INTENSITY", "ValhallaRoom", "ValhallaShimmer", "ValhallaSupermassive", "ValhallaVintageVerb", "Twangstrom", "Zebrify", "ZRev", "PLATE", "SPRING", "LX-24", "MDE-X"));
+        KNOWN_PLUGIN_CATEGORIES_MAP.put ("Sampler", List.of ("ReaSamplOmatic5000", "sforzando", "Synclavier", "TAL Sampler", "TX16Wx", "Kontakt"));
+        KNOWN_PLUGIN_CATEGORIES_MAP.put ("Synth", List.of ("Absynth", "ACE", "Acid", "Analog Lab", "ARP", "Augmented", "B-3", "Battery", "Bazille", "Easel", "Cardinal", "Clavinet", "CMI", "CP-70", "CS-80", "CZ", "DecentSampler", "Diva", "DX7", "Emulator", "Fabric", "Farfisa", "FM8", "Freak", "Hive", "Hype", "Massive", "Mellotron", "microKORG", "Microwave", "MiniBrute", "MiniFreak", "miniKORG", "Modular", "modwave", "MODX", "MonoPoly", "opsix", "Organ", "Padshop", "Piano", "Pigments", "Polysix", "Prophecy", "Prophet", "ReaSynth", "Retrologue", "SEM", "sfizz", "sforzando", "Synth1", "Synthi", "Solina", "SQ80", "Super 8", "TRITON", "VOX Continental", "VOX Super Continental", "wavestate", "Wurli", "Zebra", "Mini D", "Mini V", "ELECTRIBE", "EP-1", "Groove Agent", "HALion", "Jun-6", "Jup-8", "Komplete", "MS-20", "M1", "Maschine", "Matrix-12", "K1v", "Omnisphere", "OP-Xa", "OPx-4", "Reaktor", "ReaSynDr", "Repro", "Stage-73", "Surge XT", "Avenger", "WAVESTATION", "XO (18 out)"));
+        KNOWN_PLUGIN_CATEGORIES_MAP.put ("Tools", List.of ("Tune", "ReaCast", "ReaControlMIDI", "ReaInsert", "ReaNINJAM", "ReaSurround", "ReaSurroundPan", "Stereo Mixer", "Polarity", "SwixMitch", "Generator", "Meter", "FFT", "Statistics", "Center Canceler", "Stereo Field Manipulator", "Time Difference Pan", "Goniometer", "Joiner", "Splitter", "Switcher", "ReaStream", "Pseudo-Stereo", "Non-Linear Processor", "Auto-Wideness"));
+        KNOWN_PLUGIN_CATEGORIES_MAP.put ("Vocal", List.of ("ReaVocode", "ReaVoice", "VocalSynth", "Vocoder", "Speek"));
     }
 
-    private final List<DeviceMetadataImpl>  devices                = new ArrayList<> ();
-    private final List<DeviceMetadataImpl>  instruments            = new ArrayList<> ();
-    private final List<DeviceMetadataImpl>  effects                = new ArrayList<> ();
-    private final Set<String>               categories             = new TreeSet<> ();
-    private final Set<String>               vendors                = new TreeSet<> ();
-    private final List<DeviceCollection>    collections            = new ArrayList<> ();
-    private final Set<DeviceFileType>       availableFileTypes     = new TreeSet<> ();
-    private final Set<DeviceArchitecture>   availableArchitectures = new TreeSet<> ();
-    private final Map<String, ParameterMap> parameterMaps          = new HashMap<> ();
-    private final List<DeviceFileType>      preferredTypes         = new ArrayList<> ();
+    private final List<DeviceMetadataImpl>  devices            = new ArrayList<> ();
+    private final List<DeviceMetadataImpl>  instruments        = new ArrayList<> ();
+    private final List<DeviceMetadataImpl>  effects            = new ArrayList<> ();
+    private final Set<String>               categories         = new TreeSet<> ();
+    private final Set<String>               vendors            = new TreeSet<> ();
+    private final List<DeviceCollection>    collections        = new ArrayList<> ();
+    private final Set<DeviceFileType>       availableFileTypes = new TreeSet<> ();
+    private final Map<String, ParameterMap> parameterMaps      = new HashMap<> ();
+    private final List<DeviceFileType>      preferredTypes     = new ArrayList<> ();
     private IniFiles                        iniFiles;
 
 
@@ -171,7 +189,7 @@ public class DeviceManager
      */
     public List<DeviceMetadataImpl> filterByFileType (final DeviceFileType deviceFileType)
     {
-        return this.filterBy (deviceFileType, null, null, null, null, null);
+        return this.filterBy (deviceFileType, null, null, null, null);
     }
 
 
@@ -183,7 +201,7 @@ public class DeviceManager
      */
     public List<DeviceMetadataImpl> filterByCategory (final String category)
     {
-        return this.filterBy (null, category, null, null, null, null);
+        return this.filterBy (null, category, null, null, null);
     }
 
 
@@ -195,7 +213,7 @@ public class DeviceManager
      */
     public List<DeviceMetadataImpl> filterByVendor (final String vendor)
     {
-        return this.filterBy (null, null, vendor, null, null, null);
+        return this.filterBy (null, null, vendor, null, null);
     }
 
 
@@ -207,19 +225,7 @@ public class DeviceManager
      */
     public List<DeviceMetadataImpl> filterByCollection (final DeviceCollection collection)
     {
-        return this.filterBy (null, null, null, collection, null, null);
-    }
-
-
-    /**
-     * Filter the devices by a location.
-     *
-     * @param location Filter by device location, may be null
-     * @return The devices matching the filter criteria
-     */
-    public List<DeviceMetadataImpl> filterByLocation (final DeviceArchitecture location)
-    {
-        return this.filterBy (null, null, null, null, location, null);
+        return this.filterBy (null, null, null, collection, null);
     }
 
 
@@ -231,7 +237,7 @@ public class DeviceManager
      */
     public List<DeviceMetadataImpl> filterByType (final DeviceType deviceType)
     {
-        return this.filterBy (null, null, null, null, null, deviceType);
+        return this.filterBy (null, null, null, null, deviceType);
     }
 
 
@@ -242,18 +248,17 @@ public class DeviceManager
      * @param category Filter by device category, may be null
      * @param vendor Filter by device vendor, may be null
      * @param collection Filter by device collection, may be null
-     * @param location Filter by device location, may be null
      * @param deviceType Filter by device type, may be null
      * @return The devices matching the filter criteria
      */
-    public List<DeviceMetadataImpl> filterBy (final DeviceFileType fileType, final String category, final String vendor, final DeviceCollection collection, final DeviceArchitecture location, final DeviceType deviceType)
+    public List<DeviceMetadataImpl> filterBy (final DeviceFileType fileType, final String category, final String vendor, final DeviceCollection collection, final DeviceType deviceType)
     {
         List<DeviceMetadataImpl> results = new ArrayList<> ();
         synchronized (this.devices)
         {
             for (final DeviceMetadataImpl d: this.devices)
             {
-                if (accept (d, fileType, category, vendor, location, deviceType))
+                if (accept (d, fileType, category, vendor, deviceType))
                     results.add (d);
             }
         }
@@ -307,12 +312,12 @@ public class DeviceManager
     }
 
 
-    private static boolean accept (final DeviceMetadataImpl d, final DeviceFileType fileType, final String category, final String vendor, final DeviceArchitecture architecture, final DeviceType deviceType)
+    private static boolean accept (final DeviceMetadataImpl d, final DeviceFileType fileType, final String category, final String vendor, final DeviceType deviceType)
     {
         if (fileType != null && d.getFileType () != fileType || category != null && !d.hasCategory (category))
             return false;
 
-        if (vendor != null && !vendor.equals (d.getVendor ()) || architecture != null && d.getArchitecture () != architecture)
+        if (vendor != null && !vendor.equals (d.getVendor ()))
             return false;
 
         return deviceType == null || d.getType () == deviceType;
@@ -352,64 +357,64 @@ public class DeviceManager
     public void addDeviceInfo (final String description, final String module)
     {
         final Matcher matcher = PATTERN_NAME.matcher (description);
-        if (matcher.matches ())
+        if (!matcher.matches ())
+            return;
+
+        final String type = matcher.group ("type");
+        final String instrument = matcher.group ("instrument");
+        String deviceName = matcher.group ("name").trim ();
+        String company = matcher.group ("company");
+        final String channels = matcher.group ("channels");
+        if (channels != null)
+            deviceName = deviceName + " (" + channels + ")";
+
+        final DeviceFileType fileType = DEVICE_FILE_TYPE_MAP.get (type);
+        final DeviceType deviceType = instrument != null && "i".equals (instrument) ? DeviceType.INSTRUMENT : DeviceType.AUDIO_EFFECT;
+
+        String category = null;
+        if (fileType == DeviceFileType.JS)
         {
-            final String type = matcher.group ("type");
-            final String instrument = matcher.group ("instrument");
-            final String deviceName = matcher.group ("name").trim ();
-            String company = matcher.group ("company");
-
-            final DeviceFileType fileType = DEVICE_FILE_TYPE_MAP.get (type);
-            final DeviceType deviceType = instrument != null && "i".equals (instrument) ? DeviceType.INSTRUMENT : DeviceType.AUDIO_EFFECT;
-            final DeviceArchitecture architecture;
-
-            String category = null;
-            switch (fileType)
+            if (company != null && !"Cockos".equals (company))
             {
-                case JS:
-                    architecture = DeviceArchitecture.SCRIPT;
-
-                    // Parse category or company from first part of module
-                    final String [] modulePath = module.split ("/");
-                    if (modulePath.length <= 1)
-                        return;
-                    if (NON_CATEGORIES.contains (modulePath[0].toLowerCase (Locale.US)))
-                        company = modulePath[0];
-                    else
-                    {
-                        final String mappedCategory = JS_CATEGORY_MAP.get (modulePath[0]);
-                        category = mappedCategory == null ? modulePath[0] : mappedCategory;
-                    }
-                    break;
-
-                default:
-                    // TODO
-                    architecture = DeviceArchitecture.X64;
-                    break;
+                // Some JS plugins have additional descriptions in brackets which are not a
+                // company name
+                deviceName = deviceName + " (" + company + ")";
+                company = null;
             }
 
-            final DeviceMetadataImpl device = new DeviceMetadataImpl (deviceName, module, deviceType, fileType, architecture);
-            if (company != null)
-            {
-                device.setVendor (company);
-                this.vendors.add (company);
-            }
-
-            if (category != null)
-            {
-                device.setCategories (Collections.singleton (category));
-                this.categories.add (category);
-            }
-
-            this.devices.add (device);
-            if (deviceType == DeviceType.INSTRUMENT)
-                this.instruments.add (device);
+            // Parse category or company from first part of module
+            final String [] modulePath = module.split ("/");
+            if (modulePath.length <= 1)
+                return;
+            if (NON_CATEGORIES.contains (modulePath[0].toLowerCase (Locale.US)))
+                company = modulePath[0];
             else
-                this.effects.add (device);
-
-            this.availableFileTypes.add (fileType);
-            this.availableArchitectures.add (architecture);
+            {
+                final String mappedCategory = JS_CATEGORY_MAP.get (modulePath[0]);
+                category = mappedCategory == null ? modulePath[0] : mappedCategory;
+            }
         }
+
+        final DeviceMetadataImpl device = new DeviceMetadataImpl (deviceName, module, deviceType, fileType);
+        if (company != null)
+        {
+            device.setVendor (company);
+            this.vendors.add (company);
+        }
+
+        if (category != null)
+        {
+            device.addCategory (category);
+            this.categories.add (category);
+        }
+
+        this.devices.add (device);
+        if (deviceType == DeviceType.INSTRUMENT)
+            this.instruments.add (device);
+        else
+            this.effects.add (device);
+
+        this.availableFileTypes.add (fileType);
     }
 
 
@@ -426,13 +431,14 @@ public class DeviceManager
         synchronized (this.devices)
         {
             // Load categories and vendor information
-            final Set<String> categoriesSet = new TreeSet<> ();
-            final Set<String> vendorsSet = new TreeSet<> ();
             if (iniFiles.isFxTagsPresent ())
+            {
+                final Set<String> vendorsSet = new TreeSet<> ();
+                final Set<String> categoriesSet = new TreeSet<> ();
                 this.parseFXTagsFile (iniFiles.getIniFxTags (), categoriesSet, vendorsSet);
-
-            this.categories.addAll (categoriesSet);
-            this.vendors.addAll (vendorsSet);
+                this.categories.addAll (categoriesSet);
+                this.vendors.addAll (vendorsSet);
+            }
 
             // Load collection filters
             if (iniFiles.isFxFoldersPresent ())
@@ -442,16 +448,51 @@ public class DeviceManager
             if (iniFiles.isParamMapsPresent ())
                 this.parseParameterMaps (iniFiles.getIniParamMaps ());
 
-            // Set MIDI device type
+            // Improve category assignment
             for (final DeviceMetadataImpl device: this.devices)
             {
-                if (device.hasCategory ("MIDI"))
+                if (!device.isCategorized ())
+                {
+                    final String deviceName = device.name ();
+                    final String category = findCategory (deviceName);
+                    if (category != null)
+                        device.addCategory (category);
+                }
+                else if (device.hasCategory ("MIDI"))
                     device.setType (DeviceType.MIDI_EFFECT);
+
+                if (device.hasCategory ("Utility"))
+                {
+                    device.setCategory ("Tools");
+                    this.categories.add ("Tools");
+                }
+                if (device.hasCategory ("Pitch Shift"))
+                {
+                    device.setCategory ("Pitch");
+                    this.categories.add ("Pitch");
+                }
             }
+
+            this.categories.remove ("Utility");
+            this.categories.remove ("Pitch");
 
             // Finally sort the devices by their display name
             this.devices.sort ( (d1, d2) -> d1.getDisplayName ().compareToIgnoreCase (d2.getDisplayName ()));
         }
+    }
+
+
+    private static String findCategory (final String deviceName)
+    {
+        for (final Map.Entry<String, List<String>> entry: KNOWN_PLUGIN_CATEGORIES_MAP.entrySet ())
+        {
+            for (String value: entry.getValue ())
+            {
+                if (deviceName.contains (value))
+                    return entry.getKey ();
+            }
+        }
+        return null;
     }
 
 
@@ -463,17 +504,6 @@ public class DeviceManager
     public List<DeviceFileType> getAvailableFileTypes ()
     {
         return new ArrayList<> (this.availableFileTypes);
-    }
-
-
-    /**
-     * Get the locations present on this system.
-     *
-     * @return The file types
-     */
-    public List<DeviceArchitecture> getAvailableLocations ()
-    {
-        return new ArrayList<> (this.availableArchitectures);
     }
 
 
@@ -572,12 +602,13 @@ public class DeviceManager
                 }
                 if (cats.isEmpty ())
                 {
-                    if (d.getType () == DeviceType.INSTRUMENT)
+                    final DeviceType type = d.getType ();
+                    if (type == DeviceType.INSTRUMENT)
                         cats.add ("Synth");
-                    else if (d.getType () == DeviceType.MIDI_EFFECT)
+                    else if (type == DeviceType.MIDI_EFFECT)
                         cats.add ("MIDI");
                 }
-                d.setCategories (cats);
+                d.addCategories (cats);
                 categoriesSet.addAll (cats);
             }
 

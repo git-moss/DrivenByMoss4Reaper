@@ -16,7 +16,6 @@ import de.mossgrabers.reaper.communication.MessageSender;
 import de.mossgrabers.reaper.communication.Processor;
 import de.mossgrabers.reaper.framework.daw.data.CursorDeviceImpl;
 import de.mossgrabers.reaper.framework.daw.data.ItemImpl;
-import de.mossgrabers.reaper.framework.device.DeviceArchitecture;
 import de.mossgrabers.reaper.framework.device.DeviceCollection;
 import de.mossgrabers.reaper.framework.device.DeviceFileType;
 import de.mossgrabers.reaper.framework.device.DeviceManager;
@@ -525,12 +524,11 @@ public class BrowserImpl extends AbstractBrowser
         final DeviceCollection folder = this.deviceCollectionFilterColumn.getCursorIndex () == 0 ? null : deviceManager.getCollection (this.deviceCollectionFilterColumn.getCursorName ());
         final String category = this.deviceCategoryFilterColumn.getCursorIndex () == 0 ? null : this.deviceCategoryFilterColumn.getCursorName ();
         final DeviceFileType fileType = this.deviceFileTypeFilterColumn.getCursorIndex () == 0 ? null : DeviceFileType.valueOf (this.deviceFileTypeFilterColumn.getCursorName ().toUpperCase (Locale.US));
-        final DeviceArchitecture location = this.deviceLocationFilterColumn.getCursorIndex () == 0 ? null : DeviceArchitecture.valueOf (this.deviceLocationFilterColumn.getCursorName ().toUpperCase (Locale.US));
         // Note: this.deviceTagsFilterColumn currently does nothing
         final String vendor = this.deviceCreatorFilterColumn.getCursorIndex () == 0 ? null : this.deviceCreatorFilterColumn.getCursorName ();
         final DeviceType type = this.deviceTypeFilterColumn.getCursorIndex () == 0 ? null : DeviceType.valueOf (this.deviceTypeFilterColumn.getCursorName ().toUpperCase (Locale.US).replace (' ', '_'));
 
-        this.filteredDevices = deviceManager.filterBy (fileType, category, vendor, folder, location, type);
+        this.filteredDevices = deviceManager.filterBy (fileType, category, vendor, folder, type);
 
         if (this.selectedIndex >= this.filteredDevices.size ())
             this.selectedIndex = 0;
