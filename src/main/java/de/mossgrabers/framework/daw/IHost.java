@@ -4,6 +4,8 @@
 
 package de.mossgrabers.framework.daw;
 
+import java.util.List;
+
 import de.mossgrabers.framework.controller.hardware.IHwSurfaceFactory;
 import de.mossgrabers.framework.daw.constants.Capability;
 import de.mossgrabers.framework.daw.data.IDeviceMetadata;
@@ -16,8 +18,6 @@ import de.mossgrabers.framework.osc.IOpenSoundControlServer;
 import de.mossgrabers.framework.parameter.NoteAttribute;
 import de.mossgrabers.framework.usb.IUsbDevice;
 import de.mossgrabers.framework.usb.UsbException;
-
-import java.util.List;
 
 
 /**

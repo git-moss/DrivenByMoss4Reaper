@@ -346,7 +346,8 @@ public class MessageParser
                 break;
 
             default:
-                // Not a Transport command
+                // Don't show an error since this is a top level check and further checks are out of
+                // this method!
                 return false;
         }
         return true;
@@ -364,42 +365,53 @@ public class MessageParser
         }
 
         final String cmd = parts.poll ();
-        if ("str".equals (cmd))
+        switch (cmd)
         {
-            this.transport.setPositionText (value);
-            return;
-        }
+            case "str":
+                this.transport.setPositionText (value);
+                return;
 
-        // Parse loop start and end values
+            case "hzoom":
+                this.transport.setHZoom (Double.parseDouble (value));
+                return;
 
-        if (!"loop".equals (cmd) || parts.isEmpty ())
-            return;
+            case "loop":
+                // Parse loop start and end values
 
-        final String loopCmd = parts.poll ();
-        switch (loopCmd)
-        {
-            case "start":
-                if (parts.isEmpty ())
-                {
-                    this.transport.setLoopStartValue (Double.parseDouble (value));
+                if (!"loop".equals (cmd) || parts.isEmpty ())
                     return;
-                }
-                if ("str".equals (parts.poll ()))
-                    this.transport.setLoopStartText (value);
-                else
-                    this.transport.setLoopStartBeatText (value);
-                break;
 
-            case "length":
-                if (parts.isEmpty ())
-                    this.transport.setLoopLengthValue (Double.parseDouble (value));
-                else
-                    this.transport.setLoopLengthBeatText (value);
+                final String loopCmd = parts.poll ();
+                switch (loopCmd)
+                {
+                    case "start":
+                        if (parts.isEmpty ())
+                        {
+                            this.transport.setLoopStartValue (Double.parseDouble (value));
+                            return;
+                        }
+                        if ("str".equals (parts.poll ()))
+                            this.transport.setLoopStartText (value);
+                        else
+                            this.transport.setLoopStartBeatText (value);
+                        break;
+
+                    case "length":
+                        if (parts.isEmpty ())
+                            this.transport.setLoopLengthValue (Double.parseDouble (value));
+                        else
+                            this.transport.setLoopLengthBeatText (value);
+                        break;
+
+                    default:
+                        this.host.error ("Unhandled Loop parameter: " + loopCmd);
+                        return;
+                }
                 break;
 
             default:
-                // Not supported
-                return;
+                this.host.error ("Unhandled Time parameter: " + cmd);
+                break;
         }
     }
 
@@ -729,13 +741,13 @@ public class MessageParser
                     }
                     catch (final NumberFormatException ex)
                     {
-                        this.host.error ("Unhandled equalizer command: " + bandIndex);
+                        this.host.error ("Unhandled Equalizer command: " + bandIndex);
                     }
                 }
                 break;
 
             default:
-                this.host.error ("Unhandled device parameter: " + command);
+                this.host.error ("Unhandled Device parameter: " + command);
                 break;
         }
     }

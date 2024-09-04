@@ -62,6 +62,7 @@ public class TransportImpl extends BaseImpl implements ITransport
     private final MetronomeVolumeParameterImpl metronomeVolumeParameter;
     private final TempoParameterImpl           tempoParameter;
     private AutomationMode                     automationMode     = AutomationMode.TRIM_READ;
+    private double                             visibleSeconds;
 
 
     /**
@@ -554,12 +555,21 @@ public class TransportImpl extends BaseImpl implements ITransport
     @Override
     public void setPosition (final double time)
     {
+        this.setPosition (time, true);
+    }
+
+
+    private void setPosition (final double time, final boolean snap)
+    {
         synchronized (UPDATE_LOCK)
         {
             if (this.isAutomationRecActive ())
                 this.sender.delayUpdates (Processor.TRANSPORT);
             this.position = time;
-            this.sender.processDoubleArg (Processor.TIME, this.position);
+            if (snap)
+                this.sender.processDoubleArg (Processor.TIME, this.position);
+            else
+                this.sender.processDoubleArg (Processor.TIME, "nosnap", this.position);
         }
     }
 
@@ -584,8 +594,8 @@ public class TransportImpl extends BaseImpl implements ITransport
     @Override
     public void changePosition (final boolean increase, final boolean slow)
     {
-        final double frac = this.beatsToSeconds (slow ? TransportConstants.INC_FRACTION_TIME_SLOW : TransportConstants.INC_FRACTION_TIME);
-        this.setPosition (increase ? this.position + frac : Math.max (this.position - frac, 0.0));
+        final double fraction = this.visibleSeconds / (slow ? 100 : 10);
+        this.setPosition (increase ? this.position + fraction : Math.max (this.position - fraction, 0.0), !slow);
     }
 
 
@@ -1155,5 +1165,16 @@ public class TransportImpl extends BaseImpl implements ITransport
         if (split.length == 1)
             return replace;
         return replace + ":" + split[1];
+    }
+
+
+    /**
+     * Sets the number of visible seconds in the arranger.
+     *
+     * @param visibleSeconds The number of visible seconds
+     */
+    public void setHZoom (final double visibleSeconds)
+    {
+        this.visibleSeconds = visibleSeconds;
     }
 }
