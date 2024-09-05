@@ -360,18 +360,25 @@ public class DeviceManager
         if (!matcher.matches ())
             return;
 
-        final String type = matcher.group ("type");
-        final String instrument = matcher.group ("instrument");
         String deviceName = matcher.group ("name").trim ();
-        String company = matcher.group ("company");
+        if (deviceName == null)
+            return;
+
         final String channels = matcher.group ("channels");
         if (channels != null)
             deviceName = deviceName + " (" + channels + ")";
 
+        final String instrument = matcher.group ("instrument");
+        final String type = matcher.group ("type");
+        if (type == null)
+            return;
         final DeviceFileType fileType = DEVICE_FILE_TYPE_MAP.get (type);
+        if (fileType == null)
+            return;
         final DeviceType deviceType = instrument != null && "i".equals (instrument) ? DeviceType.INSTRUMENT : DeviceType.AUDIO_EFFECT;
 
         String category = null;
+        String company = matcher.group ("company");
         if (fileType == DeviceFileType.JS)
         {
             if (company != null && !"Cockos".equals (company))
