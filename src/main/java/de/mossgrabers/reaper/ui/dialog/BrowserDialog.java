@@ -195,7 +195,7 @@ public class BrowserDialog extends BasicDialog
                 final String name = this.browser.getFilterColumn (col).getName ();
                 menuItem.setText (name.isBlank () ? "No filter" : name);
                 this.setFilterColumnVisible (col, browserColumnsVisibility[col]);
-                ((JCheckBoxMenuItem) menuItem).setSelected (browserColumnsVisibility[col]);
+                menuItem.setSelected (browserColumnsVisibility[col]);
                 this.setFilterColumnVisible (col, browserColumnsVisibility[col]);
             }
             menuItem.setVisible (col < filterColumnCount);

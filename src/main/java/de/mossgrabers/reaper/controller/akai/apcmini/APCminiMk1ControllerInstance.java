@@ -5,9 +5,9 @@
 package de.mossgrabers.reaper.controller.akai.apcmini;
 
 import de.mossgrabers.controller.akai.apcmini.APCminiConfiguration;
-import de.mossgrabers.controller.akai.apcmini.APCminiControllerDefinition;
 import de.mossgrabers.controller.akai.apcmini.APCminiControllerSetup;
 import de.mossgrabers.controller.akai.apcmini.controller.APCminiControlSurface;
+import de.mossgrabers.controller.akai.apcmini.definition.APCminiMk1ControllerDefinition;
 import de.mossgrabers.framework.controller.IControllerSetup;
 import de.mossgrabers.reaper.communication.MessageSender;
 import de.mossgrabers.reaper.controller.AbstractControllerInstance;
@@ -18,14 +18,14 @@ import de.mossgrabers.reaper.ui.utils.LogModel;
 
 
 /**
- * APCmini controller instance.
+ * APCmini Mk1 controller instance.
  *
  * @author Jürgen Moßgraber
  */
-public class APCminiControllerInstance extends AbstractControllerInstance<APCminiControlSurface, APCminiConfiguration>
+public class APCminiMk1ControllerInstance extends AbstractControllerInstance<APCminiControlSurface, APCminiConfiguration>
 {
     /** The controller definition instance. */
-    public static final APCminiControllerDefinition CONTROLLER_DEFINITION = new APCminiControllerDefinition ();
+    public static final APCminiMk1ControllerDefinition CONTROLLER_DEFINITION = new APCminiMk1ControllerDefinition ();
 
 
     /**
@@ -36,7 +36,7 @@ public class APCminiControllerInstance extends AbstractControllerInstance<APCmin
      * @param sender The sender
      * @param iniFiles The INI configuration files
      */
-    public APCminiControllerInstance (final LogModel logModel, final WindowManager windowManager, final MessageSender sender, final IniFiles iniFiles)
+    public APCminiMk1ControllerInstance (final LogModel logModel, final WindowManager windowManager, final MessageSender sender, final IniFiles iniFiles)
     {
         super (CONTROLLER_DEFINITION, logModel, windowManager, sender, iniFiles);
     }
@@ -46,6 +46,6 @@ public class APCminiControllerInstance extends AbstractControllerInstance<APCmin
     @Override
     protected IControllerSetup<APCminiControlSurface, APCminiConfiguration> createControllerSetup (final ReaperSetupFactory setupFactory)
     {
-        return new APCminiControllerSetup (this.host, setupFactory, this.globalSettingsUI, this.documentSettingsUI);
+        return new APCminiControllerSetup (this.host, setupFactory, this.globalSettingsUI, this.documentSettingsUI, CONTROLLER_DEFINITION);
     }
 }
