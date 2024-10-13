@@ -1080,6 +1080,8 @@ public class MessageParser
 
     private void parseNoteRepeat (final Queue<String> parts, final String value)
     {
+        if (this.controllerSetup.getSurfaces ().isEmpty ())
+            return;
         final IControlSurface<?> surface = this.controllerSetup.getSurface ();
         final IMidiInput input = surface.getMidiInput ();
         if (input == null)

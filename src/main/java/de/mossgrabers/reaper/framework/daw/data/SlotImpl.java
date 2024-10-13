@@ -23,6 +23,7 @@ public class SlotImpl extends ItemImpl implements ISlot
 {
     private final ITrack track;
     private boolean      hasContent;
+    private boolean      isMuted;
     private ColorEx      color = new ColorEx (0.2, 0.2, 0.2);
     private ISceneBank   sceneBank;
 
@@ -60,6 +61,25 @@ public class SlotImpl extends ItemImpl implements ISlot
     public void setHasContent (final boolean hasContent)
     {
         this.hasContent = hasContent;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean isMuted ()
+    {
+        return this.isMuted;
+    }
+
+
+    /**
+     * Set the clip muted.
+     *
+     * @param isMuted True if muted
+     */
+    public void setMuted (final boolean isMuted)
+    {
+        this.isMuted = isMuted;
     }
 
 

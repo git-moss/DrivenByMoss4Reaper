@@ -380,10 +380,12 @@ public class ModelImpl extends AbstractModel
                 final String name = clipParts[pos++];
                 final boolean isSelected = Integer.parseInt (clipParts[pos++]) > 0;
                 final Optional<double []> color = this.parseColor (clipParts[pos++]);
+                final boolean isMuted = Integer.parseInt (clipParts[pos++]) > 0;
 
                 final SlotImpl slot = slotBank.getUnpagedItem (i);
                 slot.setPosition (i);
                 slot.setSelected (isSelected);
+                slot.setMuted (isMuted);
                 slot.setName (name);
                 if (color.isPresent ())
                     slot.setColor (new ColorEx (color.get ()));

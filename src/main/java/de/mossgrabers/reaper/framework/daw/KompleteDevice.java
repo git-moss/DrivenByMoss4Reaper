@@ -38,7 +38,7 @@ public class KompleteDevice implements ISpecificDevice
     public boolean doesExist ()
     {
         final String name = this.getName ();
-        return name.contains ("Komplete Kontrol") || name.contains ("Kontakt 7");
+        return name.contains ("Komplete Kontrol") || name.contains ("Kontakt 7") || name.contains ("Kontakt 8");
     }
 
 
@@ -49,7 +49,7 @@ public class KompleteDevice implements ISpecificDevice
         final String name = this.getName ();
         if (name.contains ("Komplete Kontrol"))
             return this.instrumentDevice.getID ();
-        else if (name.contains ("Kontakt 7") && this.instrumentDevice instanceof final SpecificDeviceImpl deviceImpl)
+        else if ((name.contains ("Kontakt 7") || name.contains ("Kontakt 8")) && this.instrumentDevice instanceof final SpecificDeviceImpl deviceImpl)
             return deviceImpl.getUnpagedParameterName (2048);
         return "";
     }

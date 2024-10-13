@@ -123,8 +123,7 @@ public class ParameterMappingDialog extends BasicDialog
         searchNextButton.addActionListener (event -> this.searchParam (Position.Bias.Forward));
 
         final BoxPanel parameterPane = new BoxPanel (BoxLayout.Y_AXIS, true);
-        final ParameterBankImpl parameterBank = (ParameterBankImpl) this.cursorDevice.getParameterBank ();
-        this.parametersListBox = parameterPane.createListBox ("Parameters:", "P", BoxPanel.NONE, getParameters (parameterBank));
+        this.parametersListBox = parameterPane.createListBox ("Parameters:", "P", BoxPanel.NONE, this.getParameters ());
 
         final JPanel leftColumn = new JPanel (new BorderLayout ());
         leftColumn.add (searchPane, BorderLayout.NORTH);
@@ -501,15 +500,18 @@ public class ParameterMappingDialog extends BasicDialog
     /**
      * Get all parameters from the currently selected device.
      *
-     * @param parameterBank The containing all parameters of the device
      * @return The parameters
      */
-    private static List<ParameterImpl> getParameters (final ParameterBankImpl parameterBank)
+    private List<ParameterImpl> getParameters ()
     {
-        final int count = parameterBank.getUnpagedItemCount ();
-        final List<ParameterImpl> params = new ArrayList<> (count);
-        for (int i = 0; i < count; i++)
-            params.add (parameterBank.getUnpagedItem (i));
-        return params;
+        if (this.cursorDevice.getParameterBank () instanceof final ParameterBankImpl parameterBank)
+        {
+            final int count = parameterBank.getUnpagedItemCount ();
+            final List<ParameterImpl> params = new ArrayList<> (count);
+            for (int i = 0; i < count; i++)
+                params.add (parameterBank.getUnpagedItem (i));
+            return params;
+        }
+        return Collections.emptyList ();
     }
 }
