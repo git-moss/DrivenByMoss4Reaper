@@ -11,6 +11,7 @@ import de.mossgrabers.framework.daw.constants.LaunchQuantization;
 import de.mossgrabers.framework.daw.constants.PostRecordingAction;
 import de.mossgrabers.framework.daw.constants.TransportConstants;
 import de.mossgrabers.framework.daw.data.ITrack;
+import de.mossgrabers.framework.parameter.AutomationModeParameter;
 import de.mossgrabers.framework.parameter.IParameter;
 import de.mossgrabers.reaper.communication.Processor;
 import de.mossgrabers.reaper.framework.Actions;
@@ -61,6 +62,7 @@ public class TransportImpl extends BaseImpl implements ITransport
     private int                                punchMode          = PUNCH_OFF;
     private final MetronomeVolumeParameterImpl metronomeVolumeParameter;
     private final TempoParameterImpl           tempoParameter;
+    private final AutomationModeParameter      automationParameter;
     private AutomationMode                     automationMode     = AutomationMode.TRIM_READ;
     private double                             visibleSeconds;
 
@@ -79,6 +81,7 @@ public class TransportImpl extends BaseImpl implements ITransport
 
         this.metronomeVolumeParameter = new MetronomeVolumeParameterImpl (dataSetup);
         this.tempoParameter = new TempoParameterImpl (dataSetup);
+        this.automationParameter = new AutomationModeParameter (this.valueChanger, this);
     }
 
 
@@ -405,6 +408,14 @@ public class TransportImpl extends BaseImpl implements ITransport
     {
         final AutomationMode automationWriteMode = this.getAutomationWriteMode ();
         return automationWriteMode != AutomationMode.READ && automationWriteMode != AutomationMode.TRIM_READ;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public IParameter getAutomationModeParameter ()
+    {
+        return this.automationParameter;
     }
 
 

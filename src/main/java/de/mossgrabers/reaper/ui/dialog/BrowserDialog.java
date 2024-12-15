@@ -216,6 +216,8 @@ public class BrowserDialog extends BasicDialog
 
     private void toggleFilterColumnVisibility (final int column)
     {
+        if (column >= this.filterPanels.size ())
+            return;
         final BoxPanel filterCol = this.filterPanels.get (column);
         final boolean show = !filterCol.isVisible ();
         this.setFilterColumnVisible (column, show);
@@ -225,6 +227,8 @@ public class BrowserDialog extends BasicDialog
 
     private void setFilterColumnVisible (final int column, final boolean show)
     {
+        if (column >= this.filterPanels.size ())
+            return;
         final BoxPanel filterCol = this.filterPanels.get (column);
         filterCol.setVisible (show);
         filterCol.getParent ().getComponent (column * 2 + 1).setVisible (show);

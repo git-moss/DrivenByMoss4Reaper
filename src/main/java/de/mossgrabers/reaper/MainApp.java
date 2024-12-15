@@ -31,10 +31,13 @@ import org.usb4java.LibUsbException;
 
 import javax.sound.midi.MidiDevice;
 import javax.sound.midi.MidiUnavailableException;
+import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -234,11 +237,26 @@ public class MainApp implements MessageSender, AppCallback, WindowManager
             this.updateMidiDevices ();
             this.instanceManager.load (this.mainConfiguration);
             this.startControllers ();
-            this.processInstanceSettings ();
 
             // This is required for the first startup of the plugin when it gets added to Reaper!
             if (this.mainFrame != null)
                 this.mainFrame.fillControllerList ();
+
+            // Delay the project settings quite a bit still everything is up...
+            SwingUtilities.invokeLater ( () -> {
+
+                final Timer timer = new Timer (2000, new ActionListener ()
+                {
+                    @Override
+                    public void actionPerformed (final ActionEvent e)
+                    {
+                        processInstanceSettings ();
+                    }
+                });
+                timer.setRepeats (false);
+                timer.start ();
+
+            });
         }
     }
 
