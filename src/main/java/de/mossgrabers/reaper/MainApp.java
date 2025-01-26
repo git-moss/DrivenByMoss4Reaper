@@ -76,7 +76,6 @@ public class MainApp implements MessageSender, AppCallback, WindowManager
     private final Object                    startupLock        = new Object ();
     private final Map<String, String>       instanceSettings   = new HashMap<> ();
 
-
     /**
      * Constructor.
      *
@@ -879,15 +878,26 @@ public class MainApp implements MessageSender, AppCallback, WindowManager
     }
 
 
-    private static void setSystemLF ()
+    private void setSystemLF ()
     {
         try
         {
-            UIManager.setLookAndFeel (UIManager.getSystemLookAndFeelClassName ());
+            // Setting GTKLookAndFeel which is the system look and feel on Ubuntu crashes currently
+            // fcitx (input layer) and makes Reaper unresponsible. The following error is logged in
+            // the debugger console:
+            // GLib-GIO-CRITICAL **: g_dbus_proxy_new: assertion 'G_IS_DBUS_CONNECTION (connection)'
+            // failed
+            // As a workaround the crossplatform L&F is used
+            final String systemLookAndFeelClassName;
+            if (OperatingSystem.get () == OperatingSystem.LINUX)
+                systemLookAndFeelClassName = UIManager.getCrossPlatformLookAndFeelClassName ();
+            else
+                systemLookAndFeelClassName = UIManager.getSystemLookAndFeelClassName ();
+            UIManager.setLookAndFeel (systemLookAndFeelClassName);
         }
         catch (final ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex)
         {
-            // Ignore
+            this.logModel.error ("Could not set System Look&Feel.", ex);
         }
     }
 
