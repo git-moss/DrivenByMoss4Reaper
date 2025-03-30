@@ -18,6 +18,7 @@ import de.mossgrabers.reaper.framework.daw.ApplicationImpl;
 import de.mossgrabers.reaper.framework.daw.DataSetupEx;
 import de.mossgrabers.reaper.framework.daw.Note;
 import de.mossgrabers.reaper.framework.daw.data.DrumPadImpl;
+import de.mossgrabers.reaper.framework.daw.data.MasterTrackImpl;
 import de.mossgrabers.reaper.framework.daw.data.TrackImpl;
 
 import java.util.ArrayList;
@@ -42,6 +43,7 @@ public class TrackBankImpl extends AbstractTrackBankImpl
     private final List<IDrumDevice>  drumDevices;
     private final boolean            hasFlatTrackList;
     private final boolean            hasFullFlatTrackList;
+
     private boolean                  skipDisabledItems;
     private final AtomicBoolean      isDirty       = new AtomicBoolean (false);
     private final Set<INoteObserver> noteObservers = new HashSet<> ();
@@ -168,6 +170,23 @@ public class TrackBankImpl extends AbstractTrackBankImpl
     public boolean hasParent ()
     {
         return !this.hasFlatTrackList && this.currentFolder.getParent () != null;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void scrollTo (final int position, final boolean adjustPage)
+    {
+        if (this.hasFlatTrackList && this.hasFullFlatTrackList)
+        {
+            if (this.flatTracks.get (position) instanceof MasterTrackImpl master)
+            {
+                master.select ();
+                return;
+            }
+        }
+
+        super.scrollTo (position, adjustPage);
     }
 
 
@@ -516,5 +535,16 @@ public class TrackBankImpl extends AbstractTrackBankImpl
 
         for (int i = 0; i < this.flatTracks.size (); i++)
             this.flatTracks.get (i).setIndex (i % this.pageSize);
+    }
+
+
+    /**
+     * Is the master track part of the track list?
+     *
+     * @return True if it is part of the full track list
+     */
+    public boolean hasFullFlatTrackList ()
+    {
+        return this.hasFullFlatTrackList;
     }
 }

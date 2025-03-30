@@ -327,8 +327,8 @@ public class MidiInputImpl implements IMidiInput
         {
             switch (message)
             {
-                case SysexMessage sysex -> this.handleSysexMessage (sysex);
-                case ShortMessage sm -> this.handleShortMessage (sm);
+                case final SysexMessage sysex -> this.handleSysexMessage (sysex);
+                case final ShortMessage sm -> this.handleShortMessage (sm);
                 default -> this.host.error ("Unknown MIDI class.");
             }
         }
@@ -504,7 +504,7 @@ public class MidiInputImpl implements IMidiInput
             if (ccContinuous != null && ccContinuous.isBound ())
             {
                 // High resolution command? See MIDI 1.0 Detailed Specification 4.2, page 11
-                if (ccContinuous instanceof AbstractHwAbsoluteControl ac && ac.isHiRes ())
+                if (ccContinuous instanceof final AbstractHwAbsoluteControl ac && ac.isHiRes ())
                 {
                     if (data1 < 32)
                     {

@@ -8,6 +8,7 @@ import de.mossgrabers.framework.daw.data.IDevice;
 import de.mossgrabers.framework.daw.data.bank.IParameterBank;
 import de.mossgrabers.framework.daw.data.bank.IParameterPageBank;
 import de.mossgrabers.framework.daw.data.empty.EmptyParameter;
+import de.mossgrabers.framework.observer.IValueObserver;
 import de.mossgrabers.framework.parameter.IParameter;
 import de.mossgrabers.reaper.communication.Processor;
 import de.mossgrabers.reaper.framework.daw.DataSetupEx;
@@ -21,8 +22,10 @@ import de.mossgrabers.reaper.framework.device.DeviceManager;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 
 /**
@@ -32,13 +35,14 @@ import java.util.Map;
  */
 public class ParameterBankImpl extends AbstractPagedBankImpl<ParameterImpl, IParameter> implements IParameterBank
 {
-    private final Map<String, Integer>  selectedDevicePages = new HashMap<> ();
+    private final Map<String, Integer>         selectedDevicePages = new HashMap<> ();
 
-    private final Processor             processor;
-    private final IDevice               device;
-    private final IParameter []         mappedParameterCache;
-    private int                         mappedParameterCount;
-    private final ParameterPageBankImpl parameterPageBank;
+    private final Processor                    processor;
+    private final IDevice                      device;
+    private final IParameter []                mappedParameterCache;
+    private int                                mappedParameterCount;
+    private final ParameterPageBankImpl        parameterPageBank;
+    private final Set<IValueObserver<Integer>> observers           = new HashSet<> ();
 
 
     /**
@@ -216,6 +220,26 @@ public class ParameterBankImpl extends AbstractPagedBankImpl<ParameterImpl, IPar
     public IParameterPageBank getPageBank ()
     {
         return this.parameterPageBank;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void addValueObserver (final IValueObserver<Integer> observer)
+    {
+        this.observers.add (observer);
+    }
+
+
+    /**
+     * Notify observers about a value change of a parameter.
+     *
+     * @param index The index of the parameter
+     */
+    public void notifyValueObservers (final Integer index)
+    {
+        for (final IValueObserver<Integer> observer: this.observers)
+            observer.update (index);
     }
 
 

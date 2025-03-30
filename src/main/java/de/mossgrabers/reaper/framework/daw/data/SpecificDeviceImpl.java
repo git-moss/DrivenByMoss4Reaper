@@ -74,8 +74,7 @@ public class SpecificDeviceImpl extends DeviceImpl implements ISpecificDevice
         else
             this.parameterBank = null;
 
-        // TODO
-        this.parameterList = new ParameterListImpl (numListParams / 8, host, valueChanger);
+        this.parameterList = new ParameterListImpl (numListParams / 8, this.parameterBank, this);
 
         // Always empty
         this.layerBank = new LayerBankImpl (dataSetup, checkedNumDeviceLayers);

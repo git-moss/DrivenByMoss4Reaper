@@ -4,10 +4,16 @@
 
 package de.mossgrabers.reaper.framework.daw.data;
 
-import de.mossgrabers.framework.controller.valuechanger.IValueChanger;
-import de.mossgrabers.framework.daw.IHost;
+import de.mossgrabers.framework.daw.data.IDevice;
 import de.mossgrabers.framework.daw.data.IParameterList;
+import de.mossgrabers.framework.daw.data.empty.EmptyParameter;
 import de.mossgrabers.framework.parameter.IParameter;
+import de.mossgrabers.reaper.framework.daw.data.bank.ParameterBankImpl;
+import de.mossgrabers.reaper.framework.daw.data.parameter.map.ParameterMap;
+import de.mossgrabers.reaper.framework.daw.data.parameter.map.ParameterMapPage;
+import de.mossgrabers.reaper.framework.daw.data.parameter.map.ParameterMapPageParameter;
+import de.mossgrabers.reaper.framework.daw.data.parameter.map.RenamedParameter;
+import de.mossgrabers.reaper.framework.device.DeviceManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,39 +26,28 @@ import java.util.List;
  */
 public class ParameterListImpl implements IParameterList
 {
-    private final int              maxNumberOfParameters;
-    private final List<IParameter> parameters;
-    private final IHost            host;
+    private final int               numMonitoredPages;
+    private final int               maxNumberOfParameters;
+    private final ParameterBankImpl parameterBank;
+    private final List<IParameter>  parameters     = new ArrayList<> ();
+    private final IDevice           device;
+    private String                  deviceName     = null;
+    private int                     devicePosition = -1;
 
 
     /**
      * Constructor.
-     * 
-     * @param numMonitoredPages The number of pages t monitor
-     * @param host The controller host
-     * @param valueChanger The value changer
+     *
+     * @param numMonitoredPages The number of pages to monitor. Each page has 8 parameters.
+     * @param parameterBank The parameter bank of the device
+     * @param device The device for looking up the device parameter mapping
      */
-    public ParameterListImpl (final int numMonitoredPages, final IHost host, final IValueChanger valueChanger)
+    public ParameterListImpl (final int numMonitoredPages, final ParameterBankImpl parameterBank, final IDevice device)
     {
-        final int numParams = 8;
-
-        this.maxNumberOfParameters = numMonitoredPages * numParams;
-        this.host = host;
-        this.parameters = new ArrayList<> (this.maxNumberOfParameters);
-
-        // TODO
-        // for (int i = 0; i < numMonitoredPages; i++)
-        // {
-        // final int page = i;
-        // final CursorRemoteControlsPage remoteControls = device.createCursorRemoteControlsPage
-        // ("Page " + page, numParams, "");
-        // remoteControls.pageCount ().addValueObserver (newValue -> reAdjust (remoteControls,
-        // page), -1);
-        // remoteControls.selectedPageIndex ().addValueObserver (newValue -> reAdjust
-        // (remoteControls, page), -1);
-        // for (int p = 0; p < numParams; p++)
-        // this.parameters.add (new ParameterImpl (valueChanger, remoteControls.getParameter (p)));
-        // }
+        this.numMonitoredPages = numMonitoredPages;
+        this.maxNumberOfParameters = numMonitoredPages * 8;
+        this.parameterBank = parameterBank;
+        this.device = device;
     }
 
 
@@ -68,6 +63,62 @@ public class ParameterListImpl implements IParameterList
     @Override
     public List<IParameter> getParameters ()
     {
-        return this.parameters;
+        synchronized (this.parameters)
+        {
+            // Update all parameters if a device has changed
+            if (this.deviceName == null || !this.deviceName.equals (this.device.getName ()) || this.devicePosition != this.device.getPosition ())
+            {
+                this.deviceName = this.device.getName ();
+                this.devicePosition = this.device.getPosition ();
+                this.refreshParameterCache ();
+            }
+
+            return this.parameters;
+        }
+    }
+
+
+    /**
+     * Refresh the parameter cache.
+     */
+    public void refreshParameterCache ()
+    {
+        synchronized (this.parameters)
+        {
+            this.parameters.clear ();
+
+            if (this.parameterBank == null)
+                return;
+
+            // Is there a parameter map?
+            ParameterMap parameterMap = null;
+            if (this.device != null)
+            {
+                final String deviceName = this.device.getName ();
+                parameterMap = DeviceManager.get ().getParameterMaps ().get (deviceName.toLowerCase ());
+            }
+
+            if (parameterMap == null || parameterMap.getPages ().size () == 0)
+            {
+                final int maxParameters = Math.min (this.maxNumberOfParameters, this.parameterBank.getItemCount ());
+                for (int i = 0; i < maxParameters; i++)
+                    this.parameters.add (this.parameterBank.getUnpagedItem (i));
+                return;
+            }
+
+            // Get the selected mapping page, if any
+            final List<ParameterMapPage> pages = parameterMap.getPages ();
+
+            final int maxPage = Math.min (this.numMonitoredPages, pages.size ());
+            for (int i = 0; i < maxPage; i++)
+            {
+                final ParameterMapPage parameterMapPage = pages.get (i);
+                for (final ParameterMapPageParameter mappedParameters: parameterMapPage.getParameters ())
+                {
+                    final int destIndex = mappedParameters.getIndex ();
+                    this.parameters.add (destIndex < 0 ? EmptyParameter.INSTANCE : new RenamedParameter (this.parameterBank.getUnpagedItem (destIndex), mappedParameters.getName ()));
+                }
+            }
+        }
     }
 }

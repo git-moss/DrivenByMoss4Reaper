@@ -292,15 +292,6 @@ public class ParameterProxy implements IParameterEx
     }
 
 
-    /** {@inheritDoc} */
-    @Override
-    public void addValueObserver (final IValueObserver<Void> observer)
-    {
-        if (this.getParam () instanceof final IParameterEx paramEx)
-            paramEx.addValueObserver (observer);
-    }
-
-
     private IParameter getParam ()
     {
         return this.bank.getParameter (this.index);

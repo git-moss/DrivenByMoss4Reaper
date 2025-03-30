@@ -203,5 +203,6 @@ public class CursorDeviceImpl extends SpecificDeviceImpl implements ICursorDevic
     public void refreshParameterMapping ()
     {
         ((ParameterBankImpl) this.getParameterBank ()).refreshParameterCache ();
+        ((ParameterListImpl) this.getParameterList ()).refreshParameterCache ();
     }
 }

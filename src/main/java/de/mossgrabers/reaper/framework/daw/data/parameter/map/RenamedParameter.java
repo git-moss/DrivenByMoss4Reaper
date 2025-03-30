@@ -240,12 +240,4 @@ public class RenamedParameter implements IParameter
     {
         this.parameter.setIndication (enable);
     }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void addValueObserver (IValueObserver<Void> observer)
-    {
-        this.parameter.addValueObserver (observer);
-    }
 }

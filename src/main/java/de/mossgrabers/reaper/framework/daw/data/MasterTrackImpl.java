@@ -61,6 +61,17 @@ public class MasterTrackImpl extends TrackImpl implements IMasterTrack
 
     /** {@inheritDoc} */
     @Override
+    public int getPosition ()
+    {
+        if (this.trackBank instanceof TrackBankImpl tb && tb.hasFullFlatTrackList ())
+            return this.trackBank.getItemCount () - 1;
+
+        return super.getPosition ();
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
     public void enableObservers (final boolean enable)
     {
         this.sender.enableUpdates (Processor.MASTER, enable);

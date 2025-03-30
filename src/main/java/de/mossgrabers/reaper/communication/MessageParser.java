@@ -467,13 +467,13 @@ public class MessageParser
                 try
                 {
                     final int paramNo = Integer.parseInt (paramCmd);
-                    final IParameter param = parameterBank.getItem (paramNo);
-                    this.parseDeviceParamValue (paramNo, param, parts, value);
+                    this.parseDeviceParamValue (paramNo, parameterBank, parts, value);
 
                     // Clone values into fake crossfader as well
                     if (paramNo == 0)
                     {
                         final IParameter crossfaderParam = masterTrack.getCrossfaderParameter ();
+                        final IParameter param = parameterBank.getItem (paramNo);
                         if (crossfaderParam instanceof final ParameterImpl destParam && param instanceof final ParameterImpl sourceParam)
                             sourceParam.copyValues (destParam);
                     }
@@ -761,7 +761,7 @@ public class MessageParser
             final int paramNo = Integer.parseInt (cmd);
             final ParameterBankImpl parameterBank = (ParameterBankImpl) device.getParameterBank ();
             if (parameterBank != null)
-                this.parseDeviceParamValue (paramNo, parameterBank.getUnpagedItem (paramNo), parts, value);
+                this.parseDeviceParamValue (paramNo, parameterBank, parts, value);
         }
         catch (final NumberFormatException ex)
         {
@@ -796,7 +796,7 @@ public class MessageParser
         try
         {
             final int paramNo = Integer.parseInt (cmd);
-            this.parseDeviceParamValue (paramNo, parameterBank.getUnpagedItem (paramNo), parts, value);
+            this.parseDeviceParamValue (paramNo, parameterBank, parts, value);
         }
         catch (final NumberFormatException ex)
         {
@@ -854,10 +854,10 @@ public class MessageParser
     }
 
 
-    private void parseDeviceParamValue (final int paramNo, final IParameter param, final Queue<String> parts, final String value)
+    private void parseDeviceParamValue (final int paramNo, final ParameterBankImpl parameterBank, final Queue<String> parts, final String value)
     {
         final String command = parts.poll ();
-        final IParameterEx p = (IParameterEx) param;
+        final IParameterEx p = parameterBank.getUnpagedItem (paramNo);
         switch (command)
         {
             case TAG_NAME:
@@ -868,7 +868,10 @@ public class MessageParser
 
             case "value":
                 if (parts.isEmpty ())
+                {
                     p.setInternalValue (Double.parseDouble (value));
+                    parameterBank.notifyValueObservers (Integer.valueOf (paramNo));
+                }
                 else if ("str".equals (parts.poll ()))
                     p.setValueStr (value);
                 break;

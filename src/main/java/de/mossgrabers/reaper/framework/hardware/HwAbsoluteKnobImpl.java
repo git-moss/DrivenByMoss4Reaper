@@ -120,10 +120,17 @@ public class HwAbsoluteKnobImpl extends AbstractHwAbsoluteControl implements IHw
 
                 if (this.type == BindType.CC)
                 {
-                    // TODO support hires
-
-                    this.currentValue = (int) Math.clamp (this.currentValue + offset, 0, 127);
-                    this.inputImpl.handleMidiMessage (new ShortMessage (0xB0, this.channel, this.control, this.currentValue));
+                    if (this.isHiRes ())
+                    {
+                        this.currentValue = (int) Math.clamp (this.currentValue + offset, 0, 16383);
+                        this.inputImpl.handleMidiMessage (new ShortMessage (0xB0, this.channel, this.control, this.currentValue / 128));
+                        this.inputImpl.handleMidiMessage (new ShortMessage (0xB0, this.channel, this.control, this.currentValue % 128));
+                    }
+                    else
+                    {
+                        this.currentValue = (int) Math.clamp (this.currentValue + offset, 0, 127);
+                        this.inputImpl.handleMidiMessage (new ShortMessage (0xB0, this.channel, this.control, this.currentValue));
+                    }
                 }
             }
         }

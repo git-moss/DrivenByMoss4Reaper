@@ -6,13 +6,9 @@ package de.mossgrabers.reaper.framework.daw.data.parameter;
 
 import de.mossgrabers.framework.controller.valuechanger.IValueChanger;
 import de.mossgrabers.framework.daw.data.ITrack;
-import de.mossgrabers.framework.observer.IValueObserver;
 import de.mossgrabers.reaper.communication.Processor;
 import de.mossgrabers.reaper.framework.daw.DataSetupEx;
 import de.mossgrabers.reaper.framework.daw.data.ItemImpl;
-
-import java.util.HashSet;
-import java.util.Set;
 
 
 /**
@@ -22,15 +18,14 @@ import java.util.Set;
  */
 public class ParameterImpl extends ItemImpl implements IParameterEx
 {
-    private String                          valueStr          = "";
-    private boolean                         isBeingTouched;
+    private String          valueStr          = "";
+    private boolean         isBeingTouched;
 
-    protected double                        value;
-    protected double                        lastReceivedValue = -1;
+    protected double        value;
+    protected double        lastReceivedValue = -1;
 
-    private final int                       defaultValue;
-    private final Processor                 processor;
-    private final Set<IValueObserver<Void>> observers         = new HashSet<> ();
+    private final int       defaultValue;
+    private final Processor processor;
 
 
     /**
@@ -151,7 +146,6 @@ public class ParameterImpl extends ItemImpl implements IParameterEx
             return;
         this.value = value;
         this.sendValue ();
-        this.notifyValueObservers ();
     }
 
 
@@ -213,10 +207,7 @@ public class ParameterImpl extends ItemImpl implements IParameterEx
         if (this.isBeingTouched)
             this.lastReceivedValue = value;
         else
-        {
             this.value = value;
-            this.notifyValueObservers ();
-        }
     }
 
 
@@ -234,14 +225,6 @@ public class ParameterImpl extends ItemImpl implements IParameterEx
     protected void sendValue ()
     {
         this.sendPositionedItemOSC ("value", this.value);
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void addValueObserver (final IValueObserver<Void> observer)
-    {
-        this.observers.add (observer);
     }
 
 
@@ -290,12 +273,5 @@ public class ParameterImpl extends ItemImpl implements IParameterEx
         destParam.setExists (this.exists);
         destParam.setInternalValue (this.value);
         destParam.setValueStr (this.valueStr);
-    }
-
-
-    private void notifyValueObservers ()
-    {
-        for (final IValueObserver<Void> observer: this.observers)
-            observer.update (null);
     }
 }

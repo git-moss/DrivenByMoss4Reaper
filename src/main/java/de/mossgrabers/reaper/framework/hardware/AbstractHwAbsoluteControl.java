@@ -98,6 +98,7 @@ public abstract class AbstractHwAbsoluteControl extends AbstractHwContinuousCont
         this.channel = channel;
         this.control = control;
 
+        this.isHiRes = isHiRes;
         if (isHiRes)
             input.bindHiRes (this, channel, control);
         else

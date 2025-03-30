@@ -76,6 +76,7 @@ public class MainApp implements MessageSender, AppCallback, WindowManager
     private final Object                    startupLock        = new Object ();
     private final Map<String, String>       instanceSettings   = new HashMap<> ();
 
+
     /**
      * Constructor.
      *
@@ -869,7 +870,7 @@ public class MainApp implements MessageSender, AppCallback, WindowManager
         {
             if (this.mainFrame == null)
             {
-                setSystemLF ();
+                this.setSystemLF ();
                 this.mainFrame = new MainFrame (this, this.instanceManager, this.logModel);
                 this.mainConfiguration.restoreStagePlacement (this.mainFrame);
             }
