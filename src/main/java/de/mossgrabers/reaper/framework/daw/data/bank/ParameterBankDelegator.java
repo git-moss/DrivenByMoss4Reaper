@@ -9,7 +9,7 @@ import de.mossgrabers.framework.daw.data.bank.IParameterPageBank;
 import de.mossgrabers.framework.daw.data.empty.EmptyParameterBank;
 import de.mossgrabers.framework.observer.IBankPageObserver;
 import de.mossgrabers.framework.observer.IItemSelectionObserver;
-import de.mossgrabers.framework.observer.IValueObserver;
+import de.mossgrabers.framework.observer.IParameterValueObserver;
 import de.mossgrabers.framework.parameter.IParameter;
 import de.mossgrabers.reaper.framework.daw.data.CursorTrackImpl;
 import de.mossgrabers.reaper.framework.daw.data.TrackImpl;
@@ -268,7 +268,7 @@ public class ParameterBankDelegator implements IParameterBank
 
     /** {@inheritDoc} */
     @Override
-    public void addValueObserver (final IValueObserver<Integer> observer)
+    public void addValueObserver (final IParameterValueObserver observer)
     {
         this.getBank ().addValueObserver (observer);
     }

@@ -870,10 +870,15 @@ public class MessageParser
                 if (parts.isEmpty ())
                 {
                     p.setInternalValue (Double.parseDouble (value));
-                    parameterBank.notifyValueObservers (Integer.valueOf (paramNo));
+                    // Note: paramNo is not the index but the overall position!
+                    parameterBank.notifyValueObservers (paramNo);
                 }
                 else if ("str".equals (parts.poll ()))
                     p.setValueStr (value);
+                break;
+
+            case "steps":
+                p.setInternalNumberOfSteps (Integer.parseInt (value));
                 break;
 
             default:

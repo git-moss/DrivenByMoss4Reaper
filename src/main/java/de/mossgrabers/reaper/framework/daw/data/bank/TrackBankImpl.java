@@ -179,7 +179,7 @@ public class TrackBankImpl extends AbstractTrackBankImpl
     {
         if (this.hasFlatTrackList && this.hasFullFlatTrackList)
         {
-            if (this.flatTracks.get (position) instanceof MasterTrackImpl master)
+            if (this.flatTracks.get (position) instanceof final MasterTrackImpl master)
             {
                 master.select ();
                 return;

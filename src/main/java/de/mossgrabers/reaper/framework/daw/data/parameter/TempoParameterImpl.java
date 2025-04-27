@@ -125,4 +125,12 @@ public class TempoParameterImpl extends AbstractParameterImpl implements IParame
     {
         // Not used
     }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void setInternalNumberOfSteps (final int numberOfSteps)
+    {
+        // Not used
+    }
 }

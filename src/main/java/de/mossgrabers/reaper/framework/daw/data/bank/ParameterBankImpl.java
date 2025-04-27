@@ -8,7 +8,7 @@ import de.mossgrabers.framework.daw.data.IDevice;
 import de.mossgrabers.framework.daw.data.bank.IParameterBank;
 import de.mossgrabers.framework.daw.data.bank.IParameterPageBank;
 import de.mossgrabers.framework.daw.data.empty.EmptyParameter;
-import de.mossgrabers.framework.observer.IValueObserver;
+import de.mossgrabers.framework.observer.IParameterValueObserver;
 import de.mossgrabers.framework.parameter.IParameter;
 import de.mossgrabers.reaper.communication.Processor;
 import de.mossgrabers.reaper.framework.daw.DataSetupEx;
@@ -42,7 +42,7 @@ public class ParameterBankImpl extends AbstractPagedBankImpl<ParameterImpl, IPar
     private final IParameter []                mappedParameterCache;
     private int                                mappedParameterCount;
     private final ParameterPageBankImpl        parameterPageBank;
-    private final Set<IValueObserver<Integer>> observers           = new HashSet<> ();
+    private final Set<IParameterValueObserver> observers           = new HashSet<> ();
 
 
     /**
@@ -225,7 +225,7 @@ public class ParameterBankImpl extends AbstractPagedBankImpl<ParameterImpl, IPar
 
     /** {@inheritDoc} */
     @Override
-    public void addValueObserver (final IValueObserver<Integer> observer)
+    public void addValueObserver (final IParameterValueObserver observer)
     {
         this.observers.add (observer);
     }
@@ -234,12 +234,15 @@ public class ParameterBankImpl extends AbstractPagedBankImpl<ParameterImpl, IPar
     /**
      * Notify observers about a value change of a parameter.
      *
-     * @param index The index of the parameter
+     * @param paramIndex The overall index of the parameter
      */
-    public void notifyValueObservers (final Integer index)
+    public void notifyValueObservers (final int paramIndex)
     {
-        for (final IValueObserver<Integer> observer: this.observers)
-            observer.update (index);
+        final int pageSize = this.getPageSize ();
+        final int page = paramIndex / pageSize;
+        final int index = paramIndex % pageSize;
+        for (final IParameterValueObserver observer: this.observers)
+            observer.update (page, index);
     }
 
 

@@ -63,7 +63,7 @@ public class MasterTrackImpl extends TrackImpl implements IMasterTrack
     @Override
     public int getPosition ()
     {
-        if (this.trackBank instanceof TrackBankImpl tb && tb.hasFullFlatTrackList ())
+        if (this.trackBank instanceof final TrackBankImpl tb && tb.hasFullFlatTrackList ())
             return this.trackBank.getItemCount () - 1;
 
         return super.getPosition ();

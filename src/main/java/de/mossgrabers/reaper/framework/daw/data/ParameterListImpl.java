@@ -6,14 +6,8 @@ package de.mossgrabers.reaper.framework.daw.data;
 
 import de.mossgrabers.framework.daw.data.IDevice;
 import de.mossgrabers.framework.daw.data.IParameterList;
-import de.mossgrabers.framework.daw.data.empty.EmptyParameter;
 import de.mossgrabers.framework.parameter.IParameter;
 import de.mossgrabers.reaper.framework.daw.data.bank.ParameterBankImpl;
-import de.mossgrabers.reaper.framework.daw.data.parameter.map.ParameterMap;
-import de.mossgrabers.reaper.framework.daw.data.parameter.map.ParameterMapPage;
-import de.mossgrabers.reaper.framework.daw.data.parameter.map.ParameterMapPageParameter;
-import de.mossgrabers.reaper.framework.daw.data.parameter.map.RenamedParameter;
-import de.mossgrabers.reaper.framework.device.DeviceManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,8 +20,6 @@ import java.util.List;
  */
 public class ParameterListImpl implements IParameterList
 {
-    private final int               numMonitoredPages;
-    private final int               maxNumberOfParameters;
     private final ParameterBankImpl parameterBank;
     private final List<IParameter>  parameters     = new ArrayList<> ();
     private final IDevice           device;
@@ -44,8 +36,6 @@ public class ParameterListImpl implements IParameterList
      */
     public ParameterListImpl (final int numMonitoredPages, final ParameterBankImpl parameterBank, final IDevice device)
     {
-        this.numMonitoredPages = numMonitoredPages;
-        this.maxNumberOfParameters = numMonitoredPages * 8;
         this.parameterBank = parameterBank;
         this.device = device;
     }
@@ -55,7 +45,7 @@ public class ParameterListImpl implements IParameterList
     @Override
     public int getMaxNumberOfParameters ()
     {
-        return this.maxNumberOfParameters;
+        return Integer.MAX_VALUE;
     }
 
 
@@ -87,37 +77,10 @@ public class ParameterListImpl implements IParameterList
         {
             this.parameters.clear ();
 
-            if (this.parameterBank == null)
-                return;
-
-            // Is there a parameter map?
-            ParameterMap parameterMap = null;
-            if (this.device != null)
+            if (this.parameterBank != null)
             {
-                final String deviceName = this.device.getName ();
-                parameterMap = DeviceManager.get ().getParameterMaps ().get (deviceName.toLowerCase ());
-            }
-
-            if (parameterMap == null || parameterMap.getPages ().size () == 0)
-            {
-                final int maxParameters = Math.min (this.maxNumberOfParameters, this.parameterBank.getItemCount ());
-                for (int i = 0; i < maxParameters; i++)
+                for (int i = 0; i < this.parameterBank.getUnpagedItemCount (); i++)
                     this.parameters.add (this.parameterBank.getUnpagedItem (i));
-                return;
-            }
-
-            // Get the selected mapping page, if any
-            final List<ParameterMapPage> pages = parameterMap.getPages ();
-
-            final int maxPage = Math.min (this.numMonitoredPages, pages.size ());
-            for (int i = 0; i < maxPage; i++)
-            {
-                final ParameterMapPage parameterMapPage = pages.get (i);
-                for (final ParameterMapPageParameter mappedParameters: parameterMapPage.getParameters ())
-                {
-                    final int destIndex = mappedParameters.getIndex ();
-                    this.parameters.add (destIndex < 0 ? EmptyParameter.INSTANCE : new RenamedParameter (this.parameterBank.getUnpagedItem (destIndex), mappedParameters.getName ()));
-                }
             }
         }
     }

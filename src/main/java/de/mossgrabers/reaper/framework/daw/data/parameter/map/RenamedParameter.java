@@ -240,4 +240,12 @@ public class RenamedParameter implements IParameter
     {
         this.parameter.setIndication (enable);
     }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public int getNumberOfSteps ()
+    {
+        return this.parameter.getNumberOfSteps ();
+    }
 }

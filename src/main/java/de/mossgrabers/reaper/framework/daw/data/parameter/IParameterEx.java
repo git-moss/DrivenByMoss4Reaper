@@ -61,4 +61,12 @@ public interface IParameterEx extends IParameter
      * @param exists True if exists
      */
     void setExists (boolean exists);
+
+
+    /**
+     * Set the number of steps of the parameter.
+     *
+     * @param numberOfSteps The number of steps, -1 for continuous
+     */
+    void setInternalNumberOfSteps (int numberOfSteps);
 }

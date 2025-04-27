@@ -296,4 +296,21 @@ public class ParameterProxy implements IParameterEx
     {
         return this.bank.getParameter (this.index);
     }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public int getNumberOfSteps ()
+    {
+        return this.getParam ().getNumberOfSteps ();
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void setInternalNumberOfSteps (final int numberOfSteps)
+    {
+        if (this.getParam () instanceof final IParameterEx paramEx)
+            paramEx.setInternalNumberOfSteps (numberOfSteps);
+    }
 }

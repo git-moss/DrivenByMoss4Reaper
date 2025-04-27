@@ -23,6 +23,7 @@ public class ParameterImpl extends ItemImpl implements IParameterEx
 
     protected double        value;
     protected double        lastReceivedValue = -1;
+    private int             numberOfSteps;
 
     private final int       defaultValue;
     private final Processor processor;
@@ -273,5 +274,21 @@ public class ParameterImpl extends ItemImpl implements IParameterEx
         destParam.setExists (this.exists);
         destParam.setInternalValue (this.value);
         destParam.setValueStr (this.valueStr);
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public int getNumberOfSteps ()
+    {
+        return this.numberOfSteps;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void setInternalNumberOfSteps (final int numberOfSteps)
+    {
+        this.numberOfSteps = numberOfSteps;
     }
 }
