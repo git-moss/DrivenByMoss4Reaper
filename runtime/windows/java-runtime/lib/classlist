@@ -293,7 +293,6 @@ java/lang/invoke/MethodHandleImpl$Intrinsic
 java/lang/invoke/MethodHandleImpl$IntrinsicMethodHandle
 java/lang/invoke/MethodHandleInfo
 java/lang/invoke/MethodHandleNatives
-java/lang/invoke/MethodHandleNatives$CallSiteContext
 java/lang/invoke/MethodHandleStatics
 java/lang/invoke/MethodHandles
 java/lang/invoke/MethodHandles$1
@@ -1349,6 +1348,7 @@ sun/util/calendar/Gregorian
 sun/util/calendar/Gregorian$Date
 sun/util/calendar/ZoneInfo
 sun/util/calendar/ZoneInfoFile
+sun/util/calendar/ZoneInfoFile$Checksum
 sun/util/calendar/ZoneInfoFile$ZoneOffsetTransitionRule
 sun/util/cldr/CLDRBaseLocaleDataMetaInfo
 sun/util/cldr/CLDRCalendarDataProviderImpl
