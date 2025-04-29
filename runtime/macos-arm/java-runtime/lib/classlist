@@ -293,7 +293,6 @@ java/lang/invoke/MethodHandleImpl$Intrinsic
 java/lang/invoke/MethodHandleImpl$IntrinsicMethodHandle
 java/lang/invoke/MethodHandleInfo
 java/lang/invoke/MethodHandleNatives
-java/lang/invoke/MethodHandleNatives$CallSiteContext
 java/lang/invoke/MethodHandleStatics
 java/lang/invoke/MethodHandles
 java/lang/invoke/MethodHandles$1
