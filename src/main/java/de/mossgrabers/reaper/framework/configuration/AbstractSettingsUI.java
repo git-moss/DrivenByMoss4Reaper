@@ -14,7 +14,7 @@ import de.mossgrabers.framework.configuration.ISettingsUI;
 import de.mossgrabers.framework.configuration.ISignalSetting;
 import de.mossgrabers.framework.configuration.IStringSetting;
 import de.mossgrabers.framework.controller.color.ColorEx;
-import de.mossgrabers.reaper.communication.MessageSender;
+import de.mossgrabers.reaper.communication.BackendExchange;
 import de.mossgrabers.reaper.ui.utils.LogModel;
 import de.mossgrabers.reaper.ui.utils.PropertiesEx;
 
@@ -29,7 +29,7 @@ import java.util.List;
  */
 public abstract class AbstractSettingsUI implements ISettingsUI
 {
-    protected final MessageSender    sender;
+    protected final BackendExchange    sender;
     protected final PropertiesEx     properties;
     protected final LogModel         logModel;
     protected final List<IfxSetting> settings = new ArrayList<> ();
@@ -42,7 +42,7 @@ public abstract class AbstractSettingsUI implements ISettingsUI
      * @param properties Where to store to
      * @param sender The sender
      */
-    protected AbstractSettingsUI (final LogModel logModel, final PropertiesEx properties, final MessageSender sender)
+    protected AbstractSettingsUI (final LogModel logModel, final PropertiesEx properties, final BackendExchange sender)
     {
         this.logModel = logModel;
         this.properties = properties;

@@ -7,7 +7,7 @@ package de.mossgrabers.reaper.framework.daw.data.bank;
 import de.mossgrabers.framework.controller.valuechanger.IValueChanger;
 import de.mossgrabers.framework.daw.data.IItem;
 import de.mossgrabers.framework.daw.data.bank.AbstractItemBank;
-import de.mossgrabers.reaper.communication.MessageSender;
+import de.mossgrabers.reaper.communication.BackendExchange;
 import de.mossgrabers.reaper.framework.daw.DataSetupEx;
 
 import java.util.List;
@@ -24,7 +24,7 @@ import java.util.Optional;
 public abstract class AbstractBankImpl<T extends IItem> extends AbstractItemBank<T>
 {
     protected final DataSetupEx   dataSetup;
-    protected final MessageSender sender;
+    protected final BackendExchange sender;
     protected final IValueChanger valueChanger;
 
     protected int                 itemCount;

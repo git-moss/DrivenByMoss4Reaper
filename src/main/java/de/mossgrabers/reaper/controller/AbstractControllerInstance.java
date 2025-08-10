@@ -11,8 +11,8 @@ import de.mossgrabers.framework.controller.IControllerSetup;
 import de.mossgrabers.framework.usb.UsbMatcher;
 import de.mossgrabers.framework.utils.OperatingSystem;
 import de.mossgrabers.framework.utils.TestCallback;
+import de.mossgrabers.reaper.communication.BackendExchange;
 import de.mossgrabers.reaper.communication.MessageParser;
-import de.mossgrabers.reaper.communication.MessageSender;
 import de.mossgrabers.reaper.framework.Actions;
 import de.mossgrabers.reaper.framework.IniFiles;
 import de.mossgrabers.reaper.framework.ReaperSetupFactory;
@@ -52,7 +52,7 @@ public abstract class AbstractControllerInstance<S extends IControlSurface<C>, C
     protected final IControllerDefinition controllerDefinition;
     protected final LogModel              logModel;
     protected final WindowManager         windowManager;
-    protected final MessageSender         sender;
+    protected final BackendExchange       backend;
     protected final IniFiles              iniFiles;
 
     protected HostImpl                    host;
@@ -80,12 +80,12 @@ public abstract class AbstractControllerInstance<S extends IControlSurface<C>, C
      * @param sender The sender
      * @param iniFiles The INI configuration files
      */
-    protected AbstractControllerInstance (final IControllerDefinition controllerDefinition, final LogModel logModel, final WindowManager windowManager, final MessageSender sender, final IniFiles iniFiles)
+    protected AbstractControllerInstance (final IControllerDefinition controllerDefinition, final LogModel logModel, final WindowManager windowManager, final BackendExchange sender, final IniFiles iniFiles)
     {
         this.controllerDefinition = controllerDefinition;
         this.logModel = logModel;
         this.windowManager = windowManager;
-        this.sender = sender;
+        this.backend = sender;
         this.iniFiles = iniFiles;
 
         this.documentSettingsUI = new DocumentSettingsUI (this.logModel);
@@ -132,7 +132,7 @@ public abstract class AbstractControllerInstance<S extends IControlSurface<C>, C
 
             this.loadConfiguration ();
             this.documentSettingsUI.clearWidgets ();
-            this.globalSettingsUI = new GlobalSettingsUI (this.sender, this.logModel, this.controllerConfiguration, this.controllerDefinition.getNumMidiInPorts (), this.controllerDefinition.getNumMidiOutPorts (), this.controllerDefinition.getMidiDiscoveryPairs (OperatingSystem.get ()));
+            this.globalSettingsUI = new GlobalSettingsUI (this.backend, this.logModel, this.controllerConfiguration, this.controllerDefinition.getNumMidiInPorts (), this.controllerDefinition.getNumMidiOutPorts (), this.controllerDefinition.getMidiDiscoveryPairs (OperatingSystem.get ()));
             this.globalSettingsUI.initMIDI ();
 
             if (!this.checkMidiDevices ())
@@ -150,8 +150,8 @@ public abstract class AbstractControllerInstance<S extends IControlSurface<C>, C
             if (matcher != null)
                 this.host.addUSBDeviceInfo (matcher);
 
-            final MidiAccessImpl midiAccess = new MidiAccessImpl (this.logModel, this.host, this.sender, this.globalSettingsUI.getSelectedMidiInputs (), this.globalSettingsUI.getSelectedMidiOutputs ());
-            this.setupFactory = new ReaperSetupFactory (this.iniFiles, this.sender, this.host, midiAccess);
+            final MidiAccessImpl midiAccess = new MidiAccessImpl (this.logModel, this.host, this.globalSettingsUI.getSelectedMidiInputs (), this.globalSettingsUI.getSelectedMidiOutputs ());
+            this.setupFactory = new ReaperSetupFactory (this.iniFiles, this.backend, this.host, midiAccess);
             this.controllerSetup = this.createControllerSetup (this.setupFactory);
 
             SafeRunLater.execute (this.logModel, this::delayedStart);

@@ -9,7 +9,7 @@ import de.mossgrabers.controller.faderfox.ec4.EC4ControllerDefinition;
 import de.mossgrabers.controller.faderfox.ec4.EC4ControllerSetup;
 import de.mossgrabers.controller.faderfox.ec4.controller.EC4ControlSurface;
 import de.mossgrabers.framework.controller.IControllerSetup;
-import de.mossgrabers.reaper.communication.MessageSender;
+import de.mossgrabers.reaper.communication.BackendExchange;
 import de.mossgrabers.reaper.controller.AbstractControllerInstance;
 import de.mossgrabers.reaper.framework.IniFiles;
 import de.mossgrabers.reaper.framework.ReaperSetupFactory;
@@ -36,7 +36,7 @@ public class EC4ControllerInstance extends AbstractControllerInstance<EC4Control
      * @param sender The sender
      * @param iniFiles The INI configuration files
      */
-    public EC4ControllerInstance (final LogModel logModel, final WindowManager windowManager, final MessageSender sender, final IniFiles iniFiles)
+    public EC4ControllerInstance (final LogModel logModel, final WindowManager windowManager, final BackendExchange sender, final IniFiles iniFiles)
     {
         super (CONTROLLER_DEFINITION, logModel, windowManager, sender, iniFiles);
     }

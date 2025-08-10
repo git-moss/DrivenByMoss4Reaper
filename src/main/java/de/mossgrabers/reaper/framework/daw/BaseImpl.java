@@ -8,7 +8,7 @@ import de.mossgrabers.framework.controller.valuechanger.IValueChanger;
 import de.mossgrabers.framework.daw.IHost;
 import de.mossgrabers.framework.daw.ITransport;
 import de.mossgrabers.framework.observer.IObserverManagement;
-import de.mossgrabers.reaper.communication.MessageSender;
+import de.mossgrabers.reaper.communication.BackendExchange;
 import de.mossgrabers.reaper.communication.Processor;
 
 
@@ -21,7 +21,7 @@ public abstract class BaseImpl implements IObserverManagement
 {
     protected final DataSetupEx   dataSetup;
     protected final IHost         host;
-    protected final MessageSender sender;
+    protected final BackendExchange sender;
     protected final IValueChanger valueChanger;
 
 

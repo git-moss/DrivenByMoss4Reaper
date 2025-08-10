@@ -6,7 +6,7 @@ package de.mossgrabers.reaper.framework.midi;
 
 import de.mossgrabers.framework.daw.midi.ArpeggiatorMode;
 import de.mossgrabers.framework.daw.midi.INoteRepeat;
-import de.mossgrabers.reaper.communication.MessageSender;
+import de.mossgrabers.reaper.communication.BackendExchange;
 import de.mossgrabers.reaper.communication.Processor;
 
 import java.util.List;
@@ -22,7 +22,7 @@ public class NoteRepeatImpl implements INoteRepeat
     /** The available arpeggiator modes. */
     public static final List<ArpeggiatorMode> ARP_MODES    = List.of (ArpeggiatorMode.DOWN, ArpeggiatorMode.UP, ArpeggiatorMode.DOWN_UP, ArpeggiatorMode.UP_DOWN);
 
-    private final MessageSender               sender;
+    private final BackendExchange               sender;
     private boolean                           isNoteRepeat = false;
     private double                            noteRepeatPeriod;
     private double                            noteLength;
@@ -35,7 +35,7 @@ public class NoteRepeatImpl implements INoteRepeat
      *
      * @param sender The sender
      */
-    public NoteRepeatImpl (final MessageSender sender)
+    public NoteRepeatImpl (final BackendExchange sender)
     {
         this.sender = sender;
     }

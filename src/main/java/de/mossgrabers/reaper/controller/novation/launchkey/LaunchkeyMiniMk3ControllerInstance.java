@@ -9,7 +9,7 @@ import de.mossgrabers.controller.novation.launchkey.mini.LaunchkeyMiniMk3Control
 import de.mossgrabers.controller.novation.launchkey.mini.LaunchkeyMiniMk3ControllerSetup;
 import de.mossgrabers.controller.novation.launchkey.mini.controller.LaunchkeyMiniMk3ControlSurface;
 import de.mossgrabers.framework.controller.IControllerSetup;
-import de.mossgrabers.reaper.communication.MessageSender;
+import de.mossgrabers.reaper.communication.BackendExchange;
 import de.mossgrabers.reaper.controller.AbstractControllerInstance;
 import de.mossgrabers.reaper.framework.IniFiles;
 import de.mossgrabers.reaper.framework.ReaperSetupFactory;
@@ -36,7 +36,7 @@ public class LaunchkeyMiniMk3ControllerInstance extends AbstractControllerInstan
      * @param sender The sender
      * @param iniFiles The INI configuration files
      */
-    public LaunchkeyMiniMk3ControllerInstance (final LogModel logModel, final WindowManager windowManager, final MessageSender sender, final IniFiles iniFiles)
+    public LaunchkeyMiniMk3ControllerInstance (final LogModel logModel, final WindowManager windowManager, final BackendExchange sender, final IniFiles iniFiles)
     {
         super (CONTROLLER_DEFINITION, logModel, windowManager, sender, iniFiles);
     }

@@ -8,7 +8,7 @@ import de.mossgrabers.framework.controller.color.ColorManager;
 import de.mossgrabers.framework.controller.valuechanger.IValueChanger;
 import de.mossgrabers.framework.daw.DataSetup;
 import de.mossgrabers.framework.daw.IHost;
-import de.mossgrabers.reaper.communication.MessageSender;
+import de.mossgrabers.reaper.communication.BackendExchange;
 import de.mossgrabers.reaper.framework.daw.data.CursorTrackImpl;
 
 
@@ -19,7 +19,7 @@ import de.mossgrabers.reaper.framework.daw.data.CursorTrackImpl;
  */
 public class DataSetupEx extends DataSetup
 {
-    private final MessageSender sender;
+    private final BackendExchange sender;
     private CursorTrackImpl     cursorTrack;
 
 
@@ -31,7 +31,7 @@ public class DataSetupEx extends DataSetup
      * @param colorManager The color manager
      * @param sender The OSC sender
      */
-    public DataSetupEx (final IHost host, final IValueChanger valueChanger, final ColorManager colorManager, final MessageSender sender)
+    public DataSetupEx (final IHost host, final IValueChanger valueChanger, final ColorManager colorManager, final BackendExchange sender)
     {
         super (host, valueChanger, colorManager);
 
@@ -44,7 +44,7 @@ public class DataSetupEx extends DataSetup
      *
      * @return The sender
      */
-    public MessageSender getSender ()
+    public BackendExchange getSender ()
     {
         return this.sender;
     }

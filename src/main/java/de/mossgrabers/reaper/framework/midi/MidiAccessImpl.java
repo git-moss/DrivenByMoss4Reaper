@@ -8,10 +8,15 @@ import de.mossgrabers.framework.daw.IHost;
 import de.mossgrabers.framework.daw.midi.IMidiAccess;
 import de.mossgrabers.framework.daw.midi.IMidiInput;
 import de.mossgrabers.framework.daw.midi.IMidiOutput;
-import de.mossgrabers.reaper.communication.MessageSender;
+import de.mossgrabers.reaper.communication.BackendExchange;
 import de.mossgrabers.reaper.ui.utils.LogModel;
 
 import javax.sound.midi.MidiDevice;
+
+import java.util.Collection;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.TreeMap;
 
 
 /**
@@ -21,11 +26,14 @@ import javax.sound.midi.MidiDevice;
  */
 public class MidiAccessImpl implements IMidiAccess
 {
-    private final IHost             host;
-    private final MessageSender     sender;
-    private final MidiConnection [] midiConnections;
-    private final MidiDevice []     inputs;
-    private final MidiDevice []     outputs;
+    private static BackendExchange                     backend;
+    private static final Map<String, ReaperMidiDevice> INPUTS  = new TreeMap<> ();
+    private static final Map<String, ReaperMidiDevice> OUTPUTS = new TreeMap<> ();
+
+    private final IHost                                host;
+    private final MidiConnection []                    midiConnections;
+    private final MidiDevice []                        inputs;
+    private final MidiDevice []                        outputs;
 
 
     /**
@@ -33,14 +41,12 @@ public class MidiAccessImpl implements IMidiAccess
      *
      * @param logModel The logging model
      * @param host The host
-     * @param sender The OSC sender
      * @param inputs The MIDI input devices
      * @param outputs The MIDI output devices
      */
-    public MidiAccessImpl (final LogModel logModel, final IHost host, final MessageSender sender, final MidiDevice [] inputs, final MidiDevice [] outputs)
+    public MidiAccessImpl (final LogModel logModel, final IHost host, final MidiDevice [] inputs, final MidiDevice [] outputs)
     {
         this.host = host;
-        this.sender = sender;
         this.inputs = inputs;
         this.outputs = outputs;
 
@@ -48,6 +54,17 @@ public class MidiAccessImpl implements IMidiAccess
         this.midiConnections = new MidiConnection [midiConnectionSize];
         for (int i = 0; i < midiConnectionSize; i++)
             this.midiConnections[i] = new MidiConnection (logModel);
+    }
+
+
+    /**
+     * Initializes MIDI access.
+     *
+     * @param backendExchange Interface to the C++ backend
+     */
+    public static void init (final BackendExchange backendExchange)
+    {
+        backend = backendExchange;
     }
 
 
@@ -90,6 +107,95 @@ public class MidiAccessImpl implements IMidiAccess
     @Override
     public IMidiInput createInput (final int index, final String name, final String... filters)
     {
-        return new MidiInputImpl (this.host, this.sender, this.midiConnections[index], this.inputs[index], filters);
+        return new MidiInputImpl (this.host, backend, this.midiConnections[index], this.inputs[index], filters);
+    }
+
+
+    /**
+     * Read information about all available MIDI devices in the system.
+     */
+    public static void readDeviceMetadata ()
+    {
+        INPUTS.clear ();
+        OUTPUTS.clear ();
+
+        final Map<String, Integer> keyedNames = new TreeMap<> ();
+
+        final Map<Integer, String> midiInputs = backend.getMidiInputs ();
+        for (final Map.Entry<Integer, String> info: midiInputs.entrySet ())
+            addDevice (keyedNames, info, true);
+
+        final Map<Integer, String> midiOutputs = backend.getMidiOutputs ();
+        for (final Map.Entry<Integer, String> info: midiOutputs.entrySet ())
+            addDevice (keyedNames, info, false);
+    }
+
+
+    private static void addDevice (final Map<String, Integer> keyedNames, final Entry<Integer, String> info, final boolean isInput)
+    {
+        // Workaround for not unique names since there is no ID for MIDI devices available
+        // (note: this info is not available on Windows at all)
+        String name = info.getValue ();
+        final String key = (isInput ? "I" : "O") + name;
+        final Integer count = keyedNames.get (key);
+        final Integer newCount = Integer.valueOf (count == null ? 1 : count.intValue () + 1);
+        keyedNames.put (key, newCount);
+
+        if (count != null)
+            name = String.format ("%s (%d)", name, newCount);
+
+        final ReaperMidiDevice device = new ReaperMidiDevice (info.getKey ().intValue (), name, isInput, backend);
+        if (isInput)
+            INPUTS.put (name, device);
+        else
+            OUTPUTS.put (name, device);
+    }
+
+
+    /**
+     * Get all MIDI devices which can be used as an output. readDeviceMetadata must have called
+     * before.
+     *
+     * @return All output devices
+     */
+    public static Collection<ReaperMidiDevice> getOutputDevices ()
+    {
+        return OUTPUTS.values ();
+    }
+
+
+    /**
+     * Get all MIDI devices which can be used as an input. readDeviceMetadata must have called
+     * before.
+     *
+     * @return All output devices
+     */
+    public static Collection<ReaperMidiDevice> getInputDevices ()
+    {
+        return INPUTS.values ();
+    }
+
+
+    /**
+     * Get a specific output device.
+     *
+     * @param name The full name of the device to lookup
+     * @return The device or null if not found
+     */
+    public static MidiDevice getOutputDevice (final String name)
+    {
+        return OUTPUTS.get (name);
+    }
+
+
+    /**
+     * Get a specific input device.
+     *
+     * @param name The full name of the device to lookup
+     * @return The device or null if not found
+     */
+    public static MidiDevice getInputDevice (final String name)
+    {
+        return INPUTS.get (name);
     }
 }

@@ -9,7 +9,7 @@ import de.mossgrabers.controller.akai.acvs.ACVSControllerDefinition;
 import de.mossgrabers.controller.akai.acvs.ACVSControllerSetup;
 import de.mossgrabers.controller.akai.acvs.controller.ACVSControlSurface;
 import de.mossgrabers.framework.controller.IControllerSetup;
-import de.mossgrabers.reaper.communication.MessageSender;
+import de.mossgrabers.reaper.communication.BackendExchange;
 import de.mossgrabers.reaper.controller.AbstractControllerInstance;
 import de.mossgrabers.reaper.framework.IniFiles;
 import de.mossgrabers.reaper.framework.ReaperSetupFactory;
@@ -37,7 +37,7 @@ public class ACVSLiveControllerInstance extends AbstractControllerInstance<ACVSC
      * @param sender The sender
      * @param iniFiles The INI configuration files
      */
-    public ACVSLiveControllerInstance (final LogModel logModel, final WindowManager windowManager, final MessageSender sender, final IniFiles iniFiles)
+    public ACVSLiveControllerInstance (final LogModel logModel, final WindowManager windowManager, final BackendExchange sender, final IniFiles iniFiles)
     {
         super (CONTROLLER_DEFINITION, logModel, windowManager, sender, iniFiles);
     }

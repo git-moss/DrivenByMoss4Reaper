@@ -9,7 +9,7 @@ import de.mossgrabers.controller.novation.sl.SLControllerDefinition;
 import de.mossgrabers.controller.novation.sl.SLControllerSetup;
 import de.mossgrabers.controller.novation.sl.controller.SLControlSurface;
 import de.mossgrabers.framework.controller.IControllerSetup;
-import de.mossgrabers.reaper.communication.MessageSender;
+import de.mossgrabers.reaper.communication.BackendExchange;
 import de.mossgrabers.reaper.controller.AbstractControllerInstance;
 import de.mossgrabers.reaper.framework.IniFiles;
 import de.mossgrabers.reaper.framework.ReaperSetupFactory;
@@ -36,7 +36,7 @@ public class SLMkIIControllerInstance extends AbstractControllerInstance<SLContr
      * @param sender The sender
      * @param iniFiles The INI configuration files
      */
-    public SLMkIIControllerInstance (final LogModel logModel, final WindowManager windowManager, final MessageSender sender, final IniFiles iniFiles)
+    public SLMkIIControllerInstance (final LogModel logModel, final WindowManager windowManager, final BackendExchange sender, final IniFiles iniFiles)
     {
         super (CONTROLLER_DEFINITION, logModel, windowManager, sender, iniFiles);
     }

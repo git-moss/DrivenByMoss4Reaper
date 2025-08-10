@@ -9,7 +9,7 @@ import de.mossgrabers.controller.ni.kontrol.mki.Kontrol1ControllerDefinition;
 import de.mossgrabers.controller.ni.kontrol.mki.Kontrol1ControllerSetup;
 import de.mossgrabers.controller.ni.kontrol.mki.controller.Kontrol1ControlSurface;
 import de.mossgrabers.framework.controller.IControllerSetup;
-import de.mossgrabers.reaper.communication.MessageSender;
+import de.mossgrabers.reaper.communication.BackendExchange;
 import de.mossgrabers.reaper.controller.AbstractControllerInstance;
 import de.mossgrabers.reaper.framework.IniFiles;
 import de.mossgrabers.reaper.framework.ReaperSetupFactory;
@@ -36,7 +36,7 @@ public class KontrolMkIS49ControllerInstance extends AbstractControllerInstance<
      * @param sender The sender
      * @param iniFiles The INI configuration files
      */
-    public KontrolMkIS49ControllerInstance (final LogModel logModel, final WindowManager windowManager, final MessageSender sender, final IniFiles iniFiles)
+    public KontrolMkIS49ControllerInstance (final LogModel logModel, final WindowManager windowManager, final BackendExchange sender, final IniFiles iniFiles)
     {
         super (CONTROLLER_DEFINITION, logModel, windowManager, sender, iniFiles);
     }

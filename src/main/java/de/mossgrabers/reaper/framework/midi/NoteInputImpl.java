@@ -5,7 +5,9 @@
 package de.mossgrabers.reaper.framework.midi;
 
 import de.mossgrabers.framework.daw.midi.AbstractNoteInput;
-import de.mossgrabers.reaper.communication.MessageSender;
+import de.mossgrabers.reaper.communication.BackendExchange;
+
+import javax.sound.midi.MidiDevice;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -21,32 +23,39 @@ import java.util.Set;
  */
 public class NoteInputImpl extends AbstractNoteInput
 {
-    private Integer []        keyTranslationTable;
-    private Integer []        velocityTranslationTable;
-    private final Set<String> filters = new HashSet<> ();
+    private final BackendExchange sender;
+    private final MidiDevice      device;
+    private final int             noteInputIndex;
 
 
     /**
      * Constructor.
      *
+     * @param device The MIDI input port for which to create this note input
+     * @param noteInputIndex The index of the note input of the given device
      * @param sender Interface to the C++ backend
      * @param filters a filter string formatted as hexadecimal value with '?' as wildcard. For
      *            example '80????' would match note-off on channel 1 (0). When this parameter is
      *            {@null}, a standard filter will be used to forward note-related messages on
      *            channel 1 (0).
      */
-    public NoteInputImpl (final MessageSender sender, final String... filters)
+    public NoteInputImpl (final MidiDevice device, final int noteInputIndex, final BackendExchange sender, final String... filters)
     {
+        this.sender = sender;
+        this.device = device;
+        this.noteInputIndex = noteInputIndex;
+
+        final Set<String> backendFilters = new HashSet<> ();
         if (filters.length == 0)
         {
-            this.filters.add ("90");
-            this.filters.add ("80");
-            this.filters.add ("B001");
-            this.filters.add ("B00B");
-            this.filters.add ("B040");
-            this.filters.add ("E0");
-            this.filters.add ("D0");
-            this.filters.add ("A0");
+            backendFilters.add ("90");
+            backendFilters.add ("80");
+            backendFilters.add ("B001");
+            backendFilters.add ("B00B");
+            backendFilters.add ("B040");
+            backendFilters.add ("E0");
+            backendFilters.add ("D0");
+            backendFilters.add ("A0");
         }
         else
         {
@@ -70,27 +79,31 @@ public class NoteInputImpl extends AbstractNoteInput
                     replaced = replaced2;
                 }
 
-                this.filters.addAll (replaced);
+                backendFilters.addAll (replaced);
             }
         }
 
         this.noteRepeat = new NoteRepeatImpl (sender);
+        if (device instanceof final ReaperMidiDevice reaperMidiDevice)
+            sender.setNoteInputFilters (reaperMidiDevice.getDeviceID (), this.noteInputIndex, backendFilters.toArray (new String [backendFilters.size ()]));
     }
 
 
     /** {@inheritDoc} */
     @Override
-    public void setKeyTranslationTable (final Integer [] table)
+    public void setKeyTranslationTable (final int [] table)
     {
-        this.keyTranslationTable = table;
+        if (this.device instanceof final ReaperMidiDevice reaperMidiDevice)
+            this.sender.setNoteInputKeyTranslationTable (reaperMidiDevice.getDeviceID (), this.noteInputIndex, table);
     }
 
 
     /** {@inheritDoc} */
     @Override
-    public void setVelocityTranslationTable (final Integer [] table)
+    public void setVelocityTranslationTable (final int [] table)
     {
-        this.velocityTranslationTable = table;
+        if (this.device instanceof final ReaperMidiDevice reaperMidiDevice)
+            this.sender.setNoteInputVelocityTranslationTable (reaperMidiDevice.getDeviceID (), this.noteInputIndex, table);
     }
 
 
@@ -107,50 +120,5 @@ public class NoteInputImpl extends AbstractNoteInput
     public void setMPEPitchBendSensitivity (final int pitchBendRange)
     {
         this.mpePitchBendSensitivity = pitchBendRange;
-    }
-
-
-    /**
-     * Test if one of the configured note input filters accept the given MIDI message.
-     *
-     * @param status The status code of the MIDI message
-     * @param data1 The first data byte of the MIDI message
-     * @return True if accepted
-     */
-    public boolean acceptFilter (final int status, final int data1)
-    {
-        final String code = String.format ("%02X%02X", Integer.valueOf (status), Integer.valueOf (data1));
-        for (final String filter: this.filters)
-        {
-            if (code.startsWith (filter))
-                return true;
-        }
-        return false;
-    }
-
-
-    /**
-     * Translate the given key by using the currently set translation table. If no table is set the
-     * given key is returned without modification.
-     *
-     * @param key The key to translate
-     * @return The translated key
-     */
-    public int translateKey (final int key)
-    {
-        return this.keyTranslationTable == null ? key : this.keyTranslationTable[key].intValue ();
-    }
-
-
-    /**
-     * Translate the given velocity by using the currently set translation table. If no table is set
-     * the given velocity is returned without modification.
-     *
-     * @param velocity The velocity to translate
-     * @return The translated velocity
-     */
-    public int translateVelocity (final int velocity)
-    {
-        return this.velocityTranslationTable == null ? velocity : this.velocityTranslationTable[velocity].intValue ();
     }
 }

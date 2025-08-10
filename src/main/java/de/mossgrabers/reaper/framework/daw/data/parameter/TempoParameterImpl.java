@@ -6,7 +6,7 @@ package de.mossgrabers.reaper.framework.daw.data.parameter;
 
 import de.mossgrabers.framework.controller.valuechanger.IValueChanger;
 import de.mossgrabers.framework.parameter.AbstractParameterImpl;
-import de.mossgrabers.reaper.communication.MessageSender;
+import de.mossgrabers.reaper.communication.BackendExchange;
 import de.mossgrabers.reaper.communication.Processor;
 import de.mossgrabers.reaper.framework.daw.DataSetupEx;
 
@@ -22,7 +22,7 @@ public class TempoParameterImpl extends AbstractParameterImpl implements IParame
 {
     private static final double DEFAULT_TEMPO = 120.0;
 
-    private final MessageSender sender;
+    private final BackendExchange sender;
     private double              tempo         = DEFAULT_TEMPO;
 
 

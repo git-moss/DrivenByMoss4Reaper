@@ -1348,7 +1348,6 @@ sun/util/calendar/Gregorian
 sun/util/calendar/Gregorian$Date
 sun/util/calendar/ZoneInfo
 sun/util/calendar/ZoneInfoFile
-sun/util/calendar/ZoneInfoFile$Checksum
 sun/util/calendar/ZoneInfoFile$ZoneOffsetTransitionRule
 sun/util/cldr/CLDRBaseLocaleDataMetaInfo
 sun/util/cldr/CLDRCalendarDataProviderImpl

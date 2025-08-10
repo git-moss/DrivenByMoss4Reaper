@@ -5,8 +5,8 @@
 package de.mossgrabers.reaper.framework.configuration;
 
 import de.mossgrabers.framework.utils.Pair;
-import de.mossgrabers.reaper.communication.MessageSender;
-import de.mossgrabers.reaper.framework.midi.Midi;
+import de.mossgrabers.reaper.communication.BackendExchange;
+import de.mossgrabers.reaper.framework.midi.MidiAccessImpl;
 import de.mossgrabers.reaper.framework.midi.MidiDeviceConverter;
 import de.mossgrabers.reaper.framework.midi.MissingMidiDevice;
 import de.mossgrabers.reaper.ui.utils.LogModel;
@@ -51,7 +51,7 @@ public class GlobalSettingsUI extends AbstractSettingsUI
      * @param numMidiOutPorts The number of required MIDI output ports
      * @param discoveryPairs Suggestions for automatically selecting the required in-/outputs
      */
-    public GlobalSettingsUI (final MessageSender sender, final LogModel logModel, final PropertiesEx properties, final int numMidiInPorts, final int numMidiOutPorts, final List<Pair<String [], String []>> discoveryPairs)
+    public GlobalSettingsUI (final BackendExchange sender, final LogModel logModel, final PropertiesEx properties, final int numMidiInPorts, final int numMidiOutPorts, final List<Pair<String [], String []>> discoveryPairs)
     {
         super (logModel, properties, sender);
 
@@ -196,7 +196,7 @@ public class GlobalSettingsUI extends AbstractSettingsUI
                 // No device selected try auto-detect
                 for (final Pair<String [], String []> pair: this.discoveryPairs)
                 {
-                    this.selectedMidiInputs[i] = Midi.getInputDevice (pair.getKey ()[i]);
+                    this.selectedMidiInputs[i] = MidiAccessImpl.getInputDevice (pair.getKey ()[i]);
                     if (this.selectedMidiInputs[i] != null)
                         break;
                 }
@@ -206,7 +206,7 @@ public class GlobalSettingsUI extends AbstractSettingsUI
             }
             else
             {
-                this.selectedMidiInputs[i] = Midi.getInputDevice (name);
+                this.selectedMidiInputs[i] = MidiAccessImpl.getInputDevice (name);
                 if (this.selectedMidiInputs[i] == null)
                     this.selectedMidiInputs[i] = new MissingMidiDevice ("Not present: " + name);
             }
@@ -221,7 +221,7 @@ public class GlobalSettingsUI extends AbstractSettingsUI
                 // No device selected try auto-detect
                 for (final Pair<String [], String []> pair: this.discoveryPairs)
                 {
-                    this.selectedMidiOutputs[i] = Midi.getOutputDevice (pair.getValue ()[i]);
+                    this.selectedMidiOutputs[i] = MidiAccessImpl.getOutputDevice (pair.getValue ()[i]);
                     if (this.selectedMidiOutputs[i] != null)
                         break;
                 }
@@ -231,7 +231,7 @@ public class GlobalSettingsUI extends AbstractSettingsUI
             }
             else
             {
-                this.selectedMidiOutputs[i] = Midi.getOutputDevice (name);
+                this.selectedMidiOutputs[i] = MidiAccessImpl.getOutputDevice (name);
                 if (this.selectedMidiOutputs[i] == null)
                     this.selectedMidiOutputs[i] = new MissingMidiDevice ("Not present: " + name);
             }

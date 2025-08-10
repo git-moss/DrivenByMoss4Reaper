@@ -7,8 +7,9 @@ package de.mossgrabers.reaper.ui.dialog;
 import de.mossgrabers.reaper.framework.configuration.ActionSettingImpl;
 import de.mossgrabers.reaper.framework.configuration.GlobalSettingsUI;
 import de.mossgrabers.reaper.framework.configuration.IfxSetting;
-import de.mossgrabers.reaper.framework.midi.Midi;
+import de.mossgrabers.reaper.framework.midi.MidiAccessImpl;
 import de.mossgrabers.reaper.framework.midi.MissingMidiDevice;
+import de.mossgrabers.reaper.framework.midi.ReaperMidiDevice;
 import de.mossgrabers.reaper.ui.utils.LogModel;
 import de.mossgrabers.reaper.ui.widget.BoxPanel;
 import de.mossgrabers.reaper.ui.widget.Functions;
@@ -17,7 +18,6 @@ import de.mossgrabers.reaper.ui.widget.TitledSeparator;
 import de.mossgrabers.reaper.ui.widget.TwoColsPanel;
 
 import javax.sound.midi.MidiDevice;
-import javax.sound.midi.MidiUnavailableException;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -50,7 +50,6 @@ public class ConfigurationDialog extends BasicDialog
 
     private List<JComboBoxX<MidiDevice>>     midiInputBoxes;
     private List<JComboBoxX<MidiDevice>>     midiOutputBoxes;
-    private final transient LogModel         model;
     private final transient GlobalSettingsUI settings;
 
 
@@ -82,7 +81,6 @@ public class ConfigurationDialog extends BasicDialog
         this.setMinimumSize (new Dimension (400, MIN_HEIGHT));
         this.setSize (400, MIN_HEIGHT);
 
-        this.model = model;
         this.settings = settings;
 
         this.basicInit ();
@@ -187,30 +185,23 @@ public class ConfigurationDialog extends BasicDialog
      */
     void updateMidiDevices ()
     {
-        // Workaround for hang with coremidi4j
+        // TODO remove this? Workaround for hang with coremidi4j
         new Thread (this::delayedUpdateMidiDevices).start ();
     }
 
 
     void delayedUpdateMidiDevices ()
     {
-        try
-        {
-            Midi.readDeviceMetadata ();
-            // Reload the settings
-            this.settings.initMIDI ();
-            this.fillAndSetMidiDevices ();
-        }
-        catch (final MidiUnavailableException ex)
-        {
-            this.model.error ("Could not update MIDI devices.", ex);
-        }
+        MidiAccessImpl.readDeviceMetadata ();
+        // Reload the settings
+        this.settings.initMIDI ();
+        this.fillAndSetMidiDevices ();
     }
 
 
     private void fillAndSetMidiDevices ()
     {
-        final Collection<MidiDevice> inputDevices = Midi.getInputDevices ();
+        final Collection<ReaperMidiDevice> inputDevices = MidiAccessImpl.getInputDevices ();
         for (int i = 0; i < this.midiInputBoxes.size (); i++)
         {
             final List<MidiDevice> devices = new ArrayList<> (inputDevices);
@@ -222,7 +213,7 @@ public class ConfigurationDialog extends BasicDialog
             deviceBox.setSelectedItem (selectedDevice);
         }
 
-        final Collection<MidiDevice> outputDevices = Midi.getOutputDevices ();
+        final Collection<ReaperMidiDevice> outputDevices = MidiAccessImpl.getOutputDevices ();
         for (int i = 0; i < this.midiOutputBoxes.size (); i++)
         {
             final List<MidiDevice> devices = new ArrayList<> (outputDevices);

@@ -7,7 +7,7 @@ package de.mossgrabers.reaper;
 import de.mossgrabers.framework.controller.IControllerDefinition;
 import de.mossgrabers.framework.utils.OperatingSystem;
 import de.mossgrabers.framework.utils.Pair;
-import de.mossgrabers.reaper.communication.MessageSender;
+import de.mossgrabers.reaper.communication.BackendExchange;
 import de.mossgrabers.reaper.communication.Processor;
 import de.mossgrabers.reaper.controller.ControllerInstanceManager;
 import de.mossgrabers.reaper.controller.IControllerInstance;
@@ -18,8 +18,9 @@ import de.mossgrabers.reaper.framework.configuration.IfxSetting;
 import de.mossgrabers.reaper.framework.daw.BrowserContentType;
 import de.mossgrabers.reaper.framework.device.DeviceManager;
 import de.mossgrabers.reaper.framework.graphics.SVGImage;
-import de.mossgrabers.reaper.framework.midi.Midi;
+import de.mossgrabers.reaper.framework.midi.MidiAccessImpl;
 import de.mossgrabers.reaper.framework.midi.MidiConnection;
+import de.mossgrabers.reaper.framework.midi.ReaperMidiDevice;
 import de.mossgrabers.reaper.ui.MainFrame;
 import de.mossgrabers.reaper.ui.WindowManager;
 import de.mossgrabers.reaper.ui.utils.LogModel;
@@ -29,8 +30,11 @@ import de.mossgrabers.reaper.ui.utils.SafeRunLater;
 import org.usb4java.LibUsb;
 import org.usb4java.LibUsbException;
 
+import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiDevice;
-import javax.sound.midi.MidiUnavailableException;
+import javax.sound.midi.MidiMessage;
+import javax.sound.midi.ShortMessage;
+import javax.sound.midi.SysexMessage;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import javax.swing.UIManager;
@@ -58,7 +62,7 @@ import java.util.regex.Pattern;
  *
  * @author Jürgen Moßgraber
  */
-public class MainApp implements MessageSender, AppCallback, WindowManager
+public class MainApp implements BackendExchange, AppCallback, WindowManager
 {
     private static final int                DEVICE_UPDATE_RATE = 30;
     private static final Pattern            TAG_PATTERN        = Pattern.compile ("(.*?)=\"(.*?)\"\\s*");
@@ -213,6 +217,8 @@ public class MainApp implements MessageSender, AppCallback, WindowManager
     {
         synchronized (this.startupLock)
         {
+            MidiAccessImpl.init (this);
+
             DeviceManager.get ().applyDeviceInfo (this.iniFiles, this.logModel);
 
             // Prevent double startup
@@ -232,7 +238,7 @@ public class MainApp implements MessageSender, AppCallback, WindowManager
 
             this.initUSB ();
             this.startFlushTimer ();
-            this.updateMidiDevices ();
+            MidiAccessImpl.readDeviceMetadata ();
             this.instanceManager.load (this.mainConfiguration);
             this.startControllers ();
 
@@ -248,22 +254,6 @@ public class MainApp implements MessageSender, AppCallback, WindowManager
                 timer.start ();
 
             });
-        }
-    }
-
-
-    /**
-     * Read all available MIDI devices.
-     */
-    private void updateMidiDevices ()
-    {
-        try
-        {
-            Midi.readDeviceMetadata ();
-        }
-        catch (final MidiUnavailableException ex)
-        {
-            this.logModel.error ("Midi not available.", ex);
         }
     }
 
@@ -475,7 +465,17 @@ public class MainApp implements MessageSender, AppCallback, WindowManager
 
     /** {@inheritDoc} */
     @Override
-    public native void processMidiArg (final int status, final int data1, final int data2);
+    public native void processMidiArg (final int deviceID, final int status, final int data1, final int data2);
+
+
+    /** {@inheritDoc} */
+    @Override
+    public native Map<Integer, String> getMidiInputs ();
+
+
+    /** {@inheritDoc} */
+    @Override
+    public native Map<Integer, String> getMidiOutputs ();
 
 
     /** {@inheritDoc} */
@@ -500,7 +500,7 @@ public class MainApp implements MessageSender, AppCallback, WindowManager
     public List<IControllerInstance> detectControllers ()
     {
         // In case a device was hot-swapped
-        this.updateMidiDevices ();
+        MidiAccessImpl.readDeviceMetadata ();
 
         final List<IControllerInstance> addedControllers = new ArrayList<> ();
 
@@ -551,7 +551,7 @@ public class MainApp implements MessageSender, AppCallback, WindowManager
         final List<MidiDevice> outputDevices = new ArrayList<> ();
         for (final String outputName: outs)
         {
-            final MidiDevice outputDevice = Midi.getOutputDevice (outputName);
+            final MidiDevice outputDevice = MidiAccessImpl.getOutputDevice (outputName);
             if (outputDevice != null)
                 outputDevices.add (outputDevice);
         }
@@ -564,7 +564,7 @@ public class MainApp implements MessageSender, AppCallback, WindowManager
         final List<MidiDevice> inputDevices = new ArrayList<> ();
         for (final String inputName: ins)
         {
-            final MidiDevice inputDevice = Midi.getInputDevice (inputName);
+            final MidiDevice inputDevice = MidiAccessImpl.getInputDevice (inputName);
             if (inputDevice != null)
                 inputDevices.add (inputDevice);
         }
@@ -751,6 +751,47 @@ public class MainApp implements MessageSender, AppCallback, WindowManager
 
             if (this.isFullyInitialised ())
                 this.processInstanceSettings ();
+        }
+    }
+
+
+    /**
+     * Handle a MIDI message.
+     *
+     * @param deviceID The device (MIDI input port) which received the message
+     * @param data The MIDI message
+     */
+    public void onMIDIMessage (final int deviceID, final byte [] data)
+    {
+        final MidiMessage midiMessage;
+        try
+        {
+            int statusInt = data[0] & 0xFF;
+            if (statusInt == 0xF0)
+                midiMessage = new SysexMessage (data, data.length);
+            else if (data.length == 3)
+                midiMessage = new ShortMessage (statusInt, data[1] & 0xFF, data[2] & 0xFF);
+            else
+            {
+                // Ignore active sensing
+                if (data.length == 1 && statusInt == 0xFE)
+                    return;
+                throw new InvalidMidiDataException ("Unknown MIDI data of length " + data.length);
+            }
+        }
+        catch (final InvalidMidiDataException ex)
+        {
+            this.logModel.info (ex.getMessage ());
+            return;
+        }
+
+        for (final ReaperMidiDevice input: MidiAccessImpl.getInputDevices ())
+        {
+            if (input.getDeviceID () == deviceID)
+            {
+                input.handleMidiMessageFromBackend (midiMessage);
+                return;
+            }
         }
     }
 
@@ -947,4 +988,44 @@ public class MainApp implements MessageSender, AppCallback, WindowManager
     {
         return this.animationTimer != null;
     }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public native boolean openMidiInput (final int deviceID);
+
+
+    /** {@inheritDoc} */
+    @Override
+    public native boolean openMidiOutput (final int deviceID);
+
+
+    /** {@inheritDoc} */
+    @Override
+    public native void closeMidiInput (final int deviceID);
+
+
+    /** {@inheritDoc} */
+    @Override
+    public native void closeMidiOutput (final int deviceID);
+
+
+    /** {@inheritDoc} */
+    @Override
+    public native void sendMidiData (final int deviceID, final byte [] data);
+
+
+    /** {@inheritDoc} */
+    @Override
+    public native void setNoteInputFilters (final int deviceID, final int noteInputIndex, String [] backendFilters);
+
+
+    /** {@inheritDoc} */
+    @Override
+    public native void setNoteInputKeyTranslationTable (final int deviceID, final int noteInputIndex, final int [] table);
+
+
+    /** {@inheritDoc} */
+    @Override
+    public native void setNoteInputVelocityTranslationTable (final int deviceID, final int noteInputIndex, final int [] table);
 }

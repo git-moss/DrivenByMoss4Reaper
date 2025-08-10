@@ -14,7 +14,7 @@ import de.mossgrabers.framework.daw.ModelSetup;
 import de.mossgrabers.framework.daw.midi.ArpeggiatorMode;
 import de.mossgrabers.framework.daw.midi.IMidiAccess;
 import de.mossgrabers.framework.scale.Scales;
-import de.mossgrabers.reaper.communication.MessageSender;
+import de.mossgrabers.reaper.communication.BackendExchange;
 import de.mossgrabers.reaper.framework.daw.DataSetupEx;
 import de.mossgrabers.reaper.framework.daw.ModelImpl;
 import de.mossgrabers.reaper.framework.midi.MidiAccessImpl;
@@ -30,7 +30,7 @@ import java.util.List;
  */
 public class ReaperSetupFactory implements ISetupFactory
 {
-    private final MessageSender  sender;
+    private final BackendExchange  sender;
     private final IHost          host;
     private final MidiAccessImpl midiAccess;
     private final IniFiles       iniFiles;
@@ -44,7 +44,7 @@ public class ReaperSetupFactory implements ISetupFactory
      * @param host The DAW host
      * @param midiAccess Access to the selected MIDI ports
      */
-    public ReaperSetupFactory (final IniFiles iniFiles, final MessageSender sender, final IHost host, final MidiAccessImpl midiAccess)
+    public ReaperSetupFactory (final IniFiles iniFiles, final BackendExchange sender, final IHost host, final MidiAccessImpl midiAccess)
     {
         this.iniFiles = iniFiles;
         this.sender = sender;

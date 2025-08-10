@@ -12,7 +12,7 @@ import de.mossgrabers.framework.daw.data.ICursorDevice;
 import de.mossgrabers.framework.daw.data.IItem;
 import de.mossgrabers.framework.utils.FrameworkException;
 import de.mossgrabers.framework.utils.StringUtils;
-import de.mossgrabers.reaper.communication.MessageSender;
+import de.mossgrabers.reaper.communication.BackendExchange;
 import de.mossgrabers.reaper.communication.Processor;
 import de.mossgrabers.reaper.framework.daw.data.CursorDeviceImpl;
 import de.mossgrabers.reaper.framework.daw.data.ItemImpl;
@@ -104,7 +104,7 @@ public class BrowserImpl extends AbstractBrowser
     int                                                   selectedIndex;
     List<DeviceMetadataImpl>                              filteredDevices     = Collections.emptyList ();
 
-    private final MessageSender                           sender;
+    private final BackendExchange                           sender;
     private final IBrowserColumn [] []                    columnDataContentTypes;
     private final BrowserDialog                           browserWindow;
     private int                                           insertPosition;

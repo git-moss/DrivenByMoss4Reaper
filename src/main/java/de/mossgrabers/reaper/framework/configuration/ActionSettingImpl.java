@@ -5,7 +5,7 @@
 package de.mossgrabers.reaper.framework.configuration;
 
 import de.mossgrabers.framework.configuration.IActionSetting;
-import de.mossgrabers.reaper.communication.MessageSender;
+import de.mossgrabers.reaper.communication.BackendExchange;
 import de.mossgrabers.reaper.communication.Processor;
 import de.mossgrabers.reaper.ui.utils.LogModel;
 import de.mossgrabers.reaper.ui.utils.PropertiesEx;
@@ -38,7 +38,7 @@ public class ActionSettingImpl extends BaseValueSetting<ActionPanel, String> imp
      * @param label The name of the setting, must not be null
      * @param category The name of the category, may not be null
      */
-    public ActionSettingImpl (final MessageSender sender, final LogModel logModel, final PropertiesEx properties, final String label, final String category)
+    public ActionSettingImpl (final BackendExchange sender, final LogModel logModel, final PropertiesEx properties, final String label, final String category)
     {
         super (logModel, label, category, new ActionPanel ());
 

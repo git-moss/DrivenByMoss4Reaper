@@ -7,7 +7,7 @@ package de.mossgrabers.reaper.controller;
 import de.mossgrabers.framework.controller.IControllerDefinition;
 import de.mossgrabers.framework.controller.IControllerSetup;
 import de.mossgrabers.framework.daw.data.ICursorDevice;
-import de.mossgrabers.reaper.communication.MessageSender;
+import de.mossgrabers.reaper.communication.BackendExchange;
 import de.mossgrabers.reaper.controller.ableton.push.Push1ControllerInstance;
 import de.mossgrabers.reaper.controller.ableton.push.Push2ControllerInstance;
 import de.mossgrabers.reaper.controller.ableton.push.Push3ControllerInstance;
@@ -68,7 +68,7 @@ import de.mossgrabers.reaper.framework.daw.data.parameter.map.ParameterMap;
 import de.mossgrabers.reaper.framework.daw.data.parameter.map.ParameterMapPage;
 import de.mossgrabers.reaper.framework.daw.data.parameter.map.ParameterMapPageParameter;
 import de.mossgrabers.reaper.framework.device.DeviceManager;
-import de.mossgrabers.reaper.framework.midi.Midi;
+import de.mossgrabers.reaper.framework.midi.MidiAccessImpl;
 import de.mossgrabers.reaper.ui.WindowManager;
 import de.mossgrabers.reaper.ui.dialog.ParameterMappingDialog;
 import de.mossgrabers.reaper.ui.dialog.ProjectSettingsDialog;
@@ -79,7 +79,6 @@ import de.mossgrabers.reaper.ui.widget.Functions;
 import com.nikhaldimann.inieditor.IniEditor;
 
 import javax.sound.midi.MidiDevice;
-import javax.sound.midi.MidiUnavailableException;
 
 import java.io.IOException;
 import java.lang.reflect.Constructor;
@@ -168,14 +167,14 @@ public class ControllerInstanceManager
     {
         LogModel.class,
         WindowManager.class,
-        MessageSender.class,
+        BackendExchange.class,
         IniFiles.class
     };
 
     private final List<IControllerInstance> instances         = new ArrayList<> ();
     private final LogModel                  logModel;
     private final WindowManager             windowManager;
-    private final MessageSender             sender;
+    private final BackendExchange           sender;
     private final IniFiles                  iniFiles;
 
 
@@ -187,7 +186,7 @@ public class ControllerInstanceManager
      * @param sender The sender
      * @param iniFiles The INI configuration files
      */
-    public ControllerInstanceManager (final LogModel logModel, final WindowManager windowManager, final MessageSender sender, final IniFiles iniFiles)
+    public ControllerInstanceManager (final LogModel logModel, final WindowManager windowManager, final BackendExchange sender, final IniFiles iniFiles)
     {
         this.logModel = logModel;
         this.windowManager = windowManager;
@@ -230,14 +229,7 @@ public class ControllerInstanceManager
      */
     public void refreshMIDIAll ()
     {
-        try
-        {
-            Midi.readDeviceMetadata ();
-        }
-        catch (final MidiUnavailableException ex)
-        {
-            this.logModel.error ("Could not update MIDI devices.", ex);
-        }
+        MidiAccessImpl.readDeviceMetadata ();
 
         this.instances.forEach (IControllerInstance::restart);
     }

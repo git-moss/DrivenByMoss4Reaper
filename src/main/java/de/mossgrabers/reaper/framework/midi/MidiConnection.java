@@ -84,7 +84,7 @@ public class MidiConnection
                 if (message != null && message.startsWith ("There is not enough memory available for this task"))
                     this.model.error ("The MIDI output port '" + device.getDeviceInfo ().getName () + "' is already opened by another application. This could also be caused by a previous run of an application which did not close the port correctly. Furthermore, make sure that you did deactivate this port in Reaper itself!", null);
                 else
-                    this.model.error ("Midi not available.", ex);
+                    this.model.error (ex.getLocalizedMessage (), null);
             }
         }
     }
@@ -125,7 +125,7 @@ public class MidiConnection
             if (message != null && message.startsWith ("There is not enough memory available for this task"))
                 this.model.error ("The MIDI output port '" + device.getDeviceInfo ().getName () + "' is already opened by another application. This could also be caused by a previous run of an application which did not close the port correctly. Furthermore, make sure that you did deactivate this port in Reaper itself!", null);
             else
-                this.model.error ("Midi not available.", ex);
+                this.model.error (ex.getLocalizedMessage (), null);
         }
     }
 

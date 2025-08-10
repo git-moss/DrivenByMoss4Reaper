@@ -19,7 +19,7 @@ import de.mossgrabers.framework.daw.midi.MidiShortCallback;
 import de.mossgrabers.framework.daw.midi.MidiSysExCallback;
 import de.mossgrabers.framework.utils.ButtonEvent;
 import de.mossgrabers.framework.utils.OperatingSystem;
-import de.mossgrabers.reaper.communication.MessageSender;
+import de.mossgrabers.reaper.communication.BackendExchange;
 import de.mossgrabers.reaper.framework.hardware.AbstractHwAbsoluteControl;
 
 import javax.sound.midi.MidiDevice;
@@ -44,7 +44,7 @@ import java.util.Map.Entry;
 public class MidiInputImpl implements IMidiInput
 {
     private final IHost                                               host;
-    private final MessageSender                                       sender;
+    private final BackendExchange                                     sender;
     private final MidiConnection                                      midiConnection;
     private final MidiDevice                                          device;
     private final NoteInputImpl                                       defaultNoteInput;
@@ -61,6 +61,7 @@ public class MidiInputImpl implements IMidiInput
     private final Map<Integer, Map<Integer, IHwContinuousControl>>    noteTouchMatchers           = new HashMap<> ();
 
     private final int []                                              lastCCValues                = new int [32];
+    private int                                                       noteInputIndex              = 0;
 
 
     /**
@@ -75,7 +76,7 @@ public class MidiInputImpl implements IMidiInput
      *            {@null}, a standard filter will be used to forward note-related messages on
      *            channel 1 (0).
      */
-    public MidiInputImpl (final IHost host, final MessageSender sender, final MidiConnection midiConnection, final MidiDevice device, final String [] filters)
+    public MidiInputImpl (final IHost host, final BackendExchange sender, final MidiConnection midiConnection, final MidiDevice device, final String [] filters)
     {
         this.host = host;
         this.sender = sender;
@@ -83,7 +84,8 @@ public class MidiInputImpl implements IMidiInput
         this.device = device;
 
         this.midiConnection.setInput (this.device, (message, timeStamp) -> this.handleMidiMessage (message));
-        this.defaultNoteInput = new NoteInputImpl (sender, filters);
+        this.defaultNoteInput = new NoteInputImpl (device, this.noteInputIndex, sender, filters);
+        this.noteInputIndex++;
         this.noteInputs.add (this.defaultNoteInput);
     }
 
@@ -92,7 +94,8 @@ public class MidiInputImpl implements IMidiInput
     @Override
     public INoteInput createNoteInput (final String name, final String... filters)
     {
-        final NoteInputImpl noteInput = new NoteInputImpl (this.sender, filters);
+        final NoteInputImpl noteInput = new NoteInputImpl (this.device, this.noteInputIndex, this.sender, filters);
+        this.noteInputIndex++;
         this.noteInputs.add (noteInput);
         return noteInput;
     }
@@ -118,7 +121,8 @@ public class MidiInputImpl implements IMidiInput
     @Override
     public void sendRawMidiEvent (final int status, final int data1, final int data2)
     {
-        this.sender.processMidiArg (status, data1, data2);
+        if (this.device instanceof ReaperMidiDevice reaperDevice)
+            this.sender.processMidiArg (reaperDevice.getDeviceID (), status, data1, data2);
     }
 
 
@@ -363,27 +367,6 @@ public class MidiInputImpl implements IMidiInput
         }
 
         final boolean isProcessed = this.handleControls (command, channel, data1, data2);
-
-        for (final NoteInputImpl noteInput: this.noteInputs)
-        {
-            if (!noteInput.acceptFilter (status, data1))
-                continue;
-            switch (command)
-            {
-                case 0x80:
-                case 0x90:
-                    final int key = noteInput.translateKey (data1);
-                    if (key >= 0)
-                        this.sendRawMidiEvent (status, key, command == 0x80 ? 0 : noteInput.translateVelocity (data2));
-                    break;
-
-                default:
-                    if (!isProcessed)
-                        this.sendRawMidiEvent (status, data1, data2);
-                    break;
-            }
-        }
-
         // Ignore active sensing
         if (isProcessed || status == 0xF8)
             return;

@@ -9,7 +9,7 @@ import de.mossgrabers.controller.akai.apcmini.APCminiControllerSetup;
 import de.mossgrabers.controller.akai.apcmini.controller.APCminiControlSurface;
 import de.mossgrabers.controller.akai.apcmini.definition.APCminiMk2ControllerDefinition;
 import de.mossgrabers.framework.controller.IControllerSetup;
-import de.mossgrabers.reaper.communication.MessageSender;
+import de.mossgrabers.reaper.communication.BackendExchange;
 import de.mossgrabers.reaper.controller.AbstractControllerInstance;
 import de.mossgrabers.reaper.framework.IniFiles;
 import de.mossgrabers.reaper.framework.ReaperSetupFactory;
@@ -36,7 +36,7 @@ public class APCminiMk2ControllerInstance extends AbstractControllerInstance<APC
      * @param sender The sender
      * @param iniFiles The INI configuration files
      */
-    public APCminiMk2ControllerInstance (final LogModel logModel, final WindowManager windowManager, final MessageSender sender, final IniFiles iniFiles)
+    public APCminiMk2ControllerInstance (final LogModel logModel, final WindowManager windowManager, final BackendExchange sender, final IniFiles iniFiles)
     {
         super (CONTROLLER_DEFINITION, logModel, windowManager, sender, iniFiles);
     }

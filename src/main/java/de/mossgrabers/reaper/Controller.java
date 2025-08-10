@@ -150,4 +150,17 @@ public class Controller
         if (app != null)
             app.setFormattedDocumentSettings (data);
     }
+
+
+    /**
+     * Handle a MIDI message.
+     *
+     * @param deviceID The device (MIDI input port) which received the message
+     * @param message The MIDI message
+     */
+    public static void onMIDIEvent (final int deviceID, final byte [] message)
+    {
+        if (app != null)
+            app.onMIDIMessage (deviceID, message);
+    }
 }

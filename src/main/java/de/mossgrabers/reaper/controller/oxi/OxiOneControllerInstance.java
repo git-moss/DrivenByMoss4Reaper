@@ -9,7 +9,7 @@ import de.mossgrabers.controller.oxi.one.OxiOneControllerDefinition;
 import de.mossgrabers.controller.oxi.one.OxiOneControllerSetup;
 import de.mossgrabers.controller.oxi.one.controller.OxiOneControlSurface;
 import de.mossgrabers.framework.controller.IControllerSetup;
-import de.mossgrabers.reaper.communication.MessageSender;
+import de.mossgrabers.reaper.communication.BackendExchange;
 import de.mossgrabers.reaper.controller.AbstractControllerInstance;
 import de.mossgrabers.reaper.framework.IniFiles;
 import de.mossgrabers.reaper.framework.ReaperSetupFactory;
@@ -36,7 +36,7 @@ public class OxiOneControllerInstance extends AbstractControllerInstance<OxiOneC
      * @param sender The sender
      * @param iniFiles The INI configuration files
      */
-    public OxiOneControllerInstance (final LogModel logModel, final WindowManager windowManager, final MessageSender sender, final IniFiles iniFiles)
+    public OxiOneControllerInstance (final LogModel logModel, final WindowManager windowManager, final BackendExchange sender, final IniFiles iniFiles)
     {
         super (CONTROLLER_DEFINITION, logModel, windowManager, sender, iniFiles);
     }

@@ -9,7 +9,7 @@ import de.mossgrabers.controller.novation.launchcontrol.LaunchControlXLControlle
 import de.mossgrabers.controller.novation.launchcontrol.LaunchControlXLControllerSetup;
 import de.mossgrabers.controller.novation.launchcontrol.controller.LaunchControlXLControlSurface;
 import de.mossgrabers.framework.controller.IControllerSetup;
-import de.mossgrabers.reaper.communication.MessageSender;
+import de.mossgrabers.reaper.communication.BackendExchange;
 import de.mossgrabers.reaper.controller.AbstractControllerInstance;
 import de.mossgrabers.reaper.framework.IniFiles;
 import de.mossgrabers.reaper.framework.ReaperSetupFactory;
@@ -36,7 +36,7 @@ public class LaunchControlXLControllerInstance extends AbstractControllerInstanc
      * @param sender The sender
      * @param iniFiles The INI configuration files
      */
-    public LaunchControlXLControllerInstance (final LogModel logModel, final WindowManager windowManager, final MessageSender sender, final IniFiles iniFiles)
+    public LaunchControlXLControllerInstance (final LogModel logModel, final WindowManager windowManager, final BackendExchange sender, final IniFiles iniFiles)
     {
         super (CONTROLLER_DEFINITION, logModel, windowManager, sender, iniFiles);
     }
