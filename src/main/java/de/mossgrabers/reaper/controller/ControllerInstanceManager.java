@@ -176,6 +176,8 @@ public class ControllerInstanceManager
     private final WindowManager             windowManager;
     private final BackendExchange           sender;
     private final IniFiles                  iniFiles;
+    private final int                       majorVersion;
+    private final int                       minorVersion;
 
 
     /**
@@ -185,13 +187,17 @@ public class ControllerInstanceManager
      * @param windowManager The owner window for the configuration dialog
      * @param sender The sender
      * @param iniFiles The INI configuration files
+     * @param minorVersion
+     * @param majorVersion
      */
-    public ControllerInstanceManager (final LogModel logModel, final WindowManager windowManager, final BackendExchange sender, final IniFiles iniFiles)
+    public ControllerInstanceManager (final LogModel logModel, final WindowManager windowManager, final BackendExchange sender, final IniFiles iniFiles, final int majorVersion, final int minorVersion)
     {
         this.logModel = logModel;
         this.windowManager = windowManager;
         this.sender = sender;
         this.iniFiles = iniFiles;
+        this.majorVersion = majorVersion;
+        this.minorVersion = minorVersion;
     }
 
 
@@ -565,6 +571,7 @@ public class ControllerInstanceManager
         {
             final Constructor<?> constructor = clazz.getConstructor (CONSTRUCTOR_TYPES);
             final IControllerInstance newInstance = (IControllerInstance) constructor.newInstance (this.logModel, this.windowManager, this.sender, this.iniFiles);
+            newInstance.setHostVersion (this.majorVersion, this.minorVersion);
             this.instances.add (newInstance);
             return newInstance;
         }

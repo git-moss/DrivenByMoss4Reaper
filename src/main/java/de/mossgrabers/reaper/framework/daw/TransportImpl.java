@@ -920,6 +920,22 @@ public class TransportImpl extends BaseImpl implements ITransport
 
     /** {@inheritDoc} */
     @Override
+    public double getMinimumTempo ()
+    {
+        return 2.0;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public double getMaximumTempo ()
+    {
+        return 960.0;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
     public String formatTempo (final double tempo)
     {
         return new DecimalFormat ("#.00").format (tempo);

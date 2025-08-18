@@ -65,21 +65,18 @@ public class NoteInputImpl extends AbstractNoteInput
                 // Remove question marks at the end, which are not necessary
                 final String trim = filter.replace ('?', ' ').trim ();
 
-                // Fix question marks in the string (which are now spaces)
-                List<String> replaced = new ArrayList<> (1);
-                replaced.add (trim);
-                while (replaced.get (0).contains (" "))
+                // This needs to deliver either 2 or 4 character lengths
+
+                List<String> result = new ArrayList<> ();
+                if (trim.length () % 2 == 0)
+                    result.add (trim);
+                else
                 {
-                    final List<String> replaced2 = new ArrayList<> ();
-                    for (final String f: replaced)
-                    {
-                        for (int i = 0; i <= 0xF; i++)
-                            replaced2.add (f.replaceFirst (" ", Integer.toHexString (i).toUpperCase (Locale.US)));
-                    }
-                    replaced = replaced2;
+                    for (int i = 0; i <= 0xF; i++)
+                        result.add (trim + Integer.toHexString (i).toUpperCase (Locale.US));
                 }
 
-                backendFilters.addAll (replaced);
+                backendFilters.addAll (result);
             }
         }
 

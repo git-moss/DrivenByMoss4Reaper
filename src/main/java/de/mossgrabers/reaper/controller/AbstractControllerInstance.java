@@ -54,6 +54,7 @@ public abstract class AbstractControllerInstance<S extends IControlSurface<C>, C
     protected final WindowManager         windowManager;
     protected final BackendExchange       backend;
     protected final IniFiles              iniFiles;
+    private int []                        hostVersion;
 
     protected HostImpl                    host;
     protected GlobalSettingsUI            globalSettingsUI;
@@ -89,6 +90,26 @@ public abstract class AbstractControllerInstance<S extends IControlSurface<C>, C
         this.iniFiles = iniFiles;
 
         this.documentSettingsUI = new DocumentSettingsUI (this.logModel);
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void setHostVersion (final int majorVersion, final int minorVersion)
+    {
+        this.hostVersion = new int []
+        {
+            majorVersion,
+            minorVersion
+        };
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public int [] getHostVersion ()
+    {
+        return this.hostVersion;
     }
 
 

@@ -149,6 +149,8 @@ public class ParamsMode extends AbstractParameterMode<KontrolProtocolControlSurf
             this.surface.sendCommand (KontrolProtocolControlSurface.KONTROL_SELECTED_TRACK_MUTED_BY_SOLO, 0);
         }
         this.surface.sendKontrolTrackSysEx (KontrolProtocolControlSurface.KONTROL_TRACK_VU, 2, 0, vuData);
+
+        this.surface.sendGlobalValues (this.model);
     }
 
 

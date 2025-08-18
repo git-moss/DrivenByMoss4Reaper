@@ -108,6 +108,14 @@ public class HostImpl implements IHost
 
     /** {@inheritDoc} */
     @Override
+    public int [] getVersion ()
+    {
+        return this.controllerInstance.getHostVersion ();
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
     public void restart ()
     {
         this.controllerInstance.restart ();

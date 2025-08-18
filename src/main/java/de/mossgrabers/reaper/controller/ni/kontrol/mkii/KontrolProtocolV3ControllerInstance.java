@@ -48,6 +48,6 @@ public class KontrolProtocolV3ControllerInstance extends AbstractControllerInsta
     @Override
     protected IControllerSetup<KontrolProtocolControlSurface, KontrolProtocolConfiguration> createControllerSetup (final ReaperSetupFactory setupFactory)
     {
-        return new KontrolProtocolControllerSetup (this.host, setupFactory, this.globalSettingsUI, this.documentSettingsUI, KontrolProtocol.VERSION_3);
+        return new KontrolProtocolControllerSetup (this.host, setupFactory, this.globalSettingsUI, this.documentSettingsUI, KontrolProtocol.VERSION_4);
     }
 }

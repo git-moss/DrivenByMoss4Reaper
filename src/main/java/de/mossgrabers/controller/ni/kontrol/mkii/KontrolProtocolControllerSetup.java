@@ -20,6 +20,7 @@ import de.mossgrabers.controller.ni.kontrol.mkii.mode.SendMode;
 import de.mossgrabers.controller.ni.kontrol.mkii.view.ControlView;
 import de.mossgrabers.framework.command.core.NopCommand;
 import de.mossgrabers.framework.command.core.TriggerCommand;
+import de.mossgrabers.framework.command.trigger.ShiftCommand;
 import de.mossgrabers.framework.command.trigger.application.RedoCommand;
 import de.mossgrabers.framework.command.trigger.application.UndoCommand;
 import de.mossgrabers.framework.command.trigger.clip.NewCommand;
@@ -71,7 +72,7 @@ import de.mossgrabers.framework.view.Views;
  *
  * @author Jürgen Moßgraber
  */
-public class KontrolProtocolControllerSetup extends AbstractControllerSetup<KontrolProtocolControlSurface, KontrolProtocolConfiguration>
+public class KontrolProtocolControllerSetup extends AbstractControllerSetup<KontrolProtocolControlSurface, KontrolProtocolConfiguration> implements NIHIASysExCallback
 {
     private final int version;
     private String    kompleteInstance = "";
@@ -148,7 +149,7 @@ public class KontrolProtocolControllerSetup extends AbstractControllerSetup<Kont
                 "9?????" /* Note on */, "A?????" /* Poly-Aftertouch */,
                 "B?????" /* Sustain-pedal + Modulation + Strip */, "D?????" /* Channel-Aftertouch */,
                 "E?????" /* Pitch-bend */);
-        final KontrolProtocolControlSurface surface = new KontrolProtocolControlSurface (this.host, this.colorManager, this.configuration, output, midiAccess.createInput (null), this.version);
+        final KontrolProtocolControlSurface surface = new KontrolProtocolControlSurface (this.host, this.colorManager, this.configuration, output, midiAccess.createInput (null), this, this.version);
         this.surfaces.add (surface);
 
         surface.addPianoKeyboard (49, pianoInput, true);
@@ -290,6 +291,11 @@ public class KontrolProtocolControllerSetup extends AbstractControllerSetup<Kont
 
         this.addButton (ButtonID.F1, "", NopCommand.INSTANCE, 15, KontrolProtocolControlSurface.KONTROL_SELECTED_TRACK_AVAILABLE);
         this.addButton (ButtonID.F2, "", NopCommand.INSTANCE, 15, KontrolProtocolControlSurface.KONTROL_SELECTED_TRACK_MUTED_BY_SOLO);
+
+        if (this.version >= KontrolProtocol.VERSION_4)
+        {
+            this.addButton (ButtonID.SHIFT, "Shift", new ShiftCommand<> (this.model, surface), 15, KontrolProtocolControlSurface.KONTROL_SHIFT);
+        }
     }
 
 
@@ -334,6 +340,12 @@ public class KontrolProtocolControllerSetup extends AbstractControllerSetup<Kont
     @Override
     protected void addButton (final KontrolProtocolControlSurface surface, final ButtonID buttonID, final String label, final TriggerCommand command, final int midiChannel, final int midiControl, final IntSupplier supplier, final String... colorIds)
     {
+        if (buttonID == ButtonID.SHIFT)
+        {
+            super.addButton (surface, buttonID, label, command, midiChannel, midiControl, supplier, colorIds);
+            return;
+        }
+
         super.addButton (surface, buttonID, label, (event, velocity) -> {
 
             // Since there is only a down event from the device, long has no meaning
@@ -571,5 +583,30 @@ public class KontrolProtocolControllerSetup extends AbstractControllerSetup<Kont
     {
         final IMode mode = this.getSurface ().getModeManager ().getActive ();
         return mode == null ? 0 : Math.max (0, mode.getKnobValue (continuousMidiControl));
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void setTempo (final double tempo)
+    {
+        final ITransport transport = this.model.getTransport ();
+        final double minimumTempo = transport.getMinimumTempo ();
+        final double maximumTempo = transport.getMaximumTempo ();
+        if (tempo < minimumTempo)
+            this.getSurface ().sendTempo (minimumTempo, true);
+        else if (tempo > maximumTempo)
+            this.getSurface ().sendTempo (maximumTempo, true);
+        else
+            transport.setTempo (tempo);
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void sendDAWInfo ()
+    {
+        final int [] version = this.host.getVersion ();
+        this.getSurface ().sendDAWInfo (version[0], version[1], this.host.getName ());
     }
 }

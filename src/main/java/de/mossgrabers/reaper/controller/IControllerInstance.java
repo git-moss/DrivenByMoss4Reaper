@@ -128,4 +128,21 @@ public interface IControllerInstance
      * Test the user interface.
      */
     void testUI ();
+
+
+    /**
+     * Set the version of the host.
+     *
+     * @param majorVersion The major version
+     * @param minorVersion The minor version
+     */
+    void setHostVersion (int majorVersion, int minorVersion);
+
+
+    /**
+     * Get the version number of the host.
+     * 
+     * @return The major and minor version
+     */
+    int [] getHostVersion ();
 }

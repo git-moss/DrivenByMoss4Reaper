@@ -85,8 +85,10 @@ public class MainApp implements BackendExchange, AppCallback, WindowManager
      * Constructor.
      *
      * @param iniPath The Reaper path which contains all INI files
+     * @param majorVersion The major application version
+     * @param minorVersion The minor application version
      */
-    public MainApp (final String iniPath)
+    public MainApp (final String iniPath, final int majorVersion, final int minorVersion)
     {
         this.iniPath = iniPath;
 
@@ -97,7 +99,7 @@ public class MainApp implements BackendExchange, AppCallback, WindowManager
             this.logModel.info (writer.toString ());
         });
 
-        this.instanceManager = new ControllerInstanceManager (this.logModel, this, this, this.iniFiles);
+        this.instanceManager = new ControllerInstanceManager (this.logModel, this, this, this.iniFiles, majorVersion, minorVersion);
 
         if (this.iniPath == null || this.iniPath.isEmpty ())
         {

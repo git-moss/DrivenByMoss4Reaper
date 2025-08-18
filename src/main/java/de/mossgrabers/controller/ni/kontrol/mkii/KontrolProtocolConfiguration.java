@@ -91,7 +91,7 @@ public class KontrolProtocolConfiguration extends AbstractConfiguration
     @Override
     public void init (final ISettingsUI globalSettings, final ISettingsUI documentSettings)
     {
-        if (this.version == KontrolProtocol.VERSION_3)
+        if (this.version >= KontrolProtocol.VERSION_3)
         {
             final IEnumSetting modeSwitchButtonSetting = globalSettings.getEnumSetting ("Switch modes with", CATEGORY_HARDWARE_SETUP, MODE_SWITCH_BUTTONS, MODE_SWITCH_BUTTONS[this.version >= 3 ? 7 : 0]);
             modeSwitchButtonSetting.addValueObserver (value -> {
@@ -131,7 +131,7 @@ public class KontrolProtocolConfiguration extends AbstractConfiguration
 
         this.activateExcludeDeactivatedItemsSetting (globalSettings);
         this.activateNewClipLengthSetting (globalSettings);
-        this.activateKnobSpeedSetting (globalSettings, 0, 20);
+        this.activateKnobSpeedSetting (globalSettings, 30, 0);
     }
 
 

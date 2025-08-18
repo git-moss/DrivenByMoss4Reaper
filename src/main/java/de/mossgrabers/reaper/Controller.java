@@ -4,6 +4,10 @@
 
 package de.mossgrabers.reaper;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+
 /**
  * Interface to be used from C++ code to control the application.
  *
@@ -11,7 +15,9 @@ package de.mossgrabers.reaper;
  */
 public class Controller
 {
-    private static MainApp app;
+    private static final Pattern VERSION_PATTERN = Pattern.compile ("(\\d+)\\.(\\d+)");
+
+    private static MainApp       app;
 
 
     /**
@@ -27,10 +33,20 @@ public class Controller
      * Startup the application window.
      *
      * @param iniPath Folder where the Reaper INI files are stored
+     * @param appVersion The Reaper version
      */
-    public static void startup (final String iniPath)
+    public static void startup (final String iniPath, final String appVersion)
     {
-        app = new MainApp (iniPath);
+        final Matcher m = VERSION_PATTERN.matcher (appVersion);
+        int majorVersion = 1;
+        int minorVersion = 0;
+        if (m.find ())
+        {
+            majorVersion = Integer.parseInt (m.group (1));
+            minorVersion = Integer.parseInt (m.group (2));
+        }
+
+        app = new MainApp (iniPath, majorVersion, minorVersion);
     }
 
 

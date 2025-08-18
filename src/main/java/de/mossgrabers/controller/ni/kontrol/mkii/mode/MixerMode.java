@@ -21,6 +21,7 @@ import de.mossgrabers.framework.mode.track.TrackVolumeMode;
 import de.mossgrabers.framework.parameterprovider.special.CombinedParameterProvider;
 import de.mossgrabers.framework.parameterprovider.track.PanParameterProvider;
 import de.mossgrabers.framework.parameterprovider.track.VolumeParameterProvider;
+import de.mossgrabers.framework.utils.StringUtils;
 
 
 /**
@@ -104,6 +105,7 @@ public class MixerMode extends TrackVolumeMode<KontrolProtocolControlSurface, Ko
     {
         final IValueChanger valueChanger = this.model.getValueChanger ();
         final boolean hasSolo = this.model.getProject ().hasSolo ();
+        final int protocolVersion = this.surface.getProtocolVersion ();
 
         final int [] vuData = new int [16];
         for (int i = 0; i < 8; i++)
@@ -118,6 +120,9 @@ public class MixerMode extends TrackVolumeMode<KontrolProtocolControlSurface, Ko
             this.surface.sendKontrolTrackSysEx (KontrolProtocolControlSurface.KONTROL_TRACK_PAN_TEXT, 0, i, track.getPanStr (8));
             this.surface.sendKontrolTrackSysEx (KontrolProtocolControlSurface.KONTROL_TRACK_NAME, 0, i, this.formatTrackName (track));
 
+            if (protocolVersion == KontrolProtocol.VERSION_4)
+                this.surface.sendKontrolTrackSysEx (KontrolProtocolControlSurface.KONTROL_TRACK_COLOR, 0, i, "#" + StringUtils.formatColor (track.getColor ()));
+
             final int j = 2 * i;
             vuData[j] = valueChanger.toMidiValue (track.getVuLeft ());
             vuData[j + 1] = valueChanger.toMidiValue (track.getVuRight ());
@@ -131,6 +136,8 @@ public class MixerMode extends TrackVolumeMode<KontrolProtocolControlSurface, Ko
             this.surface.sendCommand (KontrolProtocolControlSurface.KONTROL_SELECTED_TRACK_MUTED_BY_SOLO, selectedTrack.isPresent () && !selectedTrack.get ().isSolo () && hasSolo ? 1 : 0);
         }
         this.surface.sendKontrolTrackSysEx (KontrolProtocolControlSurface.KONTROL_TRACK_VU, 2, 0, vuData);
+
+        this.surface.sendGlobalValues (this.model);
     }
 
 
