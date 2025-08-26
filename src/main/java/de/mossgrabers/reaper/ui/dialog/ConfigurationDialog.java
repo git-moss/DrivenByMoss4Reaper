@@ -181,11 +181,10 @@ public class ConfigurationDialog extends BasicDialog
 
 
     /**
-     * Rescans all available MIDI devices and fills the MIDI input and outputs combo boxes.
+     * Update all MIDI ports from the C++ side.
      */
     void updateMidiDevices ()
     {
-        // TODO remove this? Workaround for hang with coremidi4j
         new Thread (this::delayedUpdateMidiDevices).start ();
     }
 
