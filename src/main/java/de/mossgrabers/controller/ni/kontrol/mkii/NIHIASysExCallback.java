@@ -13,7 +13,7 @@ public interface NIHIASysExCallback
 {
     /**
      * Callback for setting the tempo via SysEx.
-     * 
+     *
      * @param tempo THe tempo
      */
     void setTempo (double tempo);
@@ -23,4 +23,12 @@ public interface NIHIASysExCallback
      * Send the info about the DAW to the Kontrol.
      */
     void sendDAWInfo ();
+
+
+    /**
+     * Select a device on the current track.
+     *
+     * @param deviceIndex The index of the device to select
+     */
+    void selectDevice (int deviceIndex);
 }

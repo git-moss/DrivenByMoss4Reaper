@@ -104,7 +104,7 @@ public class BrowserImpl extends AbstractBrowser
     int                                                   selectedIndex;
     List<DeviceMetadataImpl>                              filteredDevices     = Collections.emptyList ();
 
-    private final BackendExchange                           sender;
+    private final BackendExchange                         sender;
     private final IBrowserColumn [] []                    columnDataContentTypes;
     private final BrowserDialog                           browserWindow;
     private int                                           insertPosition;
@@ -137,13 +137,13 @@ public class BrowserImpl extends AbstractBrowser
         this.columnDataContentTypes = new IBrowserColumn [2] [];
         this.columnDataContentTypes[BrowserContentType.DEVICE.ordinal ()] = new IBrowserColumn []
         {
-            this.deviceCollectionFilterColumn,
             this.deviceLocationFilterColumn,
             this.deviceFileTypeFilterColumn,
             this.deviceCategoryFilterColumn,
             this.deviceTagsFilterColumn,
             this.deviceCreatorFilterColumn,
-            this.deviceTypeFilterColumn
+            this.deviceTypeFilterColumn,
+            this.deviceCollectionFilterColumn
         };
         this.columnDataContentTypes[BrowserContentType.PRESET.ordinal ()] = new IBrowserColumn []
         {

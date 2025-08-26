@@ -137,6 +137,14 @@ public class SpecificDeviceImpl extends DeviceImpl implements ISpecificDevice
 
     /** {@inheritDoc} */
     @Override
+    public String getPresetName ()
+    {
+        return "none";
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
     public boolean isPlugin ()
     {
         // All are plugins (no native)

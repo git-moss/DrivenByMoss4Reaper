@@ -37,7 +37,7 @@ public interface IHost
 
     /**
      * Get the version number of the host.
-     * 
+     *
      * @return The major and minor version
      */
     int [] getVersion ();

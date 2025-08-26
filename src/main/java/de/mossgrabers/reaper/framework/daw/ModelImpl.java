@@ -21,6 +21,7 @@ import de.mossgrabers.framework.scale.Scales;
 import de.mossgrabers.framework.utils.FrameworkException;
 import de.mossgrabers.reaper.framework.IniFiles;
 import de.mossgrabers.reaper.framework.daw.data.CursorDeviceImpl;
+import de.mossgrabers.reaper.framework.daw.data.CursorLayerImpl;
 import de.mossgrabers.reaper.framework.daw.data.CursorTrackImpl;
 import de.mossgrabers.reaper.framework.daw.data.DrumDeviceImpl;
 import de.mossgrabers.reaper.framework.daw.data.EqualizerDeviceImpl;
@@ -117,6 +118,9 @@ public class ModelImpl extends AbstractModel
             }
             drumDevices.addAll (this.additionalDrumDevices.values ());
         }
+
+        // Assign an empty dummy implementation since there are no device layers in Reaper
+        this.cursorLayer = new CursorLayerImpl (numDevicesInBank, numDeviceLayers);
 
         ISpecificDevice firstInstrumentDevice = null;
         for (final DeviceID deviceID: modelSetup.getDeviceIDs ())

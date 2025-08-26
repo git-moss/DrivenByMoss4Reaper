@@ -312,4 +312,12 @@ public class KompleteDevice implements ISpecificDevice
     {
         throw new UnsupportedOperationException ();
     }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public String getPresetName ()
+    {
+        return "";
+    }
 }
