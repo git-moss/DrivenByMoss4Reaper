@@ -31,7 +31,6 @@ import de.mossgrabers.reaper.controller.mackie.mcu.MCU1ControllerInstance;
 import de.mossgrabers.reaper.controller.mackie.mcu.MCU2ControllerInstance;
 import de.mossgrabers.reaper.controller.mackie.mcu.MCU3ControllerInstance;
 import de.mossgrabers.reaper.controller.mackie.mcu.MCU4ControllerInstance;
-import de.mossgrabers.reaper.controller.melbourne.rotocontrol.RotoControlControllerInstance;
 import de.mossgrabers.reaper.controller.ni.kontrol.mki.KontrolMkIS25ControllerInstance;
 import de.mossgrabers.reaper.controller.ni.kontrol.mki.KontrolMkIS49ControllerInstance;
 import de.mossgrabers.reaper.controller.ni.kontrol.mki.KontrolMkIS61ControllerInstance;
@@ -152,7 +151,6 @@ public class ControllerInstanceManager
         DEF_TO_CLASS.put (Push1ControllerInstance.CONTROLLER_DEFINITION, Push1ControllerInstance.class);
         DEF_TO_CLASS.put (Push2ControllerInstance.CONTROLLER_DEFINITION, Push2ControllerInstance.class);
         DEF_TO_CLASS.put (Push3ControllerInstance.CONTROLLER_DEFINITION, Push3ControllerInstance.class);
-        DEF_TO_CLASS.put (RotoControlControllerInstance.CONTROLLER_DEFINITION, RotoControlControllerInstance.class);
         DEF_TO_CLASS.put (SLMkIControllerInstance.CONTROLLER_DEFINITION, SLMkIControllerInstance.class);
         DEF_TO_CLASS.put (SLMkIIControllerInstance.CONTROLLER_DEFINITION, SLMkIIControllerInstance.class);
         DEF_TO_CLASS.put (SLMkIIIControllerInstance.CONTROLLER_DEFINITION, SLMkIIIControllerInstance.class);

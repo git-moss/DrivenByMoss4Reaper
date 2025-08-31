@@ -121,7 +121,7 @@ public class MidiInputImpl implements IMidiInput
     @Override
     public void sendRawMidiEvent (final int status, final int data1, final int data2)
     {
-        if (this.device instanceof ReaperMidiDevice reaperDevice)
+        if (this.device instanceof final ReaperMidiDevice reaperDevice)
             this.sender.processMidiArg (reaperDevice.getDeviceID (), status, data1, data2);
     }
 
@@ -290,17 +290,9 @@ public class MidiInputImpl implements IMidiInput
 
     /** {@inheritDoc} */
     @Override
-    public void bindTouch (final IHwRelativeKnob relativeKnob, final BindType type, final int channel, final int control)
+    public void bindTouch (final IHwContinuousControl continuousControl, final BindType type, final int channel, final int control)
     {
-        this.bindTouchContinuous (relativeKnob, type, channel, control);
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void bindTouch (final IHwFader fader, final BindType type, final int channel, final int control)
-    {
-        this.bindTouchContinuous (fader, type, channel, control);
+        this.bindTouchContinuous (continuousControl, type, channel, control);
     }
 
 
