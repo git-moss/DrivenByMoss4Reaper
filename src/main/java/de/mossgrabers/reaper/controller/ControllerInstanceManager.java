@@ -386,7 +386,10 @@ public class ControllerInstanceManager
                     if (!sb.isEmpty ())
                         sb.append (',');
                     sb.append (parameter.getIndex ()).append (',');
-                    sb.append (parameter.getName ());
+                    String paramName = parameter.getName ();
+                    if (paramName == null || paramName.isBlank ())
+                        paramName = "Not assigned";
+                    sb.append (paramName);
                 }
                 iniParamMaps.set (name, "page" + i, page.getName ());
                 iniParamMaps.set (name, "params" + i, sb.toString ());

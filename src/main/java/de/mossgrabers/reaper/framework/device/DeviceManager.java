@@ -685,11 +685,11 @@ public class DeviceManager
                     break;
 
                 final String [] parts = params.split (",");
-                if (parts.length != 16)
-                    break;
-
+                // There is an incorrect parsing if there is an empty name which results in an
+                // uneven number of parameters
+                final int length = (parts.length / 2) * 2;
                 final List<ParameterMapPageParameter> parameters = page.getParameters ();
-                for (int p = 0; p < 16; p += 2)
+                for (int p = 0; p < length; p += 2)
                     parameters.get (p / 2).assign (Integer.parseInt (parts[p]), parts[p + 1]);
 
                 pages.add (page);
