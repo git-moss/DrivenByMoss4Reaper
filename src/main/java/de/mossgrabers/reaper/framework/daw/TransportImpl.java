@@ -21,7 +21,9 @@ import de.mossgrabers.reaper.framework.daw.data.parameter.MetronomeVolumeParamet
 import de.mossgrabers.reaper.framework.daw.data.parameter.TempoParameterImpl;
 
 import java.text.DecimalFormat;
+import java.util.Map;
 import java.util.Optional;
+import java.util.TreeMap;
 
 
 /**
@@ -31,6 +33,26 @@ import java.util.Optional;
  */
 public class TransportImpl extends BaseImpl implements ITransport
 {
+    private static final Map<Double, Double> ZOOM_RESOLUTIONS = new TreeMap<> ();
+    static
+    {
+        ZOOM_RESOLUTIONS.put (Double.valueOf (8.8), Double.valueOf (1.0 / 1));
+        ZOOM_RESOLUTIONS.put (Double.valueOf (27.94), Double.valueOf (1.0 / 4));
+        ZOOM_RESOLUTIONS.put (Double.valueOf (279.11), Double.valueOf (1.0 / 16));
+        ZOOM_RESOLUTIONS.put (Double.valueOf (661.61), Double.valueOf (1.0 / 32));
+        ZOOM_RESOLUTIONS.put (Double.valueOf (1176.20), Double.valueOf (1.0 / 64));
+        ZOOM_RESOLUTIONS.put (Double.valueOf (2091.03), Double.valueOf (1.0 / 128));
+        ZOOM_RESOLUTIONS.put (Double.valueOf (4956.52), Double.valueOf (1.0 / 256));
+        ZOOM_RESOLUTIONS.put (Double.valueOf (8811.59), Double.valueOf (1.0 / 512));
+        ZOOM_RESOLUTIONS.put (Double.valueOf (20886.75), Double.valueOf (1.0 / 1024));
+        ZOOM_RESOLUTIONS.put (Double.valueOf (37132.00), Double.valueOf (1.0 / 2048));
+        ZOOM_RESOLUTIONS.put (Double.valueOf (66012.45), Double.valueOf (1.0 / 4096));
+        ZOOM_RESOLUTIONS.put (Double.valueOf (156473.96), Double.valueOf (1.0 / 8192));
+        ZOOM_RESOLUTIONS.put (Double.valueOf (278175.93), Double.valueOf (1.0 / 16384));
+        ZOOM_RESOLUTIONS.put (Double.valueOf (600000), Double.valueOf (1.0 / 32768));
+        ZOOM_RESOLUTIONS.put (Double.valueOf (800000), Double.valueOf (1.0 / 65536));
+    }
+
     private static final int                   PUNCH_OFF          = 0;
     private static final int                   PUNCH_ITEMS        = 1;
     private static final int                   PUNCH_LOOP         = 2;
@@ -64,7 +86,7 @@ public class TransportImpl extends BaseImpl implements ITransport
     private final TempoParameterImpl           tempoParameter;
     private final AutomationModeParameter      automationParameter;
     private AutomationMode                     automationMode     = AutomationMode.TRIM_READ;
-    private double                             visibleSeconds;
+    private double                             visiblePixelsPerSecond;
 
 
     /**
@@ -605,14 +627,29 @@ public class TransportImpl extends BaseImpl implements ITransport
     @Override
     public void changePosition (final boolean increase, final boolean slow)
     {
-        final double fraction = this.visibleSeconds / (slow ? 100 : 10);
-        this.setPosition (increase ? this.position + fraction : Math.max (this.position - fraction, 0.0), !slow);
+        final double resolution = this.getZoomResolution ();
+        final double fraction = this.calcScrollFraction (resolution, slow);
+        final double pos = Math.round (this.secondsToBeats (this.position) / fraction) * fraction;
+        final double beats = increase ? pos + fraction : Math.max (pos - fraction, 0.0);
+        this.setPosition (this.beatsToSeconds (beats), !slow);
+    }
+
+
+    private double calcScrollFraction (final double resolution, final boolean slow)
+    {
+        return slow ? resolution : resolution * this.getQuartersPerMeasure () * 4;
     }
 
 
     private double beatsToSeconds (final double beats)
     {
         return beats * 60.0 / this.getTempo ();
+    }
+
+
+    private double secondsToBeats (final double seconds)
+    {
+        return seconds * this.getTempo () / 60.0;
     }
 
 
@@ -1196,12 +1233,25 @@ public class TransportImpl extends BaseImpl implements ITransport
 
 
     /**
-     * Sets the number of visible seconds in the arranger.
+     * Sets the number of pixels per second in the arranger.
      *
-     * @param visibleSeconds The number of visible seconds
+     * @param visiblePixelsPerSecond The number of pixels per second
      */
-    public void setHZoom (final double visibleSeconds)
+    public void setHZoom (final double visiblePixelsPerSecond)
     {
-        this.visibleSeconds = visibleSeconds;
+        this.visiblePixelsPerSecond = visiblePixelsPerSecond;
+    }
+
+
+    private double getZoomResolution ()
+    {
+        final double inverseContentPerPixel = this.visiblePixelsPerSecond;
+
+        for (final Map.Entry<Double, Double> entry: ZOOM_RESOLUTIONS.entrySet ())
+        {
+            if (inverseContentPerPixel < entry.getKey ().doubleValue ())
+                return entry.getValue ().doubleValue ();
+        }
+        return 800000.0;
     }
 }
