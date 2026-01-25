@@ -51,9 +51,9 @@ class MidiOutputImpl extends AbstractMidiOutput
 
     /** {@inheritDoc} */
     @Override
-    public void sendSysex (final byte [] data)
+    public void sendSysex (final byte []... data)
     {
-        this.midiConnection.sendSysex (data);
+        this.midiConnection.sendSysex (concatArrays (data));
     }
 
 

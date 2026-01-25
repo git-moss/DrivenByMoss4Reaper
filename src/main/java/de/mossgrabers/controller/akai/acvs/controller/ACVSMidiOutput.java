@@ -270,7 +270,7 @@ public class ACVSMidiOutput implements IMidiOutput
 
     /** {@inheritDoc} */
     @Override
-    public void sendSysex (final byte [] data)
+    public void sendSysex (final byte []... data)
     {
         this.output.sendSysex (data);
     }

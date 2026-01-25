@@ -6,12 +6,18 @@ package de.mossgrabers.controller.oxi.one;
 
 import de.mossgrabers.controller.oxi.one.command.trigger.OxiOneBackCommand;
 import de.mossgrabers.controller.oxi.one.command.trigger.OxiOneCursorCommand;
+import de.mossgrabers.controller.oxi.one.command.trigger.OxiOneFillModeGrooveCommand;
+import de.mossgrabers.controller.oxi.one.command.trigger.OxiOnePerfCommand;
 import de.mossgrabers.controller.oxi.one.command.trigger.OxiOneToggleNoteEditCommand;
+import de.mossgrabers.controller.oxi.one.command.trigger.OxiOneTrackCommand;
+import de.mossgrabers.controller.oxi.one.command.trigger.OxiPlayCommand;
 import de.mossgrabers.controller.oxi.one.controller.OxiOneColorManager;
 import de.mossgrabers.controller.oxi.one.controller.OxiOneControlSurface;
 import de.mossgrabers.controller.oxi.one.controller.OxiOneDisplay;
 import de.mossgrabers.controller.oxi.one.mode.IOxiModeReset;
 import de.mossgrabers.controller.oxi.one.mode.OxiOneAutomationMode;
+import de.mossgrabers.controller.oxi.one.mode.OxiOneGeneratorMode;
+import de.mossgrabers.controller.oxi.one.mode.OxiOneGrooveMode;
 import de.mossgrabers.controller.oxi.one.mode.OxiOneLayerMode;
 import de.mossgrabers.controller.oxi.one.mode.OxiOneNoteEditMode;
 import de.mossgrabers.controller.oxi.one.mode.OxiOneParameterMode;
@@ -28,6 +34,7 @@ import de.mossgrabers.controller.oxi.one.view.OxiOnePlayView;
 import de.mossgrabers.controller.oxi.one.view.OxiOnePolySequencerView;
 import de.mossgrabers.controller.oxi.one.view.OxiOneRaindropsView;
 import de.mossgrabers.controller.oxi.one.view.OxiOneSequencerView;
+import de.mossgrabers.controller.oxi.one.view.OxiOneSessionView;
 import de.mossgrabers.framework.command.continuous.KnobRowModeCommand;
 import de.mossgrabers.framework.command.core.NopCommand;
 import de.mossgrabers.framework.command.trigger.Direction;
@@ -39,7 +46,6 @@ import de.mossgrabers.framework.command.trigger.application.UndoCommand;
 import de.mossgrabers.framework.command.trigger.mode.CursorCommand;
 import de.mossgrabers.framework.command.trigger.mode.ModeSelectCommand;
 import de.mossgrabers.framework.command.trigger.transport.ConfiguredRecordCommand;
-import de.mossgrabers.framework.command.trigger.transport.PlayCommand;
 import de.mossgrabers.framework.command.trigger.transport.StopCommand;
 import de.mossgrabers.framework.command.trigger.view.ViewButtonCommand;
 import de.mossgrabers.framework.command.trigger.view.ViewMultiSelectCommand;
@@ -79,7 +85,17 @@ import de.mossgrabers.framework.view.Views;
  */
 public class OxiOneControllerSetup extends AbstractControllerSetup<OxiOneControlSurface, OxiOneConfiguration>
 {
-    private OxiOneBackCommand backCommand = null;
+    private static final Views [] SEQUENCER_VIEWS = new Views []
+    {
+        Views.DRUM8,
+        Views.DRUM_XOX,
+        Views.SEQUENCER,
+        Views.POLY_SEQUENCER,
+        Views.RAINDROPS
+    };
+
+    private final boolean         isMk2;
+    private OxiOneBackCommand     backCommand     = null;
 
 
     /**
@@ -89,14 +105,16 @@ public class OxiOneControllerSetup extends AbstractControllerSetup<OxiOneControl
      * @param factory The factory
      * @param globalSettings The global settings
      * @param documentSettings The document (project) specific settings
+     * @param isMk2 True if it is Mk2 otherwise Mk1
      */
-    public OxiOneControllerSetup (final IHost host, final ISetupFactory factory, final ISettingsUI globalSettings, final ISettingsUI documentSettings)
+    public OxiOneControllerSetup (final IHost host, final ISetupFactory factory, final ISettingsUI globalSettings, final ISettingsUI documentSettings, final boolean isMk2)
     {
         super (factory, host, globalSettings, documentSettings);
 
         this.colorManager = new OxiOneColorManager ();
         this.valueChanger = new TwosComplementValueChanger (1024, 10);
-        this.configuration = new OxiOneConfiguration (host, this.valueChanger, factory.getArpeggiatorModes ());
+        this.configuration = new OxiOneConfiguration (host, this.valueChanger, factory.getArpeggiatorModes (), isMk2);
+        this.isMk2 = isMk2;
     }
 
 
@@ -107,7 +125,7 @@ public class OxiOneControllerSetup extends AbstractControllerSetup<OxiOneControl
         final ModelSetup ms = new ModelSetup ();
         ms.enableDevice (DeviceID.FIRST_INSTRUMENT);
         ms.setNumTracks (16);
-        ms.setNumScenes (4);
+        ms.setNumScenes (this.isMk2 ? 8 : 4);
         ms.setNumSends (6);
         ms.setHasFullFlatTrackList (true);
         ms.setAdditionalDrumDevices (new int []
@@ -141,9 +159,9 @@ public class OxiOneControllerSetup extends AbstractControllerSetup<OxiOneControl
         final IMidiOutput output = midiAccess.createOutput ();
         final IMidiInput input = midiAccess.createInput ("Pads", "80????" /* Note off */,
                 "90????" /* Note on */);
-        final OxiOneControlSurface surface = new OxiOneControlSurface (this.host, this.colorManager, this.configuration, output, input);
+        final OxiOneControlSurface surface = new OxiOneControlSurface (this.host, this.colorManager, this.configuration, output, input, this.isMk2);
         this.surfaces.add (surface);
-        surface.addGraphicsDisplay (new OxiOneDisplay (this.host, output, this.valueChanger.getUpperBound ()));
+        surface.addGraphicsDisplay (new OxiOneDisplay (this.host, output, this.valueChanger.getUpperBound (), this.isMk2));
         surface.getModeManager ().setDefaultID (Modes.TRACK);
     }
 
@@ -173,12 +191,14 @@ public class OxiOneControllerSetup extends AbstractControllerSetup<OxiOneControl
             if (event != ButtonEvent.LONG)
                 this.getSurface ().updateFunctionButtonLEDs ();
 
-        }, 1, OxiOneControlSurface.BUTTON_SHIFT, () -> viewManager.isActive (Views.SHIFT) || surface.isShiftPressed () ? 2 : 0);
+        }, 1, OxiOneControlSurface.MK1_BUTTON_SHIFT, () -> viewManager.isActive (Views.SHIFT) || surface.isShiftPressed () ? 2 : 0);
 
         modeManager.register (Modes.SCALES, new OxiOnePlayModeConfigurationMode (surface, this.model));
         modeManager.register (Modes.REPEAT_NOTE, new OxiOneRepeatModeConfigurationMode (surface, this.model));
         modeManager.register (Modes.NOTE, new OxiOneNoteEditMode (surface, this.model));
         modeManager.register (Modes.SETUP, new OxiOneSeqConfigMode (surface, this.model));
+        modeManager.register (Modes.GROOVE, new OxiOneGrooveMode (surface, this.model));
+        modeManager.register (Modes.GENERATOR, new OxiOneGeneratorMode (surface, this.model));
     }
 
 
@@ -189,7 +209,7 @@ public class OxiOneControllerSetup extends AbstractControllerSetup<OxiOneControl
         final OxiOneControlSurface surface = this.getSurface ();
         final ViewManager viewManager = surface.getViewManager ();
 
-        viewManager.register (Views.SESSION, new OxiOneMixAndSessionView (surface, this.model));
+        viewManager.register (Views.MIX, new OxiOneMixAndSessionView (surface, this.model));
         viewManager.register (Views.PLAY, new OxiOnePlayView (surface, this.model));
         viewManager.register (Views.DRUM_XOX, new OxiOneDrumXoXView (surface, this.model));
         viewManager.register (Views.DRUM64, new OxiOneDrumView128 (surface, this.model));
@@ -197,6 +217,8 @@ public class OxiOneControllerSetup extends AbstractControllerSetup<OxiOneControl
         viewManager.register (Views.SEQUENCER, new OxiOneSequencerView (surface, this.model));
         viewManager.register (Views.POLY_SEQUENCER, new OxiOnePolySequencerView (surface, this.model, true));
         viewManager.register (Views.RAINDROPS, new OxiOneRaindropsView (surface, this.model));
+        if (this.isMk2)
+            viewManager.register (Views.SESSION, new OxiOneSessionView (surface, this.model));
     }
 
 
@@ -211,7 +233,7 @@ public class OxiOneControllerSetup extends AbstractControllerSetup<OxiOneControl
         // Transport
 
         final ITransport t = this.model.getTransport ();
-        this.addButton (ButtonID.PLAY, "PLAY", new PlayCommand<> (this.model, surface, ButtonID.SHIFT), 1, OxiOneControlSurface.BUTTON_PLAY, () -> t.isPlaying () ? 1 : 0);
+        this.addButton (ButtonID.PLAY, "PLAY", new OxiPlayCommand (this.model, surface), 1, this.isMk2 ? OxiOneControlSurface.MK2_BUTTON_PLAY : OxiOneControlSurface.MK1_BUTTON_PLAY, () -> t.isPlaying () ? 1 : 0);
 
         this.addButton (ButtonID.STOP, "STOP", new StopCommand<> (this.model, surface)
         {
@@ -221,9 +243,9 @@ public class OxiOneControllerSetup extends AbstractControllerSetup<OxiOneControl
                 if (event == ButtonEvent.UP)
                     this.surface.getModeManager ().setTemporary (Modes.TRANSPORT);
             }
-        }, 1, OxiOneControlSurface.BUTTON_STOP, () -> !t.isPlaying () ? 1 : 0);
+        }, 1, this.isMk2 ? OxiOneControlSurface.MK2_BUTTON_STOP : OxiOneControlSurface.MK1_BUTTON_STOP, () -> !t.isPlaying () ? 1 : 0);
 
-        this.addButton (ButtonID.RECORD, "REC", new ConfiguredRecordCommand<> (this.model, surface), 1, OxiOneControlSurface.BUTTON_REC, () -> {
+        this.addButton (ButtonID.RECORD, "REC", new ConfiguredRecordCommand<> (this.model, surface), 1, this.isMk2 ? OxiOneControlSurface.MK2_BUTTON_REC : OxiOneControlSurface.MK1_BUTTON_REC, () -> {
 
             int state = 0;
             if (t.isLauncherOverdub ())
@@ -236,13 +258,21 @@ public class OxiOneControllerSetup extends AbstractControllerSetup<OxiOneControl
 
         // Global buttons
 
-        this.addButton (ButtonID.LOAD, "LOAD", new LoadCommand<> (this.model, surface), 1, OxiOneControlSurface.BUTTON_LOAD, () -> 1);
-        this.addButton (ButtonID.SAVE, "SAVE", new SaveCommand<> (this.model, surface), 1, OxiOneControlSurface.BUTTON_SAVE, () -> this.model.getProject ().isDirty () ? 1 : 0);
+        this.addButton (ButtonID.LOAD, "LOAD", new LoadCommand<> (this.model, surface), 1, this.isMk2 ? OxiOneControlSurface.MK2_BUTTON_LOAD : OxiOneControlSurface.MK1_BUTTON_LOAD, () -> 1);
+        this.addButton (ButtonID.SAVE, "SAVE", new SaveCommand<> (this.model, surface), 1, this.isMk2 ? OxiOneControlSurface.MK2_BUTTON_SAVE : OxiOneControlSurface.MK1_BUTTON_SAVE, () -> this.model.getProject ().isDirty () ? 1 : 0);
 
-        this.addButton (ButtonID.DUPLICATE, "Duplicate", new DuplicateCommand<> (this.model, surface), 1, OxiOneControlSurface.BUTTON_COPY);
-        this.addButton (ButtonID.DELETE, "Delete", new DeleteCommand<> (this.model, surface), 1, OxiOneControlSurface.BUTTON_PASTE);
+        this.addButton (ButtonID.DUPLICATE, "Duplicate", new DuplicateCommand<> (this.model, surface), 1, this.isMk2 ? OxiOneControlSurface.MK2_BUTTON_COPY : OxiOneControlSurface.MK1_BUTTON_COPY);
+        this.addButton (ButtonID.DELETE, "Delete", new DeleteCommand<> (this.model, surface), 1, this.isMk2 ? OxiOneControlSurface.MK2_BUTTON_PASTE : OxiOneControlSurface.MK1_BUTTON_PASTE);
 
-        this.addButton (ButtonID.SESSION, "MIXER", new ViewMultiSelectCommand<> (this.model, surface, Views.SESSION, Views.DRUM_XOX), 1, OxiOneControlSurface.BUTTON_ARRANGER, () -> viewManager.isActive (Views.SESSION, Views.DRUM_XOX) ? 1 : 0);
+        final Views [] arrangerViews = this.isMk2 ? new Views []
+        {
+            Views.MIX,
+            Views.SESSION
+        } : new Views []
+        {
+            Views.MIX
+        };
+        this.addButton (ButtonID.SESSION, "MIXER", new ViewMultiSelectCommand<> (this.model, surface, arrangerViews), 1, this.isMk2 ? OxiOneControlSurface.MK2_BUTTON_ARRANGER : OxiOneControlSurface.MK1_BUTTON_ARRANGER, () -> viewManager.isActive (arrangerViews) ? 1 : 0);
 
         this.addButton (ButtonID.KEYBOARD, "KEYBOARD", new ViewMultiSelectCommand<> (this.model, surface, true, Views.PLAY, Views.DRUM64)
         {
@@ -255,7 +285,7 @@ public class OxiOneControllerSetup extends AbstractControllerSetup<OxiOneControl
                     modeManager.setTemporary (Modes.SCALES);
             }
 
-        }, 1, OxiOneControlSurface.BUTTON_KEYBOARD, () -> {
+        }, 1, this.isMk2 ? OxiOneControlSurface.MK2_BUTTON_KEYBOARD : OxiOneControlSurface.MK1_BUTTON_KEYBOARD, () -> {
 
             if (surface.isShiftPressed ())
                 return modeManager.isActive (Modes.SCALES) ? 2 : 0;
@@ -263,7 +293,7 @@ public class OxiOneControllerSetup extends AbstractControllerSetup<OxiOneControl
 
         });
 
-        this.addButton (ButtonID.SEQUENCER, "SEQUENCE", new ViewMultiSelectCommand<> (this.model, surface, true, Views.DRUM8, Views.SEQUENCER, Views.POLY_SEQUENCER, Views.RAINDROPS)
+        this.addButton (ButtonID.SEQUENCER, "SEQUENCE", new ViewMultiSelectCommand<> (this.model, surface, true, SEQUENCER_VIEWS)
         {
 
             /** {@inheritDoc} */
@@ -274,15 +304,15 @@ public class OxiOneControllerSetup extends AbstractControllerSetup<OxiOneControl
                     modeManager.setTemporary (Modes.REPEAT_NOTE);
             }
 
-        }, 1, OxiOneControlSurface.BUTTON_ARP, () -> {
+        }, 1, this.isMk2 ? OxiOneControlSurface.MK2_BUTTON_ARP : OxiOneControlSurface.MK1_BUTTON_ARP, () -> {
 
             if (surface.isShiftPressed ())
                 return modeManager.isActive (Modes.REPEAT_NOTE) ? 2 : 0;
-            return viewManager.isActive (Views.DRUM8, Views.SEQUENCER, Views.POLY_SEQUENCER) ? 1 : 0;
+            return viewManager.isActive (SEQUENCER_VIEWS) ? 1 : 0;
 
         });
 
-        this.addButton (ButtonID.UNDO, "Undo", new UndoCommand<> (this.model, surface), 1, OxiOneControlSurface.BUTTON_UNDO, () -> {
+        this.addButton (ButtonID.UNDO, "Undo", new UndoCommand<> (this.model, surface), 1, this.isMk2 ? OxiOneControlSurface.MK2_BUTTON_UNDO : OxiOneControlSurface.MK1_BUTTON_UNDO, () -> {
 
             int state = 0;
             final IApplication application = this.model.getApplication ();
@@ -294,12 +324,12 @@ public class OxiOneControllerSetup extends AbstractControllerSetup<OxiOneControl
 
         });
 
-        this.addButton (ButtonID.NOTE, "MOD", new OxiOneToggleNoteEditCommand (this.model, surface), 1, OxiOneControlSurface.BUTTON_MOD, () -> modeManager.isActive (Modes.NOTE));
-        this.addButton (ButtonID.REPEAT, "LFO", NopCommand.INSTANCE, 1, OxiOneControlSurface.BUTTON_LFO);
-        this.addButton (ButtonID.ACCENT, "Step Chord", NopCommand.INSTANCE, 1, OxiOneControlSurface.BUTTON_STEP_CHORD);
-        this.addButton (ButtonID.SETUP, "Y Div", new ModeSelectCommand<> (this.model, surface, Modes.SETUP), 1, OxiOneControlSurface.BUTTON_DIVISION, () -> modeManager.isActive (Modes.SETUP));
-        this.addButton (ButtonID.PUNCH_IN, "Init", NopCommand.INSTANCE, 1, OxiOneControlSurface.BUTTON_INIT);
-        this.addButton (ButtonID.PUNCH_OUT, "End", NopCommand.INSTANCE, 1, OxiOneControlSurface.BUTTON_END);
+        this.addButton (ButtonID.NOTE, "MOD", new OxiOneToggleNoteEditCommand (this.model, surface), 1, this.isMk2 ? OxiOneControlSurface.MK2_BUTTON_MOD : OxiOneControlSurface.MK1_BUTTON_MOD, () -> modeManager.isActive (Modes.NOTE));
+        this.addButton (ButtonID.REPEAT, "LFO", NopCommand.INSTANCE, 1, this.isMk2 ? OxiOneControlSurface.MK2_BUTTON_LFO : OxiOneControlSurface.MK1_BUTTON_LFO);
+        this.addButton (ButtonID.ACCENT, "Step Chord", NopCommand.INSTANCE, 1, this.isMk2 ? OxiOneControlSurface.MK2_BUTTON_STEP_CHORD : OxiOneControlSurface.MK1_BUTTON_STEP_CHORD);
+        this.addButton (ButtonID.SETUP, "Y Div", new ModeSelectCommand<> (this.model, surface, Modes.SETUP), 1, this.isMk2 ? OxiOneControlSurface.MK2_BUTTON_PAGE : OxiOneControlSurface.MK1_BUTTON_DIVISION, () -> modeManager.isActive (Modes.SETUP));
+        this.addButton (ButtonID.PUNCH_IN, "Init", NopCommand.INSTANCE, 1, this.isMk2 ? OxiOneControlSurface.MK2_BUTTON_INIT : OxiOneControlSurface.MK1_BUTTON_INIT);
+        this.addButton (ButtonID.PUNCH_OUT, "End", NopCommand.INSTANCE, 1, this.isMk2 ? OxiOneControlSurface.MK2_BUTTON_END : OxiOneControlSurface.MK1_BUTTON_END);
         this.addButton (ButtonID.QUANTIZE, "Random", (event, velocity) -> {
 
             if (event == ButtonEvent.UP)
@@ -310,12 +340,19 @@ public class OxiOneControllerSetup extends AbstractControllerSetup<OxiOneControl
                     this.model.getCursorClip ().quantize (this.configuration.getQuantizeAmount () / 100.0);
             }
 
-        }, 1, OxiOneControlSurface.BUTTON_RANDOM);
+        }, 1, this.isMk2 ? OxiOneControlSurface.MK2_BUTTON_RANDOM : OxiOneControlSurface.MK1_BUTTON_RANDOM);
 
-        this.addButton (ButtonID.SCENE1, "1", new ViewButtonCommand<> (ButtonID.SCENE1, surface), 1, OxiOneControlSurface.BUTTON_SEQUENCER1, () -> this.getSceneButtonColor (0));
-        this.addButton (ButtonID.SCENE2, "2", new ViewButtonCommand<> (ButtonID.SCENE2, surface), 1, OxiOneControlSurface.BUTTON_SEQUENCER2, () -> this.getSceneButtonColor (1));
-        this.addButton (ButtonID.SCENE3, "3", new ViewButtonCommand<> (ButtonID.SCENE3, surface), 1, OxiOneControlSurface.BUTTON_SEQUENCER3, () -> this.getSceneButtonColor (2));
-        this.addButton (ButtonID.SCENE4, "4", new ViewButtonCommand<> (ButtonID.SCENE4, surface), 1, OxiOneControlSurface.BUTTON_SEQUENCER4, () -> this.getSceneButtonColor (3));
+        this.addButton (ButtonID.SCENE1, "1", new ViewButtonCommand<> (ButtonID.SCENE1, surface), 1, this.isMk2 ? OxiOneControlSurface.MK2_BUTTON_SEQUENCER1 : OxiOneControlSurface.MK1_BUTTON_SEQUENCER1, () -> this.getSceneButtonColor (0));
+        this.addButton (ButtonID.SCENE2, "2", new ViewButtonCommand<> (ButtonID.SCENE2, surface), 1, this.isMk2 ? OxiOneControlSurface.MK2_BUTTON_SEQUENCER2 : OxiOneControlSurface.MK1_BUTTON_SEQUENCER2, () -> this.getSceneButtonColor (1));
+        this.addButton (ButtonID.SCENE3, "3", new ViewButtonCommand<> (ButtonID.SCENE3, surface), 1, this.isMk2 ? OxiOneControlSurface.MK2_BUTTON_SEQUENCER3 : OxiOneControlSurface.MK1_BUTTON_SEQUENCER3, () -> this.getSceneButtonColor (2));
+        this.addButton (ButtonID.SCENE4, "4", new ViewButtonCommand<> (ButtonID.SCENE4, surface), 1, this.isMk2 ? OxiOneControlSurface.MK2_BUTTON_SEQUENCER4 : OxiOneControlSurface.MK1_BUTTON_SEQUENCER4, () -> this.getSceneButtonColor (3));
+        if (this.isMk2)
+        {
+            this.addButton (ButtonID.SCENE5, "5", new ViewButtonCommand<> (ButtonID.SCENE5, surface), 1, OxiOneControlSurface.MK2_BUTTON_SEQUENCER5, () -> this.getSceneButtonColor (4));
+            this.addButton (ButtonID.SCENE6, "6", new ViewButtonCommand<> (ButtonID.SCENE6, surface), 1, OxiOneControlSurface.MK2_BUTTON_SEQUENCER6, () -> this.getSceneButtonColor (5));
+            this.addButton (ButtonID.SCENE7, "7", new ViewButtonCommand<> (ButtonID.SCENE7, surface), 1, OxiOneControlSurface.MK2_BUTTON_SEQUENCER7, () -> this.getSceneButtonColor (6));
+            this.addButton (ButtonID.SCENE8, "8", new ViewButtonCommand<> (ButtonID.SCENE8, surface), 1, OxiOneControlSurface.MK2_BUTTON_SEQUENCER8, () -> this.getSceneButtonColor (7));
+        }
 
         this.addButton (ButtonID.MUTE, "MUTE", (event, velocity) -> {
 
@@ -326,7 +363,7 @@ public class OxiOneControllerSetup extends AbstractControllerSetup<OxiOneControl
             else
                 this.model.getProject ().clearMute ();
 
-        }, 1, OxiOneControlSurface.BUTTON_MUTE, () -> {
+        }, 1, this.isMk2 ? OxiOneControlSurface.MK2_BUTTON_MUTE : OxiOneControlSurface.MK1_BUTTON_MUTE, () -> {
 
             if (surface.isShiftPressed ())
                 return this.model.getProject ().hasSolo () ? 2 : 0;
@@ -338,18 +375,26 @@ public class OxiOneControllerSetup extends AbstractControllerSetup<OxiOneControl
         final OxiOneCursorCommand rightCommand = new OxiOneCursorCommand (Direction.RIGHT, this.model, surface);
         final OxiOneCursorCommand upCommand = new OxiOneCursorCommand (Direction.UP, this.model, surface);
         final OxiOneCursorCommand downCommand = new OxiOneCursorCommand (Direction.DOWN, this.model, surface);
-        this.addButton (ButtonID.ARROW_UP, "Up", upCommand, 1, OxiOneControlSurface.BUTTON_32_UP, () -> this.getCursorLEDState (upCommand));
-        this.addButton (ButtonID.ARROW_DOWN, "Down", downCommand, 1, OxiOneControlSurface.BUTTON_48_DOWN, () -> this.getCursorLEDState (downCommand));
-        this.addButton (ButtonID.ARROW_LEFT, "Left", leftCommand, 1, OxiOneControlSurface.BUTTON_16_LEFT, () -> this.getCursorLEDState (leftCommand));
-        this.addButton (ButtonID.ARROW_RIGHT, "Right", rightCommand, 1, OxiOneControlSurface.BUTTON_64_RIGHT, () -> this.getCursorLEDState (rightCommand));
+        this.addButton (ButtonID.ARROW_UP, "Up", upCommand, 1, this.isMk2 ? OxiOneControlSurface.MK2_BUTTON_32_UP : OxiOneControlSurface.MK1_BUTTON_32_UP, () -> this.getCursorLEDState (upCommand));
+        this.addButton (ButtonID.ARROW_DOWN, "Down", downCommand, 1, this.isMk2 ? OxiOneControlSurface.MK2_BUTTON_48_DOWN : OxiOneControlSurface.MK1_BUTTON_48_DOWN, () -> this.getCursorLEDState (downCommand));
+        this.addButton (ButtonID.ARROW_LEFT, "Left", leftCommand, 1, this.isMk2 ? OxiOneControlSurface.MK2_BUTTON_16_LEFT : OxiOneControlSurface.MK1_BUTTON_16_LEFT, () -> this.getCursorLEDState (leftCommand));
+        this.addButton (ButtonID.ARROW_RIGHT, "Right", rightCommand, 1, this.isMk2 ? OxiOneControlSurface.MK2_BUTTON_64_RIGHT : OxiOneControlSurface.MK1_BUTTON_64_RIGHT, () -> this.getCursorLEDState (rightCommand));
 
-        this.addButton (ButtonID.KNOB1_TOUCH, "KNOB1_PRESS", (event, velocity) -> this.emulateTouch (event, 0), 1, OxiOneControlSurface.BUTTON_ENCODER1);
-        this.addButton (ButtonID.KNOB2_TOUCH, "KNOB2_PRESS", (event, velocity) -> this.emulateTouch (event, 1), 1, OxiOneControlSurface.BUTTON_ENCODER2);
-        this.addButton (ButtonID.KNOB3_TOUCH, "KNOB3_PRESS", (event, velocity) -> this.emulateTouch (event, 2), 1, OxiOneControlSurface.BUTTON_ENCODER3);
-        this.addButton (ButtonID.KNOB4_TOUCH, "KNOB4_PRESS", (event, velocity) -> this.emulateTouch (event, 3), 1, OxiOneControlSurface.BUTTON_ENCODER4);
+        this.addButton (ButtonID.KNOB1_TOUCH, "KNOB1_PRESS", (event, velocity) -> this.emulateTouch (event, 0), 1, OxiOneControlSurface.MK1_BUTTON_ENCODER1);
+        this.addButton (ButtonID.KNOB2_TOUCH, "KNOB2_PRESS", (event, velocity) -> this.emulateTouch (event, 1), 1, OxiOneControlSurface.MK1_BUTTON_ENCODER2);
+        this.addButton (ButtonID.KNOB3_TOUCH, "KNOB3_PRESS", (event, velocity) -> this.emulateTouch (event, 2), 1, OxiOneControlSurface.MK1_BUTTON_ENCODER3);
+        this.addButton (ButtonID.KNOB4_TOUCH, "KNOB4_PRESS", (event, velocity) -> this.emulateTouch (event, 3), 1, OxiOneControlSurface.MK1_BUTTON_ENCODER4);
 
-        this.backCommand = new OxiOneBackCommand (this.model, surface);
-        this.addButton (ButtonID.CONTROL, "BACK", this.backCommand, 1, OxiOneControlSurface.BUTTON_BACK);
+        this.backCommand = new OxiOneBackCommand (this.model, surface, this.isMk2);
+        this.addButton (ButtonID.CONTROL, "BACK", this.backCommand, 1, OxiOneControlSurface.MK1_BUTTON_BACK);
+
+        if (this.isMk2)
+        {
+            this.addButton (ButtonID.TRACK, "Track", new OxiOneTrackCommand (this.model, surface), 1, OxiOneControlSurface.MK2_BUTTON_TRACK, () -> modeManager.isActive (Modes.TRACK, Modes.DEVICE_LAYER));
+            this.addButton (ButtonID.DEVICE, "PERF", new OxiOnePerfCommand (this.model, surface), 1, OxiOneControlSurface.MK2_BUTTON_PERF, () -> modeManager.isActive (Modes.DEVICE_PARAMS));
+            this.addButton (ButtonID.GROOVE, "FLOW", new OxiOneFillModeGrooveCommand (this.model, surface), 1, OxiOneControlSurface.MK2_BUTTON_FLOW, () -> t.isFillModeActive ());
+            this.addButton (ButtonID.GENERATOR, "GEN", new ModeSelectCommand<> (this.model, surface, Modes.GENERATOR, true), 1, OxiOneControlSurface.MK2_BUTTON_GEN, () -> modeManager.isActive (Modes.GENERATOR));
+        }
     }
 
 
@@ -624,6 +669,8 @@ public class OxiOneControllerSetup extends AbstractControllerSetup<OxiOneControl
 
         this.createScaleObservers (this.configuration);
         this.createNoteRepeatObservers (this.configuration, surface);
+
+        this.configuration.addSettingObserver (OxiOneConfiguration.PAD_BRIGHTNESS, surface::forceFlush);
     }
 
 
@@ -633,7 +680,12 @@ public class OxiOneControllerSetup extends AbstractControllerSetup<OxiOneControl
     {
         final OxiOneControlSurface surface = this.getSurface ();
         surface.getModeManager ().setActive (Modes.TRACK);
-        surface.getViewManager ().setActive (this.configuration.getStartupView ());
+        Views startupView = this.configuration.getStartupView ();
+        final ViewManager viewManager = surface.getViewManager ();
+        // Check for backwards compatibility
+        if (viewManager.get (startupView) == null)
+            startupView = Views.MIX;
+        viewManager.setActive (startupView);
 
         surface.scheduleTask (surface::enterRemoteMode, 3000);
     }

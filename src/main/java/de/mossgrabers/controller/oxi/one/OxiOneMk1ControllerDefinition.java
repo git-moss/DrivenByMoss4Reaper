@@ -4,20 +4,20 @@
 
 package de.mossgrabers.controller.oxi.one;
 
+import java.util.List;
+import java.util.UUID;
+
 import de.mossgrabers.framework.controller.DefaultControllerDefinition;
 import de.mossgrabers.framework.utils.OperatingSystem;
 import de.mossgrabers.framework.utils.Pair;
 
-import java.util.List;
-import java.util.UUID;
-
 
 /**
- * Definition class for the OXI One controller extension.
+ * Definition class for the OXI One Mk1 controller extension.
  *
  * @author Jürgen Moßgraber
  */
-public class OxiOneControllerDefinition extends DefaultControllerDefinition
+public class OxiOneMk1ControllerDefinition extends DefaultControllerDefinition
 {
     private static final UUID EXTENSION_ID = UUID.fromString ("85593F1C-52FD-423F-BCAC-80D90EEB9ACA");
 
@@ -25,9 +25,9 @@ public class OxiOneControllerDefinition extends DefaultControllerDefinition
     /**
      * Constructor.
      */
-    public OxiOneControllerDefinition ()
+    public OxiOneMk1ControllerDefinition ()
     {
-        super (EXTENSION_ID, "One", "OXI", 1, 1);
+        super (EXTENSION_ID, "One Mk1", "OXI", 1, 1);
     }
 
 

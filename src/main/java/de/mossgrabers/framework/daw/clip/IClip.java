@@ -224,7 +224,7 @@ public interface IClip extends IObserverManagement
 
 
     /**
-     * Get the number of steps.
+     * Get the number of monitored steps (= 1 page).
      *
      * @return The number of steps
      */

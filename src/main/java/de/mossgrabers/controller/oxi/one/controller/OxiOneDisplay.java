@@ -39,8 +39,9 @@ public class OxiOneDisplay extends AbstractGraphicDisplay
      * @param host The host
      * @param output The MIDI output which addresses the display
      * @param maxParameterValue The maximum parameter value (upper bound)
+     * @param isMk2 True if it is Mk2 otherwise Mk1
      */
-    public OxiOneDisplay (final IHost host, final IMidiOutput output, final int maxParameterValue)
+    public OxiOneDisplay (final IHost host, final IMidiOutput output, final int maxParameterValue, final boolean isMk2)
     {
         super (host, new ChromaticGraphicsConfiguration (), new DefaultGraphicsDimensions (NUM_COLS, NUM_ROWS, maxParameterValue), "OXI One Display");
 
@@ -50,7 +51,7 @@ public class OxiOneDisplay extends AbstractGraphicDisplay
         this.displayData[1] = (byte) 0x00;
         this.displayData[2] = (byte) 0x21;
         this.displayData[3] = (byte) 0x5B;
-        this.displayData[4] = (byte) 0x00;
+        this.displayData[4] = isMk2 ? (byte) 0x01 : (byte) 0x00;
         this.displayData[5] = (byte) 0x01;
 
         this.displayData[6] = 0x03; // Set display command

@@ -270,6 +270,8 @@ public abstract class AbstractView<S extends IControlSurface<C>, C extends Confi
 
         final int index = buttonID.ordinal () - ButtonID.SCENE1.ordinal ();
         final IScene scene = this.model.getCurrentTrackBank ().getSceneBank ().getItem (index);
+        if (!scene.doesExist ())
+            return;
 
         final boolean isPressed = event == ButtonEvent.DOWN;
         if (isPressed)

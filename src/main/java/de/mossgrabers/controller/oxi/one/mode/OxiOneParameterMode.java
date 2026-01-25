@@ -47,8 +47,8 @@ public class OxiOneParameterMode extends ParameterMode<OxiOneControlSurface, Oxi
         this.setControls (ContinuousID.createSequentialList (ContinuousID.KNOB1, 4));
 
         this.paramProviders[0] = new FourKnobProvider<> (surface, new BankParameterProvider (model.getCursorDevice ().getParameterBank ()), ButtonID.SHIFT);
-        this.paramProviders[1] = new FourKnobProvider<> (surface, new BankParameterProvider (model.getProject ().getParameterBank ()), ButtonID.SHIFT);
-        this.paramProviders[2] = new FourKnobProvider<> (surface, new BankParameterProvider (model.getCursorTrack ().getParameterBank ()), ButtonID.SHIFT);
+        this.paramProviders[1] = new FourKnobProvider<> (surface, new BankParameterProvider (model.getCursorTrack ().getParameterBank ()), ButtonID.SHIFT);
+        this.paramProviders[2] = new FourKnobProvider<> (surface, new BankParameterProvider (model.getProject ().getParameterBank ()), ButtonID.SHIFT);
         this.setMode ();
     }
 
@@ -117,15 +117,15 @@ public class OxiOneParameterMode extends ParameterMode<OxiOneControlSurface, Oxi
 
         final String name;
         if (this.selectedProviderIndex == 0)
-            name = this.model.hasSelectedDevice () ? this.model.getCursorDevice ().getName (8) : "No device";
+            name = this.model.hasSelectedDevice () ? this.model.getCursorDevice ().getName (8) : "";
         else if (this.selectedProviderIndex == 1)
-            name = "Project";
-        else
             name = "Track";
+        else
+            name = "Project";
 
         final IParameterBank paramBank = this.getParamBank ();
         final Optional<String> pageName = paramBank.getPageBank ().getSelectedItem ();
-        final String desc = name + ": " + (pageName.isPresent () ? pageName.get () : "None");
+        final String desc = name.isBlank () ? "No device" : name + ": " + (pageName.isPresent () ? pageName.get () : "None");
 
         final IParameter p = this.bank.getItem (offset + this.selectedKnobIndex);
         String paramLine = p.getName (5);
@@ -161,7 +161,7 @@ public class OxiOneParameterMode extends ParameterMode<OxiOneControlSurface, Oxi
         if (this.selectedProviderIndex == 0)
             return this.model.getCursorDevice ().getParameterBank ();
         if (this.selectedProviderIndex == 1)
-            return this.model.getProject ().getParameterBank ();
-        return this.model.getCursorTrack ().getParameterBank ();
+            return this.model.getCursorTrack ().getParameterBank ();
+        return this.model.getProject ().getParameterBank ();
     }
 }

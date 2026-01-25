@@ -122,12 +122,18 @@ public class MidiAccessImpl implements IMidiAccess
         final Map<String, Integer> keyedNames = new TreeMap<> ();
 
         final Map<Integer, String> midiInputs = backend.getMidiInputs ();
-        for (final Map.Entry<Integer, String> info: midiInputs.entrySet ())
-            addDevice (keyedNames, info, true);
+        if (midiInputs != null)
+        {
+            for (final Map.Entry<Integer, String> info: midiInputs.entrySet ())
+                addDevice (keyedNames, info, true);
+        }
 
         final Map<Integer, String> midiOutputs = backend.getMidiOutputs ();
-        for (final Map.Entry<Integer, String> info: midiOutputs.entrySet ())
-            addDevice (keyedNames, info, false);
+        if (midiOutputs != null)
+        {
+            for (final Map.Entry<Integer, String> info: midiOutputs.entrySet ())
+                addDevice (keyedNames, info, false);
+        }
     }
 
 

@@ -264,6 +264,8 @@ public enum ButtonID
     PIN_DEVICE,
     /** Toggle the groove parameters. */
     GROOVE,
+    /** The generator button. */
+    GENERATOR,
     /** The Flip channels button. */
     FLIP,
     /** A keyboard button. */

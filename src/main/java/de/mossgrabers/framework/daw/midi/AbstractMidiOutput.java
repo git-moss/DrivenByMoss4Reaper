@@ -158,4 +158,28 @@ public abstract class AbstractMidiOutput implements IMidiOutput
      * @param data2 the data2 part of the MIDI message
      */
     protected abstract void sendMidiShort (final int status, final int data1, final int data2);
+
+
+    /**
+     * Concatenates all given arrays.
+     * 
+     * @param data The arrays to concatenate
+     * @return The array
+     */
+    protected static byte [] concatArrays (final byte []... data)
+    {
+        if (data.length == 1)
+            return data[0];
+        int totalLength = 0;
+        for (final byte [] arr: data)
+            totalLength += arr.length;
+        final byte [] result = new byte [totalLength];
+        int offset = 0;
+        for (final byte [] arr: data)
+        {
+            System.arraycopy (arr, 0, result, offset, arr.length);
+            offset += arr.length;
+        }
+        return result;
+    }
 }

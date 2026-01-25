@@ -5,8 +5,8 @@
 package de.mossgrabers.reaper.controller.oxi;
 
 import de.mossgrabers.controller.oxi.one.OxiOneConfiguration;
-import de.mossgrabers.controller.oxi.one.OxiOneControllerDefinition;
 import de.mossgrabers.controller.oxi.one.OxiOneControllerSetup;
+import de.mossgrabers.controller.oxi.one.OxiOneMk2ControllerDefinition;
 import de.mossgrabers.controller.oxi.one.controller.OxiOneControlSurface;
 import de.mossgrabers.framework.controller.IControllerSetup;
 import de.mossgrabers.reaper.communication.BackendExchange;
@@ -18,14 +18,14 @@ import de.mossgrabers.reaper.ui.utils.LogModel;
 
 
 /**
- * OXI One controller instance.
+ * OXI One Mk2 controller instance.
  *
  * @author Jürgen Moßgraber
  */
-public class OxiOneControllerInstance extends AbstractControllerInstance<OxiOneControlSurface, OxiOneConfiguration>
+public class OxiOneMk2ControllerInstance extends AbstractControllerInstance<OxiOneControlSurface, OxiOneConfiguration>
 {
     /** The controller definition instance. */
-    public static final OxiOneControllerDefinition CONTROLLER_DEFINITION = new OxiOneControllerDefinition ();
+    public static final OxiOneMk2ControllerDefinition CONTROLLER_DEFINITION = new OxiOneMk2ControllerDefinition ();
 
 
     /**
@@ -36,7 +36,7 @@ public class OxiOneControllerInstance extends AbstractControllerInstance<OxiOneC
      * @param sender The sender
      * @param iniFiles The INI configuration files
      */
-    public OxiOneControllerInstance (final LogModel logModel, final WindowManager windowManager, final BackendExchange sender, final IniFiles iniFiles)
+    public OxiOneMk2ControllerInstance (final LogModel logModel, final WindowManager windowManager, final BackendExchange sender, final IniFiles iniFiles)
     {
         super (CONTROLLER_DEFINITION, logModel, windowManager, sender, iniFiles);
     }
@@ -46,6 +46,6 @@ public class OxiOneControllerInstance extends AbstractControllerInstance<OxiOneC
     @Override
     protected IControllerSetup<OxiOneControlSurface, OxiOneConfiguration> createControllerSetup (final ReaperSetupFactory setupFactory)
     {
-        return new OxiOneControllerSetup (this.host, setupFactory, this.globalSettingsUI, this.documentSettingsUI);
+        return new OxiOneControllerSetup (this.host, setupFactory, this.globalSettingsUI, this.documentSettingsUI, true);
     }
 }

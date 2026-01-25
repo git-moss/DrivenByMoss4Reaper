@@ -9,6 +9,10 @@ import de.mossgrabers.controller.oxi.one.controller.OxiOneControlSurface;
 import de.mossgrabers.framework.controller.ButtonID;
 import de.mossgrabers.framework.daw.IModel;
 import de.mossgrabers.framework.daw.clip.INoteClip;
+import de.mossgrabers.framework.daw.clip.IStepInfo;
+import de.mossgrabers.framework.daw.clip.NoteOccurrenceType;
+import de.mossgrabers.framework.daw.clip.NotePosition;
+import de.mossgrabers.framework.daw.clip.StepState;
 import de.mossgrabers.framework.daw.constants.Resolution;
 import de.mossgrabers.framework.utils.ButtonEvent;
 import de.mossgrabers.framework.view.sequencer.AbstractPolySequencerView;
@@ -74,5 +78,64 @@ public class OxiOnePolySequencerView extends AbstractPolySequencerView<OxiOneCon
     {
         if (ButtonID.isSceneButton (buttonID))
             this.onSceneButton (buttonID, event);
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    protected boolean handleSequencerAreaButtonCombinations (final INoteClip clip, final int channel, final int step)
+    {
+        final NotePosition notePosition = new NotePosition (channel, step, 0);
+
+        // Handle note duplicate function
+        if (this.isButtonCombination (ButtonID.GROOVE))
+        {
+            NoteOccurrenceType occType = null;
+            for (int note = 0; note < 128; note++)
+            {
+                notePosition.setNote (note);
+                final IStepInfo stepInfo = clip.getStep (notePosition);
+                if (stepInfo.getState () == StepState.START)
+                {
+                    if (occType == null)
+                    {
+                        switch (stepInfo.getOccurrence ())
+                        {
+                            case FILL:
+                                occType = NoteOccurrenceType.NOT_FILL;
+                                break;
+                            case NOT_FILL:
+                                occType = NoteOccurrenceType.ALWAYS;
+                                break;
+                            default:
+                                occType = NoteOccurrenceType.FILL;
+                                break;
+                        }
+                    }
+                    clip.setStepOccurrence (notePosition, occType);
+                }
+            }
+            if (occType != null)
+            {
+                final String msg;
+                switch (occType)
+                {
+                    case FILL:
+                        msg = "Fill";
+                        break;
+                    case NOT_FILL:
+                        msg = "Not Always";
+                        break;
+                    default:
+                        msg = "Always";
+                        break;
+                }
+                this.surface.getDisplay ().notify (msg);
+            }
+
+            return true;
+        }
+
+        return super.handleSequencerAreaButtonCombinations (clip, channel, step);
     }
 }

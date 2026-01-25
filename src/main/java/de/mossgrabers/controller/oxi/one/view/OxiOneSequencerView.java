@@ -9,7 +9,10 @@ import de.mossgrabers.controller.oxi.one.controller.OxiOneControlSurface;
 import de.mossgrabers.framework.controller.ButtonID;
 import de.mossgrabers.framework.daw.IModel;
 import de.mossgrabers.framework.daw.clip.INoteClip;
+import de.mossgrabers.framework.daw.clip.IStepInfo;
+import de.mossgrabers.framework.daw.clip.NoteOccurrenceType;
 import de.mossgrabers.framework.daw.clip.NotePosition;
+import de.mossgrabers.framework.daw.clip.StepState;
 import de.mossgrabers.framework.daw.constants.Resolution;
 import de.mossgrabers.framework.utils.ButtonEvent;
 import de.mossgrabers.framework.view.Views;
@@ -104,6 +107,32 @@ public class OxiOneSequencerView extends AbstractNoteSequencerView<OxiOneControl
         {
             if (velocity > 0)
                 this.handleSequencerAreaRepeatOperator (clip, notePosition, velocity, this.surface.isPressed (ButtonID.REPEAT));
+            return true;
+        }
+
+        if (this.isButtonCombination (ButtonID.GROOVE))
+        {
+            if (velocity > 0)
+            {
+                final IStepInfo step = clip.getStep (notePosition);
+                if (step.getState () != StepState.START)
+                    return true;
+                switch (step.getOccurrence ())
+                {
+                    case FILL:
+                        clip.setStepOccurrence (notePosition, NoteOccurrenceType.NOT_FILL);
+                        this.surface.getDisplay ().notify ("Not Fill");
+                        break;
+                    case NOT_FILL:
+                        clip.setStepOccurrence (notePosition, NoteOccurrenceType.ALWAYS);
+                        this.surface.getDisplay ().notify ("Always");
+                        break;
+                    default:
+                        clip.setStepOccurrence (notePosition, NoteOccurrenceType.FILL);
+                        this.surface.getDisplay ().notify ("Fill");
+                        break;
+                }
+            }
             return true;
         }
 

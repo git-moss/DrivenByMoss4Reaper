@@ -175,7 +175,9 @@ public enum Modes
     /** A drum sequencer mode. */
     DRUM_SEQUENCER,
     /** A note sequencer mode. */
-    NOTE_SEQUENCER;
+    NOTE_SEQUENCER,
+    /** A note generator mode. */
+    GENERATOR;
 
 
     /** The name of the Track mode. */

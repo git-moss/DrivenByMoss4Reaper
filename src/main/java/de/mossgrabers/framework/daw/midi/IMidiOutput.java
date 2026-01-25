@@ -132,7 +132,7 @@ public interface IMidiOutput
      *
      * @param data The data to send
      */
-    void sendSysex (byte [] data);
+    void sendSysex (byte []... data);
 
 
     /**
