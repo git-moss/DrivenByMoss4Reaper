@@ -173,28 +173,30 @@ public class OxiOneDrum8View extends AbstractDrum8View<OxiOneControlSurface, Oxi
 
         if (this.modeManager.isActive (Modes.GENERATOR))
         {
-            final OxiOneGeneratorMode generatorMode = (OxiOneGeneratorMode) this.modeManager.get (Modes.GENERATOR);
-            final int pulse = generatorMode.getPulse ();
-            final int rotation = generatorMode.getRotation ();
-            final double density = generatorMode.getDensity ();
-            final INoteClip clip = this.getClip ();
-            final int length = Math.min (generatorMode.getLength (), clip.getNumSteps ());
-            final boolean [] euclideanPattern = NoteGenerator.generateEuclideanPattern (pulse, length, rotation, density);
-
-            final int index = note - this.surface.getPadGrid ().getStartNote ();
-            final int y = index / this.numColumns;
-            final int sound = y % this.lanes + this.scales.getDrumOffset ();
-            final int midiEditChannel = this.configuration.getMidiEditChannel ();
-            final NotePosition notePosition = new NotePosition (midiEditChannel, -1, sound);
-            for (int step = 0; step < euclideanPattern.length; step++)
+            if (velocity > 0)
             {
-                notePosition.setStep (step);
-                if (euclideanPattern[step])
-                    clip.setStep (notePosition, 127, clip.getStepLength ());
-                else
-                    clip.clearStep (notePosition);
-            }
+                final OxiOneGeneratorMode generatorMode = (OxiOneGeneratorMode) this.modeManager.get (Modes.GENERATOR);
+                final int pulse = generatorMode.getPulse ();
+                final int rotation = generatorMode.getRotation ();
+                final double density = generatorMode.getDensity ();
+                final INoteClip clip = this.getClip ();
+                final int length = Math.min (generatorMode.getLength (), clip.getNumSteps ());
+                final boolean [] euclideanPattern = NoteGenerator.generateEuclideanPattern (pulse, length, rotation, density);
 
+                final int index = note - this.surface.getPadGrid ().getStartNote ();
+                final int y = index / this.numColumns;
+                final int sound = y % this.lanes + this.scales.getDrumOffset ();
+                final int midiEditChannel = this.configuration.getMidiEditChannel ();
+                final NotePosition notePosition = new NotePosition (midiEditChannel, -1, sound);
+                for (int step = 0; step < euclideanPattern.length; step++)
+                {
+                    notePosition.setStep (step);
+                    if (euclideanPattern[step])
+                        clip.setStep (notePosition, 127, clip.getStepLength ());
+                    else
+                        clip.clearStep (notePosition);
+                }
+            }
             return;
         }
 
