@@ -243,7 +243,10 @@ public class MainFrame extends JFrame
     {
         final List<IControllerInstance> detectedControllers = this.getCallback ().detectControllers ();
         if (detectedControllers.isEmpty ())
+        {
+            Functions.message ("No device could be detected. Make sure that the necessary MIDI ports are activated in Reaper.");
             return;
+        }
 
         for (final IControllerInstance controllerInstance: detectedControllers)
             this.listModel.addElement (new ControllerCheckboxListItem (controllerInstance));

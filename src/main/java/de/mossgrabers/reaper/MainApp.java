@@ -148,8 +148,6 @@ public class MainApp implements BackendExchange, AppCallback, WindowManager
 
         SVGImage.clearCache ();
 
-        this.logModel.info ("Storing configuration...");
-        this.instanceManager.save (this.mainConfiguration);
         this.saveConfig ();
 
         MidiConnection.cleanupUnusedDevices ();
@@ -185,7 +183,13 @@ public class MainApp implements BackendExchange, AppCallback, WindowManager
     protected void saveConfig ()
     {
         if (this.iniPath == null)
+        {
+            this.logModel.error ("INI path is not configured?!", null);
             return;
+        }
+
+        this.logModel.info ("Storing configuration...");
+        this.instanceManager.save (this.mainConfiguration);
 
         try
         {
