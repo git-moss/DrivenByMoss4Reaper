@@ -780,8 +780,7 @@ public class MCUControllerSetup extends AbstractControllerSetup<MCUControlSurfac
         for (int index = 0; index < this.numMCUDevices; index++)
         {
             final MCUControlSurface surface = this.getSurface (index);
-            surface.switchVuMode (MCUControlSurface.VUMODE_LED);
-
+            
             surface.getViewManager ().setActive (Views.CONTROL);
             surface.getModeManager ().setActive (this.configuration.getStartupMode ());
         }
@@ -917,7 +916,7 @@ public class MCUControllerSetup extends AbstractControllerSetup<MCUControlSurfac
     private void sendVUValue (final IMidiOutput output, final int track, final int scaledVu, final boolean vuClipState, final boolean isMasterOrRightChannel)
     {
         output.sendChannelAftertouch (isMasterOrRightChannel ? 1 : 0, 0x10 * track + scaledVu, 0);
-
+    
         // iCON devices do not support the clip state
         if (this.configuration.getVuMeterStyle () != VUMeterStyle.ICON)
             output.sendChannelAftertouch (isMasterOrRightChannel ? 1 : 0, 0x10 * track + (vuClipState ? 0x0E : 0x0F), 0);
