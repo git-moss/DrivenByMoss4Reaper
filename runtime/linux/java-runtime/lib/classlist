@@ -1332,6 +1332,8 @@ sun/nio/ch/Util$BufferCache
 sun/nio/cs/HistoricallyNamedCharset
 sun/nio/cs/ISO_8859_1
 sun/nio/cs/StandardCharsets
+sun/nio/cs/StandardCharsets$Aliases
+sun/nio/cs/StandardCharsets$Cache
 sun/nio/cs/StreamEncoder
 sun/nio/cs/Surrogate
 sun/nio/cs/Surrogate$Parser
@@ -1381,6 +1383,7 @@ sun/security/util/Debug
 sun/security/util/SecurityProperties
 sun/security/util/SignatureFileVerifier
 sun/text/resources/cldr/FormatData
+sun/util/PreHashedMap
 sun/util/calendar/AbstractCalendar
 sun/util/calendar/BaseCalendar
 sun/util/calendar/BaseCalendar$Date
