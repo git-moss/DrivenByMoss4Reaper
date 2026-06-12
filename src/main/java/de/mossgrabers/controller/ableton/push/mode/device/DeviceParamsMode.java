@@ -4,6 +4,8 @@
 
 package de.mossgrabers.controller.ableton.push.mode.device;
 
+import java.util.Optional;
+
 import de.mossgrabers.controller.ableton.push.controller.Push1Display;
 import de.mossgrabers.controller.ableton.push.controller.PushColorManager;
 import de.mossgrabers.controller.ableton.push.controller.PushControlSurface;
@@ -28,8 +30,6 @@ import de.mossgrabers.framework.parameter.IParameter;
 import de.mossgrabers.framework.parameterprovider.device.BankParameterProvider;
 import de.mossgrabers.framework.utils.ButtonEvent;
 import de.mossgrabers.framework.utils.StringUtils;
-
-import java.util.Optional;
 
 
 /**
@@ -223,7 +223,7 @@ public class DeviceParamsMode extends BaseMode<IParameter>
         if (cd.isNested ())
         {
             cd.selectParent ();
-            this.model.getHost ().scheduleTask ( () -> {
+            this.model.getHost ().scheduleTask (() -> {
                 if (cd.hasLayers ())
                     modeManager.setActive (this.surface.getConfiguration ().getCurrentLayerMixMode ());
                 else
@@ -462,7 +462,7 @@ public class DeviceParamsMode extends BaseMode<IParameter>
 
             final IParameter param = parameterBank.getItem (i);
             final boolean exists = param.doesExist ();
-            final String parameterName = exists ? param.getName (9) : "";
+            final String parameterName = exists ? param.getName (12) : "";
             final int parameterValue = valueChanger.toDisplayValue (exists ? param.getValue () : 0);
             final String parameterValueStr = exists ? param.getDisplayedValue (8) : "";
             final boolean parameterIsActive = this.isKnobTouched (i);

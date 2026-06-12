@@ -60,9 +60,9 @@ public class SessionView extends AbstractSessionView<APCminiControlSurface, APCm
         else
         {
             final LightInfo isRecording = new LightInfo (APCminiMk1ColorManager.APC_COLOR_RED, -1, false);
-            final LightInfo isRecordingQueued = new LightInfo (APCminiMk1ColorManager.APC_COLOR_RED, APCminiMk1ColorManager.APC_COLOR_RED_BLINK, false);
+            final LightInfo isRecordingQueued = new LightInfo (APCminiMk1ColorManager.APC_COLOR_RED_BLINK, APCminiMk1ColorManager.APC_COLOR_RED_BLINK, false);
             final LightInfo isPlaying = new LightInfo (APCminiMk1ColorManager.APC_COLOR_GREEN, -1, false);
-            final LightInfo isPlayingQueued = new LightInfo (APCminiMk1ColorManager.APC_COLOR_GREEN, APCminiMk1ColorManager.APC_COLOR_GREEN_BLINK, false);
+            final LightInfo isPlayingQueued = new LightInfo (APCminiMk1ColorManager.APC_COLOR_GREEN_BLINK, APCminiMk1ColorManager.APC_COLOR_GREEN_BLINK, false);
             final LightInfo isStopQueued = new LightInfo (APCminiMk1ColorManager.APC_COLOR_GREEN, APCminiMk1ColorManager.APC_COLOR_GREEN_BLINK, false);
             final LightInfo hasContent = new LightInfo (APCminiMk1ColorManager.APC_COLOR_YELLOW, APCminiMk1ColorManager.APC_COLOR_YELLOW_BLINK, false);
             final LightInfo noContent = new LightInfo (APCminiMk1ColorManager.APC_COLOR_BLACK, -1, false);

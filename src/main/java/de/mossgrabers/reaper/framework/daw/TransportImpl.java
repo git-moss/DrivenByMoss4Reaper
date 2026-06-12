@@ -1048,6 +1048,15 @@ public class TransportImpl extends BaseImpl implements ITransport
 
     /** {@inheritDoc} */
     @Override
+    public void setTimeSignature (final int numerator, final int denominator)
+    {
+        this.sender.processIntArg (Processor.TIME, "signature", numerator + denominator * 100);
+
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
     public int getQuartersPerMeasure ()
     {
         return 4 * this.getNumerator () / this.getDenominator ();

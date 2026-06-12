@@ -166,7 +166,8 @@ public class ParameterComponent extends MenuComponent
         // Draw the name and value texts
         final ColorEx textColor = configuration.getColorText ();
         final double fontSize = elementHeight * 2 / 3;
-        gc.drawTextInBounds (this.paramName, left + inset - 1, controlsTop - inset, elementWidth, elementHeight, Align.CENTER, textColor, fontSize);
+        final double labelFontSize = elementHeight / 2;
+        gc.drawTextInBounds (this.paramName, left + inset - 1, controlsTop - inset, elementWidth, elementHeight, Align.CENTER, textColor, labelFontSize);
         gc.drawTextInBounds (this.paramValueText, left + inset - 1, controlsTop - inset + elementHeight, elementWidth, elementHeight, Align.CENTER, textColor, fontSize);
 
         // Value slider

@@ -640,6 +640,15 @@ public interface ITransport extends IObserverManagement
 
 
     /**
+     * Set the time signature.
+     * 
+     * @param numerator The numerator e.g. 3
+     * @param denominator The denominator e.g. 4
+     */
+    void setTimeSignature (int numerator, int denominator);
+
+
+    /**
      * Get the quarters per measure calculated from the numerator and denominator.
      *
      * @return The quarters per measure.

@@ -14,11 +14,11 @@ import de.mossgrabers.controller.mackie.mcu.MCUConfiguration.MainDisplay;
 import de.mossgrabers.controller.mackie.mcu.MCUConfiguration.SecondDisplay;
 import de.mossgrabers.controller.mackie.mcu.MCUConfiguration.VUMeterStyle;
 import de.mossgrabers.controller.mackie.mcu.command.trigger.AssignableCommand;
-import de.mossgrabers.controller.mackie.mcu.command.trigger.MCUDevicesCommand;
 import de.mossgrabers.controller.mackie.mcu.command.trigger.FaderTouchCommand;
 import de.mossgrabers.controller.mackie.mcu.command.trigger.KeyCommand;
 import de.mossgrabers.controller.mackie.mcu.command.trigger.KeyCommand.Key;
 import de.mossgrabers.controller.mackie.mcu.command.trigger.MCUCursorCommand;
+import de.mossgrabers.controller.mackie.mcu.command.trigger.MCUDevicesCommand;
 import de.mossgrabers.controller.mackie.mcu.command.trigger.MCUFlipCommand;
 import de.mossgrabers.controller.mackie.mcu.command.trigger.MCUMoveTrackBankCommand;
 import de.mossgrabers.controller.mackie.mcu.command.trigger.MCUWindCommand;
@@ -173,7 +173,7 @@ public class MCUControllerSetup extends AbstractControllerSetup<MCUControlSurfac
     private final int []                                          faderValues      = new int [32];
     private int                                                   masterFaderValue = -1;
     private final int                                             numMCUDevices;
-    private final IValueChanger                                         encoderValueChanger;
+    private final IValueChanger                                   encoderValueChanger;
     private JogWheelCommand<MCUControlSurface, MCUConfiguration>  jogWheelCommand  = null;
     private MasterVolumeMode<MCUControlSurface, MCUConfiguration> masterVolumeMode;
 
@@ -780,7 +780,6 @@ public class MCUControllerSetup extends AbstractControllerSetup<MCUControlSurfac
         for (int index = 0; index < this.numMCUDevices; index++)
         {
             final MCUControlSurface surface = this.getSurface (index);
-            
             surface.getViewManager ().setActive (Views.CONTROL);
             surface.getModeManager ().setActive (this.configuration.getStartupMode ());
         }
@@ -916,7 +915,7 @@ public class MCUControllerSetup extends AbstractControllerSetup<MCUControlSurfac
     private void sendVUValue (final IMidiOutput output, final int track, final int scaledVu, final boolean vuClipState, final boolean isMasterOrRightChannel)
     {
         output.sendChannelAftertouch (isMasterOrRightChannel ? 1 : 0, 0x10 * track + scaledVu, 0);
-    
+
         // iCON devices do not support the clip state
         if (this.configuration.getVuMeterStyle () != VUMeterStyle.ICON)
             output.sendChannelAftertouch (isMasterOrRightChannel ? 1 : 0, 0x10 * track + (vuClipState ? 0x0E : 0x0F), 0);

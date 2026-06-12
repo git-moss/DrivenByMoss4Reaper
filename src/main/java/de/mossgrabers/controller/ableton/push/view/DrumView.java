@@ -70,10 +70,13 @@ public class DrumView extends AbstractDrumView<PushControlSurface, PushConfigura
     @Override
     public synchronized void handleSelectButton (final int playedPad)
     {
+        this.surface.setTriggerConsumed (ButtonID.SELECT);
+
         // Do we have drum pads?
         final IDrumDevice primary = this.model.getDrumDevice ();
         if (!primary.hasDrumPads ())
             return;
+
         final ICursorDevice cd = this.model.getCursorDevice ();
         final boolean isNested = cd.isNested ();
         if (isNested)

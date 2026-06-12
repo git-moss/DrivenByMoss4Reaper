@@ -205,7 +205,33 @@ public class TransportModule extends AbstractModule
                 break;
 
             case "time":
-                this.transport.setPosition (toNumber (value));
+                if (path.isEmpty ())
+                    this.transport.setPosition (toNumber (value));
+                else
+                {
+                    final String timeCommand = getSubCommand (path);
+                    if ("signature".equalsIgnoreCase (timeCommand))
+                    {
+                        if (value != null)
+                        {
+                            final String [] split = value.toString ().split ("/");
+                            if (split.length == 2)
+                            {
+                                try
+                                {
+                                    this.transport.setTimeSignature (Integer.parseInt (split[0]), Integer.parseInt (split[1]));
+                                    return;
+                                }
+                                catch (final NumberFormatException ex)
+                                {
+                                    // Thrown below
+                                }
+                            }
+                        }
+                        throw new IllegalParameterException ("Illegal parameter: " + (value == null ? "null" : value.toString ()));
+                    }
+                    throw new UnknownCommandException (timeCommand);
+                }
                 break;
 
             case "position":
