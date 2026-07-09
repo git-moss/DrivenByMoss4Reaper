@@ -46,6 +46,8 @@ import de.mossgrabers.framework.utils.FileEx;
  */
 public class GenericFlexiConfiguration extends AbstractConfiguration
 {
+    private static final String                      GENERIC_FLEXI_NAME                = "Generic Flexi";
+
     private static final String                      TAG_TYPE                          = "TYPE";
     private static final String                      TAG_NUMBER                        = "NUMBER";
     private static final String                      TAG_MIDI_CHANNEL                  = "MIDI_CHANNEL";
@@ -302,7 +304,7 @@ public class GenericFlexiConfiguration extends AbstractConfiguration
     private final CommandSlot []                     commandSlots                      = new CommandSlot [NUM_SLOTS];
     private final IActionSetting []                  assignableFunctionActionsSettings = new IActionSetting [8];
     private final String []                          assignableFunctionActions         = new String [8];
-    private String                                   keyboardInputName                 = "Generic Flexi";
+    private String                                   keyboardInputName                 = GENERIC_FLEXI_NAME;
     private int                                      keyboardChannel                   = 0;
     private boolean                                  keyboardRouteTimbre               = false;
     private boolean                                  keyboardRouteModulation           = true;
@@ -353,7 +355,7 @@ public class GenericFlexiConfiguration extends AbstractConfiguration
 
         this.slotSelectionSetting = globalSettings.getEnumSetting ("Selected:", category, slotEntries, slotEntries[0]);
 
-        ///////////////////////////////////////////////
+        // ----------------------------------------------------------------
         // The MIDI learn section
 
         category = "Use a knob/fader/button then click Set...";
@@ -387,7 +389,7 @@ public class GenericFlexiConfiguration extends AbstractConfiguration
             this.numberSetting.set (this.learnNumberValue);
         });
 
-        ///////////////////////////////////////////////
+        // ----------------------------------------------------------------
         // Selected Slot - MIDI trigger
 
         category = "Selected Slot - MIDI trigger";
@@ -400,7 +402,7 @@ public class GenericFlexiConfiguration extends AbstractConfiguration
         this.knobModeSetting = globalSettings.getEnumSetting ("Knob Mode:", category, knobModeLabels, knobModeLabels[0]);
         this.functionLayerSetting = globalSettings.getEnumSetting ("Functions Layer:", category, FUNCTION_LAYERS, FUNCTION_LAYERS.get (0));
 
-        ///////////////////////////////////////////////
+        // ----------------------------------------------------------------
         // Selected Slot - MIDI device update
 
         category = "Selected Slot - MIDI device update";
@@ -408,7 +410,7 @@ public class GenericFlexiConfiguration extends AbstractConfiguration
         this.sendValueSetting = globalSettings.getEnumSetting ("Send value to device:", category, AbstractConfiguration.ON_OFF_OPTIONS, AbstractConfiguration.ON_OFF_OPTIONS[1]);
         this.sendValueWhenReceivedSetting = globalSettings.getEnumSetting ("Send value to device when received (only buttons):", category, AbstractConfiguration.ON_OFF_OPTIONS, AbstractConfiguration.ON_OFF_OPTIONS[1]);
 
-        ///////////////////////////////////////////////
+        // ----------------------------------------------------------------
         // Selected Slot - Function
 
         category = "Selected Slot - Function";
@@ -422,7 +424,7 @@ public class GenericFlexiConfiguration extends AbstractConfiguration
             fs.addValueObserver (this::handleFunctionChange);
         }
 
-        ///////////////////////////////////////////////
+        // ----------------------------------------------------------------
         // Export/Import section
 
         category = "Load / Save";
@@ -495,10 +497,10 @@ public class GenericFlexiConfiguration extends AbstractConfiguration
         this.sendValueSetting.addValueObserver (value -> this.getSelectedSlot ().setSendValue (AbstractConfiguration.lookupIndex (AbstractConfiguration.ON_OFF_OPTIONS, value) > 0));
         this.sendValueWhenReceivedSetting.addValueObserver (value -> this.getSelectedSlot ().setSendValueWhenReceived (AbstractConfiguration.lookupIndex (AbstractConfiguration.ON_OFF_OPTIONS, value) > 0));
 
-        ///////////////////////////////////////////////
+        // ----------------------------------------------------------------
         // Keyboard / Pads
 
-        this.keyboardInputNameSetting = globalSettings.getStringSetting ("Input Name", CATEGORY_KEYBOARD, 100, "Generic Flexi");
+        this.keyboardInputNameSetting = globalSettings.getStringSetting ("Input Name", CATEGORY_KEYBOARD, 100, GENERIC_FLEXI_NAME);
         this.keyboardInputName = this.keyboardInputNameSetting.get ();
 
         this.activateMPESetting (globalSettings, CATEGORY_KEYBOARD, false);
@@ -530,7 +532,7 @@ public class GenericFlexiConfiguration extends AbstractConfiguration
             this.routePitchbendSetting.setEnabled (!isMPEEnabled);
         });
 
-        ///////////////////////////////////////////////
+        // ----------------------------------------------------------------
         // Options
 
         this.selectedModeSetting = globalSettings.getEnumSetting ("Selected Mode", CATEGORY_OPTIONS, MODES, MODES.get (0));
@@ -546,7 +548,7 @@ public class GenericFlexiConfiguration extends AbstractConfiguration
             this.assignableFunctionActionsSettings[i].addValueObserver (value -> this.assignableFunctionActions[pos] = this.assignableFunctionActionsSettings[pos].get ());
         }
 
-        ///////////////////////////////////////////////
+        // ----------------------------------------------------------------
         // Workflow
 
         this.activateKnobSpeedSetting (globalSettings);
@@ -556,7 +558,7 @@ public class GenericFlexiConfiguration extends AbstractConfiguration
 
         this.slotSelectionSetting.addValueObserver (this::selectSlot);
 
-        ///////////////////////////////////////////////
+        // ----------------------------------------------------------------
         // Transport
 
         this.activateBehaviourOnPauseSetting (globalSettings);
@@ -903,7 +905,7 @@ public class GenericFlexiConfiguration extends AbstractConfiguration
 
         try (final Writer writer = new FileWriter (exportFile))
         {
-            props.store (writer, "Generic Flexi");
+            props.store (writer, GENERIC_FLEXI_NAME);
         }
     }
 
@@ -929,7 +931,7 @@ public class GenericFlexiConfiguration extends AbstractConfiguration
             return;
         }
 
-        this.host.scheduleTask ( () -> this.applyProperties (props), 1000);
+        this.host.scheduleTask (() -> this.applyProperties (props), 1000);
     }
 
 
@@ -973,7 +975,7 @@ public class GenericFlexiConfiguration extends AbstractConfiguration
             for (int i = 0; i < this.assignableFunctionActions.length; i++)
                 this.assignableFunctionActionsSettings[i].set (props.getProperty (TAG_ASSIGNABLE_FUNCTION_ACTIONS + i, ""));
 
-            this.keyboardInputNameSetting.set (props.getProperty (TAG_KEYBOARD_INPUT_NAME, "Generic Flexi"));
+            this.keyboardInputNameSetting.set (props.getProperty (TAG_KEYBOARD_INPUT_NAME, GENERIC_FLEXI_NAME));
             this.keyboardMidiChannelSetting.set (props.getProperty (TAG_KEYBOARD_CHANNEL, "1"));
             this.routeTimbreSetting.set (props.getProperty (TAG_KEYBOARD_ROUTE_TIMBRE, "Off"));
             this.routeModulationSetting.set (props.getProperty (TAG_KEYBOARD_ROUTE_MODULATION, "Off"));
@@ -1174,7 +1176,7 @@ public class GenericFlexiConfiguration extends AbstractConfiguration
         this.commandIsUpdating.set (true);
         for (int i = 0; i < values.length; i++)
             this.functionSettings.get (i).set (category == values[i] ? value.getName () : FlexiCommand.OFF.getName ());
-        this.host.scheduleTask ( () -> this.commandIsUpdating.set (false), 600);
+        this.host.scheduleTask (() -> this.commandIsUpdating.set (false), 600);
     }
 
 

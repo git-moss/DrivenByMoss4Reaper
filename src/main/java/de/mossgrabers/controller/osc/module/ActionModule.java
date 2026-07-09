@@ -4,6 +4,8 @@
 
 package de.mossgrabers.controller.osc.module;
 
+import java.util.LinkedList;
+
 import de.mossgrabers.controller.osc.OSCConfiguration;
 import de.mossgrabers.controller.osc.exception.IllegalParameterException;
 import de.mossgrabers.controller.osc.exception.MissingCommandException;
@@ -11,8 +13,6 @@ import de.mossgrabers.controller.osc.exception.UnknownCommandException;
 import de.mossgrabers.framework.daw.IHost;
 import de.mossgrabers.framework.daw.IModel;
 import de.mossgrabers.framework.osc.IOpenSoundControlWriter;
-
-import java.util.LinkedList;
 
 
 /**
@@ -62,7 +62,7 @@ public class ActionModule extends AbstractModule
         final String subCommand = getSubCommand (path);
         try
         {
-            final int actionNo = Math.min (OSCConfiguration.NUM_ASSIGNABLE_ACTIONS - 1, Math.max (0, Integer.parseInt (subCommand) - 1));
+            final int actionNo = Math.clamp (Integer.parseInt (subCommand) - 1L, 0, OSCConfiguration.NUM_ASSIGNABLE_ACTIONS - 1);
             final String assignableActionID = this.configuration.getAssignableAction (actionNo);
             if (assignableActionID != null)
                 this.model.getApplication ().invokeAction (assignableActionID);

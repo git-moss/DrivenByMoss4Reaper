@@ -4,13 +4,13 @@
 
 package de.mossgrabers.controller.novation.launchkey.maxi;
 
+import java.util.List;
+
 import de.mossgrabers.framework.configuration.AbstractConfiguration;
 import de.mossgrabers.framework.configuration.ISettingsUI;
 import de.mossgrabers.framework.controller.valuechanger.IValueChanger;
 import de.mossgrabers.framework.daw.IHost;
 import de.mossgrabers.framework.daw.midi.ArpeggiatorMode;
-
-import java.util.List;
 
 
 /**
@@ -37,7 +37,7 @@ public class LaunchkeyMk3Configuration extends AbstractConfiguration
     @Override
     public void init (final ISettingsUI globalSettings, final ISettingsUI documentSettings)
     {
-        ///////////////////////////
+        // ----------------------------------------------------------------
         // Transport
 
         this.activateBehaviourOnStopSetting (globalSettings);
@@ -46,7 +46,7 @@ public class LaunchkeyMk3Configuration extends AbstractConfiguration
         this.activateShiftedRecordButtonSetting (globalSettings);
         this.activateNewClipLengthSetting (globalSettings);
 
-        ///////////////////////////
+        // ----------------------------------------------------------------
         // Workflow
 
         this.activateExcludeDeactivatedItemsSetting (globalSettings);

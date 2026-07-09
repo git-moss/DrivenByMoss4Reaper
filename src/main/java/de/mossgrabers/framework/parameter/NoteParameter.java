@@ -31,6 +31,7 @@ import de.mossgrabers.framework.utils.StringUtils;
  */
 public class NoteParameter extends AbstractParameterImpl
 {
+    private static final String                     NOTE_S          = "Note: %s";
     private final IHost                             host;
     private final ITransport                        transport;
     private final INoteEditor                       callback;
@@ -234,7 +235,7 @@ public class NoteParameter extends AbstractParameterImpl
                     if (!this.scales.isChromatic ())
                         newNote = this.scales.getNearestNoteInScale (newNote);
                     clip.moveStepY (notePosition, newNote);
-                    this.notify ("Note: %s", Scales.formatNoteAndOctave (newNote, -3));
+                    this.notify (NOTE_S, Scales.formatNoteAndOctave (newNote, -3));
                     break;
 
                 case GAIN:
@@ -356,7 +357,7 @@ public class NoteParameter extends AbstractParameterImpl
                     } while (!isChromatic && !this.scales.isInScale (this.scales.toNoteInOctave (newNote)));
 
                     clip.moveStepY (notePosition, newNote);
-                    this.notify ("Note: %s", Scales.formatNoteAndOctave (newNote, -3));
+                    this.notify (NOTE_S, Scales.formatNoteAndOctave (newNote, -3));
                     break;
 
                 case GAIN:
@@ -485,7 +486,7 @@ public class NoteParameter extends AbstractParameterImpl
                 case PITCH:
                     final int newNote = 60 + this.scales.getScaleOffset ();
                     clip.moveStepY (notePosition, newNote);
-                    this.notify ("Note: %s", Scales.formatNoteAndOctave (newNote, -3));
+                    this.notify (NOTE_S, Scales.formatNoteAndOctave (newNote, -3));
                     break;
 
                 case GAIN:
@@ -666,7 +667,7 @@ public class NoteParameter extends AbstractParameterImpl
     private void delayedNotify (final String format, final Supplier<String> supplier)
     {
         if (this.display != null)
-            this.host.scheduleTask ( () -> this.display.notify (String.format (format, supplier.get ())), 10);
+            this.host.scheduleTask (() -> this.display.notify (String.format (format, supplier.get ())), 10);
     }
 
 

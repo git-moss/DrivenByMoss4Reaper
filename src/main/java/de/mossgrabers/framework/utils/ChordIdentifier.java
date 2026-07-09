@@ -217,6 +217,15 @@ public class ChordIdentifier
 
 
     /**
+     * Constructor. Private due to helper class.
+     */
+    private ChordIdentifier ()
+    {
+        // Intentionally empty
+    }
+
+
+    /**
      * Returns the name of the chord for the given notes.
      *
      * @param notes The notes for which to identify the chord
@@ -242,7 +251,7 @@ public class ChordIdentifier
         final StringBuilder sb = new StringBuilder ();
         for (final int pitchClass: pitchClasses)
         {
-            if (sb.length () > 0)
+            if (!sb.isEmpty ())
                 sb.append (", ");
             sb.append (Scales.NOTE_NAMES.get (pitchClass));
         }

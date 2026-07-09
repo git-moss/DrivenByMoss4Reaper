@@ -49,7 +49,7 @@ public class KnobRowViewCommand extends AbstractContinuousCommand<BeatstepContro
             return;
 
         // Try to tame the weird jumps of the knobs
-        knobChange = Math.min (10, Math.max (-10, knobChange));
+        knobChange = Math.clamp (knobChange, -10, 10);
         ((BeatstepView) v).onKnob (this.index, (int) knobChange + 64);
     }
 }

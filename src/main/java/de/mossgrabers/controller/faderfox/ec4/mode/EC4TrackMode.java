@@ -14,7 +14,6 @@ import de.mossgrabers.framework.daw.IModel;
 import de.mossgrabers.framework.daw.data.ISend;
 import de.mossgrabers.framework.daw.data.ITrack;
 import de.mossgrabers.framework.daw.data.bank.ISendBank;
-import de.mossgrabers.framework.daw.data.empty.EmptyTrack;
 import de.mossgrabers.framework.mode.Modes;
 import de.mossgrabers.framework.parameter.MuteParameter;
 import de.mossgrabers.framework.parameter.SoloParameter;
@@ -86,6 +85,9 @@ public class EC4TrackMode extends AbstractEC4Mode<ITrack>
                         case 3:
                             selectedTrack.get ().setSolo (false);
                             break;
+                        default:
+                            // Ignore
+                            break;
                     }
                 }
                 else
@@ -119,10 +121,9 @@ public class EC4TrackMode extends AbstractEC4Mode<ITrack>
         display.setCell (2, 0, "Snd5").setCell (2, 1, "Snd6").setCell (2, 2, "Snd7").setCell (2, 3, "Snd8");
 
         final Optional<ITrack> selectedTrack = this.model.getTrackBank ().getSelectedItem ();
-        ITrack track = EmptyTrack.getInstance (8);
         if (selectedTrack.isPresent ())
         {
-            track = selectedTrack.get ();
+            final ITrack track = selectedTrack.get ();
             final String trackName = track.getPosition () + 1 + ": " + track.getName ();
             this.updateCache (0, track.getVolume (), totalDisplayInfo, trackName, "", "Volume: " + track.getVolumeStr ());
             this.updateCache (1, track.getPan (), totalDisplayInfo, trackName, "", "Pan: " + track.getPanStr ());

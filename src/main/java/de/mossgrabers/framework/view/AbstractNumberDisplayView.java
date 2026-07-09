@@ -251,7 +251,7 @@ public abstract class AbstractNumberDisplayView<S extends IControlSurface<C>, C 
     {
         // Draw the 3 digit number in the upper part of the grid
 
-        final int value = Math.min (999, Math.max (0, this.getNumber ()));
+        final int value = Math.clamp (this.getNumber (), 0, 999);
 
         // 1st digit (two columns) in color 1
         final int digit1 = value / 100;

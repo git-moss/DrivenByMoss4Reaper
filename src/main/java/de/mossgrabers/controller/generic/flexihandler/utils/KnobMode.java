@@ -34,7 +34,7 @@ public enum KnobMode
     {
         final KnobMode [] values = KnobMode.values ();
         LABELS = new String [values.length];
-        LABEL_KNOBMODE_MAP = new HashMap<> (values.length);
+        LABEL_KNOBMODE_MAP = HashMap.newHashMap (values.length);
         for (int i = 0; i < values.length; i++)
         {
             LABELS[i] = values[i].getLabel ();

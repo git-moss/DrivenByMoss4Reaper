@@ -4,6 +4,8 @@
 
 package de.mossgrabers.controller.akai.acvs.controller;
 
+import java.util.Optional;
+
 import de.mossgrabers.controller.akai.acvs.ACVSConfiguration;
 import de.mossgrabers.controller.akai.acvs.ACVSDevice;
 import de.mossgrabers.framework.controller.AbstractControlSurface;
@@ -13,8 +15,6 @@ import de.mossgrabers.framework.daw.midi.IMidiInput;
 import de.mossgrabers.framework.daw.midi.IMidiOutput;
 import de.mossgrabers.framework.featuregroup.ModeManager;
 import de.mossgrabers.framework.utils.StringUtils;
-
-import java.util.Optional;
 
 
 /**
@@ -31,9 +31,9 @@ public class ACVSControlSurface extends AbstractControlSurface<ACVSConfiguration
     /** Send a ping every 3 seconds. */
     private static final int    PING_INTERVAL                    = 3000;
 
-    ///////////////////////////////////////////////////////////////////
+    // ----------------------------------------------------------------
     // Commands sent from the MPC/Force Touch display on channel 0x00
-    ///////////////////////////////////////////////////////////////////
+    // ----------------------------------------------------------------
 
     // 0-7
     public static final int     NOTE_TRACK1_SELECT               = 0;
@@ -59,9 +59,9 @@ public class ACVSControlSurface extends AbstractControlSurface<ACVSConfiguration
     public static final int     NOTE_PREV_BANK                   = 3;
     public static final int     NOTE_NEXT_BANK                   = 4;
 
-    ///////////////////////////////////////////////////////////////////
+    // ----------------------------------------------------------------
     // Additional commands sent from Touch display on channel 0x0A
-    ///////////////////////////////////////////////////////////////////
+    // ----------------------------------------------------------------
 
     public static final int     NOTE_METRONOME                   = 0;
     public static final int     NOTE_CAPTURE_MIDI                = 1;
@@ -92,9 +92,9 @@ public class ACVSControlSurface extends AbstractControlSurface<ACVSConfiguration
     public static final int     CC_MOVE_LOOP                     = 1;
     public static final int     CC_LOOP_LENGTH                   = 2;
 
-    ///////////////////////////////////////////////////////////////////
+    // ----------------------------------------------------------------
     // Commands sent from MPC buttons on channel 0x0C
-    ///////////////////////////////////////////////////////////////////
+    // ----------------------------------------------------------------
 
     public static final int     NOTE_MPC_LAUNCH_CLIP_OR_SCENE1   = 0;
 
@@ -126,9 +126,9 @@ public class ACVSControlSurface extends AbstractControlSurface<ACVSConfiguration
     public static final int     NOTE_MPC_LEFT                    = 82;
     public static final int     NOTE_MPC_RIGHT                   = 83;
 
-    ///////////////////////////////////////////////////////////////////
+    // ----------------------------------------------------------------
     // Commands sent from Force buttons on channel 0x0C
-    ///////////////////////////////////////////////////////////////////
+    // ----------------------------------------------------------------
 
     // 0-7
     public static final int     NOTE_FORCE_TRACK_SELECT1         = 0;

@@ -11,7 +11,7 @@ package de.mossgrabers.controller.ableton.push.controller;
  */
 public class ColorPaletteEntry
 {
-    static enum State
+    enum State
     {
         READ,
         READ_REQUESTED,

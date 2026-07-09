@@ -49,7 +49,7 @@ public class LaunchkeyMiniMk3Configuration extends AbstractConfiguration
     @Override
     public void init (final ISettingsUI globalSettings, final ISettingsUI documentSettings)
     {
-        ///////////////////////////
+        // ----------------------------------------------------------------
         // Transport
 
         this.activateBehaviourOnPauseSetting (globalSettings);
@@ -57,7 +57,7 @@ public class LaunchkeyMiniMk3Configuration extends AbstractConfiguration
         this.activateShiftedRecordButtonSetting (globalSettings);
         this.activateNewClipLengthSetting (globalSettings);
 
-        ///////////////////////////
+        // ----------------------------------------------------------------
         // Workflow
 
         this.activateExcludeDeactivatedItemsSetting (globalSettings);

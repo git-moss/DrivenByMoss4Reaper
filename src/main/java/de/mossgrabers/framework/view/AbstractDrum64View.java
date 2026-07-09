@@ -85,7 +85,7 @@ public abstract class AbstractDrum64View<S extends IControlSurface<C>, C extends
         this.yblocks = this.rows / 4;
 
         final ITrackBank tb = model.getTrackBank ();
-        tb.addSelectionObserver ( (final int index, final boolean isSelected) -> this.clearPressedKeys ());
+        tb.addSelectionObserver ((final int index, final boolean isSelected) -> this.clearPressedKeys ());
         tb.addNoteObserver (this::updateNote);
     }
 
@@ -255,7 +255,7 @@ public abstract class AbstractDrum64View<S extends IControlSurface<C>, C extends
     private void setOctave (final int octave)
     {
         this.clearPressedKeys ();
-        this.drumOctave = Math.max (-2, Math.min (1, octave));
+        this.drumOctave = Math.clamp (octave, -2, 1);
         this.offsetY = this.drumStartKey + this.drumOctave * BLOCK_SIZE;
         this.updateNoteMapping ();
         this.surface.getDisplay ().notify (this.getDrumRangeText ());

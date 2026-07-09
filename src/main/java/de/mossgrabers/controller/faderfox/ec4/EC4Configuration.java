@@ -68,22 +68,22 @@ public class EC4Configuration extends AbstractConfiguration
     @Override
     public void init (final ISettingsUI globalSettings, final ISettingsUI documentSettings)
     {
-        ///////////////////////////
+        // ----------------------------------------------------------------
         // Hardware
 
         this.activateHardwareSettings (globalSettings);
 
-        ///////////////////////////
+        // ----------------------------------------------------------------
         // Transport
 
         this.activateBehaviourOnPauseSetting (globalSettings);
 
-        ///////////////////////////
+        // ----------------------------------------------------------------
         // Assignable user functions
 
         this.activateAssignableSettings (globalSettings);
 
-        ///////////////////////////
+        // ----------------------------------------------------------------
         // Workflow
 
         this.activateExcludeDeactivatedItemsSetting (globalSettings);

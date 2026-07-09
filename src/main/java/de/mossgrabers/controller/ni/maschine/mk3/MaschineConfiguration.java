@@ -62,7 +62,7 @@ public class MaschineConfiguration extends AbstractConfiguration
     @Override
     public void init (final ISettingsUI globalSettings, final ISettingsUI documentSettings)
     {
-        ///////////////////////////
+        // ----------------------------------------------------------------
         // Scale
 
         this.activateScaleSetting (documentSettings);
@@ -70,19 +70,19 @@ public class MaschineConfiguration extends AbstractConfiguration
         this.activateScaleInScaleSetting (documentSettings);
         this.activateScaleLayoutSetting (documentSettings, ScaleLayout.SEQUENT_UP.getName ());
 
-        ///////////////////////////
+        // ----------------------------------------------------------------
         // Note Repeat
 
         this.activateNoteRepeatSetting (documentSettings);
 
-        ///////////////////////////
+        // ----------------------------------------------------------------
         // Transport
 
         this.activateRecordButtonSetting (globalSettings);
         this.activateShiftedRecordButtonSetting (globalSettings);
         this.activateBehaviourOnPauseSetting (globalSettings);
 
-        ///////////////////////////
+        // ----------------------------------------------------------------
         // Play and Sequence
 
         this.activateAccentActiveSetting (globalSettings);
@@ -100,13 +100,13 @@ public class MaschineConfiguration extends AbstractConfiguration
         });
         this.isSettingActive.add (RIBBON_MODE);
 
-        ///////////////////////////
+        // ----------------------------------------------------------------
         // Session
 
         this.activateSelectClipOnLaunchSetting (globalSettings);
         this.activateActionForRecArmedPad (globalSettings);
 
-        ///////////////////////////
+        // ----------------------------------------------------------------
         // Workflow
 
         this.activateExcludeDeactivatedItemsSetting (globalSettings);
@@ -126,7 +126,7 @@ public class MaschineConfiguration extends AbstractConfiguration
             }
         }
 
-        ///////////////////////////
+        // ----------------------------------------------------------------
         // Pads
 
         this.activateConvertAftertouchSetting (globalSettings);

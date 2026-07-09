@@ -72,7 +72,7 @@ public abstract class AbstractPlayView<S extends IControlSurface<C>, C extends C
             this.defaultVelocity[i] = i;
 
         final ITrackBank tb = model.getTrackBank ();
-        tb.addSelectionObserver ( (index, isSelected) -> this.keyManager.clearPressedKeys ());
+        tb.addSelectionObserver ((index, isSelected) -> this.keyManager.clearPressedKeys ());
         tb.addNoteObserver (this.keyManager::call);
     }
 
@@ -227,7 +227,7 @@ public abstract class AbstractPlayView<S extends IControlSurface<C>, C extends C
     @Override
     public void updateNoteMapping ()
     {
-        this.surface.scheduleTask ( () -> this.delayedUpdateNoteMapping (this.getMapping ()), 100);
+        this.surface.scheduleTask (() -> this.delayedUpdateNoteMapping (this.getMapping ()), 100);
     }
 
 
@@ -274,7 +274,7 @@ public abstract class AbstractPlayView<S extends IControlSurface<C>, C extends C
     {
         final int [] maxVelocity = new int [128];
         final Configuration config = this.surface.getConfiguration ();
-        Arrays.fill (maxVelocity, Math.min (127, Math.max (0, config.getFixedAccentValue ())));
+        Arrays.fill (maxVelocity, Math.clamp (config.getFixedAccentValue (), 0, 127));
         maxVelocity[0] = 0;
         this.surface.setVelocityTranslationTable (config.isAccentActive () ? maxVelocity : this.defaultVelocity);
     }

@@ -208,18 +208,18 @@ public class ElectraOneConfiguration extends AbstractConfiguration
     @Override
     public void init (final ISettingsUI globalSettings, final ISettingsUI documentSettings)
     {
-        ///////////////////////////
+        // ----------------------------------------------------------------
         // Hardware
 
         this.activateHardwareSettings (globalSettings);
         this.activateKnobSpeedSetting (globalSettings, 100, 20);
 
-        ///////////////////////////
+        // ----------------------------------------------------------------
         // Transport
 
         this.activateBehaviourOnPauseSetting (globalSettings);
 
-        ///////////////////////////
+        // ----------------------------------------------------------------
         // Workflow
 
         this.activateExcludeDeactivatedItemsSetting (globalSettings);

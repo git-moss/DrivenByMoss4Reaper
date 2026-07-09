@@ -498,7 +498,7 @@ public class PushConfiguration extends AbstractConfiguration implements IGraphic
     @Override
     public void init (final ISettingsUI globalSettings, final ISettingsUI documentSettings)
     {
-        ///////////////////////////
+        // ----------------------------------------------------------------
         // Scale
 
         this.activateScaleSetting (documentSettings);
@@ -506,12 +506,12 @@ public class PushConfiguration extends AbstractConfiguration implements IGraphic
         this.activateScaleInScaleSetting (documentSettings);
         this.activateScaleLayoutSetting (documentSettings);
 
-        ///////////////////////////
+        // ----------------------------------------------------------------
         // Note Repeat
 
         this.activateNoteRepeatSetting (documentSettings);
 
-        ///////////////////////////
+        // ----------------------------------------------------------------
         // Session
 
         this.activateSessionView (globalSettings);
@@ -519,13 +519,13 @@ public class PushConfiguration extends AbstractConfiguration implements IGraphic
         this.activateDrawRecordStripeSetting (globalSettings);
         this.activateActionForRecArmedPad (globalSettings);
 
-        ///////////////////////////
+        // ----------------------------------------------------------------
         // Transport
 
         this.activateBehaviourOnPauseSetting (globalSettings);
         this.activateFlipRecordSetting (globalSettings);
 
-        ///////////////////////////
+        // ----------------------------------------------------------------
         // Play and Sequence
 
         this.activateAccentActiveSetting (globalSettings);
@@ -537,7 +537,7 @@ public class PushConfiguration extends AbstractConfiguration implements IGraphic
         this.activateTurnOffScalePadsSetting (globalSettings);
         this.activateShowPlayedChordsSetting (globalSettings);
 
-        ///////////////////////////
+        // ----------------------------------------------------------------
         // Drum Sequencer
 
         if (this.host.supports (Capability.HAS_DRUM_DEVICE))
@@ -546,7 +546,7 @@ public class PushConfiguration extends AbstractConfiguration implements IGraphic
             this.activateTurnOffEmptyDrumPadsSetting (globalSettings);
         }
 
-        ///////////////////////////
+        // ----------------------------------------------------------------
         // Workflow
 
         this.activateTrackNavigationSetting (globalSettings, CATEGORY_WORKFLOW, false);
@@ -559,17 +559,17 @@ public class PushConfiguration extends AbstractConfiguration implements IGraphic
         this.activateNewClipLengthSetting (globalSettings);
         this.activateKnobSpeedSetting (globalSettings);
 
-        ///////////////////////////
+        // ----------------------------------------------------------------
         // Add Track - Device Favorites
 
         this.activateDeviceFavorites (globalSettings, 7, 7, 7, 7);
 
-        ///////////////////////////
+        // ----------------------------------------------------------------
         // Ribbon
 
         this.activateRibbonSettings (globalSettings);
 
-        ///////////////////////////
+        // ----------------------------------------------------------------
         // Hardware configuration
 
         switch (this.pushVersion)
@@ -592,13 +592,13 @@ public class PushConfiguration extends AbstractConfiguration implements IGraphic
                 break;
         }
 
-        ///////////////////////////
+        // ----------------------------------------------------------------
         // Push 2 Hardware
 
         this.activatePush2HardwareSettings (globalSettings);
         this.activatePush2DisplayColorsSettings (globalSettings);
 
-        ///////////////////////////
+        // ----------------------------------------------------------------
         // Debugging
 
         this.activateDebugSettings (globalSettings);
@@ -724,7 +724,7 @@ public class PushConfiguration extends AbstractConfiguration implements IGraphic
     {
         final int size = PushControlSurface.PUSH_PAD_THRESHOLDS_NAME.size ();
         final int value = this.valueChanger.changeValue (control, this.padThresholdPush1, -100, size);
-        this.padThresholdPush1 = Math.max (0, Math.min (value, size - 1));
+        this.padThresholdPush1 = Math.clamp (value, 0, size - 1);
         this.padThresholdSetting.set (PushControlSurface.PUSH_PAD_THRESHOLDS_NAME.get (this.padThresholdPush1));
     }
 
@@ -738,7 +738,7 @@ public class PushConfiguration extends AbstractConfiguration implements IGraphic
     {
         final int size = PushControlSurface.PUSH_PAD_CURVES_NAME.size ();
         final int value = this.valueChanger.changeValue (control, this.velocityCurvePush1, -100, size);
-        this.velocityCurvePush1 = Math.max (0, Math.min (value, size - 1));
+        this.velocityCurvePush1 = Math.clamp (value, 0, size - 1);
         this.velocityCurveSetting.set (PushControlSurface.PUSH_PAD_CURVES_NAME.get (this.velocityCurvePush1));
     }
 
@@ -1475,7 +1475,7 @@ public class PushConfiguration extends AbstractConfiguration implements IGraphic
      */
     public void setInTuneWidth (final int value)
     {
-        this.inTuneWidthSetting.set (IN_TUNE_WIDTH_OPTIONS[Math.min (IN_TUNE_WIDTH_OPTIONS.length - 1, Math.max (0, value))]);
+        this.inTuneWidthSetting.set (IN_TUNE_WIDTH_OPTIONS[Math.clamp (value, 0, IN_TUNE_WIDTH_OPTIONS.length - 1)]);
     }
 
 
@@ -1509,7 +1509,7 @@ public class PushConfiguration extends AbstractConfiguration implements IGraphic
      */
     public void setSlideHeight (final int value)
     {
-        this.slideHeightSetting.set (SLIDE_HEIGHT_OPTIONS[Math.min (SLIDE_HEIGHT_OPTIONS.length - 1, Math.max (0, value))]);
+        this.slideHeightSetting.set (SLIDE_HEIGHT_OPTIONS[Math.clamp (value, 0, SLIDE_HEIGHT_OPTIONS.length - 1)]);
     }
 
 
@@ -1597,7 +1597,7 @@ public class PushConfiguration extends AbstractConfiguration implements IGraphic
      */
     public void setPreamp1Type (final int preampType)
     {
-        this.preamp1Setting.set (PREAMP_TYPE_OPTIONS[Math.min (PREAMP_TYPE_OPTIONS.length - 1, Math.max (0, preampType))]);
+        this.preamp1Setting.set (PREAMP_TYPE_OPTIONS[Math.clamp (preampType, 0, PREAMP_TYPE_OPTIONS.length - 1)]);
     }
 
 
@@ -1631,7 +1631,7 @@ public class PushConfiguration extends AbstractConfiguration implements IGraphic
      */
     public void setPreamp2Type (final int preampType)
     {
-        this.preamp2Setting.set (PREAMP_TYPE_OPTIONS[Math.min (PREAMP_TYPE_OPTIONS.length - 1, Math.max (0, preampType))]);
+        this.preamp2Setting.set (PREAMP_TYPE_OPTIONS[Math.clamp (preampType, 0, PREAMP_TYPE_OPTIONS.length - 1)]);
     }
 
 
@@ -1665,7 +1665,7 @@ public class PushConfiguration extends AbstractConfiguration implements IGraphic
      */
     public void setPreamp1Gain (final int preampGain)
     {
-        this.preamp1GainSetting.set (PREAMP_GAIN_OPTIONS[Math.min (PREAMP_GAIN_OPTIONS.length - 1, Math.max (0, preampGain))]);
+        this.preamp1GainSetting.set (PREAMP_GAIN_OPTIONS[Math.clamp (preampGain, 0, PREAMP_GAIN_OPTIONS.length - 1)]);
     }
 
 
@@ -1699,7 +1699,7 @@ public class PushConfiguration extends AbstractConfiguration implements IGraphic
      */
     public void setPreamp2Gain (final int preampGain)
     {
-        this.preamp2GainSetting.set (PREAMP_GAIN_OPTIONS[Math.min (PREAMP_GAIN_OPTIONS.length - 1, Math.max (0, preampGain))]);
+        this.preamp2GainSetting.set (PREAMP_GAIN_OPTIONS[Math.clamp (preampGain, 0, PREAMP_GAIN_OPTIONS.length - 1)]);
     }
 
 

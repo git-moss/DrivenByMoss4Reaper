@@ -109,17 +109,17 @@ public class ScalesMode extends BaseMode<IItem>
     {
         if (event != ButtonEvent.UP)
             return;
-        if (index == 0)
+        switch (index)
         {
-            if (this.isPushModern)
-                this.scales.prevScale ();
-            else
-                this.scales.nextScale ();
+            case 0 -> {
+                if (this.isPushModern)
+                    this.scales.prevScale ();
+                else
+                    this.scales.nextScale ();
+            }
+            case 7 -> this.scales.toggleChromatic ();
+            default -> this.scales.setScaleOffsetByIndex (index + 5);
         }
-        else if (index == 7)
-            this.scales.toggleChromatic ();
-        else
-            this.scales.setScaleOffsetByIndex (index + 5);
         this.update ();
     }
 

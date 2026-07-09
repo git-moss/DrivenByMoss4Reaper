@@ -45,13 +45,12 @@ public class LayerMode extends AbstractLayerMode
             parameterProvider = new VolumeParameterProvider (model.getEffectTrackBank ());
         else
         {
-            final int surfaceID = surface.getSurfaceID ();
-            if (surfaceID == 0)
-                parameterProvider = new RangeFilterParameterProvider (new SelectedLayerOrDrumPadParameterProvider (getDevice (model)), 0, 8);
-            else if (surfaceID == 1)
-                parameterProvider = new RangeFilterParameterProvider (new SendLayerOrDrumPadParameterProvider (getDevice (model), 6), 0, 8);
-            else
-                parameterProvider = new EmptyParameterProvider (8);
+            switch (surface.getSurfaceID ())
+            {
+                case 0 -> parameterProvider = new RangeFilterParameterProvider (new SelectedLayerOrDrumPadParameterProvider (getDevice (model)), 0, 8);
+                case 1 -> parameterProvider = new RangeFilterParameterProvider (new SendLayerOrDrumPadParameterProvider (getDevice (model), 6), 0, 8);
+                default -> parameterProvider = new EmptyParameterProvider (8);
+            }
         }
         this.setParameterProvider (parameterProvider);
     }

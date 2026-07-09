@@ -150,6 +150,9 @@ public class ExquisSelectionView extends AbstractView<ExquisControlSurface, Exqu
                 trackBank.selectNextPage ();
                 this.mvHelper.notifySelectedTrack ();
                 break;
+            default:
+                // Ignore
+                break;
         }
     }
 
@@ -182,6 +185,6 @@ public class ExquisSelectionView extends AbstractView<ExquisControlSurface, Exqu
     @Override
     public void updateNoteMapping ()
     {
-        this.surface.scheduleTask ( () -> this.delayedUpdateNoteMapping (Scales.getEmptyMatrix ()), 100);
+        this.surface.scheduleTask (() -> this.delayedUpdateNoteMapping (Scales.getEmptyMatrix ()), 100);
     }
 }

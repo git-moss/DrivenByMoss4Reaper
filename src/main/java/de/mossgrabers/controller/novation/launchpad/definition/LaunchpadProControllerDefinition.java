@@ -25,8 +25,9 @@ import de.mossgrabers.framework.utils.StringUtils;
  */
 public class LaunchpadProControllerDefinition extends AbstractLaunchpadDefinition
 {
-    private static final UUID   EXTENSION_ID = UUID.fromString ("80B63970-64F1-11E5-A837-0800200C9A66");
-    private static final String SYSEX_HEADER = "F0 00 20 29 02 10 ";
+    private static final String LAUNCHPAD_PRO_STANDALONE_PORT = "Launchpad Pro Standalone Port";
+    private static final UUID   EXTENSION_ID                  = UUID.fromString ("80B63970-64F1-11E5-A837-0800200C9A66");
+    private static final String SYSEX_HEADER                  = "F0 00 20 29 02 10 ";
 
 
     /**
@@ -72,11 +73,11 @@ public class LaunchpadProControllerDefinition extends AbstractLaunchpadDefinitio
 
             case LINUX:
                 midiDiscoveryPairs.add (this.addDeviceDiscoveryPair ("Launchpad Pro MIDI 2", "Launchpad Pro MIDI 2"));
-                midiDiscoveryPairs.add (this.addDeviceDiscoveryPair ("Launchpad Pro Standalone Port", "Launchpad Pro Standalone Port"));
+                midiDiscoveryPairs.add (this.addDeviceDiscoveryPair (LAUNCHPAD_PRO_STANDALONE_PORT, LAUNCHPAD_PRO_STANDALONE_PORT));
                 break;
 
             case MAC, MAC_ARM:
-                midiDiscoveryPairs.add (this.addDeviceDiscoveryPair ("Launchpad Pro Standalone Port", "Launchpad Pro Standalone Port"));
+                midiDiscoveryPairs.add (this.addDeviceDiscoveryPair (LAUNCHPAD_PRO_STANDALONE_PORT, LAUNCHPAD_PRO_STANDALONE_PORT));
                 break;
 
             default:
@@ -169,11 +170,11 @@ public class LaunchpadProControllerDefinition extends AbstractLaunchpadDefinitio
 
         final List<String> result = new ArrayList<> (3);
         final String sysExHeader = this.getSysExHeader ();
-        if (sbNormal.length () > 0)
+        if (!sbNormal.isEmpty ())
             result.add (new StringBuilder (sysExHeader).append ("0A ").append (sbNormal).append ("F7").toString ());
-        if (sbFlash.length () > 0)
+        if (!sbFlash.isEmpty ())
             result.add (new StringBuilder (sysExHeader).append ("23 ").append (sbFlash).append ("F7").toString ());
-        if (sbPulse.length () > 0)
+        if (!sbPulse.isEmpty ())
             result.add (new StringBuilder (sysExHeader).append ("28 ").append (sbPulse).append ("F7").toString ());
         return result;
     }

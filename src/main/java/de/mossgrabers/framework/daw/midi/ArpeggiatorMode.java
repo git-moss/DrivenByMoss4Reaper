@@ -52,7 +52,7 @@ public enum ArpeggiatorMode
 
 
     private static final String []                    NAMES         = new String [ArpeggiatorMode.values ().length];
-    private static final Map<String, ArpeggiatorMode> NAME_MODE_MAP = new HashMap<> (ArpeggiatorMode.values ().length);
+    private static final Map<String, ArpeggiatorMode> NAME_MODE_MAP = HashMap.newHashMap (ArpeggiatorMode.values ().length);
     static
     {
         final ArpeggiatorMode [] values = ArpeggiatorMode.values ();

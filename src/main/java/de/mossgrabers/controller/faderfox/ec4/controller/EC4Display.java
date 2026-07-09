@@ -124,7 +124,7 @@ public class EC4Display extends AbstractTextDisplay
             final char character = textNew.charAt (i);
             if (character == textOld.charAt (i))
             {
-                if (sb.length () > 0)
+                if (!sb.isEmpty ())
                 {
                     result.put (Integer.valueOf (position), sb.toString ());
                     sb.setLength (0);
@@ -134,7 +134,7 @@ public class EC4Display extends AbstractTextDisplay
             else
                 sb.append (character);
         }
-        if (sb.length () > 0)
+        if (!sb.isEmpty ())
             result.put (Integer.valueOf (position), sb.toString ());
         return result;
     }

@@ -472,31 +472,31 @@ public class TransportImpl extends BaseImpl implements ITransport
     @Override
     public void setAutomationWriteMode (final AutomationMode mode)
     {
-        final int automationMode;
+        final int automationModeId;
         switch (mode)
         {
             default:
             case TRIM_READ:
-                automationMode = 0;
+                automationModeId = 0;
                 break;
             case READ:
-                automationMode = 1;
+                automationModeId = 1;
                 break;
             case TOUCH:
-                automationMode = 2;
+                automationModeId = 2;
                 break;
             case WRITE:
-                automationMode = 3;
+                automationModeId = 3;
                 break;
             case LATCH:
-                automationMode = 4;
+                automationModeId = 4;
                 break;
             case LATCH_PREVIEW:
-                automationMode = 5;
+                automationModeId = 5;
                 break;
         }
 
-        this.sender.processIntArg (Processor.AUTOMATION, automationMode);
+        this.sender.processIntArg (Processor.AUTOMATION, automationModeId);
     }
 
 

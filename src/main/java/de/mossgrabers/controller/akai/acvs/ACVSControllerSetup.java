@@ -4,6 +4,9 @@
 
 package de.mossgrabers.controller.akai.acvs;
 
+import java.util.Arrays;
+import java.util.Optional;
+
 import de.mossgrabers.controller.akai.acvs.command.trigger.ACVSMasterCommand;
 import de.mossgrabers.controller.akai.acvs.controller.ACVSColorManager;
 import de.mossgrabers.controller.akai.acvs.controller.ACVSControlSurface;
@@ -74,9 +77,6 @@ import de.mossgrabers.framework.scale.Scales;
 import de.mossgrabers.framework.utils.ButtonEvent;
 import de.mossgrabers.framework.view.Views;
 
-import java.util.Arrays;
-import java.util.Optional;
-
 
 /**
  * Support for Akai devices which support the ACVS protocol.
@@ -141,7 +141,7 @@ public class ACVSControllerSetup extends AbstractControllerSetup<ACVSControlSurf
         final ACVSControlSurface surface = new ACVSControlSurface (this.host, this.colorManager, this.configuration, output, input);
         this.surfaces.add (surface);
 
-        surface.setITextMessageHandler ( (itemID, text) -> {
+        surface.setITextMessageHandler ((itemID, text) -> {
 
             if (itemID == ACVSDisplay.ITEM_ID_TEMPO)
             {
@@ -270,7 +270,7 @@ public class ACVSControllerSetup extends AbstractControllerSetup<ACVSControlSurf
         this.registerMPCTouchDisplayTriggerCommands (surface, cursorDevice, tb);
 
         if (isForce)
-            this.registerForceTriggerCommands (surface, tb);
+            this.registerForceTriggerCommands (surface);
         else
             this.registerMPCTriggerCommands (surface, cursorDevice, tb);
     }
@@ -557,9 +557,8 @@ public class ACVSControllerSetup extends AbstractControllerSetup<ACVSControlSurf
      * Register MPC specific trigger commands issued from buttons
      *
      * @param surface The control surface
-     * @param tb The track bank
      */
-    private void registerForceTriggerCommands (final ACVSControlSurface surface, final ITrackBank tb)
+    private void registerForceTriggerCommands (final ACVSControlSurface surface)
     {
         final ITrackBank trackBank = this.model.getTrackBank ();
         final ITransport transport = this.model.getTransport ();
@@ -844,7 +843,7 @@ public class ACVSControllerSetup extends AbstractControllerSetup<ACVSControlSurf
 
             final ContinuousID volumeKnobID = ContinuousID.get (ContinuousID.VOLUME_KNOB1, i);
             final IHwRelativeKnob volumeKnob = this.addRelativeKnob (volumeKnobID, "Volume " + (i + 1), value -> tb.getItem (index).changeVolume (value), BindType.CC, 0x0D, i);
-            volumeKnob.bindTouch ( (event, velocity) -> {
+            volumeKnob.bindTouch ((event, velocity) -> {
 
                 if (event == ButtonEvent.LONG)
                     return;
@@ -859,7 +858,7 @@ public class ACVSControllerSetup extends AbstractControllerSetup<ACVSControlSurf
 
             final ContinuousID paramKnobID = ContinuousID.get (ContinuousID.PARAM_KNOB1, i);
             final IHwRelativeKnob paramKnob = this.addRelativeKnob (paramKnobID, "Param " + (i + 1), value -> cursorDevice.getParameterBank ().getItem (index).changeValue (value), BindType.CC, 0x0D, 8 + i);
-            paramKnob.bindTouch ( (event, velocity) -> {
+            paramKnob.bindTouch ((event, velocity) -> {
 
                 if (event == ButtonEvent.LONG)
                     return;
@@ -896,7 +895,7 @@ public class ACVSControllerSetup extends AbstractControllerSetup<ACVSControlSurf
         surface.getModeManager ().setActive (Modes.USER);
         surface.getTrackModeManager ().setActive (Modes.STOP_CLIP);
 
-        this.host.scheduleTask ( () -> {
+        this.host.scheduleTask (() -> {
             this.host.println ("Disconnected.");
             surface.sendPing ();
         }, 2000);

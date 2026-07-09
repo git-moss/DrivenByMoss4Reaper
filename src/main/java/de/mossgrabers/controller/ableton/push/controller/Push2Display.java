@@ -4,15 +4,15 @@
 
 package de.mossgrabers.controller.ableton.push.controller;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+
 import de.mossgrabers.controller.ableton.push.PushConfiguration;
 import de.mossgrabers.framework.controller.display.AbstractGraphicDisplay;
 import de.mossgrabers.framework.daw.IHost;
 import de.mossgrabers.framework.graphics.DefaultGraphicsDimensions;
 import de.mossgrabers.framework.graphics.IBitmap;
-
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -62,23 +62,26 @@ public class Push2Display extends AbstractGraphicDisplay
 
         this.isShutdown = true;
 
-        final ExecutorService executor = Executors.newSingleThreadExecutor ();
-        executor.execute ( () -> {
-
-            if (this.usbDisplay != null)
-                this.usbDisplay.shutdown ();
-            super.shutdown ();
-
-        });
-        executor.shutdown ();
-        try
+        // Shutdown the display but prevent blocking the continuation of the overall shutdown
+        try (final ExecutorService shutdownExecutor = Executors.newSingleThreadExecutor ())
         {
-            executor.awaitTermination (10, TimeUnit.SECONDS);
-        }
-        catch (final InterruptedException ex)
-        {
-            this.host.error ("Display shutdown interrupted.", ex);
-            Thread.currentThread ().interrupt ();
+            shutdownExecutor.execute (() -> {
+
+                if (this.usbDisplay != null)
+                    this.usbDisplay.shutdown ();
+                super.shutdown ();
+
+            });
+            shutdownExecutor.shutdown ();
+            try
+            {
+                shutdownExecutor.awaitTermination (10, TimeUnit.SECONDS);
+            }
+            catch (final InterruptedException ex)
+            {
+                this.host.error ("Display shutdown interrupted.", ex);
+                Thread.currentThread ().interrupt ();
+            }
         }
     }
 

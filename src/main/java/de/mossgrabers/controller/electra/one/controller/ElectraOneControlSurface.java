@@ -55,15 +55,17 @@ public class ElectraOneControlSurface extends AbstractControlSurface<ElectraOneC
     private static final int               SUBSCRIBED_EVENTS = 0x01 | 0x08 | 0x10 | 0x20;
 
     /** The IDs for the continuous elements. */
-    public static final List<ContinuousID> KNOB_IDS          = new ArrayList<> ();
+    public static final List<ContinuousID> KNOB_IDS;
     static
     {
-        KNOB_IDS.addAll (ContinuousID.createSequentialList (ContinuousID.VOLUME_KNOB1, 6));
-        KNOB_IDS.addAll (ContinuousID.createSequentialList (ContinuousID.PAN_KNOB1, 6));
-        KNOB_IDS.addAll (ContinuousID.createSequentialList (ContinuousID.FADER1, 6));
-        KNOB_IDS.addAll (ContinuousID.createSequentialList (ContinuousID.KNOB1, 6));
-        KNOB_IDS.addAll (ContinuousID.createSequentialList (ContinuousID.PARAM_KNOB1, 6));
-        KNOB_IDS.addAll (ContinuousID.createSequentialList (ContinuousID.DEVICE_KNOB1, 6));
+        final List<ContinuousID> knobIds = new ArrayList<> ();
+        knobIds.addAll (ContinuousID.createSequentialList (ContinuousID.VOLUME_KNOB1, 6));
+        knobIds.addAll (ContinuousID.createSequentialList (ContinuousID.PAN_KNOB1, 6));
+        knobIds.addAll (ContinuousID.createSequentialList (ContinuousID.FADER1, 6));
+        knobIds.addAll (ContinuousID.createSequentialList (ContinuousID.KNOB1, 6));
+        knobIds.addAll (ContinuousID.createSequentialList (ContinuousID.PARAM_KNOB1, 6));
+        knobIds.addAll (ContinuousID.createSequentialList (ContinuousID.DEVICE_KNOB1, 6));
+        KNOB_IDS = Collections.unmodifiableList (knobIds);
     }
 
     private static final ButtonID []     BUTTON_ROW_IDS                     =

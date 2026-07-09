@@ -4,6 +4,8 @@
 
 package de.mossgrabers.controller.osc.module;
 
+import java.util.LinkedList;
+
 import de.mossgrabers.controller.osc.OSCConfiguration;
 import de.mossgrabers.controller.osc.exception.IllegalParameterException;
 import de.mossgrabers.controller.osc.exception.MissingCommandException;
@@ -23,8 +25,6 @@ import de.mossgrabers.framework.featuregroup.AbstractView;
 import de.mossgrabers.framework.osc.IOpenSoundControlWriter;
 import de.mossgrabers.framework.scale.Scales;
 import de.mossgrabers.framework.utils.KeyManager;
-
-import java.util.LinkedList;
 
 
 /**
@@ -140,7 +140,7 @@ public class MidiModule extends AbstractModule
         int midiChannel;
         try
         {
-            midiChannel = Math.min (Math.max (0, Integer.parseInt (command) - 1), 15);
+            midiChannel = Math.clamp (Integer.parseInt (command) - 1L, 0, 15);
         }
         catch (final NumberFormatException ex)
         {

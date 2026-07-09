@@ -27,7 +27,7 @@ public class ProgramBank
     private int                        lsb;
     private int                        channel;
     private String []                  programs;
-    private final Map<String, Integer> programMapper = new HashMap<> (128);
+    private final Map<String, Integer> programMapper = HashMap.newHashMap (128);
 
 
     /**

@@ -4,16 +4,16 @@
 
 package de.mossgrabers.framework.osc;
 
-import de.mossgrabers.framework.daw.IHost;
-import de.mossgrabers.framework.daw.IModel;
-import de.mossgrabers.framework.utils.StringUtils;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import de.mossgrabers.framework.daw.IHost;
+import de.mossgrabers.framework.daw.IModel;
+import de.mossgrabers.framework.utils.StringUtils;
 
 
 /**
@@ -197,12 +197,12 @@ public abstract class AbstractOpenSoundControlWriter implements IOpenSoundContro
 
         // Convert the value to a list in case it is not already one
         final List<?> list;
-        if (value instanceof final List<?> l)
-            list = l;
-        else if (value instanceof final Boolean booleanValue)
-            list = Collections.singletonList (Integer.valueOf (booleanValue.booleanValue () ? 1 : 0));
-        else
-            list = Collections.singletonList (value);
+        switch (value)
+        {
+            case List<?> l -> list = l;
+            case Boolean booleanValue -> list = Collections.singletonList (Integer.valueOf (booleanValue.booleanValue () ? 1 : 0));
+            default -> list = Collections.singletonList (value);
+        }
 
         synchronized (this.messages)
         {
@@ -269,7 +269,7 @@ public abstract class AbstractOpenSoundControlWriter implements IOpenSoundContro
             if (this.configuration.filterHeartbeatMessages () && this.isHeartbeatMessage (address))
                 continue;
 
-            if (sb.length () > 0)
+            if (!sb.isEmpty ())
                 sb.append ('\n');
 
             sb.append ("Sending: ").append (address).append (" [ ");
@@ -282,7 +282,7 @@ public abstract class AbstractOpenSoundControlWriter implements IOpenSoundContro
             }
             sb.append (" ]");
         }
-        if (sb.length () > 0)
+        if (!sb.isEmpty ())
             this.model.getHost ().println (sb.toString ());
     }
 

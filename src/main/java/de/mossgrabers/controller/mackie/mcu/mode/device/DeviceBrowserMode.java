@@ -4,6 +4,8 @@
 
 package de.mossgrabers.controller.mackie.mcu.mode.device;
 
+import java.util.Optional;
+
 import de.mossgrabers.controller.mackie.mcu.controller.MCUControlSurface;
 import de.mossgrabers.controller.mackie.mcu.mode.BaseMode;
 import de.mossgrabers.framework.controller.color.ColorEx;
@@ -15,8 +17,6 @@ import de.mossgrabers.framework.daw.data.IBrowserColumnItem;
 import de.mossgrabers.framework.daw.data.ICursorDevice;
 import de.mossgrabers.framework.daw.data.IItem;
 import de.mossgrabers.framework.utils.StringUtils;
-
-import java.util.Optional;
 
 
 /**
@@ -122,7 +122,7 @@ public class DeviceBrowserMode extends BaseMode<IItem>
                     d.setCell (0, i, name).setCell (1, i, value);
                 }
                 final String selectedResult = browser.getSelectedResult ();
-                d.setCell (0, 7, browser.getSelectedContentType ()).setCell (1, 7, selectedResult == null || selectedResult.length () == 0 ? "-" : selectedResult);
+                d.setCell (0, 7, browser.getSelectedContentType ()).setCell (1, 7, selectedResult == null || selectedResult.isEmpty () ? "-" : selectedResult);
                 break;
 
             case SELECTION_PRESET:

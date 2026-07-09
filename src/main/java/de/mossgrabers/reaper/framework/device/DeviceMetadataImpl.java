@@ -23,7 +23,7 @@ public class DeviceMetadataImpl implements IDeviceMetadata
     private final DeviceFileType fileType;
     private DeviceType           deviceType;
     private String               vendor;
-    private final Set<String>    categories = new HashSet<> (1);
+    private final Set<String>    categories = HashSet.newHashSet (1);
 
 
     /**

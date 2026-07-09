@@ -248,7 +248,7 @@ public class APCminiMk2ColorManager extends ColorManager
         this.registerColorIndex (DAWColor.DAW_COLOR_GREEN_BLUE, FOREST_GREEN);
         this.registerColorIndex (DAWColor.DAW_COLOR_LIGHT_BLUE, LIGHT_GRAY);
 
-        ////////////////////////////////////////////////////////////////////////
+        // ----------------------------------------------------------------
         // Register colors
 
         for (int i = 0; i < 128; i++)

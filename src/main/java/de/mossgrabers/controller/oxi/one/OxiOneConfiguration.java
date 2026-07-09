@@ -92,7 +92,7 @@ public class OxiOneConfiguration extends AbstractConfiguration
     @Override
     public void init (final ISettingsUI globalSettings, final ISettingsUI documentSettings)
     {
-        ///////////////////////////
+        // ----------------------------------------------------------------
         // Scale
 
         this.activateScaleSetting (documentSettings);
@@ -100,12 +100,12 @@ public class OxiOneConfiguration extends AbstractConfiguration
         this.activateScaleInScaleSetting (documentSettings);
         this.activateScaleLayoutSetting (documentSettings);
 
-        ///////////////////////////
+        // ----------------------------------------------------------------
         // Note Repeat
 
         this.activateNoteRepeatSetting (documentSettings);
 
-        ///////////////////////////
+        // ----------------------------------------------------------------
         // Hardware
 
         final IEnumSetting padBrightnessSetting = globalSettings.getEnumSetting ("Grid Pad Brightness", CATEGORY_HARDWARE_SETUP, BRIGHTNESS_OPTIONS, BRIGHTNESS_OPTIONS.get (2));
@@ -114,14 +114,14 @@ public class OxiOneConfiguration extends AbstractConfiguration
             this.notifyObservers (PAD_BRIGHTNESS);
         });
 
-        ///////////////////////////
+        // ----------------------------------------------------------------
         // Session
 
         this.activateSelectClipOnLaunchSetting (globalSettings);
         this.activateDrawRecordStripeSetting (globalSettings);
         this.activateActionForRecArmedPad (globalSettings);
 
-        ///////////////////////////
+        // ----------------------------------------------------------------
         // Transport
 
         this.activateBehaviourOnStopSetting (globalSettings);
@@ -129,7 +129,7 @@ public class OxiOneConfiguration extends AbstractConfiguration
         this.activateRecordButtonSetting (globalSettings);
         this.activateShiftedRecordButtonSetting (globalSettings);
 
-        ///////////////////////////
+        // ----------------------------------------------------------------
         // Play and Sequence
 
         this.activateQuantizeAmountSetting (globalSettings);
@@ -138,13 +138,13 @@ public class OxiOneConfiguration extends AbstractConfiguration
         this.activateShowPlayedChordsSetting (globalSettings);
         this.activateStartupViewSetting (globalSettings, this.isMk2 ? PREFERRED_NOTE_VIEWS_MK2 : PREFERRED_NOTE_VIEWS_MK1);
 
-        ///////////////////////////
+        // ----------------------------------------------------------------
         // Drum Sequencer
 
         if (this.host.supports (Capability.HAS_DRUM_DEVICE))
             this.activateTurnOffEmptyDrumPadsSetting (globalSettings);
 
-        ///////////////////////////
+        // ----------------------------------------------------------------
         // Workflow
 
         this.activateExcludeDeactivatedItemsSetting (globalSettings);

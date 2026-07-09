@@ -216,7 +216,7 @@ public class CursorClipImpl extends BaseImpl implements INoteClip
         final double pageLength = this.numSteps * this.stepLength;
         this.maxPage = (int) Math.ceil (length / pageLength);
         // Make sure the page is inside the new range
-        this.editPage = Math.max (0, Math.min (this.editPage, this.maxPage - 1));
+        this.editPage = Math.clamp (this.editPage, 0, this.maxPage - 1);
     }
 
 
@@ -503,7 +503,7 @@ public class CursorClipImpl extends BaseImpl implements INoteClip
     {
         final IStepInfo info = this.getStep (notePosition);
         final double velocity = info.getVelocity () + this.valueChanger.toNormalizedValue ((int) this.valueChanger.calcKnobChange (control));
-        this.updateStepVelocity (notePosition, Math.min (1.0, Math.max (0, velocity)));
+        this.updateStepVelocity (notePosition, Math.clamp (velocity, 0, 1.0));
     }
 
 
@@ -836,7 +836,7 @@ public class CursorClipImpl extends BaseImpl implements INoteClip
         if (this.editSteps.isEmpty ())
             return;
         this.sendClipData (editStep);
-        this.host.scheduleTask ( () -> this.delayedUpdate (new NotePosition (editStep.getChannel (), editStep.getStep (), editStep.getNote ())), 100);
+        this.host.scheduleTask (() -> this.delayedUpdate (new NotePosition (editStep.getChannel (), editStep.getStep (), editStep.getNote ())), 100);
     }
 
 
@@ -1020,7 +1020,7 @@ public class CursorClipImpl extends BaseImpl implements INoteClip
     @Override
     public void scrollToPage (final int page)
     {
-        this.editPage = Math.max (0, Math.min (page, this.maxPage - 1));
+        this.editPage = Math.clamp (page, 0, this.maxPage - 1);
         this.updateNoteData ();
     }
 

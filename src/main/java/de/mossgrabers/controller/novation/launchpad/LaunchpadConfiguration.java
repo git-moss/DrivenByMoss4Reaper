@@ -72,7 +72,7 @@ public class LaunchpadConfiguration extends AbstractConfiguration
     @Override
     public void init (final ISettingsUI globalSettings, final ISettingsUI documentSettings)
     {
-        ///////////////////////////
+        // ----------------------------------------------------------------
         // Scale
 
         this.activateScaleSetting (documentSettings);
@@ -80,12 +80,12 @@ public class LaunchpadConfiguration extends AbstractConfiguration
         this.activateScaleInScaleSetting (documentSettings);
         this.activateScaleLayoutSetting (documentSettings);
 
-        ///////////////////////////
+        // ----------------------------------------------------------------
         // Note Repeat
 
         this.activateNoteRepeatSetting (documentSettings);
 
-        ///////////////////////////
+        // ----------------------------------------------------------------
         // Play and Sequence
 
         this.activateAccentActiveSetting (globalSettings);
@@ -96,34 +96,34 @@ public class LaunchpadConfiguration extends AbstractConfiguration
         this.activateTurnOffScalePadsSetting (globalSettings);
         this.activateShowPlayedChordsSetting (globalSettings);
 
-        ///////////////////////////
+        // ----------------------------------------------------------------
         // Transport
 
         this.activateBehaviourOnPauseSetting (globalSettings);
         this.activateRecordButtonSetting (globalSettings);
         this.activateShiftedRecordButtonSetting (globalSettings);
 
-        ///////////////////////////
+        // ----------------------------------------------------------------
         // Session
 
         this.activateFlipSessionSetting (globalSettings);
         this.activateSelectClipOnLaunchSetting (globalSettings);
         this.activateActionForRecArmedPad (globalSettings);
 
-        ///////////////////////////
+        // ----------------------------------------------------------------
         // Drum Sequencer
 
         this.activateAutoSelectDrumSetting (globalSettings);
         this.activateTurnOffEmptyDrumPadsSetting (globalSettings);
 
-        ///////////////////////////
+        // ----------------------------------------------------------------
         // Workflow
 
         this.activateExcludeDeactivatedItemsSetting (globalSettings);
         this.activateIncludeMasterSetting (globalSettings);
         this.activateNewClipLengthSetting (globalSettings);
 
-        ///////////////////////////
+        // ----------------------------------------------------------------
         // Pad Sensitivity
 
         this.activateConvertAftertouchSetting (globalSettings);

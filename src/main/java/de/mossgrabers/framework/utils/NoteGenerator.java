@@ -12,6 +12,15 @@ package de.mossgrabers.framework.utils;
 public class NoteGenerator
 {
     /**
+     * Constructor. Private due to helper class.
+     */
+    private NoteGenerator ()
+    {
+        // Intentionally empty
+    }
+
+
+    /**
      * Generates a Euclidean rhythm using the Bjorklund algorithm. Effective pulses = floor(Pulse *
      * Density). This preserves Euclidean spacing while thinning the pattern.
      *
@@ -64,16 +73,17 @@ public class NoteGenerator
 
             void build (final int lvl)
             {
-                if (lvl == -1)
-                    pattern[this.index++] = 0;
-                else if (lvl == -2)
-                    pattern[this.index++] = 1;
-                else
+                switch (lvl)
                 {
-                    for (int i = 0; i < counts[lvl]; i++)
-                        this.build (lvl - 1);
-                    if (remainders[lvl] != 0)
-                        this.build (lvl - 2);
+                    case -1 -> pattern[this.index++] = 0;
+                    case -2 -> pattern[this.index++] = 1;
+
+                    default -> {
+                        for (int i = 0; i < counts[lvl]; i++)
+                            this.build (lvl - 1);
+                        if (remainders[lvl] != 0)
+                            this.build (lvl - 2);
+                    }
                 }
             }
         }

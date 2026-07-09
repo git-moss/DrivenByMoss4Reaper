@@ -62,7 +62,7 @@ public class FireConfiguration extends AbstractConfiguration
     @Override
     public void init (final ISettingsUI globalSettings, final ISettingsUI documentSettings)
     {
-        ///////////////////////////
+        // ----------------------------------------------------------------
         // Scale
 
         this.activateScaleSetting (documentSettings);
@@ -70,19 +70,19 @@ public class FireConfiguration extends AbstractConfiguration
         this.activateScaleInScaleSetting (documentSettings);
         this.activateScaleLayoutSetting (documentSettings);
 
-        ///////////////////////////
+        // ----------------------------------------------------------------
         // Note Repeat
 
         this.activateNoteRepeatSetting (documentSettings);
 
-        ///////////////////////////
+        // ----------------------------------------------------------------
         // Session
 
         this.activateSelectClipOnLaunchSetting (globalSettings);
         this.activateDrawRecordStripeSetting (globalSettings);
         this.activateActionForRecArmedPad (globalSettings);
 
-        ///////////////////////////
+        // ----------------------------------------------------------------
         // Transport
 
         this.activateBehaviourOnStopSetting (globalSettings);
@@ -96,7 +96,7 @@ public class FireConfiguration extends AbstractConfiguration
         });
         this.isSettingActive.add (FLIP_RECORD);
 
-        ///////////////////////////
+        // ----------------------------------------------------------------
         // Play and Sequence
 
         this.activateAccentActiveSetting (globalSettings);
@@ -108,14 +108,14 @@ public class FireConfiguration extends AbstractConfiguration
         this.activateTurnOffScalePadsSetting (globalSettings);
         this.activateShowPlayedChordsSetting (globalSettings);
 
-        ///////////////////////////
+        // ----------------------------------------------------------------
         // Drum Sequencer
 
         if (this.host.supports (Capability.HAS_DRUM_DEVICE))
             this.activateTurnOffEmptyDrumPadsSetting (globalSettings);
         this.activateUseCombinationButtonToSoundSetting (globalSettings);
 
-        ///////////////////////////
+        // ----------------------------------------------------------------
         // Workflow
 
         this.controlLastParamSetting = globalSettings.getEnumSetting ("Control last touched/clicked parameter with SELECT", CATEGORY_WORKFLOW, ON_OFF_OPTIONS, ON_OFF_OPTIONS[0]);
@@ -126,7 +126,7 @@ public class FireConfiguration extends AbstractConfiguration
         this.activateKnobSpeedSetting (globalSettings);
         this.activateColorTrackStates (globalSettings);
 
-        ///////////////////////////
+        // ----------------------------------------------------------------
         // Hardware
 
         final IIntegerSetting padBrightnessSetting = globalSettings.getRangeSetting ("Pad Brightness", CATEGORY_HARDWARE_SETUP, 0, 100, 1, "%", 20);

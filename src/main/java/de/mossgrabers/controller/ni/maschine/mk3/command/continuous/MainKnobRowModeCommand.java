@@ -123,7 +123,7 @@ public class MainKnobRowModeCommand extends KnobRowModeCommand<MaschineControlSu
             this.surface.setTriggerConsumed (ButtonID.ACCENT);
 
             final MaschineConfiguration configuration = this.surface.getConfiguration ();
-            final int v = Math.min (Math.max (1, configuration.getFixedAccentValue () + speed), 127);
+            final int v = Math.clamp (configuration.getFixedAccentValue () + (long) speed, 1, 127);
             configuration.setFixedAccentValue (v);
             this.surface.getDisplay ().notify ("Fixed Accent: " + v);
             return;

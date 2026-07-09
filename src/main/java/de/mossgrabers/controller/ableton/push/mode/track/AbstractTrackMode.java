@@ -264,6 +264,9 @@ public abstract class AbstractTrackMode extends BaseMode<ITrack>
             case PushConfiguration.CURSOR_KEYS_TRACK_OPTION_SWAP:
                 this.model.getCursorTrack ().swapWithPrevious ();
                 break;
+            default:
+                // Ignore
+                break;
         }
     }
 
@@ -282,6 +285,9 @@ public abstract class AbstractTrackMode extends BaseMode<ITrack>
                 break;
             case PushConfiguration.CURSOR_KEYS_TRACK_OPTION_SWAP:
                 this.model.getCursorTrack ().swapWithNext ();
+                break;
+            default:
+                // Ignore
                 break;
         }
     }

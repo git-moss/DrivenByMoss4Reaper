@@ -63,7 +63,7 @@ public class ParameterImpl extends ItemImpl implements IParameterEx
     @Override
     public void inc (final double increment)
     {
-        this.setValue ((int) Math.max (0, Math.min (this.getValue () + increment, this.valueChanger.getUpperBound () - 1.0)));
+        this.setValue ((int) Math.clamp (this.getValue () + increment, 0, this.valueChanger.getUpperBound () - 1.0));
     }
 
 
@@ -119,7 +119,7 @@ public class ParameterImpl extends ItemImpl implements IParameterEx
         offset = valueChanger.toNormalizedValue (Math.abs (offset));
         if (isNegative)
             offset = -offset;
-        this.setNormalizedValue (Math.min (1, Math.max (0, this.getInternalValue () + offset)));
+        this.setNormalizedValue (Math.clamp (this.getInternalValue () + offset, 0, 1));
     }
 
 

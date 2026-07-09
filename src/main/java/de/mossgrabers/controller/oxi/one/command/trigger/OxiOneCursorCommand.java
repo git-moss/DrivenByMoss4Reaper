@@ -33,22 +33,6 @@ public class OxiOneCursorCommand extends CursorCommand<OxiOneControlSurface, Oxi
 
     /** {@inheritDoc} */
     @Override
-    protected void scrollUp ()
-    {
-        super.scrollUp ();
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    protected void scrollDown ()
-    {
-        super.scrollDown ();
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
     protected void updateArrowStates ()
     {
         super.updateArrowStates ();

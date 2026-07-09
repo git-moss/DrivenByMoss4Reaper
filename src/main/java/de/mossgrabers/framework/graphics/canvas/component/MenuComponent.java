@@ -64,7 +64,7 @@ public class MenuComponent implements IComponent
 
         final String name = this.footer.getText ();
         // Element is off if the name is empty
-        if (name == null || name.length () == 0)
+        if (name == null || name.isEmpty ())
             return;
 
         final double menuHeight = 2 * info.getDimensions ().getMenuHeight ();

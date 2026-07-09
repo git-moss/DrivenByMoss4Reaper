@@ -4,6 +4,8 @@
 
 package de.mossgrabers.controller.ni.maschine.mk3.view;
 
+import java.util.List;
+
 import de.mossgrabers.controller.ni.maschine.core.MaschineColorManager;
 import de.mossgrabers.controller.ni.maschine.mk3.MaschineConfiguration;
 import de.mossgrabers.controller.ni.maschine.mk3.controller.MaschineControlSurface;
@@ -14,8 +16,6 @@ import de.mossgrabers.framework.daw.constants.Capability;
 import de.mossgrabers.framework.daw.constants.Resolution;
 import de.mossgrabers.framework.daw.midi.ArpeggiatorMode;
 import de.mossgrabers.framework.utils.ButtonEvent;
-
-import java.util.List;
 
 
 /**
@@ -56,9 +56,9 @@ public class NoteRepeatView extends BaseView
                     final int modeIndex = configuration.lookupArpeggiatorModeIndex (arpMode);
                     final boolean increase = padIndex == 7;
                     final List<ArpeggiatorMode> modes = configuration.getArpeggiatorModes ();
-                    final int newIndex = Math.max (0, Math.min (modes.size () - 1, modeIndex + (increase ? 1 : -1)));
+                    final int newIndex = Math.clamp (modeIndex + (increase ? 1L : -1L), 0, modes.size () - 1);
                     configuration.setNoteRepeatMode (modes.get (newIndex));
-                    this.mvHelper.delayDisplay ( () -> "Mode: " + configuration.getNoteRepeatMode ().getName ());
+                    this.mvHelper.delayDisplay (() -> "Mode: " + configuration.getNoteRepeatMode ().getName ());
                 }
                 break;
 
@@ -67,21 +67,21 @@ public class NoteRepeatView extends BaseView
                 {
                     final int sel2 = Resolution.change (Resolution.getMatch (configuration.getNoteRepeatLength ().getValue ()), padIndex == 9);
                     configuration.setNoteRepeatLength (Resolution.values ()[sel2]);
-                    this.surface.scheduleTask ( () -> this.surface.getDisplay ().notify ("Note Length: " + Resolution.getNameAt (sel2)), 100);
+                    this.surface.scheduleTask (() -> this.surface.getDisplay ().notify ("Note Length: " + Resolution.getNameAt (sel2)), 100);
                 }
                 break;
 
             case 12, 13:
                 final int sel = Resolution.change (Resolution.getMatch (configuration.getNoteRepeatPeriod ().getValue ()), padIndex == 13);
                 configuration.setNoteRepeatPeriod (Resolution.values ()[sel]);
-                this.mvHelper.delayDisplay ( () -> "Period: " + Resolution.getNameAt (sel));
+                this.mvHelper.delayDisplay (() -> "Period: " + Resolution.getNameAt (sel));
                 break;
 
             case 14, 15:
                 if (host.supports (Capability.NOTE_REPEAT_OCTAVES))
                 {
                     configuration.setNoteRepeatOctave (configuration.getNoteRepeatOctave () + (padIndex == 15 ? 1 : -1));
-                    this.mvHelper.delayDisplay ( () -> "Octaves: " + configuration.getNoteRepeatOctave ());
+                    this.mvHelper.delayDisplay (() -> "Octaves: " + configuration.getNoteRepeatOctave ());
                 }
                 break;
 

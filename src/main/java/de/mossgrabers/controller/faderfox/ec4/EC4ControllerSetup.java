@@ -93,7 +93,7 @@ public class EC4ControllerSetup extends AbstractControllerSetup<EC4ControlSurfac
 
         final ITrackBank trackBank = this.model.getTrackBank ();
         trackBank.setIndication (true);
-        trackBank.addSelectionObserver ( (index, isSelected) -> this.handleTrackChange (isSelected));
+        trackBank.addSelectionObserver ((index, isSelected) -> this.handleTrackChange (isSelected));
     }
 
 
@@ -150,12 +150,7 @@ public class EC4ControllerSetup extends AbstractControllerSetup<EC4ControlSurfac
     {
         super.createObservers ();
 
-        this.configuration.addSettingObserver (EC4Configuration.SETUP_SLOT, () -> {
-
-            this.getSurface ().setSetupSlot (this.configuration.getSetupSlot ());
-
-        });
-
+        this.configuration.addSettingObserver (EC4Configuration.SETUP_SLOT, () -> this.getSurface ().setSetupSlot (this.configuration.getSetupSlot ()));
         this.configuration.registerDeactivatedItemsHandler (this.model);
     }
 
@@ -177,7 +172,7 @@ public class EC4ControllerSetup extends AbstractControllerSetup<EC4ControlSurfac
         for (int i = 0; i < 4; i++)
         {
             final int index = i;
-            surface.createButton (ButtonID.get (ButtonID.FOOTSWITCH1, i), "Action " + (i + 1)).bind ( (event, velocity) -> {
+            surface.createButton (ButtonID.get (ButtonID.FOOTSWITCH1, i), "Action " + (i + 1)).bind ((event, velocity) -> {
 
                 if (event == ButtonEvent.DOWN)
                 {

@@ -139,7 +139,7 @@ public class OxiOneControllerSetup extends AbstractControllerSetup<OxiOneControl
 
         final ITrackBank trackBank = this.model.getTrackBank ();
         trackBank.setIndication (true);
-        trackBank.addSelectionObserver ( (index, isSelected) -> this.handleTrackChange (isSelected));
+        trackBank.addSelectionObserver ((index, isSelected) -> this.handleTrackChange (isSelected));
     }
 
 
@@ -392,7 +392,7 @@ public class OxiOneControllerSetup extends AbstractControllerSetup<OxiOneControl
         {
             this.addButton (ButtonID.TRACK, "Track", new OxiOneTrackCommand (this.model, surface), 1, OxiOneControlSurface.MK2_BUTTON_TRACK, () -> modeManager.isActive (Modes.TRACK, Modes.DEVICE_LAYER));
             this.addButton (ButtonID.DEVICE, "PERF", new OxiOnePerfCommand (this.model, surface), 1, OxiOneControlSurface.MK2_BUTTON_PERF, () -> modeManager.isActive (Modes.DEVICE_PARAMS));
-            this.addButton (ButtonID.GROOVE, "FLOW", new OxiOneFillModeGrooveCommand (this.model, surface), 1, OxiOneControlSurface.MK2_BUTTON_FLOW, () -> t.isFillModeActive ());
+            this.addButton (ButtonID.GROOVE, "FLOW", new OxiOneFillModeGrooveCommand (this.model, surface), 1, OxiOneControlSurface.MK2_BUTTON_FLOW, t::isFillModeActive);
             this.addButton (ButtonID.GENERATOR, "GEN", new ModeSelectCommand<> (this.model, surface, Modes.GENERATOR, true, false, true), 1, OxiOneControlSurface.MK2_BUTTON_GEN, () -> modeManager.isActive (Modes.GENERATOR));
         }
     }
@@ -427,7 +427,7 @@ public class OxiOneControllerSetup extends AbstractControllerSetup<OxiOneControl
             final int index = i;
             final IHwRelativeKnob knob = this.addRelativeKnob (ContinuousID.get (ContinuousID.KNOB1, i), "Knob " + i, new KnobRowModeCommand<> (i, this.model, surface), OxiOneControlSurface.KNOB1_VELOCITY + i);
             knob.setIndexInGroup (i);
-            knob.addHasChangedObserver ( (Void) -> this.updateSelectedParameter (index));
+            knob.addHasChangedObserver (Void -> this.updateSelectedParameter (index));
         }
     }
 
@@ -663,7 +663,7 @@ public class OxiOneControllerSetup extends AbstractControllerSetup<OxiOneControl
 
         final OxiOneControlSurface surface = this.getSurface ();
 
-        surface.getViewManager ().addChangeListener ( (previousViewId, activeViewId) -> this.onViewChange ());
+        surface.getViewManager ().addChangeListener ((previousViewId, activeViewId) -> this.onViewChange ());
 
         this.configuration.registerDeactivatedItemsHandler (this.model);
 

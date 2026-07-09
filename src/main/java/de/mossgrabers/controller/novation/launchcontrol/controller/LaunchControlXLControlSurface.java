@@ -194,8 +194,8 @@ public class LaunchControlXLControlSurface extends AbstractControlSurface<Launch
      */
     private void setKnobLED (final int channel, final int note, final int green, final int red)
     {
-        final int g = Math.min (3, Math.max (0, green));
-        final int r = Math.min (3, Math.max (0, red));
+        final int g = Math.clamp (green, 0, 3);
+        final int r = Math.clamp (red, 0, 3);
         // Red is in bit 0 and 1. Green is in bit 4 and 5.
         this.output.sendNoteEx (channel, note, 12 + r + (g << 4));
     }

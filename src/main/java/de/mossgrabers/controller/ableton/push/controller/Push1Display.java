@@ -272,7 +272,7 @@ public class Push1Display extends AbstractTextDisplay
     public static List<Pair<String, Boolean>> createMenuList (final int displaySize, final String [] elements, final int selectedIndex)
     {
         final List<Pair<String, Boolean>> menu = new ArrayList<> ();
-        final int startIndex = Math.max (0, Math.min (selectedIndex, elements.length - displaySize));
+        final int startIndex = Math.clamp (selectedIndex, 0, elements.length - displaySize);
         for (int i = 0; i < displaySize; i++)
         {
             final int pos = startIndex + i;

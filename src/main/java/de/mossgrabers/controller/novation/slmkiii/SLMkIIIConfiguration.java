@@ -47,14 +47,14 @@ public class SLMkIIIConfiguration extends AbstractConfiguration
     @Override
     public void init (final ISettingsUI globalSettings, final ISettingsUI documentSettings)
     {
-        ///////////////////////////
+        // ----------------------------------------------------------------
         // Scale for light guide
 
         this.activateScaleBaseSetting (documentSettings);
         this.activateScaleSetting (documentSettings);
         this.activateScaleInScaleSetting (documentSettings);
 
-        ///////////////////////////
+        // ----------------------------------------------------------------
         // Workflow
 
         this.activateExcludeDeactivatedItemsSetting (globalSettings);
@@ -77,7 +77,7 @@ public class SLMkIIIConfiguration extends AbstractConfiguration
         });
         this.isSettingActive.add (ENABLE_LIGHTGUIDE);
 
-        ///////////////////////////
+        // ----------------------------------------------------------------
         // Session
 
         this.activateSelectClipOnLaunchSetting (globalSettings);

@@ -42,7 +42,7 @@ public class ProjectView extends AbstractView<LaunchpadControlSurface, Launchpad
     {
         final IPadGrid padGrid = this.surface.getPadGrid ();
 
-        //////////////////////////////////////////////////////////////////////
+        // ----------------------------------------------------------------
         // First row (from bottom)
 
         padGrid.light (36, LaunchpadColorManager.LAUNCHPAD_COLOR_BLACK);
@@ -65,13 +65,13 @@ public class ProjectView extends AbstractView<LaunchpadControlSurface, Launchpad
 
         padGrid.light (43, LaunchpadColorManager.LAUNCHPAD_COLOR_BLACK);
 
-        //////////////////////////////////////////////////////////////////////
+        // ----------------------------------------------------------------
         // Row 2
 
         for (int i = 44; i < 52; i++)
             padGrid.light (i, LaunchpadColorManager.LAUNCHPAD_COLOR_BLACK);
 
-        //////////////////////////////////////////////////////////////////////
+        // ----------------------------------------------------------------
         // Row 3
 
         padGrid.light (52, LaunchpadColorManager.LAUNCHPAD_COLOR_BLACK);
@@ -92,13 +92,13 @@ public class ProjectView extends AbstractView<LaunchpadControlSurface, Launchpad
 
         padGrid.light (59, LaunchpadColorManager.LAUNCHPAD_COLOR_BLACK);
 
-        //////////////////////////////////////////////////////////////////////
+        // ----------------------------------------------------------------
         // Row 4
 
         for (int i = 60; i < 68; i++)
             padGrid.light (i, LaunchpadColorManager.LAUNCHPAD_COLOR_BLACK);
 
-        //////////////////////////////////////////////////////////////////////
+        // ----------------------------------------------------------------
         // Row 5
 
         // Toggle inspector
@@ -110,13 +110,13 @@ public class ProjectView extends AbstractView<LaunchpadControlSurface, Launchpad
         // Toggle browser
         padGrid.light (75, LaunchpadColorManager.LAUNCHPAD_COLOR_MAGENTA);
 
-        //////////////////////////////////////////////////////////////////////
+        // ----------------------------------------------------------------
         // Row 6 & 7
 
         for (int i = 76; i < 92; i++)
             padGrid.light (i, LaunchpadColorManager.LAUNCHPAD_COLOR_BLACK);
 
-        //////////////////////////////////////////////////////////////////////
+        // ----------------------------------------------------------------
         // Row 8
 
         padGrid.light (92, LaunchpadColorManager.LAUNCHPAD_COLOR_BLACK);

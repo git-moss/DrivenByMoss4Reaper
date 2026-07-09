@@ -4,6 +4,8 @@
 
 package de.mossgrabers.controller.ni.maschine.mk3.mode;
 
+import java.util.Optional;
+
 import de.mossgrabers.controller.ni.maschine.mk3.controller.MaschineControlSurface;
 import de.mossgrabers.framework.controller.display.ITextDisplay;
 import de.mossgrabers.framework.daw.IBrowser;
@@ -11,8 +13,6 @@ import de.mossgrabers.framework.daw.IModel;
 import de.mossgrabers.framework.daw.data.IBrowserColumn;
 import de.mossgrabers.framework.daw.data.ICursorDevice;
 import de.mossgrabers.framework.utils.StringUtils;
-
-import java.util.Optional;
 
 
 /**
@@ -96,7 +96,7 @@ public class BrowseMode extends BaseMode
         String selectedContentType = browser.getSelectedContentType ();
         if (this.getSelectedParameter () == 7)
             selectedContentType = ">" + selectedContentType;
-        d.setCell (0, 7, selectedContentType).setCell (1, 7, selectedResult == null || selectedResult.length () == 0 ? "-" : selectedResult);
+        d.setCell (0, 7, selectedContentType).setCell (1, 7, selectedResult == null || selectedResult.isEmpty () ? "-" : selectedResult);
         d.allDone ();
     }
 

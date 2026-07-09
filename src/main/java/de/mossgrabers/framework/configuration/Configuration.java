@@ -496,7 +496,7 @@ public interface Configuration
         final ArpeggiatorMode arpMode = this.getNoteRepeatMode ();
         final int modeIndex = this.lookupArpeggiatorModeIndex (arpMode);
         final List<ArpeggiatorMode> modes = this.getArpeggiatorModes ();
-        final int newIndex = Math.max (0, Math.min (modes.size () - 1, modeIndex + (increase ? 1 : -1)));
+        final int newIndex = Math.clamp (modeIndex + (increase ? 1L : -1L), 0, modes.size () - 1);
         this.setNoteRepeatMode (modes.get (newIndex));
     }
 

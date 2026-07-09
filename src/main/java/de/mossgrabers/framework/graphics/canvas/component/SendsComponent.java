@@ -4,6 +4,8 @@
 
 package de.mossgrabers.framework.graphics.canvas.component;
 
+import java.util.Arrays;
+
 import de.mossgrabers.framework.controller.color.ColorEx;
 import de.mossgrabers.framework.daw.resource.ChannelType;
 import de.mossgrabers.framework.graphics.Align;
@@ -12,8 +14,6 @@ import de.mossgrabers.framework.graphics.IGraphicsContext;
 import de.mossgrabers.framework.graphics.IGraphicsDimensions;
 import de.mossgrabers.framework.graphics.IGraphicsInfo;
 import de.mossgrabers.framework.graphics.canvas.utils.SendData;
-
-import java.util.Arrays;
 
 
 /**
@@ -60,7 +60,7 @@ public class SendsComponent extends ChannelSelectComponent
 
         final String name = this.footer.getText ();
         // Element is off if the name is empty
-        if ((name == null || name.length () == 0) && !this.isExMode)
+        if ((name == null || name.isEmpty ()) && !this.isExMode)
             return;
 
         final IGraphicsContext gc = info.getContext ();
@@ -95,7 +95,7 @@ public class SendsComponent extends ChannelSelectComponent
         for (final SendData send: this.sendData)
         {
             final String sendName = send.name ();
-            if (sendName.length () == 0)
+            if (sendName.isEmpty ())
                 break;
 
             final ColorEx textColor = this.modifyIfOff (send.enabled (), configuration.getColorText ());
@@ -117,7 +117,7 @@ public class SendsComponent extends ChannelSelectComponent
             final String text = send.text ();
             if (send.edited ())
             {
-                final boolean isTouched = text != null && text.length () > 0;
+                final boolean isTouched = text != null && !text.isEmpty ();
                 final double w = isTouched ? 3 : 1;
                 gc.fillRectangle (Math.min (faderLeft + sliderWidth - w - 1, faderLeft + valueWidth + 1), faderTop, w, sliderHeight - 2, editColor);
             }
@@ -135,7 +135,7 @@ public class SendsComponent extends ChannelSelectComponent
             topy += sendRowHeight;
 
             final String text = send.text ();
-            if (text.length () > 0)
+            if (!text.isEmpty ())
             {
                 final ColorEx textColor = this.modifyIfOff (send.enabled (), configuration.getColorText ());
                 final ColorEx borderColor = this.modifyIfOff (send.enabled (), configuration.getColorBorder ());

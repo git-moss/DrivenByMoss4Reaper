@@ -168,7 +168,7 @@ public abstract class AbstractPagedBankImpl<S extends T, T extends IItem> extend
         if (!this.canScrollPageBackwards ())
             return;
         this.scrollPageBackwards ();
-        this.host.scheduleTask ( () -> this.getItem (this.getPageSize () - 1).select (), 75);
+        this.host.scheduleTask (() -> this.getItem (this.getPageSize () - 1).select (), 75);
     }
 
 
@@ -179,7 +179,7 @@ public abstract class AbstractPagedBankImpl<S extends T, T extends IItem> extend
         if (!this.canScrollPageForwards ())
             return;
         this.scrollPageForwards ();
-        this.host.scheduleTask ( () -> this.getItem (0).select (), 75);
+        this.host.scheduleTask (() -> this.getItem (0).select (), 75);
     }
 
 
@@ -218,7 +218,7 @@ public abstract class AbstractPagedBankImpl<S extends T, T extends IItem> extend
      */
     protected void setBankOffset (final int bankOffset)
     {
-        this.bankOffset = Math.max (0, Math.min (bankOffset, this.getItemCount () - 1));
+        this.bankOffset = Math.clamp (bankOffset, 0, this.getItemCount () - 1);
         this.firePageObserver ();
     }
 }

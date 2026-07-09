@@ -7,6 +7,7 @@ package de.mossgrabers.controller.intuitiveinstruments.exquis.controller;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import de.mossgrabers.controller.intuitiveinstruments.exquis.ExquisConfiguration;
@@ -31,7 +32,7 @@ import de.mossgrabers.framework.utils.StringUtils;
 public class ExquisControlSurface extends AbstractControlSurface<ExquisConfiguration>
 {
     /** The IDs of the four knobs. */
-    public static final List<ContinuousID> KNOBS                     = ContinuousID.createSequentialList (ContinuousID.KNOB1, 4);
+    public static final List<ContinuousID> KNOBS                     = Collections.unmodifiableList (ContinuousID.createSequentialList (ContinuousID.KNOB1, 4));
 
     private static final int               CMD_START_POS             = 5;
     private static final int []            SYSEX_HEADER              =

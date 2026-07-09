@@ -19,10 +19,12 @@ import de.mossgrabers.framework.utils.Pair;
  */
 public class SLControllerDefinition extends DefaultControllerDefinition
 {
-    private static final UUID EXTENSION_ID_MK_I  = UUID.fromString ("A9041F50-0407-11E5-B939-0800200C9A66");
-    private static final UUID EXTENSION_ID_MK_II = UUID.fromString ("D1CEE920-1E51-11E4-8C21-0800200C9A66");
+    private static final String SL_MK_II           = "SL MkII";
+    private static final String SL_MK_II_MIDI_2    = "SL MkII MIDI 2";
+    private static final UUID   EXTENSION_ID_MK_I  = UUID.fromString ("A9041F50-0407-11E5-B939-0800200C9A66");
+    private static final UUID   EXTENSION_ID_MK_II = UUID.fromString ("D1CEE920-1E51-11E4-8C21-0800200C9A66");
 
-    private final boolean     isMkII;
+    private final boolean       isMkII;
 
 
     /**
@@ -32,7 +34,7 @@ public class SLControllerDefinition extends DefaultControllerDefinition
      */
     public SLControllerDefinition (final boolean isMkII)
     {
-        super (isMkII ? EXTENSION_ID_MK_II : EXTENSION_ID_MK_I, isMkII ? "SL MkII" : "SL MkI", "Novation", 2, 1);
+        super (isMkII ? EXTENSION_ID_MK_II : EXTENSION_ID_MK_I, isMkII ? SL_MK_II : "SL MkI", "Novation", 2, 1);
         this.isMkII = isMkII;
     }
 
@@ -50,7 +52,7 @@ public class SLControllerDefinition extends DefaultControllerDefinition
                     midiDiscoveryPairs.add (this.addDeviceDiscoveryPair (new String []
                     {
                         "MIDIIN2 (SL MkII)",
-                        "SL MkII"
+                        SL_MK_II
                     }, new String []
                     {
                         "MIDIOUT2 (SL MkII)"
@@ -60,11 +62,11 @@ public class SLControllerDefinition extends DefaultControllerDefinition
                 case MAC, MAC_ARM:
                     midiDiscoveryPairs.add (this.addDeviceDiscoveryPair (new String []
                     {
-                        "SL MkII MIDI 2",
+                        SL_MK_II_MIDI_2,
                         "SL MkII MIDI 1"
                     }, new String []
                     {
-                        "SL MkII MIDI 2"
+                        SL_MK_II_MIDI_2
                     }));
                     break;
 
@@ -73,18 +75,18 @@ public class SLControllerDefinition extends DefaultControllerDefinition
                     midiDiscoveryPairs.add (this.addDeviceDiscoveryPair (new String []
                     {
                         "MIDIIN2 (SL MkII)",
-                        "SL MkII"
+                        SL_MK_II
                     }, new String []
                     {
                         "MIDIOUT2 (SL MkII)"
                     }));
                     midiDiscoveryPairs.add (this.addDeviceDiscoveryPair (new String []
                     {
-                        "SL MkII MIDI 2",
+                        SL_MK_II_MIDI_2,
                         "SL MkII MIDI 1"
                     }, new String []
                     {
-                        "SL MkII MIDI 2"
+                        SL_MK_II_MIDI_2
                     }));
                     break;
             }

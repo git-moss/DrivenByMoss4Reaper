@@ -4,6 +4,13 @@
 
 package de.mossgrabers.controller.novation.launchcontrol;
 
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.BooleanSupplier;
+import java.util.function.IntSupplier;
+
 import de.mossgrabers.controller.novation.launchcontrol.controller.LaunchControlXLColorManager;
 import de.mossgrabers.controller.novation.launchcontrol.controller.LaunchControlXLControlSurface;
 import de.mossgrabers.controller.novation.launchcontrol.mode.IXLMode;
@@ -54,13 +61,6 @@ import de.mossgrabers.framework.mode.DummyMode;
 import de.mossgrabers.framework.mode.Modes;
 import de.mossgrabers.framework.mode.track.MasterAndFXVolumeMode;
 import de.mossgrabers.framework.mode.track.TrackVolumeMode;
-
-import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.BooleanSupplier;
-import java.util.function.IntSupplier;
 
 
 /**
@@ -259,17 +259,17 @@ public class LaunchControlXLControllerSetup extends AbstractControllerSetup<Laun
             this.sendAKnobs[i] = surface.createAbsoluteKnob (ContinuousID.get (ContinuousID.SEND1_KNOB1, i), "Send A Knob " + (i + 1));
             this.sendAKnobs[i].bind (new KnobRowModeCommand<> (i, this.model, surface));
             this.sendAKnobs[i].setIndexInGroup (i);
-            this.sendAKnobs[i].addOutput ( () -> this.getKnobValue (0, index), value -> this.setKnobRowColor (0, index, value));
+            this.sendAKnobs[i].addOutput (() -> this.getKnobValue (0, index), value -> this.setKnobRowColor (0, index, value));
 
             this.sendBKnobs[i] = surface.createAbsoluteKnob (ContinuousID.get (ContinuousID.SEND2_KNOB1, i), "Send B Knob " + (i + 1));
             this.sendBKnobs[i].bind (new KnobRowModeCommand<> (8 + i, this.model, surface));
             this.sendBKnobs[i].setIndexInGroup (i);
-            this.sendBKnobs[i].addOutput ( () -> this.getKnobValue (8, index), value -> this.setKnobRowColor (1, index, value));
+            this.sendBKnobs[i].addOutput (() -> this.getKnobValue (8, index), value -> this.setKnobRowColor (1, index, value));
 
             this.panKnobs[i] = surface.createAbsoluteKnob (ContinuousID.get (ContinuousID.PAN_KNOB1, i), "Pan Knob " + (i + 1));
             this.panKnobs[i].bind (new KnobRowModeCommand<> (16 + i, this.model, surface));
             this.panKnobs[i].setIndexInGroup (i);
-            this.panKnobs[i].addOutput ( () -> this.getKnobValue (16, index), value -> this.setKnobRowColor (2, index, value));
+            this.panKnobs[i].addOutput (() -> this.getKnobValue (16, index), value -> this.setKnobRowColor (2, index, value));
 
             this.faders[i] = surface.createFader (ContinuousID.get (ContinuousID.FADER1, i), "Fader " + (i + 1), true);
             this.faders[i].bind (new KnobRowModeCommand<> (24 + i, this.model, surface));
@@ -493,7 +493,7 @@ public class LaunchControlXLControllerSetup extends AbstractControllerSetup<Laun
         if (templateID >= 8)
         {
             this.bindToTemplate ();
-            if (message.length () > 0)
+            if (!message.isEmpty ())
                 this.host.showNotification ("Selected Mode: " + message);
         }
     }

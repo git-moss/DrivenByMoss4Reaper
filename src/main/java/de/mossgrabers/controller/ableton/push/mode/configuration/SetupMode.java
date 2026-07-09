@@ -46,6 +46,9 @@ public class SetupMode extends AbstractConfigurationMode
             case 2:
                 config.changeLEDBrightness (value);
                 break;
+            default:
+                // Ignore
+                break;
         }
 
         if (this.surface.getConfiguration ().getPushVersion () == PushVersion.VERSION_2)
@@ -110,6 +113,9 @@ public class SetupMode extends AbstractConfigurationMode
             case 2:
                 config.setLEDBrightness (100);
                 return;
+            default:
+                // Ignore
+                break;
         }
 
         if (this.surface.getConfiguration ().getPushVersion () == PushVersion.VERSION_2)

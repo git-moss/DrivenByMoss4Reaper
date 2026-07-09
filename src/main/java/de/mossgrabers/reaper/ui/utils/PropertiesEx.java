@@ -46,7 +46,7 @@ public class PropertiesEx extends java.util.Properties
     public String getString (final String key, final String defaultValue)
     {
         final String value = this.getProperty (key, defaultValue);
-        return value == null || value.length () == 0 ? null : value;
+        return value == null || value.isEmpty () ? null : value;
     }
 
 
@@ -252,7 +252,7 @@ public class PropertiesEx extends java.util.Properties
     @Override
     public synchronized Object put (final Object key, final Object value)
     {
-        if (value != null && !(value instanceof final String str && str.length () == 0))
+        if (value != null && !(value instanceof final String str && str.isEmpty ()))
             return super.put (key, value);
         this.remove (key);
         return null;

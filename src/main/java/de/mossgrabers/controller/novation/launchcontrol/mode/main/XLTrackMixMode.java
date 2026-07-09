@@ -143,7 +143,7 @@ public class XLTrackMixMode extends XLAbstractTrackMode
      */
     public void selectParameterMode (final boolean increase)
     {
-        this.selectedDeviceParamProviderIndex = Math.clamp (this.selectedDeviceParamProviderIndex + (increase ? 1 : -1), 0, 2);
+        this.selectedDeviceParamProviderIndex = Math.clamp (this.selectedDeviceParamProviderIndex + (increase ? 1L : -1L), 0, 2);
         this.updateDeviceParametersProvider ();
         this.bindControls ();
         this.model.getHost ().showNotification (MODE_NAMES[this.selectedDeviceParamProviderIndex]);

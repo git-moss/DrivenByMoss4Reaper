@@ -118,7 +118,6 @@ public class OxiOneTransportMode extends AbstractParameterMode<OxiOneControlSurf
                     {
                         enabledParameter.setNormalizedValue (enabledParameter.getValue () == 0 ? 1 : 0);
                         this.mvHelper.notifyGrooveEnablement ();
-                        return;
                     }
                     break;
                 case 2:
@@ -128,6 +127,9 @@ public class OxiOneTransportMode extends AbstractParameterMode<OxiOneControlSurf
                 case 3:
                     this.transport.toggleLoop ();
                     this.mvHelper.notifyArrangerRepeat ();
+                    break;
+                default:
+                    // Ignore
                     break;
             }
         }

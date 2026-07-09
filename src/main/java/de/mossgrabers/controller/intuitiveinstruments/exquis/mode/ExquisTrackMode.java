@@ -38,7 +38,6 @@ public class ExquisTrackMode extends TrackMode<ExquisControlSurface, ExquisConfi
         if (index != 0)
             return ExquisColorManager.FIRST_DAW_COLOR_INDEX + DAWColor.DAW_COLOR_SILVER.ordinal ();
         final String colorID = this.model.getTrackBank ().getSelectedChannelColorEntry ();
-        final int colorIndex = this.colorManager.getColorIndex (colorID);
-        return colorIndex;
+        return this.colorManager.getColorIndex (colorID);
     }
 }

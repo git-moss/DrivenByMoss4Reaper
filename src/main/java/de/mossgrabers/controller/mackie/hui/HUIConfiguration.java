@@ -105,24 +105,24 @@ public class HUIConfiguration extends AbstractConfiguration
     @Override
     public void init (final ISettingsUI globalSettings, final ISettingsUI documentSettings)
     {
-        ///////////////////////////
+        // ----------------------------------------------------------------
         // Hardware
 
         this.activateHardwareSettings (globalSettings);
         this.activateEnableVUMetersSetting (globalSettings, CATEGORY_HARDWARE_SETUP);
 
-        ///////////////////////////
+        // ----------------------------------------------------------------
         // Assignable buttons
 
         this.activateAssignableSettings (globalSettings);
 
-        ///////////////////////////
+        // ----------------------------------------------------------------
         // Transport
 
         this.activateBehaviourOnStopSetting (globalSettings);
         this.activateBehaviourOnPauseSetting (globalSettings);
 
-        ///////////////////////////
+        // ----------------------------------------------------------------
         // Workflow
 
         this.activateExcludeDeactivatedItemsSetting (globalSettings);

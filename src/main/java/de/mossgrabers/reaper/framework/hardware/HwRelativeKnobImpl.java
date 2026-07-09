@@ -223,7 +223,7 @@ public class HwRelativeKnobImpl extends AbstractHwContinuousControl implements I
                     if (!this.isPressed)
                         return;
 
-                    final int speed = (int) Math.min (3, Math.max (-3, Math.round (this.pressedX - scaleX + (this.pressedY - scaleY))));
+                    final int speed = Math.clamp (Math.round (this.pressedX - scaleX + (this.pressedY - scaleY)), -3, 3);
                     if (speed == 0)
                         return;
                     this.pressedX = scaleX;

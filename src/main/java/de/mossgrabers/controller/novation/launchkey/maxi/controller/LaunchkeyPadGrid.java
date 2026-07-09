@@ -4,13 +4,13 @@
 
 package de.mossgrabers.controller.novation.launchkey.maxi.controller;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import de.mossgrabers.framework.controller.color.ColorManager;
 import de.mossgrabers.framework.controller.grid.PadGridImpl;
 import de.mossgrabers.framework.daw.midi.IMidiOutput;
 import de.mossgrabers.framework.view.Views;
-
-import java.util.HashMap;
-import java.util.Map;
 
 
 /**
@@ -40,9 +40,9 @@ public class LaunchkeyPadGrid extends PadGridImpl
     };
     // @formatter:on
 
-    private static final Map<Integer, Integer> INVERSE_MAP_DRUM          = new HashMap<> (16);
-    private static final Map<Integer, Integer> INVERSE_MAP_SESSION       = new HashMap<> (16);
-    private static final Map<Integer, Integer> INVERSE_MAP_DEVICE_SELECT = new HashMap<> (16);
+    private static final Map<Integer, Integer> INVERSE_MAP_DRUM          = HashMap.newHashMap (16);
+    private static final Map<Integer, Integer> INVERSE_MAP_SESSION       = HashMap.newHashMap (16);
+    private static final Map<Integer, Integer> INVERSE_MAP_DEVICE_SELECT = HashMap.newHashMap (16);
 
     static
     {

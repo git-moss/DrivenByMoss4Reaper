@@ -361,7 +361,7 @@ public abstract class AbstractGraphicDisplay implements IGraphicDisplay
     public void addListElement (final int displaySize, final String [] elements, final int selectedIndex)
     {
         final List<Pair<String, Boolean>> menu = new ArrayList<> ();
-        final int startIndex = Math.max (0, Math.min (selectedIndex, elements.length - displaySize));
+        final int startIndex = Math.clamp (elements.length - (long) displaySize, 0, selectedIndex);
         for (int i = 0; i < displaySize; i++)
         {
             final int pos = startIndex + i;

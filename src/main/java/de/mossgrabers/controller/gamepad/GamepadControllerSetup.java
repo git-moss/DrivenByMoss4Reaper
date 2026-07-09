@@ -4,6 +4,8 @@
 
 package de.mossgrabers.controller.gamepad;
 
+import com.studiohartman.jamepad.ControllerManager;
+
 import de.mossgrabers.controller.gamepad.controller.GamepadControlSurface;
 import de.mossgrabers.framework.configuration.ISettingsUI;
 import de.mossgrabers.framework.controller.AbstractControllerSetup;
@@ -13,8 +15,6 @@ import de.mossgrabers.framework.daw.IHost;
 import de.mossgrabers.framework.daw.ModelSetup;
 import de.mossgrabers.framework.daw.midi.IMidiAccess;
 import de.mossgrabers.framework.daw.midi.IMidiInput;
-
-import com.studiohartman.jamepad.ControllerManager;
 
 
 /**
@@ -94,12 +94,7 @@ public class GamepadControllerSetup extends AbstractControllerSetup<GamepadContr
     {
         super.createObservers ();
 
-        this.configuration.addSettingObserver (GamepadConfiguration.SELECTED_GAMEPAD, () -> {
-
-            this.getSurface ().selectGamepad (this.configuration.getSelectedGamepad ());
-
-        });
-
+        this.configuration.addSettingObserver (GamepadConfiguration.SELECTED_GAMEPAD, () -> this.getSurface ().selectGamepad (this.configuration.getSelectedGamepad ()));
         this.createNoteRepeatObservers (this.configuration, this.getSurface ());
     }
 

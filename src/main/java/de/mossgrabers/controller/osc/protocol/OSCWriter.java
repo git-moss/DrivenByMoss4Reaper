@@ -4,17 +4,17 @@
 
 package de.mossgrabers.controller.osc.protocol;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import de.mossgrabers.controller.osc.OSCConfiguration;
 import de.mossgrabers.controller.osc.module.IModule;
 import de.mossgrabers.framework.daw.IHost;
 import de.mossgrabers.framework.daw.IModel;
 import de.mossgrabers.framework.osc.AbstractOpenSoundControlWriter;
 import de.mossgrabers.framework.osc.IOpenSoundControlClient;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 
 /**
@@ -24,7 +24,7 @@ import java.util.Set;
  */
 public class OSCWriter extends AbstractOpenSoundControlWriter
 {
-    private static final Set<String> HEARTBEAT_MESSAGES = new HashSet<> (3);
+    private static final Set<String> HEARTBEAT_MESSAGES = HashSet.newHashSet (3);
 
     static
     {

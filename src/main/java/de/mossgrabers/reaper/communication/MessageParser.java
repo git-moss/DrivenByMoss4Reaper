@@ -63,15 +63,16 @@ import java.util.concurrent.LinkedBlockingDeque;
  */
 public class MessageParser
 {
-    private static final String          TAG_ACTIVE = "active";
-    private static final String          TAG_PARAM  = "param";
-    private static final String          TAG_COLOR  = "color";
-    private static final String          TAG_SELECT = "select";
-    private static final String          TAG_NUMBER = "number";
-    private static final String          TAG_COUNT  = "count";
-    private static final String          TAG_EXISTS = "exists";
-    private static final String          TAG_NAME   = "name";
-    private static final String          TAG_VOLUME = "volume";
+    private static final String          TAG_POSITION = "position";
+    private static final String          TAG_ACTIVE   = "active";
+    private static final String          TAG_PARAM    = "param";
+    private static final String          TAG_COLOR    = "color";
+    private static final String          TAG_SELECT   = "select";
+    private static final String          TAG_NUMBER   = "number";
+    private static final String          TAG_COUNT    = "count";
+    private static final String          TAG_EXISTS   = "exists";
+    private static final String          TAG_NAME     = "name";
+    private static final String          TAG_VOLUME   = "volume";
 
     private final IControllerSetup<?, ?> controllerSetup;
 
@@ -701,7 +702,7 @@ public class MessageParser
                 device.setExists (Integer.parseInt (value) > 0);
                 break;
 
-            case "position":
+            case TAG_POSITION:
                 device.setPosition (Integer.parseInt (value));
                 break;
 
@@ -837,7 +838,7 @@ public class MessageParser
                         sibling.setEnabled (Integer.parseInt (value) == 0);
                         break;
 
-                    case "position":
+                    case TAG_POSITION:
                         sibling.setPosition (Integer.parseInt (value));
                         break;
 
@@ -995,7 +996,7 @@ public class MessageParser
                 markerImpl.setColorState (color.isPresent () ? color.get () : ColorEx.GRAY.toDoubleRGB ());
                 break;
 
-            case "position", "endPosition":
+            case TAG_POSITION, "endPosition":
                 // Only needed for scenes
                 break;
 
@@ -1029,7 +1030,7 @@ public class MessageParser
                 sceneImpl.setColorState (color.isPresent () ? new ColorEx (color.get ()) : ColorEx.GRAY);
                 break;
 
-            case "position":
+            case TAG_POSITION:
                 sceneImpl.setBeginPosition (Double.parseDouble (value));
                 break;
 
@@ -1171,7 +1172,7 @@ public class MessageParser
 
     private void updateNoteMapping ()
     {
-        this.host.scheduleTask ( () -> this.controllerSetup.getSurface ().getViewManager ().getActive ().updateNoteMapping (), 1000);
+        this.host.scheduleTask (() -> this.controllerSetup.getSurface ().getViewManager ().getActive ().updateNoteMapping (), 1000);
     }
 
 

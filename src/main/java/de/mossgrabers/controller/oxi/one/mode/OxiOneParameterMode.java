@@ -125,7 +125,11 @@ public class OxiOneParameterMode extends ParameterMode<OxiOneControlSurface, Oxi
 
         final IParameterBank paramBank = this.getParamBank ();
         final Optional<String> pageName = paramBank.getPageBank ().getSelectedItem ();
-        final String desc = name.isBlank () ? "No device" : name + ": " + (pageName.isPresent () ? pageName.get () : "None");
+        final String desc;
+        if (name.isBlank ())
+            desc = "No device";
+        else
+            desc = name + ": " + (pageName.isPresent () ? pageName.get () : "None");
 
         final IParameter p = this.bank.getItem (offset + this.selectedKnobIndex);
         String paramLine = p.getName (5);

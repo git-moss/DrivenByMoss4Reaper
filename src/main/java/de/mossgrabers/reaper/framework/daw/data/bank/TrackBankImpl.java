@@ -177,16 +177,10 @@ public class TrackBankImpl extends AbstractTrackBankImpl
     @Override
     public void scrollTo (final int position, final boolean adjustPage)
     {
-        if (this.hasFlatTrackList && this.hasFullFlatTrackList)
-        {
-            if (this.flatTracks.get (position) instanceof final MasterTrackImpl master)
-            {
-                master.select ();
-                return;
-            }
-        }
-
-        super.scrollTo (position, adjustPage);
+        if (this.hasFlatTrackList && this.hasFullFlatTrackList && this.flatTracks.get (position) instanceof final MasterTrackImpl masterTrack)
+            masterTrack.select ();
+        else
+            super.scrollTo (position, adjustPage);
     }
 
 

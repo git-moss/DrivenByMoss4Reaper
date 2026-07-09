@@ -4,18 +4,18 @@
 
 package de.mossgrabers.controller.novation.launchpad.definition;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.UUID;
+
 import de.mossgrabers.controller.novation.launchpad.controller.LaunchpadControlSurface;
 import de.mossgrabers.controller.novation.launchpad.definition.button.LaunchpadButton;
 import de.mossgrabers.framework.controller.grid.LightInfo;
 import de.mossgrabers.framework.utils.OperatingSystem;
 import de.mossgrabers.framework.utils.Pair;
 import de.mossgrabers.framework.utils.StringUtils;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.UUID;
 
 
 /**
@@ -134,11 +134,11 @@ public class LaunchpadMkIIControllerDefinition extends AbstractLaunchpadDefiniti
 
         final List<String> result = new ArrayList<> (3);
         final String sysExHeader = this.getSysExHeader ();
-        if (sbNormal.length () > 0)
+        if (!sbNormal.isEmpty ())
             result.add (new StringBuilder (sysExHeader).append ("0A ").append (sbNormal).append ("F7").toString ());
-        if (sbFlash.length () > 0)
+        if (!sbFlash.isEmpty ())
             result.add (new StringBuilder (sysExHeader).append ("23 ").append (sbFlash).append ("F7").toString ());
-        if (sbPulse.length () > 0)
+        if (!sbPulse.isEmpty ())
             result.add (new StringBuilder (sysExHeader).append ("28 ").append (sbPulse).append ("F7").toString ());
         return result;
     }

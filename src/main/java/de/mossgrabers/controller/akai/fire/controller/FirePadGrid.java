@@ -4,6 +4,10 @@
 
 package de.mossgrabers.controller.akai.fire.controller;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+
 import de.mossgrabers.framework.controller.ButtonID;
 import de.mossgrabers.framework.controller.color.ColorEx;
 import de.mossgrabers.framework.controller.color.ColorManager;
@@ -11,10 +15,6 @@ import de.mossgrabers.framework.controller.grid.BlinkingPadGrid;
 import de.mossgrabers.framework.controller.grid.LightInfo;
 import de.mossgrabers.framework.daw.midi.IMidiOutput;
 import de.mossgrabers.framework.utils.StringUtils;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
 
 
 /**
@@ -34,7 +34,7 @@ public class FirePadGrid extends BlinkingPadGrid
     };
     // @formatter:on
 
-    private static final Map<Integer, Integer> INVERSE_TRANSLATE_16x4_MATRIX = new HashMap<> (64);
+    private static final Map<Integer, Integer> INVERSE_TRANSLATE_16x4_MATRIX = HashMap.newHashMap (64);
     static
     {
         for (int i = 0; i < TRANSLATE_16x4_MATRIX.length; i++)
@@ -131,7 +131,7 @@ public class FirePadGrid extends BlinkingPadGrid
         }
 
         // No update necessary
-        if (sb.length () == 0)
+        if (sb.isEmpty ())
             return;
 
         length *= 4;

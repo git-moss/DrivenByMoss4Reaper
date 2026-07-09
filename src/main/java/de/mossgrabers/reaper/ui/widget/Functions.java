@@ -329,7 +329,7 @@ public final class Functions
      */
     public static String noEmptyString (final String value)
     {
-        return value != null && value.length () == 0 ? null : value;
+        return value != null && value.isEmpty () ? null : value;
     }
 
 
@@ -543,7 +543,7 @@ public final class Functions
                     this.setSelectedFile (cp);
             }
             this.existanceMsg = existanceMsg;
-            if (this.existanceMsg != null && this.existanceMsg.length () > 0 && this.existanceMsg.charAt (0) == '@')
+            if (this.existanceMsg != null && !this.existanceMsg.isEmpty () && this.existanceMsg.charAt (0) == '@')
                 this.existanceMsg = Functions.getMessage (this.existanceMsg.substring (1));
             this.setFileSelectionMode (allowFolders ? JFileChooser.FILES_AND_DIRECTORIES : JFileChooser.FILES_ONLY);
             this.setFileHidingEnabled (true);

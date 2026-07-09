@@ -101,6 +101,14 @@ public interface INoteRepeat extends IObserverManagement
 
 
     /**
+     * Set if pressure as the velocity for new notes is active.
+     *
+     * @param usePressure True to activate
+     */
+    void setUsePressure (boolean usePressure);
+
+
+    /**
      * Get the arpeggiator octaves.
      *
      * @return The octaves (0-8)

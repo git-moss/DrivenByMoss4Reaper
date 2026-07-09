@@ -26,7 +26,7 @@ import java.util.Set;
  */
 public class MidiConnection
 {
-    private static final Set<MidiDevice> USED_DEVICES = new HashSet<> (1);
+    private static final Set<MidiDevice> USED_DEVICES = HashSet.newHashSet (1);
 
     private MidiDevice                   midiInputDevice;
     private MidiDevice                   midiOutputDevice;

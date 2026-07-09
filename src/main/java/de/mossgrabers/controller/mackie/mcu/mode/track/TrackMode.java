@@ -45,12 +45,12 @@ public class TrackMode extends AbstractTrackMode
         else
         {
             final int surfaceID = surface.getSurfaceID ();
-            if (surfaceID == 0)
-                parameterProvider = new RangeFilterParameterProvider (new SelectedTrackParameterProvider (model), 0, 8);
-            else if (surfaceID == 1)
-                parameterProvider = new RangeFilterParameterProvider (new SendParameterProvider (model, -1, 6), 0, 8);
-            else
-                parameterProvider = new EmptyParameterProvider (8);
+            switch (surfaceID)
+            {
+                case 0 -> parameterProvider = new RangeFilterParameterProvider (new SelectedTrackParameterProvider (model), 0, 8);
+                case 1 -> parameterProvider = new RangeFilterParameterProvider (new SendParameterProvider (model, -1, 6), 0, 8);
+                default -> parameterProvider = new EmptyParameterProvider (8);
+            }
         }
         this.setParameterProvider (parameterProvider);
     }

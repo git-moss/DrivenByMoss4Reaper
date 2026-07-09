@@ -97,7 +97,7 @@ public class JTextFieldX extends JTextField
         try
         {
             final String text = this.getText ();
-            return text.length () == 0 ? null : Integer.valueOf (text);
+            return text.isEmpty () ? null : Integer.valueOf (text);
         }
         catch (final NumberFormatException ex)
         {

@@ -8,13 +8,14 @@ import java.util.Arrays;
 
 
 /**
- * Keeps track of playing MPE notes.
+ * Keeps track of playing MPE notes and slides.
  *
  * @author Jürgen Moßgraber
  */
 public class MPEStatus
 {
-    private final int [] notes = new int [16];
+    private final int [] notes      = new int [16];
+    private final int [] slideValue = new int [16];
 
 
     /**
@@ -43,10 +44,34 @@ public class MPEStatus
      * Get the note currently playing on the channel.
      *
      * @param channel The MIDI channel
-     * @return THe note or -1 if no note is playing on this channel
+     * @return The note or -1 if no note is playing on this channel
      */
     public int getNoteStatus (final int channel)
     {
         return this.notes[channel];
+    }
+
+
+    /**
+     * Get the current slide value.
+     * 
+     * @param channel The MIDI channel on which the note of the slide is stored
+     * @return The value
+     */
+    public int getSlideValue (final int channel)
+    {
+        return this.slideValue[channel];
+    }
+
+
+    /**
+     * Stores the current slide value.
+     * 
+     * @param channel The channel of the note which is slid
+     * @param slideValue The value
+     */
+    public void setSlideValue (final int channel, final int slideValue)
+    {
+        this.slideValue[channel] = slideValue;
     }
 }

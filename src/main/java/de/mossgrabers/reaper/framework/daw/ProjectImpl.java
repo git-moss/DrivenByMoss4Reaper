@@ -60,7 +60,7 @@ public class ProjectImpl extends BaseImpl implements IProject
     @Override
     public String getName ()
     {
-        return this.name != null && this.name.length () > 0 ? this.name : "None";
+        return this.name == null || this.name.isEmpty () ? "None" : this.name;
     }
 
 

@@ -88,6 +88,7 @@ import de.mossgrabers.framework.command.trigger.transport.PlayCommand;
 import de.mossgrabers.framework.command.trigger.transport.ToggleLoopCommand;
 import de.mossgrabers.framework.command.trigger.view.ToggleShiftViewCommand;
 import de.mossgrabers.framework.command.trigger.view.ViewMultiSelectCommand;
+import de.mossgrabers.framework.configuration.AbstractConfiguration;
 import de.mossgrabers.framework.configuration.ISettingsUI;
 import de.mossgrabers.framework.controller.AbstractControllerSetup;
 import de.mossgrabers.framework.controller.ButtonID;
@@ -100,12 +101,14 @@ import de.mossgrabers.framework.controller.valuechanger.TwosComplementValueChang
 import de.mossgrabers.framework.daw.IHost;
 import de.mossgrabers.framework.daw.ITransport;
 import de.mossgrabers.framework.daw.ModelSetup;
+import de.mossgrabers.framework.daw.constants.Capability;
 import de.mossgrabers.framework.daw.data.ITrack;
 import de.mossgrabers.framework.daw.data.bank.ITrackBank;
 import de.mossgrabers.framework.daw.data.empty.EmptyTrack;
 import de.mossgrabers.framework.daw.midi.IMidiAccess;
 import de.mossgrabers.framework.daw.midi.IMidiInput;
 import de.mossgrabers.framework.daw.midi.IMidiOutput;
+import de.mossgrabers.framework.daw.midi.INoteRepeat;
 import de.mossgrabers.framework.featuregroup.IMode;
 import de.mossgrabers.framework.featuregroup.IView;
 import de.mossgrabers.framework.featuregroup.ModeManager;
@@ -206,7 +209,7 @@ public class MaschineControllerSetup extends AbstractControllerSetup<MaschineCon
 
         final ITrackBank trackBank = this.model.getTrackBank ();
         trackBank.setIndication (true);
-        trackBank.addSelectionObserver ( (index, isSelected) -> this.handleTrackChange (isSelected));
+        trackBank.addSelectionObserver ((index, isSelected) -> this.handleTrackChange (isSelected));
     }
 
 
@@ -304,6 +307,13 @@ public class MaschineControllerSetup extends AbstractControllerSetup<MaschineCon
         this.createNoteRepeatObservers (this.configuration, surface);
 
         this.activateBrowserObserver (Modes.BROWSER);
+
+        if (this.host.supports (Capability.NOTE_REPEAT_USE_PRESSURE_TO_VELOCITY))
+        {
+            // If fixed velocity is active forward it to the note repeat as well
+            final INoteRepeat noteRepeat = surface.getMidiInput ().getDefaultNoteInput ().getNoteRepeat ();
+            this.configuration.addSettingObserver (AbstractConfiguration.ACTIVATE_FIXED_ACCENT, () -> noteRepeat.setUsePressure (!this.configuration.isAccentActive ()));
+        }
     }
 
 
@@ -665,7 +675,7 @@ public class MaschineControllerSetup extends AbstractControllerSetup<MaschineCon
         final ViewManager viewManager = surface.getViewManager ();
 
         final IHwRelativeKnob knob = this.addRelativeKnob (ContinuousID.MASTER_KNOB, "Encoder", this.mainKnobCommand, MaschineControlSurface.ENCODER);
-        knob.bindTouch ( (event, velocity) -> {
+        knob.bindTouch ((event, velocity) -> {
             final IMode mode = modeManager.getActive ();
             if (mode != null && event != ButtonEvent.LONG)
                 mode.onKnobTouch (8, event == ButtonEvent.DOWN);
@@ -677,7 +687,7 @@ public class MaschineControllerSetup extends AbstractControllerSetup<MaschineCon
             {
                 final int index = i;
                 final IHwRelativeKnob modeKnob = this.addRelativeKnob (ContinuousID.get (ContinuousID.KNOB1, i), "Knob " + (i + 1), new KnobRowModeCommand<> (i, this.model, surface), MaschineControlSurface.MODE_KNOB_1 + i);
-                modeKnob.bindTouch ( (event, velocity) -> {
+                modeKnob.bindTouch ((event, velocity) -> {
                     final IMode mode = modeManager.getActive ();
                     if (mode != null && event != ButtonEvent.LONG)
                         mode.onKnobTouch (index, event == ButtonEvent.DOWN);

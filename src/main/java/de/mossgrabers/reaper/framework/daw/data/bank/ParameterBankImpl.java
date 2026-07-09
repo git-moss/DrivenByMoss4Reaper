@@ -74,15 +74,9 @@ public class ParameterBankImpl extends AbstractPagedBankImpl<ParameterImpl, IPar
 
         this.processor = processor;
         this.device = device;
+        // Restore the offset when switching between devices
         if (this.device != null)
-        {
-            this.device.addNameObserver (name -> {
-
-                // Restore the offset when switching between devices
-                this.setBankOffset (this.selectedDevicePages.getOrDefault (name.toLowerCase (), Integer.valueOf (0)).intValue ());
-
-            });
-        }
+            this.device.addNameObserver (name -> this.setBankOffset (this.selectedDevicePages.getOrDefault (name.toLowerCase (), Integer.valueOf (0)).intValue ()));
 
         this.mappedParameterCache = new IParameter [this.pageSize];
         this.clearParameterCache ();
@@ -112,7 +106,7 @@ public class ParameterBankImpl extends AbstractPagedBankImpl<ParameterImpl, IPar
     @Override
     protected void setBankOffset (final int bankOffset)
     {
-        this.bankOffset = Math.max (0, Math.min (bankOffset, this.getItemCount () - 1));
+        this.bankOffset = Math.clamp (bankOffset, 0, this.getItemCount () - 1);
 
         // Store the offset for switching between devices
         if (this.device != null)

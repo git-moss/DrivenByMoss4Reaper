@@ -84,7 +84,7 @@ public class OSCConfiguration extends AbstractOpenSoundControlConfiguration
     @Override
     public void init (final ISettingsUI globalSettings, final ISettingsUI documentSettings)
     {
-        ///////////////////////////
+        // ----------------------------------------------------------------
         // Network
 
         final IIntegerSetting receivePortSetting = globalSettings.getRangeSetting ("Port to receive on", CATEGORY_SETUP, 1024, 65535, 1, "", 8000);
@@ -100,7 +100,7 @@ public class OSCConfiguration extends AbstractOpenSoundControlConfiguration
         final IIntegerSetting sendPortSetting = globalSettings.getRangeSetting ("Port to send to (requires restart)", CATEGORY_SETUP, 1024, 65535, 1, "", 9000);
         this.sendPort = sendPortSetting.get ().intValue ();
 
-        ///////////////////////////
+        // ----------------------------------------------------------------
         // Protocol
 
         final IEnumSetting valueResolutionSetting = globalSettings.getEnumSetting ("Value resolution", CATEGORY_PROTOCOL, VALUE_RESOLUTION_OPTIONS, VALUE_RESOLUTION_OPTIONS[0]);
@@ -122,25 +122,25 @@ public class OSCConfiguration extends AbstractOpenSoundControlConfiguration
         final IEnumSetting bankPageSizeSetting = globalSettings.getEnumSetting ("Bank Page Size (requires restart)", CATEGORY_PROTOCOL, pageSize, pageSize[7]);
         this.bankPageSize = Integer.parseInt (bankPageSizeSetting.get ());
 
-        ///////////////////////////
+        // ----------------------------------------------------------------
         // Transport
 
         this.activateBehaviourOnStopSetting (globalSettings);
 
-        ///////////////////////////
+        // ----------------------------------------------------------------
         // Play and Sequence
 
         this.activateTrackNavigationSetting (globalSettings, null, true);
         this.activateAccentActiveSetting (globalSettings);
         this.activateAccentValueSetting (globalSettings);
 
-        ///////////////////////////
+        // ----------------------------------------------------------------
         // Workflow
 
         this.activateExcludeDeactivatedItemsSetting (globalSettings);
         this.activateEnableVUMetersSetting (globalSettings);
 
-        ///////////////////////////
+        // ----------------------------------------------------------------
         // Actions
 
         for (int i = 0; i < this.assignableFunctionActions.length; i++)
@@ -150,7 +150,7 @@ public class OSCConfiguration extends AbstractOpenSoundControlConfiguration
             actionSetting.addValueObserver (value -> this.assignableFunctionActions[pos] = actionSetting.get ());
         }
 
-        ///////////////////////////
+        // ----------------------------------------------------------------
         // Debug
 
         this.activateOSCLogging (globalSettings);

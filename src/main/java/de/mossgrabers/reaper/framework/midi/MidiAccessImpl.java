@@ -27,8 +27,8 @@ import java.util.TreeMap;
 public class MidiAccessImpl implements IMidiAccess
 {
     private static BackendExchange                     backend;
-    private static final Map<String, ReaperMidiDevice> INPUTS  = new TreeMap<> ();
-    private static final Map<String, ReaperMidiDevice> OUTPUTS = new TreeMap<> ();
+    private static final Map<String, ReaperMidiDevice> INPUTS_BY_NAME  = new TreeMap<> ();
+    private static final Map<String, ReaperMidiDevice> OUTPUTS_BY_NAME = new TreeMap<> ();
 
     private final IHost                                host;
     private final MidiConnection []                    midiConnections;
@@ -116,8 +116,8 @@ public class MidiAccessImpl implements IMidiAccess
      */
     public static void readDeviceMetadata ()
     {
-        INPUTS.clear ();
-        OUTPUTS.clear ();
+        INPUTS_BY_NAME.clear ();
+        OUTPUTS_BY_NAME.clear ();
 
         final Map<String, Integer> keyedNames = new TreeMap<> ();
 
@@ -152,9 +152,9 @@ public class MidiAccessImpl implements IMidiAccess
 
         final ReaperMidiDevice device = new ReaperMidiDevice (info.getKey ().intValue (), name, isInput, backend);
         if (isInput)
-            INPUTS.put (name, device);
+            INPUTS_BY_NAME.put (name, device);
         else
-            OUTPUTS.put (name, device);
+            OUTPUTS_BY_NAME.put (name, device);
     }
 
 
@@ -166,7 +166,7 @@ public class MidiAccessImpl implements IMidiAccess
      */
     public static Collection<ReaperMidiDevice> getOutputDevices ()
     {
-        return OUTPUTS.values ();
+        return OUTPUTS_BY_NAME.values ();
     }
 
 
@@ -178,7 +178,7 @@ public class MidiAccessImpl implements IMidiAccess
      */
     public static Collection<ReaperMidiDevice> getInputDevices ()
     {
-        return INPUTS.values ();
+        return INPUTS_BY_NAME.values ();
     }
 
 
@@ -190,7 +190,7 @@ public class MidiAccessImpl implements IMidiAccess
      */
     public static MidiDevice getOutputDevice (final String name)
     {
-        return OUTPUTS.get (name);
+        return OUTPUTS_BY_NAME.get (name);
     }
 
 
@@ -202,6 +202,6 @@ public class MidiAccessImpl implements IMidiAccess
      */
     public static MidiDevice getInputDevice (final String name)
     {
-        return INPUTS.get (name);
+        return INPUTS_BY_NAME.get (name);
     }
 }

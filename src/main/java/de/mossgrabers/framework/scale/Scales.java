@@ -323,7 +323,7 @@ public class Scales
      */
     public void setScaleOffsetByIndex (final int scaleOffsetIndex)
     {
-        this.scaleOffset = Math.max (0, Math.min (scaleOffsetIndex, Scales.OFFSETS.length - 1));
+        this.scaleOffset = Math.clamp (scaleOffsetIndex, 0, Scales.OFFSETS.length - 1);
     }
 
 
@@ -485,7 +485,7 @@ public class Scales
      */
     public void setOctave (final int octave)
     {
-        this.octave = Math.max (-Scales.OCTAVE_RANGE, Math.min (octave, Scales.OCTAVE_RANGE));
+        this.octave = Math.clamp (octave, -Scales.OCTAVE_RANGE, Scales.OCTAVE_RANGE);
     }
 
 
@@ -640,7 +640,7 @@ public class Scales
      */
     public void setPianoOctave (final int octave)
     {
-        this.pianoOctave = Math.max (-Scales.PIANO_OCTAVE_RANGE, Math.min (octave, Scales.PIANO_OCTAVE_RANGE));
+        this.pianoOctave = Math.clamp (octave, -Scales.PIANO_OCTAVE_RANGE, Scales.PIANO_OCTAVE_RANGE);
     }
 
 

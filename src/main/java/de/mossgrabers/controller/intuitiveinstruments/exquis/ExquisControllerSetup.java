@@ -126,8 +126,8 @@ public class ExquisControllerSetup extends AbstractControllerSetup<ExquisControl
 
         final ITrackBank trackBank = this.model.getTrackBank ();
         trackBank.setIndication (true);
-        trackBank.addSelectionObserver ( (index, isSelected) -> this.handleTrackChange (index, isSelected));
-        trackBank.addPageObserver ( () -> this.handleTrackChange (-1, true));
+        trackBank.addSelectionObserver (this::handleTrackChange);
+        trackBank.addPageObserver (() -> this.handleTrackChange (-1, true));
     }
 
 
@@ -194,7 +194,7 @@ public class ExquisControllerSetup extends AbstractControllerSetup<ExquisControl
         final ExquisControlSurface surface = this.getSurface ();
         this.configuration.registerDeactivatedItemsHandler (this.model);
 
-        this.configuration.addSettingObserver (AbstractConfiguration.MPE_PITCHBEND_RANGE, () -> surface.scheduleTask ( () -> {
+        this.configuration.addSettingObserver (AbstractConfiguration.MPE_PITCHBEND_RANGE, () -> surface.scheduleTask (() -> {
 
             final INoteInput input = surface.getMidiInput ().getDefaultNoteInput ();
             final IMidiOutput output = surface.getMidiOutput ();
@@ -262,7 +262,7 @@ public class ExquisControllerSetup extends AbstractControllerSetup<ExquisControl
 
             final int ki = knobIndex;
 
-            relativeKnob.addOutput ( () -> {
+            relativeKnob.addOutput (() -> {
 
                 final IMode mode = modeManager.getActive ();
                 return mode == null ? 0 : Math.max (0, mode.getKnobValue (ki));
@@ -280,7 +280,7 @@ public class ExquisControllerSetup extends AbstractControllerSetup<ExquisControl
         }
 
         this.touchstrip = this.addAbsoluteKnob (ContinuousID.TOUCHSTRIP, "Touchstrip", this::selectBankPage, BindType.CC, MIDI_CHANNEL, ExquisControlSurface.TOUCHSTRIP);
-        this.touchstrip.addOutput ( () -> this.isMoveTracks ? this.model.getTrackBank ().getScrollPosition () / 4 : this.model.getSceneBank ().getScrollPosition () / 7, value -> {
+        this.touchstrip.addOutput (() -> this.isMoveTracks ? this.model.getTrackBank ().getScrollPosition () / 4 : this.model.getSceneBank ().getScrollPosition () / 7, value -> {
 
             final ColorEx hiColor = this.isMoveTracks ? ColorEx.BLUE : ColorEx.GREEN;
             for (int i = 0; i < 6; i++)
@@ -326,9 +326,9 @@ public class ExquisControllerSetup extends AbstractControllerSetup<ExquisControl
         if (doesntNeedUpdate)
             return;
 
-        final byte [] trackSettings = this.trackSettings.get (Integer.valueOf (cursorTrackPosition));
-        if (trackSettings != null)
-            this.getSurface ().sendTrackSettings (trackSettings);
+        final byte [] trackSettingsData = this.trackSettings.get (Integer.valueOf (cursorTrackPosition));
+        if (trackSettingsData != null)
+            this.getSurface ().sendTrackSettings (trackSettingsData);
     }
 
 

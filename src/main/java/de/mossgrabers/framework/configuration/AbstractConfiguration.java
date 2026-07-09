@@ -391,7 +391,6 @@ public abstract class AbstractConfiguration implements Configuration
     private IEnumSetting                              midiEditChannelSetting;
     protected IIntegerSetting                         pitchBendRangeSetting;
     protected IEnumSetting                            enableMPESetting;
-    private IEnumSetting                              showPlayedChordsSetting;
 
     private final List<IEnumSetting>                  instrumentSettings                  = new ArrayList<> (7);
     private final List<IEnumSetting>                  audioSettings                       = new ArrayList<> (3);
@@ -937,8 +936,7 @@ public abstract class AbstractConfiguration implements Configuration
     @Override
     public void setNoteRepeatOctave (final int octave)
     {
-        final int o = Math.max (0, Math.min (8, octave));
-        this.noteRepeatOctaveSetting.set (Integer.toString (o));
+        this.noteRepeatOctaveSetting.set (Integer.toString (Math.clamp (octave, 0, 8)));
     }
 
 
@@ -954,7 +952,7 @@ public abstract class AbstractConfiguration implements Configuration
     @Override
     public void setMidiEditChannel (final int midiChannel)
     {
-        final int mc = Math.max (0, Math.min (midiChannel, 15));
+        final int mc = Math.clamp (midiChannel, 0, 15);
         this.midiEditChannelSetting.set (OPTIONS_MIDI_CHANNEL[mc]);
     }
 
@@ -1785,8 +1783,8 @@ public abstract class AbstractConfiguration implements Configuration
      */
     protected void activateShowPlayedChordsSetting (final ISettingsUI settingsUI)
     {
-        this.showPlayedChordsSetting = settingsUI.getEnumSetting ("Notify played chords", CATEGORY_PLAY_AND_SEQUENCE, ON_OFF_OPTIONS, ON_OFF_OPTIONS[0]);
-        this.showPlayedChordsSetting.addValueObserver (value -> this.showPlayedChords = ON_OFF_OPTIONS[1].equals (value));
+        final IEnumSetting showPlayedChordsSetting = settingsUI.getEnumSetting ("Notify played chords", CATEGORY_PLAY_AND_SEQUENCE, ON_OFF_OPTIONS, ON_OFF_OPTIONS[0]);
+        showPlayedChordsSetting.addValueObserver (value -> this.showPlayedChords = ON_OFF_OPTIONS[1].equals (value));
     }
 
 
@@ -2136,7 +2134,7 @@ public abstract class AbstractConfiguration implements Configuration
      */
     public void setMPEPitchbendRange (final int value)
     {
-        this.pitchBendRangeSetting.set (Math.min (96, Math.max (1, value)));
+        this.pitchBendRangeSetting.set (Math.clamp (value, 1, 96));
     }
 
 

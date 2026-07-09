@@ -4,6 +4,9 @@
 
 package de.mossgrabers.controller.ableton.push.mode.track;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import de.mossgrabers.controller.ableton.push.controller.PushControlSurface;
 import de.mossgrabers.framework.controller.display.AbstractGraphicDisplay;
 import de.mossgrabers.framework.controller.display.Format;
@@ -16,9 +19,6 @@ import de.mossgrabers.framework.mode.Modes;
 import de.mossgrabers.framework.parameter.IParameter;
 import de.mossgrabers.framework.parameterprovider.track.CrossfadeParameterProvider;
 
-import java.util.HashMap;
-import java.util.Map;
-
 
 /**
  * Mode for editing the cross-fade setting of all tracks.
@@ -27,7 +27,7 @@ import java.util.Map;
  */
 public class CrossfadeMode extends AbstractTrackMode
 {
-    private static final Map<String, String> CROSSFADE_TEXT = new HashMap<> (3);
+    private static final Map<String, String> CROSSFADE_TEXT = HashMap.newHashMap (3);
 
     static
     {

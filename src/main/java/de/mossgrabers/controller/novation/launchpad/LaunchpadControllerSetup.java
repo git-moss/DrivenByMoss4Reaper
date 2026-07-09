@@ -65,6 +65,7 @@ import de.mossgrabers.framework.command.trigger.view.SelectPlayViewCommand;
 import de.mossgrabers.framework.command.trigger.view.ToggleShiftViewCommand;
 import de.mossgrabers.framework.command.trigger.view.ViewButtonCommand;
 import de.mossgrabers.framework.command.trigger.view.ViewMultiSelectCommand;
+import de.mossgrabers.framework.configuration.AbstractConfiguration;
 import de.mossgrabers.framework.configuration.ISettingsUI;
 import de.mossgrabers.framework.controller.AbstractControllerSetup;
 import de.mossgrabers.framework.controller.ButtonID;
@@ -78,6 +79,7 @@ import de.mossgrabers.framework.daw.DAWColor;
 import de.mossgrabers.framework.daw.IHost;
 import de.mossgrabers.framework.daw.ITransport;
 import de.mossgrabers.framework.daw.ModelSetup;
+import de.mossgrabers.framework.daw.constants.Capability;
 import de.mossgrabers.framework.daw.data.ICursorDevice;
 import de.mossgrabers.framework.daw.data.ITrack;
 import de.mossgrabers.framework.daw.data.bank.IParameterBank;
@@ -86,6 +88,7 @@ import de.mossgrabers.framework.daw.data.bank.ITrackBank;
 import de.mossgrabers.framework.daw.midi.IMidiAccess;
 import de.mossgrabers.framework.daw.midi.IMidiInput;
 import de.mossgrabers.framework.daw.midi.IMidiOutput;
+import de.mossgrabers.framework.daw.midi.INoteRepeat;
 import de.mossgrabers.framework.featuregroup.IMode;
 import de.mossgrabers.framework.featuregroup.IView;
 import de.mossgrabers.framework.featuregroup.ModeManager;
@@ -269,7 +272,7 @@ public class LaunchpadControllerSetup extends AbstractControllerSetup<LaunchpadC
 
         final LaunchpadControlSurface surface = this.getSurface ();
 
-        surface.getViewManager ().addChangeListener ( (previousViewId, activeViewId) -> {
+        surface.getViewManager ().addChangeListener ((previousViewId, activeViewId) -> {
 
             surface.getLight (OutputID.LED1).forceFlush ();
             this.updateIndication ();
@@ -277,10 +280,17 @@ public class LaunchpadControllerSetup extends AbstractControllerSetup<LaunchpadC
         });
 
         final ITrackBank trackBank = this.model.getTrackBank ();
-        trackBank.addSelectionObserver ( (index, isSelected) -> this.handleTrackChange (isSelected));
+        trackBank.addSelectionObserver ((index, isSelected) -> this.handleTrackChange (isSelected));
 
         if (this.configuration.canSettingBeObserved (LaunchpadConfiguration.PAD_BRIGHTNESS))
             this.configuration.addSettingObserver (LaunchpadConfiguration.PAD_BRIGHTNESS, surface::updateBrightness);
+
+        if (this.host.supports (Capability.NOTE_REPEAT_USE_PRESSURE_TO_VELOCITY))
+        {
+            // If fixed velocity is active forward it to the note repeat as well
+            final INoteRepeat noteRepeat = surface.getMidiInput ().getDefaultNoteInput ().getNoteRepeat ();
+            this.configuration.addSettingObserver (AbstractConfiguration.ACTIVATE_FIXED_ACCENT, () -> noteRepeat.setUsePressure (!this.configuration.isAccentActive ()));
+        }
 
         this.configuration.registerDeactivatedItemsHandler (this.model);
         this.createScaleObservers (this.configuration);

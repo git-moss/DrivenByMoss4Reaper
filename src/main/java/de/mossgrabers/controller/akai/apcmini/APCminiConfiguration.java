@@ -75,7 +75,7 @@ public class APCminiConfiguration extends AbstractConfiguration
     @Override
     public void init (final ISettingsUI globalSettings, final ISettingsUI documentSettings)
     {
-        ///////////////////////////
+        // ----------------------------------------------------------------
         // Hardware
 
         if (this.definition.hasBrightness ())
@@ -87,7 +87,7 @@ public class APCminiConfiguration extends AbstractConfiguration
             });
         }
 
-        ///////////////////////////
+        // ----------------------------------------------------------------
         // Scale
 
         this.activateScaleSetting (documentSettings);
@@ -95,7 +95,7 @@ public class APCminiConfiguration extends AbstractConfiguration
         this.activateScaleInScaleSetting (documentSettings);
         this.activateScaleLayoutSetting (documentSettings);
 
-        ///////////////////////////
+        // ----------------------------------------------------------------
         // Play and Sequence
 
         this.activateQuantizeAmountSetting (globalSettings);
@@ -103,7 +103,7 @@ public class APCminiConfiguration extends AbstractConfiguration
         this.activateStartWithSessionViewSetting (globalSettings);
         this.activateShowPlayedChordsSetting (globalSettings);
 
-        ///////////////////////////
+        // ----------------------------------------------------------------
         // Workflow
 
         this.activateExcludeDeactivatedItemsSetting (globalSettings);
@@ -111,7 +111,7 @@ public class APCminiConfiguration extends AbstractConfiguration
         this.activateSelectClipOnLaunchSetting (globalSettings);
         this.activateNewClipLengthSetting (globalSettings);
 
-        ///////////////////////////
+        // ----------------------------------------------------------------
         // Button Control
 
         this.faderCtrlSetting = globalSettings.getEnumSetting ("Fader Ctrl", "Button Control", FADER_CTRL_OPTIONS, this.faderCtrl);

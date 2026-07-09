@@ -4,15 +4,15 @@
 
 package de.mossgrabers.controller.novation.launchpad.controller;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.TreeMap;
+
 import de.mossgrabers.controller.novation.launchpad.definition.ILaunchpadControllerDefinition;
 import de.mossgrabers.framework.controller.color.ColorManager;
 import de.mossgrabers.framework.controller.grid.LightInfo;
 import de.mossgrabers.framework.controller.grid.PadGridImpl;
 import de.mossgrabers.framework.daw.midi.IMidiOutput;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.TreeMap;
 
 
 /**
@@ -36,7 +36,7 @@ public class LaunchpadPadGrid extends PadGridImpl
     };
     // @formatter:on
 
-    private static final Map<Integer, Integer> INVERSE_TRANSLATE_MATRIX = new HashMap<> (64);
+    private static final Map<Integer, Integer> INVERSE_TRANSLATE_MATRIX = HashMap.newHashMap (64);
     static
     {
         for (int i = 0; i < TRANSLATE_MATRIX.length; i++)

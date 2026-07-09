@@ -77,6 +77,6 @@ public class FileEx extends File
         final String text = Files.readString (this.toPath ());
 
         // UTF-8 BOM might not be automatically removed
-        return text.length () > 0 && text.charAt (0) == '\uFEFF' ? text.substring (1) : text;
+        return !text.isEmpty () && text.charAt (0) == '\uFEFF' ? text.substring (1) : text;
     }
 }

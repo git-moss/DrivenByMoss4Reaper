@@ -107,7 +107,7 @@ public abstract class AbstractDrumXoXView<S extends IControlSurface<C>, C extend
      * @param model The model
      * @param numColumns The number of available columns
      */
-    public AbstractDrumXoXView (final String name, final S surface, final IModel model, final int numColumns)
+    protected AbstractDrumXoXView (final String name, final S surface, final IModel model, final int numColumns)
     {
         this (name, surface, model, numColumns, 32);
     }
@@ -122,7 +122,7 @@ public abstract class AbstractDrumXoXView<S extends IControlSurface<C>, C extend
      * @param numColumns The number of available columns
      * @param clipCols The columns of the clip
      */
-    public AbstractDrumXoXView (final String name, final S surface, final IModel model, final int numColumns, final int clipCols)
+    protected AbstractDrumXoXView (final String name, final S surface, final IModel model, final int numColumns, final int clipCols)
     {
         super (name, surface, model, 32 / numColumns, 1, numColumns, 128, clipCols, true, true);
 
@@ -217,8 +217,8 @@ public abstract class AbstractDrumXoXView<S extends IControlSurface<C>, C extend
             return;
         }
 
-        // Drum Pad row(s)
-        if (y >= this.numStepRows && y < this.clipsOffset)
+        // Drum Pad row(s) -> y >= this.numStepRows
+        if (y < this.clipsOffset)
         {
             this.handleNoteArea ((y - this.numStepRows) * this.numColumns + x, 0, offsetY, velocity);
             return;
@@ -479,7 +479,7 @@ public abstract class AbstractDrumXoXView<S extends IControlSurface<C>, C extend
     {
         this.blockSelectKnob = true;
         this.changeOctave (ButtonEvent.DOWN, isUp, 16, true, true);
-        this.surface.scheduleTask ( () -> {
+        this.surface.scheduleTask (() -> {
             this.selectDrumPad (selection);
             this.blockSelectKnob = false;
         }, 100);

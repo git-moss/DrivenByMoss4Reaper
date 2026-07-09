@@ -65,7 +65,7 @@ public class ACVSConfiguration extends AbstractConfiguration
     @Override
     public void init (final ISettingsUI globalSettings, final ISettingsUI documentSettings)
     {
-        ///////////////////////////
+        // ------------------------------
         // Hardware
 
         this.acvsDeviceSetting = globalSettings.getEnumSetting ("Device", CATEGORY_HARDWARE_SETUP, ACVS_DEVICE, ACVSDevice.MPC_LIVE_ONE.getName ());
@@ -81,7 +81,7 @@ public class ACVSConfiguration extends AbstractConfiguration
         }
         this.acvsDeviceSetting.setEnabled (false);
 
-        ///////////////////////////
+        // ------------------------------
         // Session
 
         this.launchClipsOrScenesSetting = globalSettings.getEnumSetting ("Launch", CATEGORY_SESSION, SCENE_CLIPS_OPTIONS, SCENE_CLIPS_OPTIONS[0]);
@@ -90,18 +90,18 @@ public class ACVSConfiguration extends AbstractConfiguration
             this.notifyObservers (LAUNCH_CLIPS_OR_SCENES);
         });
 
-        ///////////////////////////
+        // ------------------------------
         // Transport
 
         this.activateBehaviourOnStopSetting (globalSettings);
         this.activateBehaviourOnPauseSetting (globalSettings);
 
-        ///////////////////////////
+        // ------------------------------
         // Play and Sequence
 
         this.activateQuantizeAmountSetting (globalSettings);
 
-        ///////////////////////////
+        // ------------------------------
         // Workflow
 
         this.activateExcludeDeactivatedItemsSetting (globalSettings);

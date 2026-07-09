@@ -414,7 +414,7 @@ public class Kontrol1UsbDevice
     private final IMemoryBlock                 keyLedBlock;
     private final IMemoryBlock                 initBlock;
 
-    private static final Map<Integer, Integer> LED_MAPPING               = new HashMap<> (21);
+    private static final Map<Integer, Integer> LED_MAPPING               = HashMap.newHashMap (21);
 
     private final int                          modelIndex;
     private final IHost                        host;
@@ -486,7 +486,7 @@ public class Kontrol1UsbDevice
             if (hidDevOpt.isPresent ())
             {
                 this.hidDevice = hidDevOpt.get ();
-                this.hidDevice.setCallback ( (reportID, data, received) -> this.processHIDMessage (reportID, data));
+                this.hidDevice.setCallback ((reportID, data, received) -> this.processHIDMessage (reportID, data));
             }
         }
         catch (final UsbException ex)
@@ -854,7 +854,7 @@ public class Kontrol1UsbDevice
             final boolean valueIncreased = (this.mainEncoderValue < currentEncoderValue || this.mainEncoderValue == 0x0F && currentEncoderValue == 0) && !(this.mainEncoderValue == 0 && currentEncoderValue == 0x0F);
             this.mainEncoderValue = currentEncoderValue;
             if (!this.isFirstStateMsg)
-                this.host.scheduleTask ( () -> this.callback.mainEncoderChanged (valueIncreased), 0);
+                this.host.scheduleTask (() -> this.callback.mainEncoderChanged (valueIncreased), 0);
             encoderChange = true;
         }
 
@@ -886,7 +886,7 @@ public class Kontrol1UsbDevice
                     // Slow down, minimum value seems to be 4
                     final int control = diff / 4;
 
-                    this.host.scheduleTask ( () -> this.callback.encoderChanged (ei, control), 0);
+                    this.host.scheduleTask (() -> this.callback.encoderChanged (ei, control), 0);
                 }
                 encoderChange = true;
             }
@@ -910,7 +910,7 @@ public class Kontrol1UsbDevice
         {
             // Store the new start note
             this.firstNote = data[36];
-            this.host.scheduleTask ( () -> this.callback.octaveChanged (this.firstNote), 0);
+            this.host.scheduleTask (() -> this.callback.octaveChanged (this.firstNote), 0);
         }
     }
 
@@ -965,7 +965,7 @@ public class Kontrol1UsbDevice
         {
             final int button = buttons[i];
             final boolean isPressed = (t & TEST_BITS[i]) > 0;
-            this.host.scheduleTask ( () -> this.callback.buttonChange (button, isPressed), 0);
+            this.host.scheduleTask (() -> this.callback.buttonChange (button, isPressed), 0);
         }
     }
 

@@ -148,7 +148,7 @@ public class ChannelComponent extends ChannelSelectComponent
 
         final String name = this.footer.getText ();
         // Element is off if the name is empty
-        if (name == null || name.length () == 0)
+        if (name == null || name.isEmpty ())
             return;
 
         final ColorEx backgroundColor = this.modifyIfOff (configuration.getColorBackground ());
@@ -185,7 +185,7 @@ public class ChannelComponent extends ChannelSelectComponent
 
         final double maxValue = dimensions.getParameterUpperBound ();
         final double halfMax = maxValue / 2;
-        final boolean isPanTouched = this.panText.length () > 0;
+        final boolean isPanTouched = !this.panText.isEmpty ();
 
         // Panned to the left or right?
         final boolean isRight = this.panValue > halfMax;
@@ -234,7 +234,7 @@ public class ChannelComponent extends ChannelSelectComponent
 
         gc.fillRectangle (faderLeft, modulatedVolumeTop, volumeWidth, modulatedVolumeHeight, faderColor);
 
-        final boolean isVolumeTouched = this.volumeText.length () > 0;
+        final boolean isVolumeTouched = !this.volumeText.isEmpty ();
         if (this.editType == EDIT_TYPE_VOLUME || this.editType == EDIT_TYPE_ALL)
         {
             final double h = isVolumeTouched ? 3 : 1;

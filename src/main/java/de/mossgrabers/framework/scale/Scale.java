@@ -135,8 +135,8 @@ public enum Scale
 
     private final String                name;
     private final int []                intervals;
-    private final Set<Integer>          scaleKeys    = new HashSet<> (7);
-    private final Map<Integer, Integer> indexInScale = new HashMap<> (7);
+    private final Set<Integer>          scaleKeys    = HashSet.newHashSet (7);
+    private final Map<Integer, Integer> indexInScale = HashMap.newHashMap (7);
 
     private static final String []      SCALE_NAMES;
     static

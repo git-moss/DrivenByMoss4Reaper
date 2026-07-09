@@ -26,6 +26,9 @@ import de.mossgrabers.framework.mode.Modes;
  */
 public class MCUConfiguration extends AbstractConfiguration
 {
+    private static final String TAG_ASPARION = "Asparion";
+
+
     /** Can display 1 show colors? */
     public enum DisplayColors
     {
@@ -321,7 +324,7 @@ public class MCUConfiguration extends AbstractConfiguration
     private static final String []    MAIN_DISPLAY_OPTIONS                  =
     {
         "None",
-        "Asparion",
+        TAG_ASPARION,
         "Mackie - 6 characters",
         "Mackie - 7 characters"
     };
@@ -329,7 +332,7 @@ public class MCUConfiguration extends AbstractConfiguration
     private static final String []    DISPLAY_COLORS_OPTIONS                =
     {
         "None",
-        "Asparion",
+        TAG_ASPARION,
         "Behringer",
         "iCON"
     };
@@ -337,7 +340,7 @@ public class MCUConfiguration extends AbstractConfiguration
     private static final String []    VU_METER_STYLES                       =
     {
         "None",
-        "Asparion",
+        TAG_ASPARION,
         "iCON",
         "Mackie"
     };
@@ -345,9 +348,9 @@ public class MCUConfiguration extends AbstractConfiguration
     private static final String []    SECOND_DISPLAY_OPTIONS                =
     {
         "None",
-        "Asparion",
+        TAG_ASPARION,
         "iCON QCon Pro-X",
-        "iCON V1-M"
+        DEVICE_ICON_QCON_V1M
     };
 
     private IEnumSetting              zoomStateSetting;
@@ -355,7 +358,6 @@ public class MCUConfiguration extends AbstractConfiguration
     private IEnumSetting              tempoOrTicksSetting;
     private IEnumSetting              displayTrackNamesSetting;
     private IEnumSetting              useFadersAsKnobsSetting;
-    private IEnumSetting              vuMeterStyleSetting;
     private IEnumSetting              enableVuMetersSetting;
     private IEnumSetting              hasMotorFadersSetting;
 
@@ -407,40 +409,40 @@ public class MCUConfiguration extends AbstractConfiguration
     @Override
     public void init (final ISettingsUI globalSettings, final ISettingsUI documentSettings)
     {
-        ///////////////////////////
+        // ----------------------------------------------------------------
         // Hardware
 
         this.activateHardwareSettings (globalSettings);
         this.activateExtenderSettings (globalSettings);
 
-        ///////////////////////////
+        // ----------------------------------------------------------------
         // Segment display
 
         this.activateSegmentDisplaySettings (globalSettings);
 
-        ///////////////////////////
+        // ----------------------------------------------------------------
         // Tracks setup
 
         this.activateTracksSettings (globalSettings);
 
-        ///////////////////////////
+        // ----------------------------------------------------------------
         // Assignable buttons
 
         this.activateAssignableSettings (globalSettings);
 
-        ///////////////////////////
+        // ----------------------------------------------------------------
         // Transport
 
         this.activateBehaviourOnStopSetting (globalSettings);
         this.activateBehaviourOnPauseSetting (globalSettings);
         this.activateFlipRecordSetting (globalSettings);
 
-        ///////////////////////////
+        // ----------------------------------------------------------------
         // Play and Sequence
 
         this.activateQuantizeAmountSetting (globalSettings);
 
-        ///////////////////////////
+        // ----------------------------------------------------------------
         // Workflow
 
         this.activateExcludeDeactivatedItemsSetting (globalSettings);
@@ -538,8 +540,8 @@ public class MCUConfiguration extends AbstractConfiguration
         });
         this.isSettingActive.add (USE_FADERS_AS_KNOBS);
 
-        this.vuMeterStyleSetting = settingsUI.getEnumSetting ("VU Meter Type", CATEGORY_HARDWARE_SETUP, VU_METER_STYLES, VU_METER_STYLES[0]);
-        this.vuMeterStyleSetting.addValueObserver (value -> {
+        final IEnumSetting vuMeterStyleSetting = settingsUI.getEnumSetting ("VU Meter Type", CATEGORY_HARDWARE_SETUP, VU_METER_STYLES, VU_METER_STYLES[0]);
+        vuMeterStyleSetting.addValueObserver (value -> {
 
             if (VU_METER_STYLES[1].equals (value))
                 this.vuMeterStyle = VUMeterStyle.ASPARION;
@@ -601,7 +603,7 @@ public class MCUConfiguration extends AbstractConfiguration
                     useVertZoomForModesSetting.set (off);
                     this.useFadersAsKnobsSetting.set (off);
                     alwaysSendVuMetersSetting.set (off);
-                    this.vuMeterStyleSetting.set (VU_METER_STYLES[3]);
+                    vuMeterStyleSetting.set (VU_METER_STYLES[3]);
                     displayColorsSetting.set (DISPLAY_COLORS_OPTIONS[0]);
                     break;
 
@@ -616,7 +618,7 @@ public class MCUConfiguration extends AbstractConfiguration
                     useVertZoomForModesSetting.set (off);
                     this.useFadersAsKnobsSetting.set (off);
                     alwaysSendVuMetersSetting.set (off);
-                    this.vuMeterStyleSetting.set (VU_METER_STYLES[1]);
+                    vuMeterStyleSetting.set (VU_METER_STYLES[1]);
                     displayColorsSetting.set (DISPLAY_COLORS_OPTIONS[1]);
                     break;
 
@@ -631,7 +633,7 @@ public class MCUConfiguration extends AbstractConfiguration
                     useVertZoomForModesSetting.set (off);
                     this.useFadersAsKnobsSetting.set (off);
                     alwaysSendVuMetersSetting.set (off);
-                    this.vuMeterStyleSetting.set (VU_METER_STYLES[3]);
+                    vuMeterStyleSetting.set (VU_METER_STYLES[3]);
                     displayColorsSetting.set (DISPLAY_COLORS_OPTIONS[2]);
                     break;
 
@@ -646,7 +648,7 @@ public class MCUConfiguration extends AbstractConfiguration
                     useVertZoomForModesSetting.set (off);
                     this.useFadersAsKnobsSetting.set (off);
                     alwaysSendVuMetersSetting.set (off);
-                    this.vuMeterStyleSetting.set (VU_METER_STYLES[3]);
+                    vuMeterStyleSetting.set (VU_METER_STYLES[3]);
                     displayColorsSetting.set (DISPLAY_COLORS_OPTIONS[0]);
                     break;
 
@@ -661,7 +663,7 @@ public class MCUConfiguration extends AbstractConfiguration
                     useVertZoomForModesSetting.set (off);
                     this.useFadersAsKnobsSetting.set (off);
                     alwaysSendVuMetersSetting.set (off);
-                    this.vuMeterStyleSetting.set (VU_METER_STYLES[2]);
+                    vuMeterStyleSetting.set (VU_METER_STYLES[2]);
                     displayColorsSetting.set (DISPLAY_COLORS_OPTIONS[3]);
                     break;
 
@@ -676,7 +678,7 @@ public class MCUConfiguration extends AbstractConfiguration
                     useVertZoomForModesSetting.set (off);
                     this.useFadersAsKnobsSetting.set (off);
                     alwaysSendVuMetersSetting.set (off);
-                    this.vuMeterStyleSetting.set (VU_METER_STYLES[2]);
+                    vuMeterStyleSetting.set (VU_METER_STYLES[2]);
                     displayColorsSetting.set (DISPLAY_COLORS_OPTIONS[3]);
                     break;
 
@@ -691,7 +693,7 @@ public class MCUConfiguration extends AbstractConfiguration
                     useVertZoomForModesSetting.set (on);
                     this.useFadersAsKnobsSetting.set (off);
                     alwaysSendVuMetersSetting.set (off);
-                    this.vuMeterStyleSetting.set (VU_METER_STYLES[0]);
+                    vuMeterStyleSetting.set (VU_METER_STYLES[0]);
                     displayColorsSetting.set (DISPLAY_COLORS_OPTIONS[0]);
                     break;
 
@@ -706,7 +708,7 @@ public class MCUConfiguration extends AbstractConfiguration
                     useVertZoomForModesSetting.set (off);
                     this.useFadersAsKnobsSetting.set (off);
                     alwaysSendVuMetersSetting.set (off);
-                    this.vuMeterStyleSetting.set (VU_METER_STYLES[2]);
+                    vuMeterStyleSetting.set (VU_METER_STYLES[2]);
                     displayColorsSetting.set (DISPLAY_COLORS_OPTIONS[0]);
                     break;
 
@@ -721,7 +723,7 @@ public class MCUConfiguration extends AbstractConfiguration
                     useVertZoomForModesSetting.set (off);
                     this.useFadersAsKnobsSetting.set (off);
                     alwaysSendVuMetersSetting.set (off);
-                    this.vuMeterStyleSetting.set (VU_METER_STYLES[2]);
+                    vuMeterStyleSetting.set (VU_METER_STYLES[2]);
                     displayColorsSetting.set (DISPLAY_COLORS_OPTIONS[3]);
                     break;
 
@@ -736,7 +738,7 @@ public class MCUConfiguration extends AbstractConfiguration
                     useVertZoomForModesSetting.set (off);
                     this.useFadersAsKnobsSetting.set (on);
                     alwaysSendVuMetersSetting.set (off);
-                    this.vuMeterStyleSetting.set (VU_METER_STYLES[0]);
+                    vuMeterStyleSetting.set (VU_METER_STYLES[0]);
                     displayColorsSetting.set (DISPLAY_COLORS_OPTIONS[0]);
                     break;
 

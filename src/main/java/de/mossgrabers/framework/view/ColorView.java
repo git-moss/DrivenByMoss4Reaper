@@ -4,6 +4,8 @@
 
 package de.mossgrabers.framework.view;
 
+import java.util.Optional;
+
 import de.mossgrabers.controller.ableton.push.mode.device.DeviceLayerDetailsMode;
 import de.mossgrabers.framework.configuration.Configuration;
 import de.mossgrabers.framework.controller.ButtonID;
@@ -19,10 +21,7 @@ import de.mossgrabers.framework.daw.data.ITrack;
 import de.mossgrabers.framework.daw.data.bank.IBank;
 import de.mossgrabers.framework.featuregroup.AbstractFeatureGroup;
 import de.mossgrabers.framework.featuregroup.AbstractView;
-import de.mossgrabers.framework.featuregroup.IMode;
 import de.mossgrabers.framework.mode.Modes;
-
-import java.util.Optional;
 
 
 /**
@@ -81,7 +80,7 @@ public class ColorView<S extends IControlSurface<C>, C extends Configuration> ex
      */
     public void setPage (final int page)
     {
-        this.page = Math.max (0, Math.min (page, this.pages - 1));
+        this.page = Math.clamp (this.pages - 1L, 0, page);
     }
 
 
@@ -167,7 +166,6 @@ public class ColorView<S extends IControlSurface<C>, C extends Configuration> ex
 
     private IBank<? extends ILayer> getLayerBank ()
     {
-        final IMode mode = this.surface.getModeManager ().get (Modes.DEVICE_LAYER_DETAILS);
-        return ((DeviceLayerDetailsMode) mode).getBank ();
+        return ((DeviceLayerDetailsMode) this.surface.getModeManager ().get (Modes.DEVICE_LAYER_DETAILS)).getBank ();
     }
 }

@@ -21,8 +21,9 @@ import de.mossgrabers.framework.utils.StringUtils;
  */
 public class LaunchpadProMk3ControllerDefinition extends AbstractLaunchpadDefinition
 {
-    private static final UUID   EXTENSION_ID = UUID.fromString ("4EDED44C-7817-4C66-A334-66A9E342AAA0");
-    private static final String SYSEX_HEADER = "F0 00 20 29 02 0E ";
+    private static final String LAUNCHPAD_PRO_MK3_LP_PRO_MK3_MIDI = "Launchpad Pro MK3 LPProMK3 MIDI";
+    private static final UUID   EXTENSION_ID                      = UUID.fromString ("4EDED44C-7817-4C66-A334-66A9E342AAA0");
+    private static final String SYSEX_HEADER                      = "F0 00 20 29 02 0E ";
 
 
     /**
@@ -84,11 +85,11 @@ public class LaunchpadProMk3ControllerDefinition extends AbstractLaunchpadDefini
 
             case LINUX:
                 midiDiscoveryPairs.add (this.addDeviceDiscoveryPair ("Launchpad Pro MK3 MIDI 1", "Launchpad Pro MK3 MIDI 1"));
-                midiDiscoveryPairs.add (this.addDeviceDiscoveryPair ("Launchpad Pro MK3 LPProMK3 MIDI", "Launchpad Pro MK3 LPProMK3 MIDI"));
+                midiDiscoveryPairs.add (this.addDeviceDiscoveryPair (LAUNCHPAD_PRO_MK3_LP_PRO_MK3_MIDI, LAUNCHPAD_PRO_MK3_LP_PRO_MK3_MIDI));
                 break;
 
             case MAC, MAC_ARM:
-                midiDiscoveryPairs.add (this.addDeviceDiscoveryPair ("Launchpad Pro MK3 LPProMK3 MIDI", "Launchpad Pro MK3 LPProMK3 MIDI"));
+                midiDiscoveryPairs.add (this.addDeviceDiscoveryPair (LAUNCHPAD_PRO_MK3_LP_PRO_MK3_MIDI, LAUNCHPAD_PRO_MK3_LP_PRO_MK3_MIDI));
                 break;
 
             default:

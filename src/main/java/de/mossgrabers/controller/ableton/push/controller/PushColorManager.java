@@ -72,7 +72,7 @@ public class PushColorManager extends ColorManager
     /** ID for color when button signals an activated lock state. */
     public static final String         PUSH_BUTTON_STATE_MASTER_HI            = "PUSH_BUTTON_STATE_MASTER_HI";
 
-    ///////////////////////////////////////////////////////////////////////////////////////
+    // ----------------------------------------------------------------
     // Only Push 3
 
     /** ID for color when button signals a lock state. */

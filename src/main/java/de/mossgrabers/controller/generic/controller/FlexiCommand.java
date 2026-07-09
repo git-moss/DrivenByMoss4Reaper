@@ -1169,7 +1169,7 @@ public enum FlexiCommand
     {
         final FlexiCommand [] values = FlexiCommand.values ();
         NAMES = new String [values.length];
-        NAME_COMMAND_MAP = new HashMap<> (values.length);
+        NAME_COMMAND_MAP = HashMap.newHashMap (values.length);
         for (int i = 0; i < values.length; i++)
         {
             NAMES[i] = values[i].getName ();

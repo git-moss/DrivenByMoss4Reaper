@@ -347,10 +347,7 @@ public abstract class AbstractTextDisplay implements ITextDisplay
         synchronized (this.notificationLock)
         {
             if (this.notificationTimeout > 0)
-            {
                 this.updateNotification ();
-                return;
-            }
         }
     }
 

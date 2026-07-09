@@ -136,10 +136,10 @@ public class DeviceParamsMode extends BaseMode<IParameter>
                 final int extenderOffset = this.getExtenderOffset ();
                 for (int i = 0; i < 8; i++)
                 {
-                    final IDevice device = deviceBank.getItem (extenderOffset + i);
-                    if (device.doesExist ())
+                    final IDevice extenderDevice = deviceBank.getItem (extenderOffset + i);
+                    if (extenderDevice.doesExist ())
                     {
-                        d.setCell (0, i, StringUtils.shortenAndFixASCII (device.getName (), textLength));
+                        d.setCell (0, i, StringUtils.shortenAndFixASCII (extenderDevice.getName (), textLength));
                         colors[i] = ColorEx.WHITE;
                     }
                     else
@@ -289,8 +289,8 @@ public class DeviceParamsMode extends BaseMode<IParameter>
                 final int selectedPosition = cursorDevice.getPosition ();
                 for (int i = 0; i < 8; i++)
                 {
-                    final IDevice device = deviceBank.getItem (extenderOffset + i);
-                    this.surface.setKnobLED (i, MCUControlSurface.KNOB_LED_MODE_WRAP, device.doesExist () && device.getPosition () == selectedPosition ? upperBound - 1 : 0, upperBound);
+                    final IDevice extenderDevice = deviceBank.getItem (extenderOffset + i);
+                    this.surface.setKnobLED (i, MCUControlSurface.KNOB_LED_MODE_WRAP, extenderDevice.doesExist () && extenderDevice.getPosition () == selectedPosition ? upperBound - 1 : 0, upperBound);
                 }
             }
             else

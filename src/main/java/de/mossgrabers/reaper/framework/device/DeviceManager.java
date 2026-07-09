@@ -34,13 +34,19 @@ import java.util.regex.Pattern;
  */
 public class DeviceManager
 {
+    private static final String                       TAG_DELAY                   = "Delay";
+    private static final String                       TAG_FILTER                  = "Filter";
+    private static final String                       TAG_PITCH                   = "Pitch";
+    private static final String                       TAG_SYNTH                   = "Synth";
+    private static final String                       TAG_TOOLS                   = "Tools";
+
     private static final DeviceManager                INSTANCE                    = new DeviceManager ();
 
     private static final String                       SECTION_FOLDERS             = "Folders";
     private static final Pattern                      PATTERN_NAME                = Pattern.compile ("(?<type>[^:]+?)(?<instrument>i?):\\s*(?<name>([^)])+)(\\s*\\((?<company>[^)]+?)\\))?(\\s*\\((?<channels>[^)]+)\\))?");
     private static final Set<String>                  NON_CATEGORIES              = Set.of ("ix", "till", "loser", "liteon", "sstillwell", "teej", "schwa", "u-he", "remaincalm_org");
 
-    private static final Map<Integer, DeviceFileType> TYPE_CODES                  = new HashMap<> (5);
+    private static final Map<Integer, DeviceFileType> TYPE_CODES                  = HashMap.newHashMap (5);
     private static final Map<String, DeviceFileType>  DEVICE_FILE_TYPE_MAP        = new HashMap<> ();
     private static final Map<String, String>          JS_CATEGORY_MAP             = new HashMap<> ();
     private static final Map<String, List<String>>    KNOWN_PLUGIN_CATEGORIES_MAP = new HashMap<> ();
@@ -60,36 +66,36 @@ public class DeviceManager
         DEVICE_FILE_TYPE_MAP.put ("JS", DeviceFileType.JS);
 
         JS_CATEGORY_MAP.put ("analysis", "Analysis");
-        JS_CATEGORY_MAP.put ("delay", "Delay");
+        JS_CATEGORY_MAP.put ("delay", TAG_DELAY);
         JS_CATEGORY_MAP.put ("dynamics", "Dynamics");
-        JS_CATEGORY_MAP.put ("filters", "Filter");
+        JS_CATEGORY_MAP.put ("filters", TAG_FILTER);
         JS_CATEGORY_MAP.put ("guitar", "Guitar");
         JS_CATEGORY_MAP.put ("loopsamplers", "Sampler");
         JS_CATEGORY_MAP.put ("meters", "Analysis");
         JS_CATEGORY_MAP.put ("midi", "MIDI");
         JS_CATEGORY_MAP.put ("misc", "Misc");
         JS_CATEGORY_MAP.put ("old_unsupported", "Misc");
-        JS_CATEGORY_MAP.put ("pitch", "Pitch");
-        JS_CATEGORY_MAP.put ("synthesis", "Synth");
-        JS_CATEGORY_MAP.put ("utility", "Tools");
+        JS_CATEGORY_MAP.put ("pitch", TAG_PITCH);
+        JS_CATEGORY_MAP.put ("synthesis", TAG_SYNTH);
+        JS_CATEGORY_MAP.put ("utility", TAG_TOOLS);
         JS_CATEGORY_MAP.put ("waveshapers", "Modulation");
 
-        KNOWN_PLUGIN_CATEGORIES_MAP.put ("Delay", List.of ("ColourCopy", "Delay", "MFM2", "ReaDelay", "Replika", "ValhallaDelay", "Ping Pong"));
+        KNOWN_PLUGIN_CATEGORIES_MAP.put (TAG_DELAY, List.of ("ColourCopy", TAG_DELAY, "MFM2", "ReaDelay", "Replika", "ValhallaDelay", "Ping Pong"));
         KNOWN_PLUGIN_CATEGORIES_MAP.put ("Distortion", List.of ("Bite", "Dirt", "COLDFIRE", "Dist", "Trash", "Saturation", "Vinyl", "Paranoia Mangler", "Tape MELLO-FI"));
         KNOWN_PLUGIN_CATEGORIES_MAP.put ("Dynamics", List.of ("Bus", "Comp", "Expander", "Exciter", "Nectar", "Neutron", "Ozone", "ReaLimit", "Satin", "Solid Bus Comp", "Solid Dynamics", "Supercharger", "Limiter", "Gate", "Transient", "Presswerk", "ReaComp", "ReaXcomp", "Vari Comp", "Enhancer", "Loud", "Satin", "Compciter", "Stereo Upmix", "Zero Crossing Maximizer", "Event Horizon Clipper", "Stereo Width", "Thunderkick", "Booster", "De-esser"));
         KNOWN_PLUGIN_CATEGORIES_MAP.put ("EQ", List.of ("EQ", "Equalizer", "Kicker"));
-        KNOWN_PLUGIN_CATEGORIES_MAP.put ("Filter", List.of ("Driver", "Filter", "ReaFir"));
+        KNOWN_PLUGIN_CATEGORIES_MAP.put (TAG_FILTER, List.of ("Driver", TAG_FILTER, "ReaFir"));
         KNOWN_PLUGIN_CATEGORIES_MAP.put ("Granular", List.of ("FRAGMENTS", "REFRACT"));
         KNOWN_PLUGIN_CATEGORIES_MAP.put ("Guitar", List.of ("Pre", "VC"));
         KNOWN_PLUGIN_CATEGORIES_MAP.put ("MIDI", List.of ("Captain", "SChord", "MIDI"));
         KNOWN_PLUGIN_CATEGORIES_MAP.put ("Misc", List.of ("RX", "SpectraLayers", "Lorenz Attractor", "WaveLab"));
         KNOWN_PLUGIN_CATEGORIES_MAP.put ("Modulation", List.of ("Choral", "Chorus", "MOTIONS", "Flair", "Flange", "Stutter", "Ring Modulator", "Waveshaper", "Phasis", "Modulator", "Phaser", "Rotary"));
         KNOWN_PLUGIN_CATEGORIES_MAP.put ("Multi", List.of ("Guitar Rig", "KAOSS", "Surge XT Effects"));
-        KNOWN_PLUGIN_CATEGORIES_MAP.put ("Pitch", List.of ("Melodyne", "ReaPitch", "ReaTune"));
+        KNOWN_PLUGIN_CATEGORIES_MAP.put (TAG_PITCH, List.of ("Melodyne", "ReaPitch", "ReaTune"));
         KNOWN_PLUGIN_CATEGORIES_MAP.put ("Reverb", List.of ("Raum", "RC", "ReaVerb", "ReaVerbate", "INTENSITY", "ValhallaRoom", "ValhallaShimmer", "ValhallaSupermassive", "ValhallaVintageVerb", "Twangstrom", "Zebrify", "ZRev", "PLATE", "SPRING", "LX-24", "MDE-X"));
         KNOWN_PLUGIN_CATEGORIES_MAP.put ("Sampler", List.of ("ReaSamplOmatic5000", "sforzando", "Synclavier", "TAL Sampler", "TX16Wx", "Kontakt"));
-        KNOWN_PLUGIN_CATEGORIES_MAP.put ("Synth", List.of ("Absynth", "ACE", "Acid", "Analog Lab", "ARP", "Augmented", "B-3", "Battery", "Bazille", "Easel", "Cardinal", "Clavinet", "CMI", "CP-70", "CS-80", "CZ", "DecentSampler", "Diva", "DX7", "Emulator", "Fabric", "Farfisa", "FM8", "Freak", "Hive", "Hype", "Massive", "Mellotron", "microKORG", "Microwave", "MiniBrute", "MiniFreak", "miniKORG", "Modular", "modwave", "MODX", "MonoPoly", "opsix", "Organ", "Padshop", "Piano", "Pigments", "Polysix", "Prophecy", "Prophet", "ReaSynth", "Retrologue", "SEM", "sfizz", "sforzando", "Synth1", "Synthi", "Solina", "SQ80", "Super 8", "TRITON", "VOX Continental", "VOX Super Continental", "wavestate", "Wurli", "Zebra", "Mini D", "Mini V", "ELECTRIBE", "EP-1", "Groove Agent", "HALion", "Jun-6", "Jup-8", "Komplete", "MS-20", "M1", "Maschine", "Matrix-12", "K1v", "Omnisphere", "OP-Xa", "OPx-4", "Reaktor", "ReaSynDr", "Repro", "Stage-73", "Surge XT", "Avenger", "WAVESTATION", "XO (18 out)"));
-        KNOWN_PLUGIN_CATEGORIES_MAP.put ("Tools", List.of ("Tune", "ReaCast", "ReaControlMIDI", "ReaInsert", "ReaNINJAM", "ReaSurround", "ReaSurroundPan", "Stereo Mixer", "Polarity", "SwixMitch", "Generator", "Meter", "FFT", "Statistics", "Center Canceler", "Stereo Field Manipulator", "Time Difference Pan", "Goniometer", "Joiner", "Splitter", "Switcher", "ReaStream", "Pseudo-Stereo", "Non-Linear Processor", "Auto-Wideness"));
+        KNOWN_PLUGIN_CATEGORIES_MAP.put (TAG_SYNTH, List.of ("Absynth", "ACE", "Acid", "Analog Lab", "ARP", "Augmented", "B-3", "Battery", "Bazille", "Easel", "Cardinal", "Clavinet", "CMI", "CP-70", "CS-80", "CZ", "DecentSampler", "Diva", "DX7", "Emulator", "Fabric", "Farfisa", "FM8", "Freak", "Hive", "Hype", "Massive", "Mellotron", "microKORG", "Microwave", "MiniBrute", "MiniFreak", "miniKORG", "Modular", "modwave", "MODX", "MonoPoly", "opsix", "Organ", "Padshop", "Piano", "Pigments", "Polysix", "Prophecy", "Prophet", "ReaSynth", "Retrologue", "SEM", "sfizz", "sforzando", "Synth1", "Synthi", "Solina", "SQ80", "Super 8", "TRITON", "VOX Continental", "VOX Super Continental", "wavestate", "Wurli", "Zebra", "Mini D", "Mini V", "ELECTRIBE", "EP-1", "Groove Agent", "HALion", "Jun-6", "Jup-8", "Komplete", "MS-20", "M1", "Maschine", "Matrix-12", "K1v", "Omnisphere", "OP-Xa", "OPx-4", "Reaktor", "ReaSynDr", "Repro", "Stage-73", "Surge XT", "Avenger", "WAVESTATION", "XO (18 out)"));
+        KNOWN_PLUGIN_CATEGORIES_MAP.put (TAG_TOOLS, List.of ("Tune", "ReaCast", "ReaControlMIDI", "ReaInsert", "ReaNINJAM", "ReaSurround", "ReaSurroundPan", "Stereo Mixer", "Polarity", "SwixMitch", "Generator", "Meter", "FFT", "Statistics", "Center Canceler", "Stereo Field Manipulator", "Time Difference Pan", "Goniometer", "Joiner", "Splitter", "Switcher", "ReaStream", "Pseudo-Stereo", "Non-Linear Processor", "Auto-Wideness"));
         KNOWN_PLUGIN_CATEGORIES_MAP.put ("Vocal", List.of ("ReaVocode", "ReaVoice", "VocalSynth", "Vocoder", "Speek"));
     }
 
@@ -470,21 +476,21 @@ public class DeviceManager
 
                 if (device.hasCategory ("Utility"))
                 {
-                    device.setCategory ("Tools");
-                    this.categories.add ("Tools");
+                    device.setCategory (TAG_TOOLS);
+                    this.categories.add (TAG_TOOLS);
                 }
                 if (device.hasCategory ("Pitch Shift"))
                 {
-                    device.setCategory ("Pitch");
-                    this.categories.add ("Pitch");
+                    device.setCategory (TAG_PITCH);
+                    this.categories.add (TAG_PITCH);
                 }
             }
 
             this.categories.remove ("Utility");
-            this.categories.remove ("Pitch");
+            this.categories.remove (TAG_PITCH);
 
             // Finally sort the devices by their display name
-            this.devices.sort ( (d1, d2) -> d1.getDisplayName ().compareToIgnoreCase (d2.getDisplayName ()));
+            this.devices.sort ((d1, d2) -> d1.getDisplayName ().compareToIgnoreCase (d2.getDisplayName ()));
         }
     }
 
@@ -611,7 +617,7 @@ public class DeviceManager
                 {
                     final DeviceType type = d.getType ();
                     if (type == DeviceType.INSTRUMENT)
-                        cats.add ("Synth");
+                        cats.add (TAG_SYNTH);
                     else if (type == DeviceType.MIDI_EFFECT)
                         cats.add ("MIDI");
                 }

@@ -346,14 +346,15 @@ public class ParametersMode extends AbstractParametersMode<IItem>
             final IDeviceBank deviceBank = cursorDevice.getDeviceBank ();
             for (int i = 0; i < 8; i++)
             {
-                final IDevice device = deviceBank.getItem (i);
+                final IDevice bankDevice = deviceBank.getItem (i);
                 final StringBuilder sb = new StringBuilder ();
-                if (device.doesExist ())
-                    sb.append (device.getName (9));
+                final boolean exists = bankDevice.doesExist ();
+                if (exists)
+                    sb.append (bankDevice.getName (9));
                 d.setCell (3, i, sb.toString ());
 
-                d.setPropertyColor (i, 2, device.doesExist () ? SLMkIIIColorManager.SLMKIII_MINT : SLMkIIIColorManager.SLMKIII_BLACK);
-                d.setPropertyValue (i, 1, device.doesExist () && i == cursorDevice.getIndex () ? 1 : 0);
+                d.setPropertyColor (i, 2, exists ? SLMkIIIColorManager.SLMKIII_MINT : SLMkIIIColorManager.SLMKIII_BLACK);
+                d.setPropertyValue (i, 1, exists && i == cursorDevice.getIndex () ? 1 : 0);
             }
         }
         else

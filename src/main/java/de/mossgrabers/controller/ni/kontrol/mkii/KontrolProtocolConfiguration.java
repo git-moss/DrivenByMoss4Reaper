@@ -75,7 +75,7 @@ public class KontrolProtocolConfiguration extends AbstractConfiguration
             this.isSettingActive.add (DAW_SWITCH);
         }
 
-        ///////////////////////////
+        // ----------------------------------------------------------------
         // Transport
 
         this.activateBehaviourOnStopSetting (globalSettings);
@@ -83,7 +83,7 @@ public class KontrolProtocolConfiguration extends AbstractConfiguration
         this.activateRecordButtonSetting (globalSettings);
         this.activateShiftedRecordButtonSetting (globalSettings);
 
-        ///////////////////////////
+        // ----------------------------------------------------------------
         // Navigation
 
         final IEnumSetting flipTrackClipNavigationSetting = globalSettings.getEnumSetting ("Flip track/clip navigation", CATEGORY_NAVIGATION, ON_OFF_OPTIONS, ON_OFF_OPTIONS[0]);
@@ -100,7 +100,7 @@ public class KontrolProtocolConfiguration extends AbstractConfiguration
         });
         this.isSettingActive.add (FLIP_CLIP_SCENE_NAVIGATION);
 
-        ///////////////////////////
+        // ----------------------------------------------------------------
         // Workflow
 
         this.activateExcludeDeactivatedItemsSetting (globalSettings);

@@ -56,6 +56,9 @@ public class PushCursorCommand extends CursorCommand<PushControlSurface, PushCon
             case PushConfiguration.CURSOR_KEYS_TRACK_OPTION_MOVE_BANK_BY_1:
                 sceneBank.scrollBackwards ();
                 break;
+            default:
+                // Ignore
+                break;
         }
     }
 
@@ -74,6 +77,9 @@ public class PushCursorCommand extends CursorCommand<PushControlSurface, PushCon
                 break;
             case PushConfiguration.CURSOR_KEYS_TRACK_OPTION_MOVE_BANK_BY_1:
                 sceneBank.scrollForwards ();
+                break;
+            default:
+                // Ignore
                 break;
         }
     }
@@ -126,6 +132,9 @@ public class PushCursorCommand extends CursorCommand<PushControlSurface, PushCon
             case PushConfiguration.CURSOR_KEYS_TRACK_OPTION_MOVE_BANK_BY_1:
                 this.scrollStates.setCanScrollUp (sceneBank.canScrollBackwards ());
                 this.scrollStates.setCanScrollDown (sceneBank.canScrollForwards ());
+                break;
+            default:
+                // Ignore
                 break;
         }
 

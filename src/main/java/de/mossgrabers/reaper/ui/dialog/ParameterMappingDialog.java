@@ -42,6 +42,8 @@ import java.util.List;
  */
 public class ParameterMappingDialog extends BasicDialog
 {
+    private static final String               TAG_REMOVE       = "Remove";
+
     private static final long                 serialVersionUID = 3773770769128020035L;
 
     private final ICursorDevice               cursorDevice;
@@ -53,7 +55,6 @@ public class ParameterMappingDialog extends BasicDialog
     private JListX<ParameterMapPage>          pagesListBox;
     private JListX<ParameterMapPageParameter> pageParametersListBox;
 
-    private JButton                           addPageButton;
     private JButton                           removePageButton;
     private JButton                           editPageButton;
     private JButton                           movePageUpButton;
@@ -142,10 +143,10 @@ public class ParameterMappingDialog extends BasicDialog
 
         final BoxPanel pagesButtonsPanel = new BoxPanel (BoxLayout.Y_AXIS, true);
         pagesButtonsPanel.createSpace (BoxPanel.GLUE);
-        this.addPageButton = pagesButtonsPanel.createButton (Functions.getIcon ("Add"), "Add", null, BoxPanel.SMALL);
-        this.addPageButton.setHorizontalAlignment (SwingConstants.LEFT);
-        this.addPageButton.addActionListener (event -> this.addParamPage ());
-        this.removePageButton = pagesButtonsPanel.createButton (Functions.getIcon ("Remove"), "Remove", null, BoxPanel.SMALL);
+        final JButton addPageButton = pagesButtonsPanel.createButton (Functions.getIcon ("Add"), "Add", null, BoxPanel.SMALL);
+        addPageButton.setHorizontalAlignment (SwingConstants.LEFT);
+        addPageButton.addActionListener (event -> this.addParamPage ());
+        this.removePageButton = pagesButtonsPanel.createButton (Functions.getIcon (TAG_REMOVE), TAG_REMOVE, null, BoxPanel.SMALL);
         this.removePageButton.addActionListener (event -> this.removeParamPage ());
         this.removePageButton.setHorizontalAlignment (SwingConstants.LEFT);
         this.editPageButton = pagesButtonsPanel.createButton (Functions.getIcon ("Edit"), "Rename", null, BoxPanel.NONE);
@@ -176,7 +177,7 @@ public class ParameterMappingDialog extends BasicDialog
         this.assignParamButton = paramButtonsPanel.createButton (Functions.getIcon ("Assign"), "Assign", null, BoxPanel.SMALL);
         this.assignParamButton.setHorizontalAlignment (SwingConstants.LEFT);
         this.assignParamButton.addActionListener (event -> this.assignParam ());
-        this.clearParamButton = paramButtonsPanel.createButton (Functions.getIcon ("Remove"), "Clear", null, BoxPanel.SMALL);
+        this.clearParamButton = paramButtonsPanel.createButton (Functions.getIcon (TAG_REMOVE), "Clear", null, BoxPanel.SMALL);
         this.clearParamButton.setHorizontalAlignment (SwingConstants.LEFT);
         this.clearParamButton.addActionListener (event -> this.clearParam ());
         this.editParamButton = paramButtonsPanel.createButton (Functions.getIcon ("Edit"), "Rename", null, BoxPanel.NONE);
@@ -205,7 +206,7 @@ public class ParameterMappingDialog extends BasicDialog
         contentPane.add (buttons, BorderLayout.SOUTH);
         buttons.createSpace (BoxPanel.GLUE);
 
-        final JButton discardButton = buttons.createButton (Functions.getIcon ("Remove"), "Discard", null, BoxPanel.NORMAL);
+        final JButton discardButton = buttons.createButton (Functions.getIcon (TAG_REMOVE), "Discard", null, BoxPanel.NORMAL);
         final JButton saveButton = buttons.createButton (Functions.getIcon ("Confirm"), "Save", null, BoxPanel.NONE);
         Functions.asWidthAs (discardButton, saveButton);
 

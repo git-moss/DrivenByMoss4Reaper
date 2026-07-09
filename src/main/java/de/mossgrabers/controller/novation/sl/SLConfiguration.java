@@ -72,7 +72,7 @@ public class SLConfiguration extends AbstractConfiguration
     @Override
     public void init (final ISettingsUI globalSettings, final ISettingsUI documentSettings)
     {
-        ///////////////////////////
+        // ----------------------------------------------------------------
         // Play and Sequence
 
         final IEnumSetting touchpadModeSetting = globalSettings.getEnumSetting ("Mode", "Touchpad", TOUCHPAD_OPTIONS, TOUCHPAD_OPTIONS[1]);
@@ -82,7 +82,7 @@ public class SLConfiguration extends AbstractConfiguration
         });
         this.isSettingActive.add (TOUCHPAD_MODE);
 
-        ///////////////////////////
+        // ----------------------------------------------------------------
         // Workflow
 
         this.activateExcludeDeactivatedItemsSetting (globalSettings);

@@ -213,12 +213,12 @@ public class HwPianoKeyboardImpl implements IHwPianoKeyboard, IReaperHwControl
 
         if (mouseEvent == MouseEvent.MOUSE_DRAGGED)
         {
-            final double change = Math.min (3, Math.max (-3, this.pressedX - scaleX + (this.pressedY - scaleY)));
+            final double change = Math.clamp (this.pressedX - scaleX + (this.pressedY - scaleY), -3, 3);
             this.pressedX = scaleX;
             this.pressedY = scaleY;
 
             // Simulate Aftertouch with mouse movement
-            this.currentValue = (int) Math.max (0, Math.min (127, this.currentValue + change));
+            this.currentValue = (int) Math.clamp (this.currentValue + change, 0, 127);
             this.midiInput.sendRawMidiEvent (0xA0, this.pressedKey, this.currentValue);
         }
     }

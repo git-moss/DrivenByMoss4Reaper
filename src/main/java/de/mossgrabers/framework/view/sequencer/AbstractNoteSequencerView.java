@@ -247,11 +247,11 @@ public abstract class AbstractNoteSequencerView<S extends IControlSurface<C>, C 
             // Set a new loop between the 2 selected pads
             final int start = this.loopPadPressed < pad ? this.loopPadPressed : pad;
             final int end = (this.loopPadPressed < pad ? pad : this.loopPadPressed) + 1;
-            final int lengthOfOnePad = this.getLengthOfOnePage (this.numDisplayCols);
-            final double newStart = (double) start * lengthOfOnePad;
+            final double lengthOfOnePad = this.getLengthOfOnePage (this.numDisplayCols);
+            final double newStart = start * lengthOfOnePad;
             clip.setLoopStart (newStart);
             clip.setLoopLength ((end - start) * lengthOfOnePad);
-            clip.setPlayRange (newStart, (double) end * lengthOfOnePad);
+            clip.setPlayRange (newStart, end * lengthOfOnePad);
         }
 
         this.loopPadPressed = -1;
@@ -409,6 +409,6 @@ public abstract class AbstractNoteSequencerView<S extends IControlSurface<C>, C 
         this.offsetY = value;
         this.updateScale ();
         this.clearEditNotes ();
-        this.surface.scheduleTask ( () -> this.surface.getDisplay ().notify (Scales.getSequencerRangeText (this.keyManager.map (0), this.keyManager.map (this.numSequencerRows - 1))), 10);
+        this.surface.scheduleTask (() -> this.surface.getDisplay ().notify (Scales.getSequencerRangeText (this.keyManager.map (0), this.keyManager.map (this.numSequencerRows - 1))), 10);
     }
 }

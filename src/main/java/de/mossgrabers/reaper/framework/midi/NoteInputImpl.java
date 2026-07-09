@@ -68,11 +68,11 @@ public class NoteInputImpl extends AbstractNoteInput
                 final String status = filter.substring (0, 2).replace ('?', ' ').trim ();
                 final String data1 = filter.substring (2, 4).replace ('?', ' ').trim ();
                 final String data2 = filter.substring (4, 6).replace ('?', ' ').trim ();
-                if (status.length () == 0)
+                if (status.isEmpty ())
                     throw new IllegalArgumentException ("Filter has missing status!");
-                if (data1.length () == 0 && data2.length () > 0)
+                if (data1.isEmpty () && !data2.isEmpty ())
                     throw new IllegalArgumentException ("First data byte filter cannot be empty if second is set!");
-                if (data1.length () == 1 || data2.length () == 1)
+                if (data1.isEmpty () || data2.length () == 1)
                     throw new IllegalArgumentException ("Can only handle 2 byte data byte filters!");
 
                 // Add MIDI channels if necessary
@@ -89,10 +89,10 @@ public class NoteInputImpl extends AbstractNoteInput
                 for (final String result: results)
                 {
                     String finalFilter = result;
-                    if (data1.length () > 0)
+                    if (!data1.isEmpty ())
                     {
                         finalFilter += data1;
-                        if (data2.length () > 0)
+                        if (!data2.isEmpty ())
                             finalFilter += data2;
                     }
                     backendFilters.add (finalFilter);

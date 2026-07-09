@@ -761,7 +761,7 @@ public class BoxPanel extends JPanel
      */
     public <T extends JComponent> T addComponent (final T component, final String label, final String mnemonic, final String tooltip, final int space, final boolean addScrollPane)
     {
-        final JLabel l = label != null && label.length () > 0 ? new JLabel (Functions.getText (label)) : null;
+        final JLabel l = label != null && !label.isEmpty () ? new JLabel (Functions.getText (label)) : null;
         return this.addComponent (component, l, mnemonic, tooltip, space, addScrollPane);
     }
 
@@ -871,7 +871,7 @@ public class BoxPanel extends JPanel
     protected char getMnemonicChar (final String text)
     {
         final String t = Functions.getText (text);
-        return t.length () == 0 ? 0 : t.charAt (0);
+        return t.isEmpty () ? 0 : t.charAt (0);
     }
 
 

@@ -168,7 +168,7 @@ public enum Resolution
      */
     public static int change (final int index, final boolean inc)
     {
-        return Math.max (0, Math.min (values ().length - 1, index + (inc ? 1 : -1)));
+        return Math.clamp (index + (inc ? 1L : -1L), 0, values ().length - 1);
     }
 
 

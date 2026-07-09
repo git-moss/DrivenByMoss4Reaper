@@ -572,47 +572,45 @@ public class PushControlSurface extends AbstractControlSurface<PushConfiguration
                     final Scales scales = view.getKeyManager ().getScales ();
                     final int [] intervals = scales.isChromatic () ? CHROMATIC_SCALE : scales.getScale ().getIntervals ();
 
-                    // Range of -10 to 10
-                    final int bendIndex = data2 - 64;
-
                     // Range of -1279 to 1279
-                    final int value = bendIndex * 128 + (data1 >= 64 ? data1 - 127 : data1);
+                    final double value = this.calculateBendValue (channel, data1, data2);
+
                     // Scale to 0..7
                     final int padIndex = (int) Math.round (value / 170.6);
-
-                    final int tonic = scales.getScaleOffset ();
-
-                    final int noteIndex = calcNoteIndex (intervals, note, tonic);
+                    final int noteIndex = calcNoteIndex (intervals, note, scales.getScaleOffset ());
 
                     // Work in a single linear index, then wrap with floorDiv/floorMod
                     final int linear = noteIndex + padIndex;
                     final int deg = Math.floorMod (linear, intervals.length);
-                    final int oct = Math.floorDiv (linear, intervals.length);
+                    final int octave = Math.floorDiv (linear, intervals.length);
 
-                    // Semitone offset to target degree
-                    final int semitones = 12 * oct + intervals[deg] - intervals[noteIndex];
+                    // Semi-tone offset to target degree
+                    final int semitones = 12 * octave + intervals[deg] - intervals[noteIndex];
 
-                    // Next/prev degree for cents interpolation (handles negative correctly)
-                    final boolean positive = value >= 0;
+                    // Residual within the current pad, in the current scale
+                    final double residual = value - padIndex * 170.6;
+
+                    // Next/previous degree for cents interpolation
+                    final boolean positive = residual >= 0;
                     final int linearNext = linear + (positive ? 1 : -1);
                     final int nextDeg = Math.floorMod (linearNext, intervals.length);
                     final int nextOct = Math.floorDiv (linearNext, intervals.length);
                     final int nextPrevSemitones = 12 * nextOct + intervals[nextDeg] - intervals[noteIndex];
 
                     final double diff = (nextPrevSemitones - semitones) * 100.0 / 2.0;
-
-                    // Residual within the current pad, in your scaling
-                    final double residual = value - padIndex * 170.6;
-                    final int cents = (int) Math.round (residual / 85.3 * diff);
+                    // 'diff' already carries the sign of direction; therefore ignore residual sign
+                    final int cents = (int) Math.round (Math.abs (residual) / 85.3 * diff);
 
                     // Convert to pitch-bend and send (unchanged)
                     final int bendRange = 24;
                     final double pitchSemis = semitones + cents / 100.0;
-                    final double f = Math.max (-1.0, Math.min (1.0, pitchSemis / bendRange));
+                    final double f = Math.clamp (pitchSemis / bendRange, -1.0, 1.0);
                     final int delta = (int) Math.round (8191.0 * f);
-                    final int value14 = Math.max (0, Math.min (16383, 8192 + delta));
+                    final int value14 = Math.clamp (8192L + delta, 0, 16383);
+
                     final int lsb = value14 & 0x7F;
                     final int msb = value14 >> 7 & 0x7F;
+                    // TODO Bitwig currently ignores the MIDI channel for MPE!
                     this.input.sendRawMidiEvent (MidiConstants.CMD_PITCHBEND + channel, lsb, msb);
                 }
             }
@@ -620,6 +618,35 @@ public class PushControlSurface extends AbstractControlSurface<PushConfiguration
         }
 
         this.input.sendRawMidiEvent (MidiConstants.CMD_PITCHBEND + channel, data1, data2);
+    }
+
+
+    /**
+     * Calculates the slide movement. Filters outlier values which can occur from accidental touches
+     * of pads of the row above or below.
+     * 
+     * @param channel The MIDI channel on which the note is played which is slid
+     * @param data1 The LSB value byte
+     * @param data2 The MSB value byte
+     * @return The value in the range of -1279 to 1279
+     */
+    private double calculateBendValue (final int channel, final int data1, final int data2)
+    {
+        // Range of -10 to 10
+        final int bendIndex = data2 - 64;
+        double value = bendIndex * 128.0 + (data1 >= 64 ? data1 - 127 : data1);
+
+        final int prevValue = this.mpeStatus.getSlideValue (channel);
+        final double delta = value - prevValue;
+
+        // Max change per event ~1 pad width; an adjacent row touch would exceed this
+        final int maxDelta = 170;
+        final double clampedValue = prevValue + Math.clamp (delta, -maxDelta, maxDelta);
+
+        // Store clamped value for next event
+        this.mpeStatus.setSlideValue (channel, (int) clampedValue);
+
+        return clampedValue;
     }
 
 
@@ -681,7 +708,7 @@ public class PushControlSurface extends AbstractControlSurface<PushConfiguration
                             final IView view = this.getViewManager ().getActive ();
                             if (view instanceof IExpressionView)
                             {
-                                final boolean isNoteOn = code == MidiConstants.CMD_NOTE_ON & data2 > 0;
+                                final boolean isNoteOn = code == MidiConstants.CMD_NOTE_ON && data2 > 0;
                                 // Reset pitch-bend
                                 if (!isNoteOn)
                                     this.input.sendRawMidiEvent (MidiConstants.CMD_PITCHBEND + channel, 0, 64);
@@ -689,6 +716,10 @@ public class PushControlSurface extends AbstractControlSurface<PushConfiguration
                             }
                             return;
                         }
+                        break;
+
+                    default:
+                        // Ignore all others
                         break;
                 }
             }

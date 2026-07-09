@@ -151,7 +151,7 @@ public class EqBandTypeParameterImpl extends ParameterImpl
     @Override
     public void inc (final double increment)
     {
-        final int idValue = Math.min (Math.max (0, (int) (this.bandType.ordinal () + increment)), 6);
+        final int idValue = Math.clamp ((int) (this.bandType.ordinal () + increment), 0, 6);
         final Integer id = EQ_TYPE_INDICES.get (EqualizerBandType.values ()[idValue]);
         this.sendOSC (BAND + this.bandIndex, id.toString ());
     }

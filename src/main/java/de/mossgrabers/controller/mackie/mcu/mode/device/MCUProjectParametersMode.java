@@ -104,11 +104,8 @@ public class MCUProjectParametersMode extends BaseMode<IParameter>
 
         final int [] indices = new int [8];
         Arrays.fill (indices, 0);
-        if (this.getExtenderOffset () == 0)
-        {
-            if (this.bank instanceof final IParameterBank parameterBank)
-                indices[2] = parameterBank.getPageBank ().getSelectedItemIndex () + 1;
-        }
+        if (this.getExtenderOffset () == 0 && this.bank instanceof final IParameterBank parameterBank)
+            indices[2] = parameterBank.getPageBank ().getSelectedItemIndex () + 1;
         this.surface.setItemIndices (indices);
     }
 

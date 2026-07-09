@@ -147,7 +147,7 @@ public class FireControlSurface extends AbstractControlSurface<FireConfiguration
     public void configureLEDs ()
     {
         // Scale to [0..1]. Brightness is in the range of [0.1..1]
-        final double padBrightness = Math.max (0.1, Math.min (1, 0.1 + 0.9 * this.configuration.getPadBrightness () / 100.0));
+        final double padBrightness = Math.clamp (0.1 + 0.9 * this.configuration.getPadBrightness () / 100.0, 0.1, 1);
         final double padSaturation = this.configuration.getPadSaturation () / 100.0;
         final FirePadGrid padGrid = this.getPadGrid ();
         padGrid.configureLEDs (padBrightness, padSaturation);

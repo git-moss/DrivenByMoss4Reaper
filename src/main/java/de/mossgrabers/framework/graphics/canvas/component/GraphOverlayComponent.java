@@ -17,9 +17,6 @@ import de.mossgrabers.framework.graphics.IGraphicsInfo;
  *
  * @author Jürgen Moßgraber
  */
-/**
- *
- */
 public class GraphOverlayComponent implements IComponent
 {
     private final double  x;

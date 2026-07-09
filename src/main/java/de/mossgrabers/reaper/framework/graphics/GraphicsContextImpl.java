@@ -191,7 +191,7 @@ public class GraphicsContextImpl implements IGraphicsContext
     @Override
     public void drawTextInBounds (final String text, final double x, final double y, final double width, final double height, final Align alignment, final ColorEx color, final ColorEx backgroundColor, final double fontSize)
     {
-        if (text == null || text.length () == 0)
+        if (text == null || text.isEmpty ())
             return;
 
         final String txt = StringUtils.fixFontCharacters (text);
@@ -240,7 +240,7 @@ public class GraphicsContextImpl implements IGraphicsContext
     @Override
     public void drawTextInHeight (final String text, final double x, final double y, final double height, final ColorEx color, final ColorEx backgroundColor, final double fontSize)
     {
-        if (text == null || text.length () == 0)
+        if (text == null || text.isEmpty ())
             return;
 
         final String txt = StringUtils.fixFontCharacters (text);

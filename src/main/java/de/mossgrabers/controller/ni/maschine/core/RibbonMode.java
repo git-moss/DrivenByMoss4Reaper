@@ -40,7 +40,7 @@ public enum RibbonMode
     {
         final RibbonMode [] values = RibbonMode.values ();
         NAMES = new String [values.length];
-        NAME_MODE_MAP = new HashMap<> (values.length);
+        NAME_MODE_MAP = HashMap.newHashMap (values.length);
         for (int i = 0; i < values.length; i++)
         {
             NAMES[i] = values[i].getName ();

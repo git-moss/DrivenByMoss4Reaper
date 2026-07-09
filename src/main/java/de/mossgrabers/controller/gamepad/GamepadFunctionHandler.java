@@ -4,6 +4,11 @@
 
 package de.mossgrabers.controller.gamepad;
 
+import java.util.Optional;
+
+import com.studiohartman.jamepad.ControllerAxis;
+import com.studiohartman.jamepad.ControllerButton;
+
 import de.mossgrabers.controller.gamepad.controller.GamepadControlSurface;
 import de.mossgrabers.controller.gamepad.controller.IGamepadCallback;
 import de.mossgrabers.framework.command.trigger.clip.NewCommand;
@@ -14,11 +19,6 @@ import de.mossgrabers.framework.daw.midi.IMidiInput;
 import de.mossgrabers.framework.daw.midi.INoteRepeat;
 import de.mossgrabers.framework.daw.midi.MidiConstants;
 import de.mossgrabers.framework.utils.ButtonEvent;
-
-import com.studiohartman.jamepad.ControllerAxis;
-import com.studiohartman.jamepad.ControllerButton;
-
-import java.util.Optional;
 
 
 /**
@@ -215,14 +215,14 @@ public class GamepadFunctionHandler implements IGamepadCallback
         switch (functionRange)
         {
             case GamepadConfiguration.FUNCTION_RANGE_127:
-                midiValue = positive < 0.09 ? 0 : (int) Math.min (127, Math.max (0, Math.round (positive * 127)));
+                midiValue = positive < 0.09 ? 0 : (int) Math.clamp (Math.round (positive * 127), 0, 127);
                 break;
             case GamepadConfiguration.FUNCTION_RANGE_CENTER_64:
                 if (positive < 0.09)
                     midiValue = 64;
                 else
                 {
-                    final int v = (int) Math.min (63, Math.max (0, Math.round (positive * 63)));
+                    final int v = Math.clamp (Math.round (positive * 63), 0, 63);
                     midiValue = value < 0 ? 63 - v : 64 + v;
                 }
                 break;
@@ -231,7 +231,7 @@ public class GamepadFunctionHandler implements IGamepadCallback
                     midiValue = 64;
                 else
                 {
-                    final int v = (int) Math.min (63, Math.max (0, Math.round (positive * 63)));
+                    final int v = Math.clamp (Math.round (positive * 63), 0, 63);
                     midiValue = value < 0 ? 64 + v : 63 - v;
                 }
                 break;
@@ -253,7 +253,7 @@ public class GamepadFunctionHandler implements IGamepadCallback
      */
     private void handleMidiPitchbend (final float value)
     {
-        final int midiValue = Math.abs (value) < 0.09 ? 8128 : (int) Math.max (Math.min (16383, Math.round ((1 + value) / 2.0 * 16383)), 0);
+        final int midiValue = Math.abs (value) < 0.09 ? 8128 : (int) Math.clamp (Math.round ((1 + value) / 2.0 * 16383), 0, 16383);
         final int msb = midiValue >> 7;
         final int lsb = midiValue & 0x7F;
         this.input.sendRawMidiEvent (MidiConstants.CMD_PITCHBEND, lsb, msb);

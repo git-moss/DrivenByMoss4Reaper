@@ -4,8 +4,9 @@
 
 package de.mossgrabers.controller.gamepad.controller;
 
-import de.mossgrabers.framework.daw.IHost;
-import de.mossgrabers.framework.utils.ButtonEvent;
+import java.util.EnumMap;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.studiohartman.jamepad.ControllerAxis;
 import com.studiohartman.jamepad.ControllerButton;
@@ -13,9 +14,8 @@ import com.studiohartman.jamepad.ControllerIndex;
 import com.studiohartman.jamepad.ControllerManager;
 import com.studiohartman.jamepad.ControllerUnpluggedException;
 
-import java.util.EnumMap;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
+import de.mossgrabers.framework.daw.IHost;
+import de.mossgrabers.framework.utils.ButtonEvent;
 
 
 /**
@@ -102,15 +102,7 @@ public class GamepadControllerInputThread implements Runnable
         {
             while (this.running.get ())
             {
-                // Hand over to other running threads
-                try
-                {
-                    Thread.sleep (INTERVAL);
-                }
-                catch (final InterruptedException ex)
-                {
-                    Thread.currentThread ().interrupt ();
-                }
+                waitThread ();
 
                 if (!this.running.get ())
                     break;
@@ -129,40 +121,63 @@ public class GamepadControllerInputThread implements Runnable
                         continue;
                     }
 
-                    try
-                    {
-                        for (final ControllerButton button: ControllerButton.values ())
-                        {
-                            final boolean isPressed = currController.isButtonPressed (button);
-                            final Boolean state = this.buttonStates.getOrDefault (button, Boolean.FALSE);
-                            if (state.booleanValue () == isPressed)
-                                continue;
-
-                            this.buttonStates.put (button, Boolean.valueOf (isPressed));
-                            this.host.scheduleTask ( () -> this.gamepadCallback.process (button, isPressed ? ButtonEvent.DOWN : ButtonEvent.UP), 0);
-                        }
-
-                        for (final ControllerAxis axis: ControllerAxis.values ())
-                        {
-                            final float position = currController.getAxisState (axis);
-                            final Float state = this.axisStates.getOrDefault (axis, Float.valueOf (0));
-                            if (state.floatValue () == position)
-                                continue;
-
-                            this.axisStates.put (axis, Float.valueOf (position));
-                            this.host.scheduleTask ( () -> this.gamepadCallback.process (axis, position), 0);
-                        }
-                    }
-                    catch (final ControllerUnpluggedException ex)
-                    {
-                        this.host.error ("Controller not connected.");
-                    }
+                    this.executeFunction (currController);
                 }
             }
         }
         catch (final RuntimeException ex)
         {
             this.host.error ("Controller error.", ex);
+        }
+    }
+
+
+    /**
+     * @param currController
+     */
+    public void executeFunction (final ControllerIndex currController)
+    {
+        try
+        {
+            for (final ControllerButton button: ControllerButton.values ())
+            {
+                final boolean isPressed = currController.isButtonPressed (button);
+                final Boolean state = this.buttonStates.getOrDefault (button, Boolean.FALSE);
+                if (state.booleanValue () == isPressed)
+                    continue;
+
+                this.buttonStates.put (button, Boolean.valueOf (isPressed));
+                this.host.scheduleTask (() -> this.gamepadCallback.process (button, isPressed ? ButtonEvent.DOWN : ButtonEvent.UP), 0);
+            }
+
+            for (final ControllerAxis axis: ControllerAxis.values ())
+            {
+                final float position = currController.getAxisState (axis);
+                final Float state = this.axisStates.getOrDefault (axis, Float.valueOf (0));
+                if (state.floatValue () == position)
+                    continue;
+
+                this.axisStates.put (axis, Float.valueOf (position));
+                this.host.scheduleTask (() -> this.gamepadCallback.process (axis, position), 0);
+            }
+        }
+        catch (final ControllerUnpluggedException ex)
+        {
+            this.host.error ("Controller not connected.");
+        }
+    }
+
+
+    private static void waitThread ()
+    {
+        // Hand over to other running threads
+        try
+        {
+            Thread.sleep (INTERVAL);
+        }
+        catch (final InterruptedException ex)
+        {
+            Thread.currentThread ().interrupt ();
         }
     }
 }

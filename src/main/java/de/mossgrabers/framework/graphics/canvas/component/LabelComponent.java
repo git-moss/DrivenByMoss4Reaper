@@ -86,7 +86,7 @@ public class LabelComponent implements IComponent
         final ColorEx textColor = ColorEx.calcContrastColor (bgColor);
         final IGraphicsContext gc = info.getContext ();
 
-        if (this.text == null || this.text.length () == 0)
+        if (this.text == null || this.text.isEmpty ())
         {
             if (this.layout == LabelLayout.SMALL_HEADER)
             {

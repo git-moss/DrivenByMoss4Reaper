@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import de.mossgrabers.controller.mackie.mcu.MCUConfiguration.MainDisplay;
@@ -281,7 +282,7 @@ public class MCUControllerSetup extends AbstractControllerSetup<MCUControlSurfac
 
         final ITrackBank trackBank = this.model.getTrackBank ();
         trackBank.setIndication (true);
-        trackBank.addSelectionObserver ( (index, isSelected) -> this.handleTrackChange (isSelected));
+        trackBank.addSelectionObserver ((index, isSelected) -> this.handleTrackChange (isSelected));
     }
 
 
@@ -374,7 +375,7 @@ public class MCUControllerSetup extends AbstractControllerSetup<MCUControlSurfac
             }
         }
 
-        this.model.getMasterTrack ().addSelectionObserver ( (index, isSelected) -> {
+        this.model.getMasterTrack ().addSelectionObserver ((index, isSelected) -> {
             final ModeManager modeManager = this.getSurface ().getModeManager ();
             if (isSelected && modeManager.isActive (Modes.TRACK))
                 modeManager.setActive (Modes.MASTER);
@@ -959,12 +960,16 @@ public class MCUControllerSetup extends AbstractControllerSetup<MCUControlSurfac
             {
                 if (this.masterVolumeMode.isControlLastParamActive ())
                 {
-                    final IFocusedParameter focusedParameter = this.model.getFocusedParameter ().get ();
-                    final int value = focusedParameter.doesExist () ? focusedParameter.getValue () : 0;
-                    if (value != this.masterFaderValue)
+                    final Optional<IFocusedParameter> focusedParameterOpt = this.model.getFocusedParameter ();
+                    if (focusedParameterOpt.isPresent ())
                     {
-                        this.masterFaderValue = value;
-                        output.sendPitchbend (8, value % 127, value / 127);
+                        final IFocusedParameter focusedParameter = focusedParameterOpt.get ();
+                        final int value = focusedParameter.doesExist () ? focusedParameter.getValue () : 0;
+                        if (value != this.masterFaderValue)
+                        {
+                            this.masterFaderValue = value;
+                            output.sendPitchbend (8, value % 127, value / 127);
+                        }
                     }
                 }
                 else

@@ -27,7 +27,7 @@ public abstract class BaseColumn extends ItemImpl implements IBrowserColumn
 
     protected final IBrowserColumnItem [] items;
 
-    private final Set<FilterListener>     listeners   = new HashSet<> (1);
+    private final Set<FilterListener>     listeners   = HashSet.newHashSet (1);
 
     final int                             numItemsPerPage;
 
@@ -168,7 +168,7 @@ public abstract class BaseColumn extends ItemImpl implements IBrowserColumn
     @Override
     public void setCursorIndex (final int index)
     {
-        this.selectedRow = Math.max (0, Math.min (index, this.getMaxNumItems ()));
+        this.selectedRow = Math.clamp (index, 0, this.getMaxNumItems ());
         this.notifyListeners ();
     }
 

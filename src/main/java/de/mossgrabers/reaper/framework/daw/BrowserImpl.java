@@ -161,7 +161,7 @@ public class BrowserImpl extends AbstractBrowser
         this.resultData = this.createResultData (this.numResults);
 
         for (final IBrowserColumn column: this.columnDataContentTypes[BrowserContentType.DEVICE.ordinal ()])
-            ((BaseColumn) column).addSelectionListener ( () -> this.updateFilteredDevices (true));
+            ((BaseColumn) column).addSelectionListener (() -> this.updateFilteredDevices (true));
 
         this.browserWindow = ((HostImpl) dataSetup.getHost ()).getWindowManager ().getMainFrame ().getBrowserDialog ();
 
@@ -261,14 +261,14 @@ public class BrowserImpl extends AbstractBrowser
     {
         final BrowserContentType [] values = BrowserContentType.values ();
         final int id = contentType.ordinal ();
-        this.contentType = values[Math.min (Math.max (0, id), values.length - 1)];
+        this.contentType = values[Math.clamp (id, 0, values.length - 1)];
         this.columnData = this.columnDataContentTypes[id];
         this.selectedIndex = 0;
 
         if (contentType == BrowserContentType.DEVICE)
             this.updateFilteredDevices (false);
 
-        SwingUtilities.invokeLater ( () -> {
+        SwingUtilities.invokeLater (() -> {
             this.browserWindow.updateFilters ();
             this.browserWindow.updateResults (this.selectedIndex);
             this.browserWindow.setVisible (true);
@@ -309,7 +309,7 @@ public class BrowserImpl extends AbstractBrowser
         if (item instanceof final CursorDeviceImpl cdi)
         {
             final String name = item.getName ();
-            this.infoText = "Replace: " + (name.length () == 0 ? "Empty" : name);
+            this.infoText = "Replace: " + (name.isEmpty () ? "Empty" : name);
 
             this.browse (BrowserContentType.PRESET, cdi.getPosition ());
         }
@@ -361,7 +361,7 @@ public class BrowserImpl extends AbstractBrowser
     {
         this.stopBrowsing (false);
 
-        SwingUtilities.invokeLater ( () -> this.browserWindow.open (this));
+        SwingUtilities.invokeLater (() -> this.browserWindow.open (this));
 
         this.enableObservers (true);
         this.insertPosition = insertPos;
@@ -465,8 +465,8 @@ public class BrowserImpl extends AbstractBrowser
     public void setSelectedResult (final int index)
     {
         final int length = this.isPresetContentType () ? this.presetModel.getSize () : this.filteredDevices.size ();
-        this.selectedIndex = Math.min (Math.max (0, index), length - 1);
-        SwingUtilities.invokeLater ( () -> this.browserWindow.updateResultSelection (this.selectedIndex));
+        this.selectedIndex = Math.clamp (index, 0, length - 1);
+        SwingUtilities.invokeLater (() -> this.browserWindow.updateResultSelection (this.selectedIndex));
     }
 
 
@@ -534,7 +534,7 @@ public class BrowserImpl extends AbstractBrowser
             this.selectedIndex = 0;
 
         if (alsoUpdateResults)
-            SwingUtilities.invokeLater ( () -> this.browserWindow.updateResults (this.selectedIndex));
+            SwingUtilities.invokeLater (() -> this.browserWindow.updateResults (this.selectedIndex));
     }
 
 

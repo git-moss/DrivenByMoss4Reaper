@@ -148,7 +148,7 @@ public class MCUDisplay extends AbstractTextDisplay
             return;
 
         final LatestTaskExecutor executor = this.executors[row + (this.isFirstDisplay ? 0 : 2)];
-        executor.execute ( () -> {
+        executor.execute (() -> {
             try
             {
                 int offset = 0;
@@ -225,35 +225,39 @@ public class MCUDisplay extends AbstractTextDisplay
         // Prevent further sends
         this.isShutdown = true;
 
-        final ExecutorService shutdownExecutor = Executors.newSingleThreadExecutor ();
-        shutdownExecutor.execute ( () -> {
+        // Shutdown the display but prevent blocking the continuation of the overall shutdown
+        try (final ExecutorService shutdownExecutor = Executors.newSingleThreadExecutor ())
+        {
+            shutdownExecutor.execute (() -> {
 
-            for (final LatestTaskExecutor executor: this.executors)
+                for (final LatestTaskExecutor executor: this.executors)
+                {
+                    // Prevent further sends
+                    executor.shutdown ();
+                    try
+                    {
+                        if (!executor.awaitTermination (5, TimeUnit.SECONDS))
+                            this.host.error ("MCU display send executor did not end in 5 seconds.");
+                    }
+                    catch (final InterruptedException ex)
+                    {
+                        this.host.error ("MCU display send executor interrupted.", ex);
+                        Thread.currentThread ().interrupt ();
+                    }
+                }
+
+            });
+            shutdownExecutor.shutdown ();
+            try
             {
-                executor.shutdown ();
-                try
-                {
-                    if (!executor.awaitTermination (5, TimeUnit.SECONDS))
-                        this.host.error ("MCU display send executor did not end in 5 seconds.");
-                }
-                catch (final InterruptedException ex)
-                {
-                    this.host.error ("MCU display send executor interrupted.", ex);
-                    Thread.currentThread ().interrupt ();
-                }
+                if (!shutdownExecutor.awaitTermination (10, TimeUnit.SECONDS))
+                    this.host.error ("MCU display shutdown executor did not end in 10 seconds.");
             }
-
-        });
-        shutdownExecutor.shutdown ();
-        try
-        {
-            if (!shutdownExecutor.awaitTermination (10, TimeUnit.SECONDS))
-                this.host.error ("MCU display shutdown executor did not end in 10 seconds.");
-        }
-        catch (final InterruptedException ex)
-        {
-            this.host.error ("Display shutdown interrupted.", ex);
-            Thread.currentThread ().interrupt ();
+            catch (final InterruptedException ex)
+            {
+                this.host.error ("Display shutdown interrupted.", ex);
+                Thread.currentThread ().interrupt ();
+            }
         }
     }
 

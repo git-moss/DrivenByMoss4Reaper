@@ -53,6 +53,9 @@ public class TransportMode extends AbstractElectraOneMode
 
         this.project = this.model.getProject ();
 
+        final Optional<IFocusedParameter> focusedParameter = this.model.getFocusedParameter ();
+        if (focusedParameter.isEmpty ())
+            throw new IllegalArgumentException ("Focused Parameter is not configured (in MasterVolumeMode)!");
         final EmptyParameterProvider emptyParameterProvider5 = new EmptyParameterProvider (5);
         final EmptyParameterProvider emptyParameterProvider6 = new EmptyParameterProvider (6);
         this.setParameterProvider (new CombinedParameterProvider (
@@ -67,7 +70,7 @@ public class TransportMode extends AbstractElectraOneMode
                 // Row 5
                 new EmptyParameterProvider (1), new FixedParameterProvider (this.transport.getMetronomeVolumeParameter ()), new FixedParameterProvider (this.project.getCueVolumeParameter ()), new EmptyParameterProvider (3),
                 // Row 6
-                new EmptyParameterProvider (2), new FixedParameterProvider (this.model.getFocusedParameter ().get ()), new EmptyParameterProvider (3)));
+                new EmptyParameterProvider (2), new FixedParameterProvider (focusedParameter.get ()), new EmptyParameterProvider (3)));
     }
 
 
@@ -196,6 +199,10 @@ public class TransportMode extends AbstractElectraOneMode
                         // Not used
                         break;
                 }
+                break;
+
+            default:
+                // Ignore
                 break;
         }
     }

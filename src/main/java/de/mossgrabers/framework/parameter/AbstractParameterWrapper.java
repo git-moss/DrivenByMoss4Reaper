@@ -23,7 +23,7 @@ public abstract class AbstractParameterWrapper implements IParameter
      *
      * @param parameter The parameter to encapsulate
      */
-    public AbstractParameterWrapper (final IParameter parameter)
+    protected AbstractParameterWrapper (final IParameter parameter)
     {
         this.parameter = parameter;
     }

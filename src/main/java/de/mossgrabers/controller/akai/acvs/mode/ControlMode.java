@@ -361,7 +361,7 @@ public class ControlMode extends AbstractParameterMode<ACVSControlSurface, ACVSC
 
         d.setScreenItem (ScreenItem.MPC_DEVICE_LOCK, device.isPinned () ? 127 : 0);
         d.setScreenItem (ScreenItem.MPC_DETAIL_VIEW, device.isExpanded () ? 127 : 0);
-        d.setScreenItem (ScreenItem.MPC_QUANTIZE_INTERVAL, Math.max (0, Math.min (7, 10 - this.surface.getConfiguration ().getQuantizeAmount () / 10)));
+        d.setScreenItem (ScreenItem.MPC_QUANTIZE_INTERVAL, Math.clamp (10L - this.surface.getConfiguration ().getQuantizeAmount () / 10, 0, 7));
         d.setScreenItem (ScreenItem.MPC_CLIP_SCENE_LAUNCH, this.surface.getConfiguration ().isLaunchClips () ? 0 : 1);
     }
 

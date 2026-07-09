@@ -125,12 +125,12 @@ public abstract class AbstractDrumView<S extends IControlSurface<C>, C extends C
         this.playColumns = 4;
 
         final ITrackBank tb = model.getTrackBank ();
-        tb.addSelectionObserver ( (index, isSelected) -> this.keyManager.clearPressedKeys ());
+        tb.addSelectionObserver ((index, isSelected) -> this.keyManager.clearPressedKeys ());
         tb.addNoteObserver (this::updateNote);
 
         if (followSelection)
         {
-            model.getDrumDevice ().getDrumPadBank ().addSelectionObserver ( (index, isSelected) -> {
+            model.getDrumDevice ().getDrumPadBank ().addSelectionObserver ((index, isSelected) -> {
                 if (isSelected)
                     this.selectedPad = index;
             });
@@ -413,13 +413,13 @@ public abstract class AbstractDrumView<S extends IControlSurface<C>, C extends C
         {
             final int start = this.loopPadPressed < pad ? this.loopPadPressed : pad;
             final int end = (this.loopPadPressed < pad ? pad : this.loopPadPressed) + 1;
-            final int lengthOfOnePad = this.getLengthOfOnePage (this.sequencerSteps);
+            final double lengthOfOnePad = this.getLengthOfOnePage (this.sequencerSteps);
 
             // Set a new loop between the 2 selected pads
-            final int newStart = start * lengthOfOnePad;
+            final double newStart = start * lengthOfOnePad;
             clip.setLoopStart (newStart);
             clip.setLoopLength ((end - start) * lengthOfOnePad);
-            clip.setPlayRange (newStart, (double) end * lengthOfOnePad);
+            clip.setPlayRange (newStart, end * lengthOfOnePad);
         }
 
         this.loopPadPressed = -1;

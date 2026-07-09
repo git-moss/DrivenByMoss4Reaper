@@ -201,7 +201,7 @@ public abstract class AbstractSequencerView<S extends IControlSurface<C>, C exte
      */
     public void setResolutionIndex (final int selectedResolutionIndex)
     {
-        final int resolutionIndex = Math.min (Math.max (0, selectedResolutionIndex), 7);
+        final int resolutionIndex = Math.clamp (selectedResolutionIndex, 0, 7);
         final Resolution resolution = Resolution.values ()[resolutionIndex];
         this.getClip ().setStepLength (resolution.getValue ());
         this.surface.getDisplay ().notify ("Grid res.: " + resolution.getName ());

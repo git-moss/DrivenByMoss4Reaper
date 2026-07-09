@@ -37,7 +37,7 @@ public class BeatstepConfiguration extends AbstractConfiguration
     @Override
     public void init (final ISettingsUI globalSettings, final ISettingsUI documentSettings)
     {
-        ///////////////////////////
+        // ----------------------------------------------------------------
         // Scale
 
         this.activateScaleSetting (documentSettings);
@@ -45,12 +45,12 @@ public class BeatstepConfiguration extends AbstractConfiguration
         this.activateScaleInScaleSetting (documentSettings);
         this.activateScaleLayoutSetting (documentSettings);
 
-        ///////////////////////////
+        // ----------------------------------------------------------------
         // Workflow
 
         this.activateExcludeDeactivatedItemsSetting (globalSettings);
 
-        ///////////////////////////
+        // ----------------------------------------------------------------
         // Pad Sensitivity
 
         this.activateConvertAftertouchSetting (globalSettings);

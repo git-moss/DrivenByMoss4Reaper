@@ -53,7 +53,7 @@ public class LogModel
             this.errorStyle = this.textPane.addStyle ("Error Style", null);
             StyleConstants.setForeground (this.errorStyle, Color.RED);
 
-            if (this.buffer.length () > 0)
+            if (!this.buffer.isEmpty ())
                 this.info ("");
         }
     }
@@ -95,14 +95,14 @@ public class LogModel
      */
     public void log (final String message, final boolean isError)
     {
-        if (message.length () == 0 && this.buffer.isEmpty ())
+        if (message.isEmpty () && this.buffer.isEmpty ())
             return;
 
         SafeRunLater.execute (null, () -> {
 
             synchronized (this.updateLock)
             {
-                if (message.length () > 0)
+                if (!message.isEmpty ())
                     this.buffer.append (message).append ("\n");
 
                 if (this.textPane != null)

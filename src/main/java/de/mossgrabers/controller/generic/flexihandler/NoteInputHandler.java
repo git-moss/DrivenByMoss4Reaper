@@ -4,6 +4,8 @@
 
 package de.mossgrabers.controller.generic.flexihandler;
 
+import java.util.List;
+
 import de.mossgrabers.controller.generic.GenericFlexiConfiguration;
 import de.mossgrabers.controller.generic.controller.FlexiCommand;
 import de.mossgrabers.controller.generic.controller.GenericFlexiControlSurface;
@@ -19,8 +21,6 @@ import de.mossgrabers.framework.daw.midi.ArpeggiatorMode;
 import de.mossgrabers.framework.daw.midi.INoteInput;
 import de.mossgrabers.framework.daw.midi.INoteRepeat;
 import de.mossgrabers.framework.scale.Scales;
-
-import java.util.List;
 
 
 /**
@@ -124,7 +124,7 @@ public class NoteInputHandler extends AbstractHandler
                 if (isButtonPressed)
                 {
                     configuration.toggleNoteRepeatActive ();
-                    this.mvHelper.delayDisplay ( () -> "Repeat: " + (configuration.isNoteRepeatActive () ? "On" : "Off"));
+                    this.mvHelper.delayDisplay (() -> "Repeat: " + (configuration.isNoteRepeatActive () ? "On" : "Off"));
                 }
                 break;
 
@@ -136,7 +136,7 @@ public class NoteInputHandler extends AbstractHandler
                 else
                     selPeriod = Resolution.change (Resolution.getMatch (configuration.getNoteRepeatPeriod ().getValue ()), this.isIncrease (knobMode, value));
                 configuration.setNoteRepeatPeriod (resolutions[selPeriod]);
-                this.mvHelper.delayDisplay ( () -> "Repeat Period: " + configuration.getNoteRepeatPeriod ().getName ());
+                this.mvHelper.delayDisplay (() -> "Repeat Period: " + configuration.getNoteRepeatPeriod ().getName ());
                 break;
 
             // Note Repeat: Set Length
@@ -149,7 +149,7 @@ public class NoteInputHandler extends AbstractHandler
                     else
                         selLength = Resolution.change (Resolution.getMatch (configuration.getNoteRepeatLength ().getValue ()), this.isIncrease (knobMode, value));
                     configuration.setNoteRepeatLength (resolutions[selLength]);
-                    this.mvHelper.delayDisplay ( () -> "Repeat Length: " + configuration.getNoteRepeatLength ().getName ());
+                    this.mvHelper.delayDisplay (() -> "Repeat Length: " + configuration.getNoteRepeatLength ().getName ());
                 }
                 break;
 
@@ -169,10 +169,10 @@ public class NoteInputHandler extends AbstractHandler
                         final ArpeggiatorMode arpMode = configuration.getNoteRepeatMode ();
                         final int modeIndex = configuration.lookupArpeggiatorModeIndex (arpMode);
                         final boolean increase = this.isIncrease (knobMode, value);
-                        newIndex = Math.max (0, Math.min (modes.size () - 1, modeIndex + (increase ? 1 : -1)));
+                        newIndex = Math.clamp (modeIndex + (increase ? 1L : -1L), 0, modes.size () - 1);
                     }
                     configuration.setNoteRepeatMode (modes.get (newIndex));
-                    this.mvHelper.delayDisplay ( () -> "Repeat Mode: " + modes.get (newIndex).getName ());
+                    this.mvHelper.delayDisplay (() -> "Repeat Mode: " + modes.get (newIndex).getName ());
                 }
                 break;
 
@@ -185,7 +185,7 @@ public class NoteInputHandler extends AbstractHandler
                     else
                         octave = configuration.getNoteRepeatOctave () + (this.isIncrease (knobMode, value) ? 1 : -1);
                     configuration.setNoteRepeatOctave (octave);
-                    this.mvHelper.delayDisplay ( () -> "Repeat Octave: " + octave);
+                    this.mvHelper.delayDisplay (() -> "Repeat Octave: " + octave);
                 }
                 break;
 
@@ -213,9 +213,9 @@ public class NoteInputHandler extends AbstractHandler
 
     private void updateOctave (final Scales scales)
     {
-        this.surface.scheduleTask ( () -> {
+        this.surface.scheduleTask (() -> {
             this.surface.setKeyTranslationTable (scales.getNoteMatrix ());
-            this.mvHelper.delayDisplay ( () -> "Octave: " + scales.getOctave ());
+            this.mvHelper.delayDisplay (() -> "Octave: " + scales.getOctave ());
         }, 6);
     }
 }

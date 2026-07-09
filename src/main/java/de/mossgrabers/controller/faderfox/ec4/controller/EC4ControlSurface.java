@@ -5,6 +5,7 @@
 package de.mossgrabers.controller.faderfox.ec4.controller;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import de.mossgrabers.controller.faderfox.ec4.EC4Configuration;
@@ -36,7 +37,7 @@ public class EC4ControlSurface extends AbstractControlSurface<EC4Configuration>
     public static final int                EC4_BUTTON_1        = 30;
 
     /** The IDs for the continuous elements. */
-    public static final List<ContinuousID> KNOB_IDS            = ContinuousID.createSequentialList (ContinuousID.KNOB1, 16);
+    public static final List<ContinuousID> KNOB_IDS            = Collections.unmodifiableList (ContinuousID.createSequentialList (ContinuousID.KNOB1, 16));
 
     private static final byte []           SYSEX_HEADER        =
     {

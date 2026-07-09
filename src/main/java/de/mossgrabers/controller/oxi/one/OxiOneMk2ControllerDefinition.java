@@ -19,7 +19,8 @@ import de.mossgrabers.framework.utils.Pair;
  */
 public class OxiOneMk2ControllerDefinition extends DefaultControllerDefinition
 {
-    private static final UUID EXTENSION_ID = UUID.fromString ("4E7F5AC9-DE44-4D4A-ABDF-643EC9B6A585");
+    private static final String OXI_ONE_MKII_JACK_1 = "OXI ONE MKII Jack 1";
+    private static final UUID   EXTENSION_ID        = UUID.fromString ("4E7F5AC9-DE44-4D4A-ABDF-643EC9B6A585");
 
 
     /**
@@ -44,11 +45,11 @@ public class OxiOneMk2ControllerDefinition extends DefaultControllerDefinition
 
             case LINUX:
                 midiDiscoveryPairs.add (this.addDeviceDiscoveryPair ("OXI ONE MKII MIDI 1", "OXI ONE MKII MIDI 1"));
-                midiDiscoveryPairs.addAll (this.createLinuxDeviceDiscoveryPairs ("OXI ONE MKII Jack 1", "OXI ONE MKII Jack 1"));
+                midiDiscoveryPairs.addAll (this.createLinuxDeviceDiscoveryPairs (OXI_ONE_MKII_JACK_1, OXI_ONE_MKII_JACK_1));
                 break;
 
             case MAC, MAC_ARM:
-                midiDiscoveryPairs.add (this.addDeviceDiscoveryPair ("OXI ONE MKII Jack 1", "OXI ONE MKII Jack 1"));
+                midiDiscoveryPairs.add (this.addDeviceDiscoveryPair (OXI_ONE_MKII_JACK_1, OXI_ONE_MKII_JACK_1));
                 midiDiscoveryPairs.add (this.addDeviceDiscoveryPair ("OXI ONE MKII Anschluss 1", "OXI ONE MKII Anschluss 1"));
                 break;
 

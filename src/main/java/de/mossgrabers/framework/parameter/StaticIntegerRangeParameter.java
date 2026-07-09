@@ -56,7 +56,7 @@ public class StaticIntegerRangeParameter extends AbstractStaticParameter
     @Override
     public void inc (final double incrementValue)
     {
-        this.value = Math.clamp (this.value + (incrementValue > 0 ? 1 : -1), this.minValue, this.maxValue);
+        this.value = Math.clamp (this.value + (incrementValue > 0 ? 1L : -1L), this.minValue, this.maxValue);
     }
 
 
@@ -72,8 +72,8 @@ public class StaticIntegerRangeParameter extends AbstractStaticParameter
     @Override
     public int getValue ()
     {
-        final double range = this.maxValue - this.minValue;
-        final double v = this.value - this.minValue;
+        final double range = this.maxValue - (double) this.minValue;
+        final double v = this.value - (double) this.minValue;
         return (int) Math.round (v / range * this.valueChanger.getUpperBound ());
     }
 
@@ -106,7 +106,7 @@ public class StaticIntegerRangeParameter extends AbstractStaticParameter
     @Override
     public void changeValue (final IValueChanger valueChanger, final int control)
     {
-        this.value = Math.clamp (this.value + (valueChanger.isIncrease (control) ? 1 : -1), this.minValue, this.maxValue);
+        this.value = Math.clamp (this.value + (valueChanger.isIncrease (control) ? 1L : -1L), this.minValue, this.maxValue);
     }
 
 

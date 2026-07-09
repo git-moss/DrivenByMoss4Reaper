@@ -293,11 +293,11 @@ public class PushControllerSetup extends AbstractControllerSetup<PushControlSurf
 
         final ITrackBank trackBank = this.model.getTrackBank ();
         trackBank.setIndication (true);
-        trackBank.addSelectionObserver ( (index, isSelected) -> this.handleTrackChange (isSelected));
+        trackBank.addSelectionObserver ((index, isSelected) -> this.handleTrackChange (isSelected));
         final ITrackBank effectTrackBank = this.model.getEffectTrackBank ();
         if (effectTrackBank != null)
-            effectTrackBank.addSelectionObserver ( (index, isSelected) -> this.handleTrackChange (isSelected));
-        this.model.getMasterTrack ().addSelectionObserver ( (index, isSelected) -> {
+            effectTrackBank.addSelectionObserver ((index, isSelected) -> this.handleTrackChange (isSelected));
+        this.model.getMasterTrack ().addSelectionObserver ((index, isSelected) -> {
             final PushControlSurface surface = this.getSurface ();
             final ModeManager modeManager = surface.getModeManager ();
             if (isSelected)
@@ -402,7 +402,7 @@ public class PushControllerSetup extends AbstractControllerSetup<PushControlSurf
     @Override
     protected void createObservers ()
     {
-        ////////////////////////////////////////////////////////////////////
+        // ----------------------------------------------------------------
         // Configuration observers
 
         super.createObservers ();
@@ -497,10 +497,10 @@ public class PushControllerSetup extends AbstractControllerSetup<PushControlSurf
         this.createScaleObservers (this.configuration);
         this.createNoteRepeatObservers (this.configuration, surface);
 
-        ////////////////////////////////////////////////////////////////////
+        // ----------------------------------------------------------------
         // Other observers
 
-        surface.getViewManager ().addChangeListener ( (previousViewId, activeViewId) -> this.onViewChange ());
+        surface.getViewManager ().addChangeListener ((previousViewId, activeViewId) -> this.onViewChange ());
 
         this.activateBrowserObserver (Modes.BROWSER);
     }

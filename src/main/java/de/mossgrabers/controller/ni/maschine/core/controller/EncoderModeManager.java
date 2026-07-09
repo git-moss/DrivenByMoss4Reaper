@@ -60,12 +60,12 @@ public class EncoderModeManager<S extends IControlSurface<C>, C extends Configur
         MODE_LABELS.put (EncoderMode.PLAY_POSITION, "Play Position");
 
         TOGGLED_MODE_LABELS.put (EncoderMode.OFF, "Off");
-        TOGGLED_MODE_LABELS.put (EncoderMode.MASTER_VOLUME, "Master: Panning");
+        TOGGLED_MODE_LABELS.put (EncoderMode.MASTER_VOLUME, "Master: Volume");
         TOGGLED_MODE_LABELS.put (EncoderMode.MASTER_PANNING, "Master: Panning");
-        TOGGLED_MODE_LABELS.put (EncoderMode.SELECTED_TRACK_VOLUME, "Selected track: Panning");
+        TOGGLED_MODE_LABELS.put (EncoderMode.SELECTED_TRACK_VOLUME, "Selected track: Volume");
         TOGGLED_MODE_LABELS.put (EncoderMode.SELECTED_TRACK_PANNING, "Selected track: Panning");
         TOGGLED_MODE_LABELS.put (EncoderMode.METRONOME_VOLUME, "Metronome: Volume");
-        TOGGLED_MODE_LABELS.put (EncoderMode.CUE_VOLUME, "Cue: Mix");
+        TOGGLED_MODE_LABELS.put (EncoderMode.CUE_VOLUME, "Cue: Volume");
         TOGGLED_MODE_LABELS.put (EncoderMode.CUE_MIX, "Cue: Mix");
         TOGGLED_MODE_LABELS.put (EncoderMode.TEMPORARY_TEMPO, "Tempo");
         TOGGLED_MODE_LABELS.put (EncoderMode.TEMPORARY_SWING, "Swing");
@@ -108,7 +108,7 @@ public class EncoderModeManager<S extends IControlSurface<C>, C extends Configur
         this.playPositionParameter = new PlayPositionParameter (valueChanger, transport, surface);
         this.loopStartParameter = new LoopStartParameter (valueChanger, transport, surface);
 
-        this.model.getTrackBank ().addSelectionObserver ( (index, isSelected) -> this.handleTrackChange (isSelected));
+        this.model.getTrackBank ().addSelectionObserver ((index, isSelected) -> this.handleTrackChange (isSelected));
     }
 
 
@@ -168,7 +168,7 @@ public class EncoderModeManager<S extends IControlSurface<C>, C extends Configur
     {
         this.temporaryEncoderMode = encoderMode;
         this.encoder.bind ((IParameter) null);
-        this.mvHelper.delayDisplay ( () -> MODE_LABELS.get (this.temporaryEncoderMode));
+        this.mvHelper.delayDisplay (() -> MODE_LABELS.get (this.temporaryEncoderMode));
     }
 
 
@@ -243,7 +243,7 @@ public class EncoderModeManager<S extends IControlSurface<C>, C extends Configur
 
     protected void notifyMode ()
     {
-        this.mvHelper.delayDisplay ( () -> this.isFunctionToggled ? TOGGLED_MODE_LABELS.get (this.activeEncoderMode) : MODE_LABELS.get (this.activeEncoderMode));
+        this.mvHelper.delayDisplay (() -> this.isFunctionToggled ? TOGGLED_MODE_LABELS.get (this.activeEncoderMode) : MODE_LABELS.get (this.activeEncoderMode));
     }
 
 

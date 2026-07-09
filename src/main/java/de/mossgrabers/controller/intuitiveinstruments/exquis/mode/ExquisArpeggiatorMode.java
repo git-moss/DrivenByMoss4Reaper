@@ -50,18 +50,13 @@ public class ExquisArpeggiatorMode extends AbstractMode<ExquisControlSurface, Ex
     {
         if (!isTouched)
             return;
-        switch (index)
+        if (index == 0)
         {
-            case 0:
-                this.configuration.toggleNoteRepeatActive ();
-                this.mvHelper.delayDisplay ( () -> "Note Repeat: " + (this.configuration.isNoteRepeatActive () ? "On" : "Off"));
-                break;
-
-            case 3:
-                if (this.host.supports (Capability.NOTE_REPEAT_LATCH))
-                    this.noteRepeat.toggleLatchActive ();
-                break;
+            this.configuration.toggleNoteRepeatActive ();
+            this.mvHelper.delayDisplay (() -> "Note Repeat: " + (this.configuration.isNoteRepeatActive () ? "On" : "Off"));
         }
+        else if (index == 3 && this.host.supports (Capability.NOTE_REPEAT_LATCH))
+            this.noteRepeat.toggleLatchActive ();
     }
 
 
@@ -77,7 +72,7 @@ public class ExquisArpeggiatorMode extends AbstractMode<ExquisControlSurface, Ex
             case 0:
                 final int sel = Resolution.change (Resolution.getMatch (this.configuration.getNoteRepeatPeriod ().getValue ()), isInc);
                 this.configuration.setNoteRepeatPeriod (Resolution.values ()[sel]);
-                this.mvHelper.delayDisplay ( () -> "Period: " + this.configuration.getNoteRepeatPeriod ().getName ());
+                this.mvHelper.delayDisplay (() -> "Period: " + this.configuration.getNoteRepeatPeriod ().getName ());
                 break;
 
             case 1:
@@ -85,7 +80,7 @@ public class ExquisArpeggiatorMode extends AbstractMode<ExquisControlSurface, Ex
                 {
                     final int sel2 = Resolution.change (Resolution.getMatch (this.configuration.getNoteRepeatLength ().getValue ()), valueChanger.calcKnobChange (value) > 0);
                     this.configuration.setNoteRepeatLength (Resolution.values ()[sel2]);
-                    this.mvHelper.delayDisplay ( () -> "Length: " + this.configuration.getNoteRepeatLength ().getName ());
+                    this.mvHelper.delayDisplay (() -> "Length: " + this.configuration.getNoteRepeatLength ().getName ());
                 }
                 break;
 
@@ -93,7 +88,7 @@ public class ExquisArpeggiatorMode extends AbstractMode<ExquisControlSurface, Ex
                 if (this.host.supports (Capability.NOTE_REPEAT_MODE))
                 {
                     this.configuration.setPrevNextNoteRepeatMode (valueChanger.isIncrease (value));
-                    this.mvHelper.delayDisplay ( () -> "Mode: " + this.configuration.getNoteRepeatMode ().getName ());
+                    this.mvHelper.delayDisplay (() -> "Mode: " + this.configuration.getNoteRepeatMode ().getName ());
                 }
                 break;
 
@@ -101,7 +96,7 @@ public class ExquisArpeggiatorMode extends AbstractMode<ExquisControlSurface, Ex
                 if (this.host.supports (Capability.NOTE_REPEAT_OCTAVES))
                 {
                     this.configuration.setNoteRepeatOctave (this.configuration.getNoteRepeatOctave () + (valueChanger.calcKnobChange (value) > 0 ? 1 : -1));
-                    this.mvHelper.delayDisplay ( () -> "Octave: " + this.configuration.getNoteRepeatOctave ());
+                    this.mvHelper.delayDisplay (() -> "Octave: " + this.configuration.getNoteRepeatOctave ());
                 }
                 break;
 

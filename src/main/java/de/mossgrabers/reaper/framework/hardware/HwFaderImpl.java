@@ -133,7 +133,7 @@ public class HwFaderImpl extends AbstractHwAbsoluteControl implements IHwFader
                     value = 1 - (scaleY - bounds.y ()) / bounds.height ();
                 else
                     value = (scaleX - bounds.x ()) / bounds.width ();
-                value = Math.max (0, Math.min (1, value));
+                value = Math.clamp (value, 0, 1);
 
                 if (this.inputImpl == null)
                 {

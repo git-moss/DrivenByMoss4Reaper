@@ -22,7 +22,7 @@ public class NoteRepeatImpl implements INoteRepeat
     /** The available arpeggiator modes. */
     public static final List<ArpeggiatorMode> ARP_MODES    = List.of (ArpeggiatorMode.DOWN, ArpeggiatorMode.UP, ArpeggiatorMode.DOWN_UP, ArpeggiatorMode.UP_DOWN);
 
-    private final BackendExchange               sender;
+    private final BackendExchange             sender;
     private boolean                           isNoteRepeat = false;
     private double                            noteRepeatPeriod;
     private double                            noteLength;
@@ -121,6 +121,14 @@ public class NoteRepeatImpl implements INoteRepeat
     /** {@inheritDoc} */
     @Override
     public void toggleShuffle ()
+    {
+        // Not supported
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void setUsePressure (final boolean usePressure)
     {
         // Not supported
     }

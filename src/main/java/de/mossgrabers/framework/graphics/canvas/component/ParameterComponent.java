@@ -153,7 +153,7 @@ public class ParameterComponent extends MenuComponent
         final double trackRowTop = height - trackRowHeight - unit - separatorSize;
 
         // Component is off if the name is empty
-        if (this.paramName == null || this.paramName.length () == 0)
+        if (this.paramName == null || this.paramName.isEmpty ())
             return;
 
         final double elementWidth = width - 2 * inset;

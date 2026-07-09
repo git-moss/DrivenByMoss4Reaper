@@ -136,7 +136,7 @@ public class TwosComplementValueChanger implements IValueChanger
     private int changeValue (final int control, final int value, final double sensitivity, final int maxParameterValue, final int minParameterValue)
     {
         final double speed = this.calcKnobChange (control, sensitivity);
-        return (int) Math.max (Math.min (value + speed, maxParameterValue - 1.0), minParameterValue);
+        return (int) Math.clamp (value + speed, minParameterValue, maxParameterValue - 1.0);
     }
 
 

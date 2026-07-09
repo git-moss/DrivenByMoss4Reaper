@@ -74,7 +74,7 @@ public class BeatstepPadGrid extends PadGridImpl
             }
             catch (final InterruptedException ex)
             {
-                // Ignore
+                Thread.currentThread ().interrupt ();
             }
         }
     }

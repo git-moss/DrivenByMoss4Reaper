@@ -221,7 +221,7 @@ public class OxiOneSeqConfigMode extends AbstractParameterMode<OxiOneControlSurf
      */
     public void setResolutionIndex (final INoteClip clip, final int selectedResolutionIndex)
     {
-        final int resolutionIndex = Math.min (Math.max (0, selectedResolutionIndex), 7);
+        final int resolutionIndex = Math.clamp (selectedResolutionIndex, 0, 7);
         final Resolution resolution = Resolution.values ()[resolutionIndex];
         clip.setStepLength (resolution.getValue ());
     }

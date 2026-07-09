@@ -236,7 +236,7 @@ public class KontrolProtocolControllerSetup extends AbstractControllerSetup<Kont
     {
         super.createObservers ();
 
-        this.configuration.addSettingObserver (KontrolProtocolConfiguration.DAW_SWITCH, () -> this.sendDAWInfo ());
+        this.configuration.addSettingObserver (KontrolProtocolConfiguration.DAW_SWITCH, this::sendDAWInfo);
 
         this.configuration.registerDeactivatedItemsHandler (this.model);
     }
@@ -374,13 +374,13 @@ public class KontrolProtocolControllerSetup extends AbstractControllerSetup<Kont
 
         if (this.version >= KontrolProtocol.VERSION_4)
         {
-            this.addButton (surface, ButtonID.LOCK_MODE, "Mode Selection", (event, velocity) -> this.selectMainMode (event, velocity), 15, KontrolProtocolControlSurface.CC_MODE_SELECT);
+            this.addButton (surface, ButtonID.LOCK_MODE, "Mode Selection", this::selectMainMode, 15, KontrolProtocolControlSurface.CC_MODE_SELECT);
 
             for (int i = 0; i < 8; i++)
             {
                 final int knobMidi1 = KontrolProtocolControlSurface.CC_PARAM_VALUE_CHANGE + i;
                 final IHwRelativeKnob knob1 = this.addRelativeKnob (ContinuousID.get (ContinuousID.PARAM_KNOB1, i), "Param Knob " + (i + 1), null, BindType.CC, 15, knobMidi1);
-                knob1.addOutput ( () -> this.getKnobValue (knobMidi1), value -> surface.setTrigger (15, knobMidi1, value));
+                knob1.addOutput (() -> this.getKnobValue (knobMidi1), value -> surface.setTrigger (15, knobMidi1, value));
                 knob1.setIndexInGroup (i);
             }
         }
@@ -389,12 +389,12 @@ public class KontrolProtocolControllerSetup extends AbstractControllerSetup<Kont
         {
             final int knobMidi1 = KontrolProtocolControlSurface.CC_TRACK_VOLUME + i;
             final IHwRelativeKnob knob1 = this.addRelativeKnob (ContinuousID.get (ContinuousID.KNOB1, i), "Knob " + (i + 1), null, BindType.CC, 15, knobMidi1);
-            knob1.addOutput ( () -> this.getKnobValue (knobMidi1), value -> surface.setTrigger (15, knobMidi1, value));
+            knob1.addOutput (() -> this.getKnobValue (knobMidi1), value -> surface.setTrigger (15, knobMidi1, value));
             knob1.setIndexInGroup (i);
 
             final int knobMidi2 = KontrolProtocolControlSurface.CC_TRACK_PAN + i;
             final IHwRelativeKnob knob2 = this.addRelativeKnob (ContinuousID.get (ContinuousID.FADER1, i), "Fader " + (i + 1), null, BindType.CC, 15, knobMidi2);
-            knob2.addOutput ( () -> this.getKnobValue (knobMidi2), value -> surface.setTrigger (15, knobMidi2, value));
+            knob2.addOutput (() -> this.getKnobValue (knobMidi2), value -> surface.setTrigger (15, knobMidi2, value));
             knob2.setIndexInGroup (i);
         }
     }
@@ -721,9 +721,9 @@ public class KontrolProtocolControllerSetup extends AbstractControllerSetup<Kont
         // The DAW name trigger the background graphics. "Bitwig" (not "Bitwig Studio") triggers the
         // Bitwig background. An unknown name triggers an unreadable rainbow background, therefore,
         // provide an option for the user to decide
-        final int [] version = this.host.getVersion ();
+        final int [] hostVersion = this.host.getVersion ();
         final KontrolProtocolControlSurface surface = this.getSurface ();
-        surface.sendDAWInfo (version[0], version[1], surface.getConfiguration ().getSelectedDaw ());
+        surface.sendDAWInfo (hostVersion[0], hostVersion[1], surface.getConfiguration ().getSelectedDaw ());
     }
 
 

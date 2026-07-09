@@ -15,8 +15,8 @@ import java.util.Map;
  */
 public class MidiValue
 {
-    private static final Map<Integer, MidiValue> HI_RES_VALUES = new HashMap<> (16384);
-    private static final Map<Integer, MidiValue> LO_RES_VALUES = new HashMap<> (128);
+    private static final Map<Integer, MidiValue> HI_RES_VALUES = HashMap.newHashMap (16384);
+    private static final Map<Integer, MidiValue> LO_RES_VALUES = HashMap.newHashMap (128);
 
     private final boolean                        isHighRes;
     private final int                            value;

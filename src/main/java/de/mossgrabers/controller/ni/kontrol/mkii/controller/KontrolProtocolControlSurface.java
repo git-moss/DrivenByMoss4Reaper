@@ -4,6 +4,10 @@
 
 package de.mossgrabers.controller.ni.kontrol.mkii.controller;
 
+import java.util.Arrays;
+import java.util.Map;
+import java.util.TreeMap;
+
 import de.mossgrabers.controller.ni.kontrol.mkii.KontrolProtocolConfiguration;
 import de.mossgrabers.controller.ni.kontrol.mkii.NIHIASysExCallback;
 import de.mossgrabers.controller.ni.kontrol.mkii.TrackType;
@@ -18,10 +22,6 @@ import de.mossgrabers.framework.daw.midi.IMidiOutput;
 import de.mossgrabers.framework.mode.Modes;
 import de.mossgrabers.framework.utils.StringUtils;
 
-import java.util.Arrays;
-import java.util.Map;
-import java.util.TreeMap;
-
 
 /**
  * The Komplete Kontrol MkII control surface.
@@ -30,7 +30,7 @@ import java.util.TreeMap;
  */
 public class KontrolProtocolControlSurface extends AbstractControlSurface<KontrolProtocolConfiguration>
 {
-    ///////////////////////////////////////////////////////////////////////////////
+    // ----------------------------------------------------------------
     // SYSEX
 
     /** Switches a parameter on or off on. */
@@ -80,7 +80,7 @@ public class KontrolProtocolControlSurface extends AbstractControlSurface<Kontro
     /** New for v4: Set the name of the selected preset, if any. */
     public static final int          SYSEX_PLUGIN_SELECTED_PRESET     = 0x76;
 
-    ///////////////////////////////////////////////////////////////////////////////
+    // ----------------------------------------------------------------
     // MIDI CC
 
     /** Command to initialize the protocol handshake (and acknowledge). */
@@ -191,7 +191,7 @@ public class KontrolProtocolControlSurface extends AbstractControlSurface<Kontro
     private double                   cachedTempo                      = 0;
     private final Object             handshakeLock                    = new Object ();
     private boolean                  isConnectedToNIHIA               = false;
-    private final int []                   ccValueCache                     = new int [255];
+    private final int []             ccValueCache                     = new int [255];
 
 
     /**
@@ -507,7 +507,7 @@ public class KontrolProtocolControlSurface extends AbstractControlSurface<Kontro
                 long nsPerMinute = 0;
                 for (int i = 0; i < 5; i++)
                     nsPerMinute |= (long) byteData[13 + i] << i * 7;
-                final double tempo = TEN_NS_PER_MINUTE / nsPerMinute;
+                final double tempo = nsPerMinute == 0 ? 120 : TEN_NS_PER_MINUTE / nsPerMinute;
                 final long roundedTo2Fractions = Math.round (tempo * 100.0);
                 this.sysexCallback.setTempo (roundedTo2Fractions / 100.0);
                 break;

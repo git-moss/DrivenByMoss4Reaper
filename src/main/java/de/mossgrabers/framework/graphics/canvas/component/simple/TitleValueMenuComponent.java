@@ -67,7 +67,7 @@ public class TitleValueMenuComponent extends TitleValueComponent
         final ColorEx colorFader = configuration.getColorFader ();
 
         final IGraphicsContext gc = info.getContext ();
-        this.draw (gc, 2 * this.rowHeight + 4, this.rowHeight - 4, colorText, colorFader);
+        this.draw (gc, 2 * this.rowHeight + 4.0, this.rowHeight - 4.0, colorText, colorFader);
         this.drawMenu (gc);
     }
 
@@ -80,10 +80,10 @@ public class TitleValueMenuComponent extends TitleValueComponent
 
         gc.fillRectangle (0, menuTop, DEFAULT_WIDTH, menuHeight, ColorEx.WHITE);
 
-        gc.drawTextInBounds (this.menu[0], 0, menuTop, itemWidth, menuHeight, Align.CENTER, ColorEx.BLACK, menuHeight + 2);
-        gc.drawTextInBounds (this.menu[1], itemWidth, menuTop, itemWidth, menuHeight, Align.CENTER, ColorEx.BLACK, menuHeight + 2);
-        gc.drawTextInBounds (this.menu[2], 2 * itemWidth, menuTop, itemWidth, menuHeight, Align.CENTER, ColorEx.BLACK, menuHeight + 2);
-        gc.drawTextInBounds (this.menu[3], 3 * itemWidth, menuTop, itemWidth, menuHeight, Align.CENTER, ColorEx.BLACK, menuHeight + 2);
+        gc.drawTextInBounds (this.menu[0], 0, menuTop, itemWidth, menuHeight, Align.CENTER, ColorEx.BLACK, menuHeight + 2.0);
+        gc.drawTextInBounds (this.menu[1], itemWidth, menuTop, itemWidth, menuHeight, Align.CENTER, ColorEx.BLACK, menuHeight + 2.0);
+        gc.drawTextInBounds (this.menu[2], 2.0 * itemWidth, menuTop, itemWidth, menuHeight, Align.CENTER, ColorEx.BLACK, menuHeight + 2.0);
+        gc.drawTextInBounds (this.menu[3], 3.0 * itemWidth, menuTop, itemWidth, menuHeight, Align.CENTER, ColorEx.BLACK, menuHeight + 2.0);
     }
 
 
@@ -107,8 +107,6 @@ public class TitleValueMenuComponent extends TitleValueComponent
         if (!super.equals (obj) || this.getClass () != obj.getClass ())
             return false;
         final TitleValueMenuComponent other = (TitleValueMenuComponent) obj;
-        if (!Arrays.equals (this.menu, other.menu))
-            return false;
-        return true;
+        return Arrays.equals (this.menu, other.menu);
     }
 }

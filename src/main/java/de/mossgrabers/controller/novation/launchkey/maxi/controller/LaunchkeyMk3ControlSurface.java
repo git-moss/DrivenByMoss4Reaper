@@ -42,7 +42,7 @@ public class LaunchkeyMk3ControlSurface extends AbstractControlSurface<Launchkey
     /** Device family code of Launchkey 88 model. */
     public static final int                  LAUNCHKEY_88          = 64;
 
-    public static final Map<Integer, String> LAUNCHKEY_MODEL_NAMES = new HashMap<> (5);
+    public static final Map<Integer, String> LAUNCHKEY_MODEL_NAMES = HashMap.newHashMap (5);
 
     static
     {
@@ -193,14 +193,14 @@ public class LaunchkeyMk3ControlSurface extends AbstractControlSurface<Launchkey
             pad.addLight (this.surfaceFactory.createLight (this.surfaceID, null, () -> this.padGrid.getLightInfo (note).getEncoded (), state -> this.padGrid.sendState (note), colorIndex -> this.colorManager.getColor (colorIndex, buttonID), null));
             int [] translated = LaunchkeyPadGrid.translateToController (Views.DRUM, note);
             pad.bind (this.input, BindType.NOTE, translated[0], translated[1]);
-            pad.bind ( (event, velocity) -> this.handleGridNote (event, note, velocity));
+            pad.bind ((event, velocity) -> this.handleGridNote (event, note, velocity));
 
             final ButtonID buttonID2 = ButtonID.get (ButtonID.PAD33, i);
             pad = this.createButton (buttonID2, "DS " + (i + 1));
             pad.addLight (this.surfaceFactory.createLight (this.surfaceID, null, () -> this.padGrid.getLightInfo (note).getEncoded (), state -> this.padGrid.sendState (note), colorIndex -> this.colorManager.getColor (colorIndex, buttonID2), null));
             translated = LaunchkeyPadGrid.translateToController (Views.DEVICE, note);
             pad.bind (this.input, BindType.NOTE, translated[0], translated[1]);
-            pad.bind ( (event, velocity) -> this.handleGridNote (event, note, velocity));
+            pad.bind ((event, velocity) -> this.handleGridNote (event, note, velocity));
         }
     }
 

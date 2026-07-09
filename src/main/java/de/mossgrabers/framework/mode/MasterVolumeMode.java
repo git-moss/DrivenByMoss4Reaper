@@ -5,6 +5,7 @@
 package de.mossgrabers.framework.mode;
 
 import java.util.Collections;
+import java.util.Optional;
 
 import de.mossgrabers.framework.configuration.Configuration;
 import de.mossgrabers.framework.controller.ButtonID;
@@ -13,6 +14,7 @@ import de.mossgrabers.framework.controller.IControlSurface;
 import de.mossgrabers.framework.daw.IModel;
 import de.mossgrabers.framework.daw.data.IItem;
 import de.mossgrabers.framework.featuregroup.AbstractParameterMode;
+import de.mossgrabers.framework.parameter.IFocusedParameter;
 import de.mossgrabers.framework.parameterprovider.special.FixedParameterProvider;
 
 
@@ -43,7 +45,10 @@ public class MasterVolumeMode<S extends IControlSurface<C>, C extends Configurat
         super ("Master Volume", surface, model, true, null, Collections.singletonList (masterID));
 
         this.masterVolumeProvider = new FixedParameterProvider (this.model.getMasterTrack ().getVolumeParameter ());
-        this.focusedParameterProvider = new FixedParameterProvider (this.model.getFocusedParameter ().get ());
+        final Optional<IFocusedParameter> focusedParameter = this.model.getFocusedParameter ();
+        if (focusedParameter.isEmpty ())
+            throw new IllegalArgumentException ("Focused Parameter is not configured (in MasterVolumeMode)!");
+        this.focusedParameterProvider = new FixedParameterProvider (focusedParameter.get ());
     }
 
 

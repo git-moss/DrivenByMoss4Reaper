@@ -51,8 +51,8 @@ import java.util.Optional;
 public class ModelImpl extends AbstractModel
 {
     private final DataSetupEx                 dataSetup;
-    private final Map<Integer, SceneBankImpl> sceneBanks = new HashMap<> (1);
-    private final Map<Integer, ISlotBank>     slotBanks  = new HashMap<> (1);
+    private final Map<Integer, SceneBankImpl> sceneBanks = HashMap.newHashMap (1);
+    private final Map<Integer, ISlotBank>     slotBanks  = HashMap.newHashMap (1);
     private final FocusedParameterImpl        focusedParameter;
 
 
@@ -95,7 +95,7 @@ public class ModelImpl extends AbstractModel
         if (modelSetup.wantsClipLauncherNavigator ())
             this.clipLauncherNavigator = new ClipLauncherNavigatorImpl (this);
 
-        //////////////////////////////////////////////////////////////////////////////
+        // ----------------------------------------------------------------
         // Create devices
 
         // Cursor device
@@ -147,7 +147,7 @@ public class ModelImpl extends AbstractModel
             }
         }
 
-        //////////////////////////////////////////////////////////////////////////////
+        // ----------------------------------------------------------------
         // Create track banks
 
         final ISceneBank sceneBank = this.getSceneBank (numScenes);

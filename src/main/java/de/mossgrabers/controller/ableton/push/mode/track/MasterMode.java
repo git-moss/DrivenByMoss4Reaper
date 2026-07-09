@@ -279,6 +279,9 @@ public class MasterMode extends BaseMode<ITrack>
                     if (this.project.isDirty ())
                         return isPush2 ? PushColorManager.PUSH2_COLOR_ORANGE_HI : PushColorManager.PUSH1_COLOR_ORANGE_HI;
                     return isPush2 ? PushColorManager.PUSH2_COLOR_GREEN_LO : PushColorManager.PUSH1_COLOR_GREEN_LO;
+                default:
+                    // Ignore
+                    break;
             }
 
             return off;

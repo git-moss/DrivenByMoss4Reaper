@@ -50,7 +50,7 @@ public class HUIDisplay extends AbstractTextDisplay
     {
         if (this.executor.isShutdown ())
             return;
-        this.executor.execute ( () -> {
+        this.executor.execute (() -> {
             try
             {
                 this.sendDisplayLine (text);
@@ -89,33 +89,36 @@ public class HUIDisplay extends AbstractTextDisplay
     {
         this.notifyOnDisplay ("Please start " + this.host.getName () + "...");
 
-        final ExecutorService shutdownExecutor = Executors.newSingleThreadExecutor ();
-        shutdownExecutor.execute ( () -> {
+        // Shutdown the display but prevent blocking the continuation of the overall shutdown
+        try (final ExecutorService shutdownExecutor = Executors.newSingleThreadExecutor ())
+        {
+            shutdownExecutor.execute (() -> {
 
-            // Prevent further sends
-            this.executor.shutdown ();
+                // Prevent further sends
+                this.executor.shutdown ();
+                try
+                {
+                    if (!this.executor.awaitTermination (5, TimeUnit.SECONDS))
+                        this.host.error ("HUI display send executor did not end in 5 seconds.");
+                }
+                catch (final InterruptedException ex)
+                {
+                    this.host.error ("HUI display send executor interrupted.", ex);
+                    Thread.currentThread ().interrupt ();
+                }
+
+            });
+            shutdownExecutor.shutdown ();
             try
             {
-                if (!this.executor.awaitTermination (5, TimeUnit.SECONDS))
-                    this.host.error ("HUI display send executor did not end in 5 seconds.");
+                if (!shutdownExecutor.awaitTermination (10, TimeUnit.SECONDS))
+                    this.host.error ("HUI display shutdown executor did not end in 10 seconds.");
             }
             catch (final InterruptedException ex)
             {
-                this.host.error ("HUI display send executor interrupted.", ex);
+                this.host.error ("Display shutdown interrupted.", ex);
                 Thread.currentThread ().interrupt ();
             }
-
-        });
-        shutdownExecutor.shutdown ();
-        try
-        {
-            if (!shutdownExecutor.awaitTermination (10, TimeUnit.SECONDS))
-                this.host.error ("HUI display shutdown executor did not end in 10 seconds.");
-        }
-        catch (final InterruptedException ex)
-        {
-            this.host.error ("Display shutdown interrupted.", ex);
-            Thread.currentThread ().interrupt ();
         }
     }
 }

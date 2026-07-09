@@ -63,6 +63,7 @@ public class MidiInputImpl implements IMidiInput
     private final int []                                              lastCCValues                = new int [32];
     private int                                                       noteInputIndex              = 0;
 
+
     /**
      * Constructor.
      *
@@ -320,14 +321,11 @@ public class MidiInputImpl implements IMidiInput
     {
         try
         {
-            if (message instanceof final SysexMessage sysex)
-                this.handleSysexMessage (sysex);
-            else if (message instanceof ShortMessage sm)
-                this.handleShortMessage (sm);
-            else
+            switch (message)
             {
-                this.host.error ("Unknown MIDI class.");
-                return;
+                case SysexMessage sysex -> this.handleSysexMessage (sysex);
+                case ShortMessage sm -> this.handleShortMessage (sm);
+                default -> this.host.error ("Unknown MIDI class.");
             }
         }
         catch (final RuntimeException ex)
