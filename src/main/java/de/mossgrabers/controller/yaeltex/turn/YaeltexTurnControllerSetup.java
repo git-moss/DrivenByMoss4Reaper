@@ -129,7 +129,7 @@ public class YaeltexTurnControllerSetup extends AbstractControllerSetup<YaeltexT
         this.model = this.factory.createModel (this.configuration, this.colorManager, this.valueChanger, this.scales, ms);
         final ITrackBank trackBank = this.model.getTrackBank ();
         trackBank.setIndication (true);
-        trackBank.addSelectionObserver ( (index, isSelected) -> this.handleTrackChange (isSelected));
+        trackBank.addSelectionObserver ((index, isSelected) -> this.handleTrackChange (isSelected));
     }
 
 
@@ -198,16 +198,16 @@ public class YaeltexTurnControllerSetup extends AbstractControllerSetup<YaeltexT
 
         // Modifier buttons
 
-        final ColorIntensity shiftIntensity = new ColorIntensity ( () -> surface.isPressed (ButtonID.SHIFT), YaeltexTurnColorManager.BUTTON_STATE_SHIFT);
-        final ColorIntensity selectIntensity = new ColorIntensity ( () -> surface.isPressed (ButtonID.SELECT), YaeltexTurnColorManager.BUTTON_STATE_SELECT);
+        final ColorIntensity shiftIntensity = new ColorIntensity (() -> surface.isPressed (ButtonID.SHIFT), YaeltexTurnColorManager.BUTTON_STATE_SHIFT);
+        final ColorIntensity selectIntensity = new ColorIntensity (() -> surface.isPressed (ButtonID.SELECT), YaeltexTurnColorManager.BUTTON_STATE_SELECT);
 
         this.addButton (ButtonID.SHIFT, "shift", new ShiftCommand<> (this.model, surface), channel, YaeltexTurnControlSurface.BUTTON_SHIFT, shiftIntensity);
         this.addButton (ButtonID.SELECT, "select", NopCommand.INSTANCE, channel, YaeltexTurnControlSurface.BUTTON_SELECT, selectIntensity);
 
         // Mode selection
 
-        final ColorIntensity clipIntensity = new ColorIntensity ( () -> viewManager.isActive (Views.SEQUENCER, Views.DRUM), YaeltexTurnColorManager.BUTTON_STATE_SESSION);
-        final ColorIntensity sessionIntensity = new ColorIntensity ( () -> viewManager.isActive (Views.SCENE_PLAY), YaeltexTurnColorManager.BUTTON_STATE_SESSION);
+        final ColorIntensity clipIntensity = new ColorIntensity (() -> viewManager.isActive (Views.SEQUENCER, Views.DRUM), YaeltexTurnColorManager.BUTTON_STATE_SESSION);
+        final ColorIntensity sessionIntensity = new ColorIntensity (() -> viewManager.isActive (Views.SCENE_PLAY), YaeltexTurnColorManager.BUTTON_STATE_SESSION);
 
         this.addButton (ButtonID.CLIP, "clips", (event, velocity) -> this.toggleSequencer (event), channel, YaeltexTurnControlSurface.BUTTON_CLIPS, clipIntensity);
         this.addButton (ButtonID.SESSION, "session", (event, velocity) -> this.toggleSession (event), channel, YaeltexTurnControlSurface.BUTTON_SESSION, sessionIntensity);
@@ -220,11 +220,11 @@ public class YaeltexTurnControllerSetup extends AbstractControllerSetup<YaeltexT
         final RecordCommand<YaeltexTurnControlSurface, YaeltexTurnConfiguration> recordCommand = new YaeltexTurnRecordCommand (this.model, surface);
 
         final ColorIntensity playIntensity = new ColorIntensity (t::isPlaying, YaeltexTurnColorManager.BUTTON_STATE_PLAY);
-        final ColorIntensity stopIntensity = new ColorIntensity ( () -> !t.isPlaying (), YaeltexTurnColorManager.BUTTON_STATE_STOP);
+        final ColorIntensity stopIntensity = new ColorIntensity (() -> !t.isPlaying (), YaeltexTurnColorManager.BUTTON_STATE_STOP);
         final ColorIntensity recIntensity = new ColorIntensity (recordCommand::isActive, YaeltexTurnColorManager.BUTTON_STATE_REC);
         final ColorIntensity overdubIntensity = new ColorIntensity (overdubCommand::isActive, YaeltexTurnColorManager.BUTTON_STATE_OVERDUB);
         final ColorIntensity loopIntensity = new ColorIntensity (t::isLoop, YaeltexTurnColorManager.BUTTON_STATE_LOOP);
-        final ColorIntensity tapTempoIntensity = new ColorIntensity ( () -> surface.isPressed (ButtonID.TAP_TEMPO), YaeltexTurnColorManager.BUTTON_STATE_TAP_TEMPO);
+        final ColorIntensity tapTempoIntensity = new ColorIntensity (() -> surface.isPressed (ButtonID.TAP_TEMPO), YaeltexTurnColorManager.BUTTON_STATE_TAP_TEMPO);
 
         this.addButton (ButtonID.PLAY, "play", new PlayCommand<> (this.model, surface), channel, YaeltexTurnControlSurface.BUTTON_PLAY, playIntensity);
         this.addButton (ButtonID.STOP, "stop", new StopCommand<> (this.model, surface), channel, YaeltexTurnControlSurface.BUTTON_STOP, stopIntensity);

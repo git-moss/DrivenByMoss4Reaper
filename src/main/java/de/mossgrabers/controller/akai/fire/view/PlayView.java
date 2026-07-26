@@ -153,23 +153,23 @@ public class PlayView extends AbstractPlayView<FireControlSurface, FireConfigura
             if (isAltPressed)
             {
                 this.scales.prevScaleLayout ();
-                this.mvHelper.delayDisplay ( () -> this.scales.getScaleLayout ().getName ());
+                this.mvHelper.delayDisplay (() -> this.scales.getScaleLayout ().getName ());
             }
             else
             {
                 this.scales.prevScale ();
-                this.mvHelper.delayDisplay ( () -> this.scales.getScale ().getName ());
+                this.mvHelper.delayDisplay (() -> this.scales.getScale ().getName ());
             }
         }
         else if (isAltPressed)
         {
             this.scales.prevScaleOffset ();
-            this.mvHelper.delayDisplay ( () -> Scales.BASES.get (this.scales.getScaleOffsetIndex ()));
+            this.mvHelper.delayDisplay (() -> Scales.BASES.get (this.scales.getScaleOffsetIndex ()));
         }
         else
         {
             this.scales.toggleChromatic ();
-            this.mvHelper.delayDisplay ( () -> this.scales.isChromatic () ? "Chromatic" : "In Scale");
+            this.mvHelper.delayDisplay (() -> this.scales.isChromatic () ? "Chromatic" : "In Scale");
         }
         this.updateScale ();
     }
@@ -182,23 +182,23 @@ public class PlayView extends AbstractPlayView<FireControlSurface, FireConfigura
             if (isAltPressed)
             {
                 this.scales.nextScaleLayout ();
-                this.mvHelper.delayDisplay ( () -> this.scales.getScaleLayout ().getName ());
+                this.mvHelper.delayDisplay (() -> this.scales.getScaleLayout ().getName ());
             }
             else
             {
                 this.scales.nextScale ();
-                this.mvHelper.delayDisplay ( () -> this.scales.getScale ().getName ());
+                this.mvHelper.delayDisplay (() -> this.scales.getScale ().getName ());
             }
         }
         else if (isAltPressed)
         {
             this.scales.nextScaleOffset ();
-            this.mvHelper.delayDisplay ( () -> Scales.BASES.get (this.scales.getScaleOffsetIndex ()));
+            this.mvHelper.delayDisplay (() -> Scales.BASES.get (this.scales.getScaleOffsetIndex ()));
         }
         else
         {
             this.scales.toggleChromatic ();
-            this.mvHelper.delayDisplay ( () -> this.scales.isChromatic () ? "Chromatic" : "In Scale");
+            this.mvHelper.delayDisplay (() -> this.scales.isChromatic () ? "Chromatic" : "In Scale");
         }
         this.updateScale ();
     }

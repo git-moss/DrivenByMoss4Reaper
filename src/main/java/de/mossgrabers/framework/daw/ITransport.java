@@ -641,7 +641,7 @@ public interface ITransport extends IObserverManagement
 
     /**
      * Set the time signature.
-     * 
+     *
      * @param numerator The numerator e.g. 3
      * @param denominator The denominator e.g. 4
      */

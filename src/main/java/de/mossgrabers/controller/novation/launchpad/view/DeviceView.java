@@ -107,7 +107,7 @@ public class DeviceView extends AbstractFaderView
                 final boolean isPinned = !this.cursorDevice.isPinned ();
                 this.cursorDevice.setPinned (isPinned);
                 this.model.getCursorTrack ().setPinned (isPinned);
-                this.mvHelper.delayDisplay ( () -> this.cursorDevice.getName () + ": " + (this.cursorDevice.isPinned () ? "Pinned" : "Not pinned"));
+                this.mvHelper.delayDisplay (() -> this.cursorDevice.getName () + ": " + (this.cursorDevice.isPinned () ? "Pinned" : "Not pinned"));
                 break;
 
             case SCENE6:

@@ -77,7 +77,7 @@ public class FireSelectButtonCommand extends AbstractTriggerCommand<FireControlS
         else
         {
             configuration.toggleControlLastParam ();
-            this.mvHelper.delayDisplay ( () -> "Last Param: " + (configuration.isControlLastParam () ? "ON" : "OFF"));
+            this.mvHelper.delayDisplay (() -> "Last Param: " + (configuration.isControlLastParam () ? "ON" : "OFF"));
         }
     }
 }

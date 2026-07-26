@@ -6,6 +6,7 @@ package de.mossgrabers.controller.akai.fire.view;
 
 import de.mossgrabers.controller.akai.fire.FireConfiguration;
 import de.mossgrabers.controller.akai.fire.controller.FireControlSurface;
+import de.mossgrabers.controller.akai.fire.controller.FirePadGrid;
 import de.mossgrabers.controller.akai.fire.mode.FireLayerMode;
 import de.mossgrabers.framework.controller.ButtonID;
 import de.mossgrabers.framework.daw.IModel;
@@ -33,9 +34,11 @@ import de.mossgrabers.framework.view.sequencer.AbstractDrumXoXView;
  */
 public class DrumXoXView extends AbstractDrumXoXView<FireControlSurface, FireConfiguration> implements IFireView
 {
-    protected boolean isCopy        = true;
-    protected boolean isSolo        = true;
-    protected boolean editLoopRange = false;
+    protected boolean         isCopy        = true;
+    protected boolean         isSolo        = true;
+    protected boolean         editLoopRange = false;
+
+    private final FirePadGrid padGrid;
 
 
     /**
@@ -51,6 +54,8 @@ public class DrumXoXView extends AbstractDrumXoXView<FireControlSurface, FireCon
         this.buttonSelect = ButtonID.ALT;
         this.deleteButton = ButtonID.SCENE1;
         this.editLoopTriggerButton = ButtonID.SCENE3;
+
+        this.padGrid = this.surface.getPadGrid ();
     }
 
 
@@ -111,7 +116,7 @@ public class DrumXoXView extends AbstractDrumXoXView<FireControlSurface, FireCon
             case 3:
             default:
                 this.configuration.toggleNoteRepeatActive ();
-                this.mvHelper.delayDisplay ( () -> "Note Repeat: " + (this.configuration.isNoteRepeatActive () ? "On" : "Off"));
+                this.mvHelper.delayDisplay (() -> "Note Repeat: " + (this.configuration.isNoteRepeatActive () ? "On" : "Off"));
                 break;
         }
     }
@@ -145,7 +150,7 @@ public class DrumXoXView extends AbstractDrumXoXView<FireControlSurface, FireCon
                 else
                     sel = PREV_RESOLUTION.get (activePeriod);
                 this.configuration.setNoteRepeatPeriod (sel);
-                this.mvHelper.delayDisplay ( () -> "Period: " + sel.getName ());
+                this.mvHelper.delayDisplay (() -> "Period: " + sel.getName ());
                 return;
             }
         }
@@ -236,6 +241,29 @@ public class DrumXoXView extends AbstractDrumXoXView<FireControlSurface, FireCon
         }
 
         return false;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void onGridNoteLongPress (final int note)
+    {
+        if (!this.isActive ())
+            return;
+
+        final int index = note - this.padGrid.getStartNote ();
+        final int x = index % this.numColumns;
+        final int y = index / this.numColumns;
+
+        // Sequencer steps
+        if (y < this.numStepRows)
+        {
+            this.surface.getButton (ButtonID.get (ButtonID.PAD1, index)).setConsumed ();
+
+            final int offsetY = this.scales.getDrumOffset ();
+            final NotePosition notePosition = new NotePosition (this.configuration.getMidiEditChannel (), (this.numStepRows - 1 - y) * this.numColumns + x, offsetY + this.selectedPad);
+            this.editNote (this.getClip (), notePosition, false);
+        }
     }
 
 

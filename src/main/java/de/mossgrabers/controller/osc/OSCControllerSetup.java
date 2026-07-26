@@ -122,7 +122,7 @@ public class OSCControllerSetup extends AbstractControllerSetup<IControlSurface<
         this.configuration.addSettingObserver (OSCConfiguration.RECEIVE_PORT, this::startOSCServer);
 
         final ITrackBank tb = this.model.getTrackBank ();
-        tb.addSelectionObserver ( (final int index, final boolean isSelected) -> this.keyManager.clearPressedKeys ());
+        tb.addSelectionObserver ((final int index, final boolean isSelected) -> this.keyManager.clearPressedKeys ());
         tb.addNoteObserver (this.keyManager);
 
         this.configuration.registerDeactivatedItemsHandler (this.model);
@@ -226,6 +226,6 @@ public class OSCControllerSetup extends AbstractControllerSetup<IControlSurface<
     public void startup ()
     {
         // Initial flush of the whole DAW state
-        this.host.scheduleTask ( () -> this.writer.flush (true), 1000);
+        this.host.scheduleTask (() -> this.writer.flush (true), 1000);
     }
 }

@@ -45,7 +45,7 @@ public class ControlView extends AbstractPlayView<Kontrol1ControlSurface, Kontro
         final int [] matrix = isActive && this.model.canSelectedTrackHoldNotes () ? Scales.getIdentityMatrix () : EMPTY_TABLE;
         // Only set the key manager not the translation matrix, since the keyboard always plays the
         // same notes!
-        this.surface.scheduleTask ( () -> this.keyManager.setNoteMatrix (matrix), 6);
+        this.surface.scheduleTask (() -> this.keyManager.setNoteMatrix (matrix), 6);
     }
 
 

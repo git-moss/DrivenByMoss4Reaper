@@ -357,6 +357,14 @@ public class BrowserImpl extends AbstractBrowser
     }
 
 
+    /** {@inheritDoc} */
+    @Override
+    public void insertClapDevice (final String clapId)
+    {
+        // Not supported
+    }
+
+
     private void browse (final BrowserContentType contentType, final int insertPos)
     {
         this.stopBrowsing (false);

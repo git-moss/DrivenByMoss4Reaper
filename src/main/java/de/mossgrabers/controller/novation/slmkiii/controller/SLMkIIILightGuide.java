@@ -47,7 +47,7 @@ public class SLMkIIILightGuide extends LightGuideImpl
         this.keyboardManager.setNoteMatrix (this.keyboardScales.getNoteMatrix ());
 
         final ITrackBank tb = model.getTrackBank ();
-        tb.addSelectionObserver ( (index, isSelected) -> this.keyboardManager.clearPressedKeys ());
+        tb.addSelectionObserver ((index, isSelected) -> this.keyboardManager.clearPressedKeys ());
         tb.addNoteObserver (this.keyboardManager::call);
     }
 

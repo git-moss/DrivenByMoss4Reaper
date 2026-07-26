@@ -84,7 +84,7 @@ public class RasteredKnobCommand extends TempoCommand<PushControlSurface, PushCo
         {
             this.surface.setTriggerConsumed (ButtonID.SELECT);
             if (activate)
-                this.mvHelper.delayDisplay ( () -> "Loop Start: " + this.transport.getLoopStartBeatText ());
+                this.mvHelper.delayDisplay (() -> "Loop Start: " + this.transport.getLoopStartBeatText ());
             return;
         }
 

@@ -39,7 +39,7 @@ public class MCUFlipCommand extends ToggleTrackBanksCommand<MCUControlSurface, M
 
         final MCUConfiguration configuration = this.surface.getConfiguration ();
         configuration.toggleUseFadersAsKnobs ();
-        this.mvHelper.delayDisplay ( () -> "Use faders as knobs: " + (configuration.useFadersAsKnobs () ? "On" : "Off"));
+        this.mvHelper.delayDisplay (() -> "Use faders as knobs: " + (configuration.useFadersAsKnobs () ? "On" : "Off"));
     }
 
 

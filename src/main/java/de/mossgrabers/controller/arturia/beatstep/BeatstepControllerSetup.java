@@ -104,7 +104,7 @@ public class BeatstepControllerSetup extends AbstractControllerSetup<BeatstepCon
         final ModelSetup ms = new ModelSetup ();
         this.model = this.factory.createModel (this.configuration, this.colorManager, this.valueChanger, this.scales, ms);
         final ITrackBank trackBank = this.model.getTrackBank ();
-        trackBank.addSelectionObserver ( (index, value) -> this.handleTrackChange (value));
+        trackBank.addSelectionObserver ((index, value) -> this.handleTrackChange (value));
         trackBank.setIndication (true);
     }
 
@@ -166,7 +166,7 @@ public class BeatstepControllerSetup extends AbstractControllerSetup<BeatstepCon
     {
         super.createObservers ();
 
-        this.getSurface ().getViewManager ().addChangeListener ( (previousViewId, activeViewId) -> this.updateIndication ());
+        this.getSurface ().getViewManager ().addChangeListener ((previousViewId, activeViewId) -> this.updateIndication ());
         this.createScaleObservers (this.configuration);
 
         this.configuration.registerDeactivatedItemsHandler (this.model);

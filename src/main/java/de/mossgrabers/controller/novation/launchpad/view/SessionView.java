@@ -72,7 +72,7 @@ public class SessionView extends AbstractSessionView<LaunchpadControlSurface, La
         this.birdColorSelected = new LightInfo (LaunchpadColorManager.LAUNCHPAD_COLOR_GREEN, -1, false);
 
         this.configuration.addSettingObserver (AbstractConfiguration.FLIP_SESSION, this::updateRowsCols);
-        this.surface.getModeManager ().addChangeListener ( (oldMode, newMode) -> this.updateRowsCols ());
+        this.surface.getModeManager ().addChangeListener ((oldMode, newMode) -> this.updateRowsCols ());
     }
 
 

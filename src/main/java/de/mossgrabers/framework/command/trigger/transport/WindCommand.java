@@ -89,7 +89,7 @@ public class WindCommand<S extends IControlSurface<C>, C extends Configuration> 
             return;
 
         this.model.getTransport ().changePosition (this.isForwarding, slow);
-        this.surface.scheduleTask ( () -> this.doChangePosition (slow), 100);
+        this.surface.scheduleTask (() -> this.doChangePosition (slow), 100);
     }
 
 

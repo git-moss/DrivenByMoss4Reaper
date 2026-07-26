@@ -95,7 +95,7 @@ public class AssignableCommand extends FootswitchCommand<MCUControlSurface, MCUC
                 if (event != ButtonEvent.DOWN)
                     return;
                 configuration.toggleMotorFaders ();
-                this.mvHelper.delayDisplay ( () -> "Motor Faders: " + (configuration.hasMotorFaders () ? "On" : "Off"));
+                this.mvHelper.delayDisplay (() -> "Motor Faders: " + (configuration.hasMotorFaders () ? "On" : "Off"));
                 break;
 
             case MCUConfiguration.FOOTSWITCH_PUNCH_IN:

@@ -82,9 +82,9 @@ public class OxiOneGrooveMode extends AbstractParameterMode<OxiOneControlSurface
 
         final IGraphicDisplay display = this.surface.getGraphicsDisplay ();
 
-        IParameter p = this.params[this.selectedIndex];
-        String label = p.doesExist () ? p.getName (12) + ": " + p.getDisplayedValue (8) : "";
-        int value = p.doesExist () ? p.getValue () : -1;
+        final IParameter p = this.params[this.selectedIndex];
+        final String label = p.doesExist () ? p.getName (12) + ": " + p.getDisplayedValue (8) : "";
+        final int value = p.doesExist () ? p.getValue () : -1;
 
         display.addElement (new TitleValueMenuComponent ("", label, this.surface.isShiftPressed () ? SHIFTED_MENU : MENU, value, 0, 0, false));
         display.send ();

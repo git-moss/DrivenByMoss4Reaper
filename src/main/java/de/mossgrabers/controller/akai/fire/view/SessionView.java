@@ -261,7 +261,7 @@ public class SessionView extends AbstractSessionView<FireControlSurface, FireCon
             }
             sceneBank.scrollForwards ();
 
-            this.model.getHost ().scheduleTask ( () -> {
+            this.model.getHost ().scheduleTask (() -> {
 
                 this.surface.println ("Pos: " + sceneBank.getScrollPosition ());
                 this.surface.println ("Track 1 Pos: " + this.model.getTrackBank ().getItem (0).getSlotBank ().getScrollPosition ());

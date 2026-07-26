@@ -93,7 +93,7 @@ public class MainApp implements BackendExchange, AppCallback, WindowManager
         this.iniPath = iniPath;
 
         // To not again loose any exception from executors or delayed methods...
-        Thread.setDefaultUncaughtExceptionHandler ( (thread, throwable) -> {
+        Thread.setDefaultUncaughtExceptionHandler ((thread, throwable) -> {
             final StringWriter writer = new StringWriter ();
             throwable.printStackTrace (new PrintWriter (writer));
             this.logModel.info (writer.toString ());
@@ -253,7 +253,7 @@ public class MainApp implements BackendExchange, AppCallback, WindowManager
                 this.mainFrame.fillControllerList ();
 
             // Delay the project settings quite a bit still everything is up...
-            SwingUtilities.invokeLater ( () -> {
+            SwingUtilities.invokeLater (() -> {
 
                 final Timer timer = new Timer (2000, e -> MainApp.this.processInstanceSettings ());
                 timer.setRepeats (false);
@@ -772,7 +772,7 @@ public class MainApp implements BackendExchange, AppCallback, WindowManager
         final MidiMessage midiMessage;
         try
         {
-            int statusInt = data[0] & 0xFF;
+            final int statusInt = data[0] & 0xFF;
             if (statusInt == 0xF0)
                 midiMessage = new SysexMessage (data, data.length);
             else if (data.length == 3)

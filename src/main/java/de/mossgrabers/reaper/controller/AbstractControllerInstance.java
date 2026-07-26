@@ -393,7 +393,7 @@ public abstract class AbstractControllerInstance<S extends IControlSurface<C>, C
 
         this.globalSettingsUI.flush ();
 
-        this.host.scheduleTask ( () -> {
+        this.host.scheduleTask (() -> {
             try
             {
                 this.controllerSetup.startup ();

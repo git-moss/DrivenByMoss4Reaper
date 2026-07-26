@@ -49,7 +49,7 @@ public class Timeout
 
     private void delayExecution (final Runnable runnable, final long issuedTime)
     {
-        this.host.scheduleTask ( () -> {
+        this.host.scheduleTask (() -> {
 
             if (issuedTime == this.updateTime)
                 runnable.run ();

@@ -46,8 +46,8 @@ public class ParameterMappingDialog extends BasicDialog
 
     private static final long                 serialVersionUID = 3773770769128020035L;
 
-    private final ICursorDevice               cursorDevice;
-    private final ParameterMap                parameterMap;
+    private final transient ICursorDevice     cursorDevice;
+    private final transient ParameterMap      parameterMap;
 
     private JListX<ParameterImpl>             parametersListBox;
     private JTextField                        searchField;

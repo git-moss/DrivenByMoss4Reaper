@@ -77,8 +77,8 @@ public class MainFrame extends JFrame
 
     private final DebugDialog                                  debugDialog;
     private final BrowserDialog                                browserDialog;
-    private final LogModel                                     logModel;
-    private ControllerInstanceManager                          instanceManager;
+    private final transient LogModel                           logModel;
+    private transient ControllerInstanceManager                instanceManager;
 
 
     /**

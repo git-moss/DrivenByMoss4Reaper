@@ -82,6 +82,6 @@ public class ExquisNoteView extends AbstractView<ExquisControlSurface, ExquisCon
     @Override
     public void updateNoteMapping ()
     {
-        this.surface.scheduleTask ( () -> this.delayedUpdateNoteMapping (Scales.getIdentityMatrix ()), 100);
+        this.surface.scheduleTask (() -> this.delayedUpdateNoteMapping (Scales.getIdentityMatrix ()), 100);
     }
 }

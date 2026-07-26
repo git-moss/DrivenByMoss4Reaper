@@ -106,7 +106,7 @@ public class HidDeviceImpl implements IHidDevice
     {
         if (!this.isOpen)
             return;
-        this.hidDevice.setInputReportListener ( (source, id, data, length) -> {
+        this.hidDevice.setInputReportListener ((source, id, data, length) -> {
 
             // purehid documentation says otherwise but MAC also contains the report ID in
             // data[0], therefore remove it

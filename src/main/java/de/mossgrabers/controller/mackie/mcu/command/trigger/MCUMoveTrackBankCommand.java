@@ -203,7 +203,7 @@ public class MCUMoveTrackBankCommand extends AbstractTriggerCommand<MCUControlSu
 
     private void notifySelectedDeviceAndParameterPage ()
     {
-        this.mvHelper.delayDisplay ( () -> {
+        this.mvHelper.delayDisplay (() -> {
 
             final ICursorDevice cursorDevice = this.model.getCursorDevice ();
             if (!cursorDevice.doesExist ())
@@ -227,7 +227,7 @@ public class MCUMoveTrackBankCommand extends AbstractTriggerCommand<MCUControlSu
 
     private void notifySelectedParameterPage (final boolean isProjectParameters)
     {
-        this.mvHelper.delayDisplay ( () -> {
+        this.mvHelper.delayDisplay (() -> {
 
             final IMode mode = this.surface.getModeManager ().get (isProjectParameters ? Modes.PROJECT_PARAMETERS : Modes.TRACK_PARAMETERS);
 

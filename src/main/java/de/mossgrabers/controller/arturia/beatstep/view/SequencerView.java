@@ -45,7 +45,7 @@ public class SequencerView extends BaseSequencerView
         this.offsetY = SequencerView.START_KEY;
 
         final ITrackBank tb = model.getTrackBank ();
-        tb.addSelectionObserver ( (index, isSelected) -> this.keyManager.clearPressedKeys ());
+        tb.addSelectionObserver ((index, isSelected) -> this.keyManager.clearPressedKeys ());
         tb.addNoteObserver (this::updateNote);
     }
 

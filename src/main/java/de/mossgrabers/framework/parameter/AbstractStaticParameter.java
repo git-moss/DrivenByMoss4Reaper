@@ -20,7 +20,7 @@ public abstract class AbstractStaticParameter extends AbstractParameterImpl
 
     /**
      * Constructor.
-     * 
+     *
      * @param name The name of the parameter
      * @param valueChanger The value changer
      */

@@ -46,7 +46,7 @@ public class AutomationCommand<S extends IControlSurface<C>, C extends Configura
         if (this.surface.isSelectPressed ())
         {
             transport.nextAutomationWriteMode ();
-            this.mvHelper.delayDisplay ( () -> transport.getAutomationWriteMode ().getLabel ());
+            this.mvHelper.delayDisplay (() -> transport.getAutomationWriteMode ().getLabel ());
             return;
         }
 

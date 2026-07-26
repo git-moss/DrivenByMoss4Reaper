@@ -30,10 +30,10 @@ import java.util.List;
  */
 public class ReaperSetupFactory implements ISetupFactory
 {
-    private final BackendExchange  sender;
-    private final IHost          host;
-    private final MidiAccessImpl midiAccess;
-    private final IniFiles       iniFiles;
+    private final BackendExchange sender;
+    private final IHost           host;
+    private final MidiAccessImpl  midiAccess;
+    private final IniFiles        iniFiles;
 
 
     /**

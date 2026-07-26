@@ -162,7 +162,7 @@ public abstract class AbstractMidiOutput implements IMidiOutput
 
     /**
      * Concatenates all given arrays.
-     * 
+     *
      * @param data The arrays to concatenate
      * @return The array
      */

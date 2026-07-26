@@ -47,7 +47,7 @@ public class DeviceLayerDetailsMode extends BaseMode<ILayer>
         final ICursorDevice cursorDevice = model.getCursorDevice ();
 
         final ViewManager viewManager = surface.getViewManager ();
-        viewManager.addChangeListener ( (previousID, activeID) -> {
+        viewManager.addChangeListener ((previousID, activeID) -> {
 
             final IBank<ILayer> bank;
             switch (activeID)

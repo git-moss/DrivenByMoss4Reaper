@@ -29,7 +29,7 @@ import java.util.List;
  */
 public abstract class AbstractSettingsUI implements ISettingsUI
 {
-    protected final BackendExchange    sender;
+    protected final BackendExchange  sender;
     protected final PropertiesEx     properties;
     protected final LogModel         logModel;
     protected final List<IfxSetting> settings = new ArrayList<> ();

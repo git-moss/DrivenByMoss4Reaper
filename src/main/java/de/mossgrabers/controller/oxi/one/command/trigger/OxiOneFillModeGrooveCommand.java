@@ -44,7 +44,7 @@ public class OxiOneFillModeGrooveCommand extends AbstractTriggerCommand<OxiOneCo
         if (event == ButtonEvent.UP)
         {
             this.transport.toggleFillModeActive ();
-            this.mvHelper.delayDisplay ( () -> "Fill Mode: " + (this.transport.isFillModeActive () ? "On" : "Off"));
+            this.mvHelper.delayDisplay (() -> "Fill Mode: " + (this.transport.isFillModeActive () ? "On" : "Off"));
         }
     }
 

@@ -151,7 +151,7 @@ public class NoteRepeatView extends AbstractView<MaschineJamControlSurface, Masc
                 {
                     final int octave = note - 36;
                     configuration.setNoteRepeatOctave (octave);
-                    this.surface.scheduleTask ( () -> this.surface.getDisplay ().notify ("Note Repeat Octave: " + octave), 100);
+                    this.surface.scheduleTask (() -> this.surface.getDisplay ().notify ("Note Repeat Octave: " + octave), 100);
                 }
                 return;
 
@@ -161,7 +161,7 @@ public class NoteRepeatView extends AbstractView<MaschineJamControlSurface, Masc
                 if (host.supports (Capability.NOTE_REPEAT_MODE))
                 {
                     configuration.setPrevNextNoteRepeatMode (note == 77);
-                    this.surface.scheduleTask ( () -> this.surface.getDisplay ().notify ("Note Repeat Mode: " + configuration.getNoteRepeatMode ().getName ()), 100);
+                    this.surface.scheduleTask (() -> this.surface.getDisplay ().notify ("Note Repeat Mode: " + configuration.getNoteRepeatMode ().getName ()), 100);
                 }
                 break;
 
@@ -228,7 +228,7 @@ public class NoteRepeatView extends AbstractView<MaschineJamControlSurface, Masc
     private void setPeriod (final int index)
     {
         this.surface.getConfiguration ().setNoteRepeatPeriod (Resolution.values ()[index]);
-        this.surface.scheduleTask ( () -> this.surface.getDisplay ().notify ("Period: " + Resolution.getNameAt (index)), 100);
+        this.surface.scheduleTask (() -> this.surface.getDisplay ().notify ("Period: " + Resolution.getNameAt (index)), 100);
     }
 
 
@@ -237,7 +237,7 @@ public class NoteRepeatView extends AbstractView<MaschineJamControlSurface, Masc
         if (this.model.getHost ().supports (Capability.NOTE_REPEAT_LENGTH))
         {
             this.surface.getConfiguration ().setNoteRepeatLength (Resolution.values ()[index]);
-            this.surface.scheduleTask ( () -> this.surface.getDisplay ().notify ("Note Length: " + Resolution.getNameAt (index)), 100);
+            this.surface.scheduleTask (() -> this.surface.getDisplay ().notify ("Note Length: " + Resolution.getNameAt (index)), 100);
         }
     }
 }

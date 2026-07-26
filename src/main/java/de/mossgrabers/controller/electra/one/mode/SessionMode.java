@@ -215,7 +215,7 @@ public class SessionMode extends AbstractElectraOneMode
                     // Quantize
                     case 3:
                         slot.select ();
-                        this.surface.scheduleTask ( () -> {
+                        this.surface.scheduleTask (() -> {
                             final IClip clip = this.model.getCursorClip ();
                             if (clip.doesExist ())
                                 clip.quantize (configuration.getQuantizeAmount () / 100.0);

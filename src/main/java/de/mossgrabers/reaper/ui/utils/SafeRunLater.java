@@ -31,7 +31,7 @@ public class SafeRunLater
      */
     public static void execute (final LogModel logModel, final Runnable runnable)
     {
-        SwingUtilities.invokeLater ( () -> {
+        SwingUtilities.invokeLater (() -> {
             try
             {
                 runnable.run ();

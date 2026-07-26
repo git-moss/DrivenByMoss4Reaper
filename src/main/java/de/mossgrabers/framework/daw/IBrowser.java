@@ -144,6 +144,14 @@ public interface IBrowser extends IObserverManagement
 
 
     /**
+     * Insert a CLAP device directly by its CLAP ID, bypassing the browser.
+     *
+     * @param clapId The CLAP plugin ID (e.g. "com.jmoss.dsp-lab")
+     */
+    void insertClapDevice (String clapId);
+
+
+    /**
      * Stop browsing.
      *
      * @param commitSelection Commits the selection if true otherwise it is discarded.

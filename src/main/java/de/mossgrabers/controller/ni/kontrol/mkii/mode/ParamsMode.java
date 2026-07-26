@@ -84,7 +84,7 @@ public class ParamsMode extends AbstractParameterMode<KontrolProtocolControlSurf
 
         final SelectedLayerDeviceBankParameterProvider provider = new SelectedLayerDeviceBankParameterProvider (model.getCursorLayer (), model.getCursorDevice ().getParameterBank ().getPageSize ());
         this.providers[LAYER_INDEX] = provider;
-        this.providers[LAYER_INDEX].addParametersObserver ( () -> {
+        this.providers[LAYER_INDEX].addParametersObserver (() -> {
 
             this.banks.set (LAYER_INDEX, provider.getBank ());
             if (this.layerSubModeEnabled)
@@ -272,7 +272,7 @@ public class ParamsMode extends AbstractParameterMode<KontrolProtocolControlSurf
 
             if (this.layerSubModeEnabled)
             {
-                this.surface.getHost ().scheduleTask ( () -> {
+                this.surface.getHost ().scheduleTask (() -> {
                     ((SelectedLayerDeviceBankParameterProvider) this.providers[LAYER_INDEX]).configureCurrentBank ();
                     this.banks.set (LAYER_INDEX, ((SelectedLayerDeviceBankParameterProvider) this.providers[LAYER_INDEX]).getBank ());
                 }, 100);

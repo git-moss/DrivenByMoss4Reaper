@@ -668,7 +668,7 @@ public class ChannelImpl extends ItemImpl implements IChannel
     public void duplicate ()
     {
         this.select ();
-        this.host.scheduleTask ( () -> this.sender.invokeAction (Actions.DUPLICATE_TRACKS), 200);
+        this.host.scheduleTask (() -> this.sender.invokeAction (Actions.DUPLICATE_TRACKS), 200);
     }
 
 

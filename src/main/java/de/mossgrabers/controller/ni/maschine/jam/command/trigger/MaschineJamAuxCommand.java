@@ -54,7 +54,7 @@ public class MaschineJamAuxCommand extends ModeMultiSelectCommand<MaschineJamCon
             return;
 
         this.model.toggleCurrentTrackBank ();
-        this.mvHelper.delayDisplay ( () -> this.model.isEffectTrackBankActive () ? "Effect Tracks" : "Audio/Instrument Tracks");
+        this.mvHelper.delayDisplay (() -> this.model.isEffectTrackBankActive () ? "Effect Tracks" : "Audio/Instrument Tracks");
         this.surface.setTriggerConsumed (ButtonID.SHIFT);
     }
 }

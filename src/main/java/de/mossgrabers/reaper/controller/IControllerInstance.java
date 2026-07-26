@@ -141,7 +141,7 @@ public interface IControllerInstance
 
     /**
      * Get the version number of the host.
-     * 
+     *
      * @return The major and minor version
      */
     int [] getHostVersion ();

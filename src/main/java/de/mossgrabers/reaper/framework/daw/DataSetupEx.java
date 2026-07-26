@@ -20,7 +20,7 @@ import de.mossgrabers.reaper.framework.daw.data.CursorTrackImpl;
 public class DataSetupEx extends DataSetup
 {
     private final BackendExchange sender;
-    private CursorTrackImpl     cursorTrack;
+    private CursorTrackImpl       cursorTrack;
 
 
     /**

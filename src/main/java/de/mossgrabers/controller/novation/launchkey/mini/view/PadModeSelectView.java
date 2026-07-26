@@ -109,7 +109,7 @@ public class PadModeSelectView extends AbstractView<LaunchkeyMiniMk3ControlSurfa
 
             case 8:
                 transport.toggleMetronome ();
-                this.mvHelper.delayDisplay ( () -> transport.isMetronomeOn () ? "Metronome: On" : "Metronome: Off");
+                this.mvHelper.delayDisplay (() -> transport.isMetronomeOn () ? "Metronome: On" : "Metronome: Off");
                 break;
 
             case 9:

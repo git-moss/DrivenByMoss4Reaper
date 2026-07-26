@@ -58,7 +58,7 @@ public class TestFramework
             this.host.error (ex.getLocalizedMessage (), ex);
         }
 
-        this.host.scheduleTask ( () -> this.executeScheduler (callback), delay);
+        this.host.scheduleTask (() -> this.executeScheduler (callback), delay);
     }
 
 

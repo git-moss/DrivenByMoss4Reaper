@@ -19,10 +19,10 @@ import de.mossgrabers.reaper.communication.Processor;
  */
 public abstract class BaseImpl implements IObserverManagement
 {
-    protected final DataSetupEx   dataSetup;
-    protected final IHost         host;
+    protected final DataSetupEx     dataSetup;
+    protected final IHost           host;
     protected final BackendExchange sender;
-    protected final IValueChanger valueChanger;
+    protected final IValueChanger   valueChanger;
 
 
     /**

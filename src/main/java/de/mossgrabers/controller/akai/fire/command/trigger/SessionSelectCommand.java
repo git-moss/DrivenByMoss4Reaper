@@ -41,7 +41,7 @@ public class SessionSelectCommand extends AbstractTriggerCommand<FireControlSurf
 
     /**
      * Get the color index for the activation state of the views.
-     * 
+     *
      * @return The color index
      */
     public int getViewActivationColor ()

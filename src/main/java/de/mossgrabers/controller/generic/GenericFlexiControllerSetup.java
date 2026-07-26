@@ -256,17 +256,17 @@ public class GenericFlexiControllerSetup extends AbstractControllerSetup<Generic
         this.configuration.addSettingObserver (GenericFlexiConfiguration.SELECTED_MODE, this::selectMode);
 
         final ITrackBank trackBank = this.model.getTrackBank ();
-        trackBank.addSelectionObserver ( (index, selected) -> this.handleTrackChange (selected));
+        trackBank.addSelectionObserver ((index, selected) -> this.handleTrackChange (selected));
         final ITrackBank effectTrackBank = this.model.getEffectTrackBank ();
         if (effectTrackBank != null)
-            effectTrackBank.addSelectionObserver ( (index, selected) -> this.handleTrackChange (selected));
+            effectTrackBank.addSelectionObserver ((index, selected) -> this.handleTrackChange (selected));
 
-        surface.getModeManager ().addChangeListener ( (oldMode, newMode) -> this.updateIndication ());
+        surface.getModeManager ().addChangeListener ((oldMode, newMode) -> this.updateIndication ());
 
         // Handle configuration changes
         this.createNoteRepeatObservers (this.configuration, surface);
         this.configuration.registerDeactivatedItemsHandler (this.model);
-        this.configuration.addSettingObserver (AbstractConfiguration.ENABLED_MPE_ZONES, () -> surface.scheduleTask ( () -> {
+        this.configuration.addSettingObserver (AbstractConfiguration.ENABLED_MPE_ZONES, () -> surface.scheduleTask (() -> {
 
             final INoteInput input = surface.getMidiInput ().getDefaultNoteInput ();
             final IMidiOutput output = surface.getMidiOutput ();
@@ -281,7 +281,7 @@ public class GenericFlexiControllerSetup extends AbstractControllerSetup<Generic
 
         }, 2000));
 
-        this.configuration.addSettingObserver (AbstractConfiguration.MPE_PITCHBEND_RANGE, () -> surface.scheduleTask ( () -> {
+        this.configuration.addSettingObserver (AbstractConfiguration.MPE_PITCHBEND_RANGE, () -> surface.scheduleTask (() -> {
 
             final INoteInput input = surface.getMidiInput ().getDefaultNoteInput ();
             final IMidiOutput output = surface.getMidiOutput ();
@@ -305,7 +305,7 @@ public class GenericFlexiControllerSetup extends AbstractControllerSetup<Generic
 
         // Load last configuration
         final GenericFlexiControlSurface surface = this.getSurface ();
-        this.host.scheduleTask ( () -> this.host.println (surface.loadFile (this.configuration.getFilename ())), 2000);
+        this.host.scheduleTask (() -> this.host.println (surface.loadFile (this.configuration.getFilename ())), 2000);
     }
 
 

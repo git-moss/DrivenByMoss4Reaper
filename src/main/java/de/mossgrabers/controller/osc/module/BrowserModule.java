@@ -81,6 +81,13 @@ public class BrowserModule extends AbstractModule
                     browser.insertBeforeCursorDevice ();
                 break;
 
+            case "insertClap":
+                // Insert a CLAP device directly by its ID (passed as the value),
+                // bypassing the browser. Reaches plug-ins the popup browser cannot.
+                if (value != null)
+                    browser.insertClapDevice (value.toString ());
+                break;
+
             case "commit":
                 browser.stopBrowsing (true);
                 break;

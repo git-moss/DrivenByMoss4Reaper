@@ -213,7 +213,7 @@ public class ShiftView extends AbstractShiftView<FireControlSurface, FireConfigu
                 {
                     final ArpeggiatorMode prevArpeggiatorMode = configuration.prevArpeggiatorMode ();
                     configuration.setNoteRepeatMode (prevArpeggiatorMode);
-                    this.mvHelper.delayDisplay ( () -> "Arp: " + prevArpeggiatorMode.getName ());
+                    this.mvHelper.delayDisplay (() -> "Arp: " + prevArpeggiatorMode.getName ());
                 }
                 break;
             case 87:
@@ -221,13 +221,13 @@ public class ShiftView extends AbstractShiftView<FireControlSurface, FireConfigu
                 {
                     final ArpeggiatorMode nextArpeggiatorMode = configuration.nextArpeggiatorMode ();
                     configuration.setNoteRepeatMode (nextArpeggiatorMode);
-                    this.mvHelper.delayDisplay ( () -> "Arp: " + nextArpeggiatorMode.getName ());
+                    this.mvHelper.delayDisplay (() -> "Arp: " + nextArpeggiatorMode.getName ());
                 }
                 break;
 
             case 84:
                 configuration.toggleNoteRepeatActive ();
-                this.mvHelper.delayDisplay ( () -> "Note Repeat: " + (configuration.isNoteRepeatActive () ? "On" : "Off"));
+                this.mvHelper.delayDisplay (() -> "Note Repeat: " + (configuration.isNoteRepeatActive () ? "On" : "Off"));
                 break;
 
             case 88:
@@ -350,7 +350,7 @@ public class ShiftView extends AbstractShiftView<FireControlSurface, FireConfigu
     private void setPeriod (final int index)
     {
         this.surface.getConfiguration ().setNoteRepeatPeriod (Resolution.values ()[index]);
-        this.surface.scheduleTask ( () -> this.surface.getDisplay ().notify ("Period: " + Resolution.getNameAt (index)), 100);
+        this.surface.scheduleTask (() -> this.surface.getDisplay ().notify ("Period: " + Resolution.getNameAt (index)), 100);
     }
 
 
@@ -359,7 +359,7 @@ public class ShiftView extends AbstractShiftView<FireControlSurface, FireConfigu
         if (this.model.getHost ().supports (Capability.NOTE_REPEAT_LENGTH))
         {
             this.surface.getConfiguration ().setNoteRepeatLength (Resolution.values ()[index]);
-            this.surface.scheduleTask ( () -> this.surface.getDisplay ().notify ("Note Len: " + Resolution.getNameAt (index)), 100);
+            this.surface.scheduleTask (() -> this.surface.getDisplay ().notify ("Note Len: " + Resolution.getNameAt (index)), 100);
         }
     }
 
@@ -370,7 +370,7 @@ public class ShiftView extends AbstractShiftView<FireControlSurface, FireConfigu
         {
             final FireConfiguration configuration = this.surface.getConfiguration ();
             configuration.setNoteRepeatOctave (octave);
-            this.mvHelper.delayDisplay ( () -> "Octave: " + configuration.getNoteRepeatOctave ());
+            this.mvHelper.delayDisplay (() -> "Octave: " + configuration.getNoteRepeatOctave ());
         }
     }
 

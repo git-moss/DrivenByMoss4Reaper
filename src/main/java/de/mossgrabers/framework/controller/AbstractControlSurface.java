@@ -198,7 +198,7 @@ public abstract class AbstractControlSurface<C extends Configuration> implements
             pad.addLight (this.surfaceFactory.createLight (this.surfaceID, null, () -> this.padGrid.getLightInfo (note).getEncoded (), state -> this.padGrid.sendState (note), colorIndex -> this.colorManager.getColor (colorIndex, buttonID), pad));
             final int [] translated = this.padGrid.translateToController (note);
             pad.bind (this.input, BindType.NOTE, translated[0], translated[1]);
-            pad.bind ( (event, velocity) -> this.handleGridNote (event, note, velocity));
+            pad.bind ((event, velocity) -> this.handleGridNote (event, note, velocity));
         }
     }
 
@@ -492,7 +492,7 @@ public abstract class AbstractControlSurface<C extends Configuration> implements
     {
         final List<IHwRelativeKnob> relativeKnobs = new ArrayList<> ();
 
-        this.continuous.forEach ( (id, control) -> {
+        this.continuous.forEach ((id, control) -> {
             if (control instanceof final IHwRelativeKnob knob)
                 relativeKnobs.add (knob);
         });
@@ -727,7 +727,7 @@ public abstract class AbstractControlSurface<C extends Configuration> implements
                 light.turnOff ();
         });
 
-        this.continuous.forEach ( (id, control) -> control.turnOff ());
+        this.continuous.forEach ((id, control) -> control.turnOff ());
 
         this.surfaceFactory.flush ();
     }
@@ -756,10 +756,10 @@ public abstract class AbstractControlSurface<C extends Configuration> implements
         this.flushButtonLEDs ();
 
         // Refresh all knob/fader LEDs
-        this.continuous.forEach ( (id, control) -> control.forceFlush ());
+        this.continuous.forEach ((id, control) -> control.forceFlush ());
 
         // Flush additional lights which are not assigned to a button
-        this.lights.forEach ( (outputID, light) -> light.forceFlush ());
+        this.lights.forEach ((outputID, light) -> light.forceFlush ());
 
         if (this.lightGuide != null)
             this.lightGuide.forceFlush ();
@@ -770,7 +770,7 @@ public abstract class AbstractControlSurface<C extends Configuration> implements
     @Override
     public void flushButtonLEDs ()
     {
-        this.buttons.forEach ( (id, button) -> {
+        this.buttons.forEach ((id, button) -> {
             final IHwLight light = button.getLight ();
             if (light != null)
                 light.forceFlush ();
@@ -996,7 +996,7 @@ public abstract class AbstractControlSurface<C extends Configuration> implements
     @Override
     public void scheduleTask (final Runnable callback, final long delay)
     {
-        this.host.scheduleTask ( () -> {
+        this.host.scheduleTask (() -> {
             try
             {
                 callback.run ();

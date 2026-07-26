@@ -23,11 +23,11 @@ import java.util.Optional;
  */
 public abstract class AbstractBankImpl<T extends IItem> extends AbstractItemBank<T>
 {
-    protected final DataSetupEx   dataSetup;
+    protected final DataSetupEx     dataSetup;
     protected final BackendExchange sender;
-    protected final IValueChanger valueChanger;
+    protected final IValueChanger   valueChanger;
 
-    protected int                 itemCount;
+    protected int                   itemCount;
 
 
     /**

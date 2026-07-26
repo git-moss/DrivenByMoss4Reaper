@@ -53,7 +53,7 @@ public class SequencerView extends AbstractNoteSequencerView<MaschineJamControlS
                     this.scales.nextScale ();
                 else
                     this.scales.prevScale ();
-                this.mvHelper.delayDisplay ( () -> "Scale: " + this.scales.getScale ().getName ());
+                this.mvHelper.delayDisplay (() -> "Scale: " + this.scales.getScale ().getName ());
                 break;
 
             case TEMPORARY_NOTES:
@@ -61,12 +61,12 @@ public class SequencerView extends AbstractNoteSequencerView<MaschineJamControlS
                     this.scales.nextScaleOffset ();
                 else
                     this.scales.prevScaleOffset ();
-                this.mvHelper.delayDisplay ( () -> "Scale Offset: " + Scales.BASES.get (this.scales.getScaleOffsetIndex ()));
+                this.mvHelper.delayDisplay (() -> "Scale Offset: " + Scales.BASES.get (this.scales.getScaleOffsetIndex ()));
                 break;
 
             case TEMPORARY_LOCK:
                 this.scales.toggleChromatic ();
-                this.mvHelper.delayDisplay ( () -> "Chromatic: " + (this.scales.isChromatic () ? "On" : "Off"));
+                this.mvHelper.delayDisplay (() -> "Chromatic: " + (this.scales.isChromatic () ? "On" : "Off"));
                 break;
 
             case TEMPORARY_TUNE:

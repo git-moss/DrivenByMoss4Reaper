@@ -323,8 +323,8 @@ public class MidiInputImpl implements IMidiInput
         {
             switch (message)
             {
-                case SysexMessage sysex -> this.handleSysexMessage (sysex);
-                case ShortMessage sm -> this.handleShortMessage (sm);
+                case final SysexMessage sysex -> this.handleSysexMessage (sysex);
+                case final ShortMessage sm -> this.handleShortMessage (sm);
                 default -> this.host.error ("Unknown MIDI class.");
             }
         }
@@ -347,13 +347,13 @@ public class MidiInputImpl implements IMidiInput
         if (status == 0xF8)
             return;
 
-        int data1 = message.getData1 ();
-        int data2 = message.getData2 ();
+        final int data1 = message.getData1 ();
+        final int data2 = message.getData2 ();
         final int command = status & 0xF0;
         final int channel = status & 0xF;
         final boolean isProcessed = this.handleControls (command, channel, data1, data2);
         // Still forward MIDI notes
-        if (isProcessed && (command != MidiConstants.CMD_NOTE_ON && command != MidiConstants.CMD_NOTE_OFF))
+        if (isProcessed && command != MidiConstants.CMD_NOTE_ON && command != MidiConstants.CMD_NOTE_OFF)
             return;
 
         if (this.shortCallback != null)

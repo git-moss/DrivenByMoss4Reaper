@@ -75,7 +75,7 @@ public class MVHelper<S extends IControlSurface<C>, C extends Configuration>
      */
     public void notifySelectedTrack ()
     {
-        this.delayDisplay ( () -> {
+        this.delayDisplay (() -> {
 
             final ITrackBank currentTrackBank = this.model.getCurrentTrackBank ();
             final Optional<ITrack> selectedTrack = currentTrackBank.getSelectedItem ();
@@ -97,7 +97,7 @@ public class MVHelper<S extends IControlSurface<C>, C extends Configuration>
      */
     public void notifyTrackRange ()
     {
-        this.delayDisplay ( () -> {
+        this.delayDisplay (() -> {
 
             final ITrackBank currentTrackBank = this.model.getCurrentTrackBank ();
             final int scrollPosition = currentTrackBank.getScrollPosition ();
@@ -112,7 +112,7 @@ public class MVHelper<S extends IControlSurface<C>, C extends Configuration>
      */
     public void notifyLayerRange ()
     {
-        this.delayDisplay ( () -> {
+        this.delayDisplay (() -> {
 
             final ISpecificDevice specificDevice = this.model.getSpecificDevice (DeviceID.FIRST_INSTRUMENT);
             final ILayerBank layerBank = specificDevice.getLayerBank ();
@@ -129,7 +129,7 @@ public class MVHelper<S extends IControlSurface<C>, C extends Configuration>
      */
     public void notifyDrumPadRange ()
     {
-        this.delayDisplay ( () -> {
+        this.delayDisplay (() -> {
 
             final ISpecificDevice specificDevice = this.model.getDrumDevice ();
             final IDrumPadBank drumPadBank = specificDevice.getDrumPadBank ();
@@ -149,7 +149,7 @@ public class MVHelper<S extends IControlSurface<C>, C extends Configuration>
      */
     public void notifySelectedSends (final ISendBank sendBank)
     {
-        this.delayDisplay ( () -> {
+        this.delayDisplay (() -> {
 
             final int scrollPosition = sendBank.getScrollPosition () + 1;
             return "Sends: " + scrollPosition + "-" + (scrollPosition + 1);
@@ -165,7 +165,7 @@ public class MVHelper<S extends IControlSurface<C>, C extends Configuration>
      */
     public void notifySelectedSend (final int sendIndex)
     {
-        this.delayDisplay ( () -> {
+        this.delayDisplay (() -> {
 
             final ITrackBank trackBank = this.model.getTrackBank ();
             Optional<ITrack> selectedTrack = trackBank.getSelectedItem ();
@@ -193,7 +193,7 @@ public class MVHelper<S extends IControlSurface<C>, C extends Configuration>
      */
     public void notifySelectedDevice ()
     {
-        this.delayDisplay ( () -> {
+        this.delayDisplay (() -> {
 
             final ICursorDevice cursorDevice = this.model.getCursorDevice ();
             return "Selected device: " + (cursorDevice.doesExist () ? cursorDevice.getName () : NONE);
@@ -211,7 +211,7 @@ public class MVHelper<S extends IControlSurface<C>, C extends Configuration>
         if (!cursorDevice.doesExist () || !cursorDevice.hasLayers ())
             return;
 
-        this.delayDisplay ( () -> {
+        this.delayDisplay (() -> {
 
             final Optional<ILayer> selectedLayer = cursorDevice.getLayerBank ().getSelectedItem ();
             return "Selected layer: " + (selectedLayer.isPresent () ? selectedLayer.get ().getName () : NONE);
@@ -225,7 +225,7 @@ public class MVHelper<S extends IControlSurface<C>, C extends Configuration>
      */
     public void notifySelectedDeviceAndParameterPage ()
     {
-        this.delayDisplay ( () -> {
+        this.delayDisplay (() -> {
 
             final ICursorDevice cursorDevice = this.model.getCursorDevice ();
             if (!cursorDevice.doesExist ())
@@ -252,7 +252,7 @@ public class MVHelper<S extends IControlSurface<C>, C extends Configuration>
      */
     public void notifyFirstDeviceAndParameterPage ()
     {
-        this.delayDisplay ( () -> {
+        this.delayDisplay (() -> {
 
             final ISpecificDevice cursorDevice = this.model.getSpecificDevice (DeviceID.FIRST_INSTRUMENT);
             if (cursorDevice.doesExist ())
@@ -305,7 +305,7 @@ public class MVHelper<S extends IControlSurface<C>, C extends Configuration>
      */
     public void notifySelectedParameterPage (final IParameterBank bank, final String prefix)
     {
-        this.delayDisplay ( () -> {
+        this.delayDisplay (() -> {
 
             final Optional<String> selectedItem = bank.getPageBank ().getSelectedItem ();
             if (selectedItem.isPresent ())
@@ -328,7 +328,7 @@ public class MVHelper<S extends IControlSurface<C>, C extends Configuration>
     public void notifyParameter (final IParameter parameter)
     {
         if (parameter.doesExist ())
-            this.delayDisplay ( () -> parameter.getName () + ": " + parameter.getDisplayedValue ());
+            this.delayDisplay (() -> parameter.getName () + ": " + parameter.getDisplayedValue ());
     }
 
 
@@ -339,7 +339,7 @@ public class MVHelper<S extends IControlSurface<C>, C extends Configuration>
      */
     public void notifySelectedItem (final IMode mode)
     {
-        this.delayDisplay ( () -> {
+        this.delayDisplay (() -> {
 
             final Optional<String> selectedItemName = mode.getSelectedItemName ();
             return selectedItemName.isPresent () ? selectedItemName.get () : NONE;
@@ -353,7 +353,7 @@ public class MVHelper<S extends IControlSurface<C>, C extends Configuration>
      */
     public void notifyScenePage ()
     {
-        this.delayDisplay ( () -> {
+        this.delayDisplay (() -> {
 
             final ISceneBank sceneBank = this.model.getSceneBank ();
             int lastScene = -1;
@@ -385,7 +385,7 @@ public class MVHelper<S extends IControlSurface<C>, C extends Configuration>
      */
     public void notifyTempo ()
     {
-        this.delayDisplay ( () -> "Tempo: " + this.transport.formatTempo (this.transport.getTempo ()));
+        this.delayDisplay (() -> "Tempo: " + this.transport.formatTempo (this.transport.getTempo ()));
     }
 
 
@@ -394,7 +394,7 @@ public class MVHelper<S extends IControlSurface<C>, C extends Configuration>
      */
     public void notifyGrooveEnablement ()
     {
-        this.delayDisplay ( () -> "Groove: " + (this.groove.getParameter (GrooveParameterID.ENABLED).getValue () == 0 ? "Off" : "On"));
+        this.delayDisplay (() -> "Groove: " + (this.groove.getParameter (GrooveParameterID.ENABLED).getValue () == 0 ? "Off" : "On"));
     }
 
 
@@ -403,7 +403,7 @@ public class MVHelper<S extends IControlSurface<C>, C extends Configuration>
      */
     public void notifyShuffle ()
     {
-        this.delayDisplay ( () -> "Shuffle: " + this.groove.getParameter (GrooveParameterID.SHUFFLE_AMOUNT).getDisplayedValue ());
+        this.delayDisplay (() -> "Shuffle: " + this.groove.getParameter (GrooveParameterID.SHUFFLE_AMOUNT).getDisplayedValue ());
     }
 
 
@@ -412,7 +412,7 @@ public class MVHelper<S extends IControlSurface<C>, C extends Configuration>
      */
     public void notifyArrangerRepeat ()
     {
-        this.delayDisplay ( () -> "Repeat: " + (this.transport.isLoop () ? "On" : "Off"));
+        this.delayDisplay (() -> "Repeat: " + (this.transport.isLoop () ? "On" : "Off"));
     }
 
 
@@ -421,7 +421,7 @@ public class MVHelper<S extends IControlSurface<C>, C extends Configuration>
      */
     public void notifyMetronome ()
     {
-        this.delayDisplay ( () -> "Metronome: " + (this.transport.isMetronomeOn () ? "On" : "Off"));
+        this.delayDisplay (() -> "Metronome: " + (this.transport.isMetronomeOn () ? "On" : "Off"));
     }
 
 
@@ -430,7 +430,7 @@ public class MVHelper<S extends IControlSurface<C>, C extends Configuration>
      */
     public void notifyMetronomeTicks ()
     {
-        this.delayDisplay ( () -> "Ticks: " + (this.transport.isMetronomeTicksOn () ? "On" : "Off"));
+        this.delayDisplay (() -> "Ticks: " + (this.transport.isMetronomeTicksOn () ? "On" : "Off"));
     }
 
 
@@ -439,7 +439,7 @@ public class MVHelper<S extends IControlSurface<C>, C extends Configuration>
      */
     public void notifyPlayPosition ()
     {
-        this.delayDisplay ( () -> "Play Pos.: " + this.transport.getBeatText ());
+        this.delayDisplay (() -> "Play Pos.: " + this.transport.getBeatText ());
     }
 
 
@@ -451,7 +451,7 @@ public class MVHelper<S extends IControlSurface<C>, C extends Configuration>
     public void notifyEditPage (final INoteClip clip)
     {
         if (clip != null && clip.doesExist ())
-            this.delayDisplay ( () -> "Edit page: " + (clip.getEditPage () + 1));
+            this.delayDisplay (() -> "Edit page: " + (clip.getEditPage () + 1));
     }
 
 
@@ -462,7 +462,7 @@ public class MVHelper<S extends IControlSurface<C>, C extends Configuration>
      */
     public void notifyScale (final Scales scales)
     {
-        this.delayDisplay ( () -> "Scale: " + scales.getScale ().getName ());
+        this.delayDisplay (() -> "Scale: " + scales.getScale ().getName ());
     }
 
 
@@ -471,7 +471,7 @@ public class MVHelper<S extends IControlSurface<C>, C extends Configuration>
      */
     public void notifyClipLauncherAutomation ()
     {
-        this.delayDisplay ( () -> "Lnchr Autom.: " + (this.transport.isWritingClipLauncherAutomation () ? "On" : "Off"));
+        this.delayDisplay (() -> "Lnchr Autom.: " + (this.transport.isWritingClipLauncherAutomation () ? "On" : "Off"));
     }
 
 
@@ -480,7 +480,7 @@ public class MVHelper<S extends IControlSurface<C>, C extends Configuration>
      */
     public void notifyArrangerAutomation ()
     {
-        this.delayDisplay ( () -> "Arr. Autom.: " + (this.transport.isWritingArrangerAutomation () ? "On" : "Off"));
+        this.delayDisplay (() -> "Arr. Autom.: " + (this.transport.isWritingArrangerAutomation () ? "On" : "Off"));
     }
 
 
@@ -489,7 +489,7 @@ public class MVHelper<S extends IControlSurface<C>, C extends Configuration>
      */
     public void notifyAutomationWriteMode ()
     {
-        this.delayDisplay ( () -> "Autom.: " + this.transport.getAutomationWriteMode ().getLabel ());
+        this.delayDisplay (() -> "Autom.: " + this.transport.getAutomationWriteMode ().getLabel ());
     }
 
 
@@ -500,7 +500,7 @@ public class MVHelper<S extends IControlSurface<C>, C extends Configuration>
      */
     public void delayDisplay (final Supplier<String> supplier)
     {
-        this.surface.scheduleTask ( () -> {
+        this.surface.scheduleTask (() -> {
 
             final String message = supplier.get ();
             if (message != null && !message.isBlank ())

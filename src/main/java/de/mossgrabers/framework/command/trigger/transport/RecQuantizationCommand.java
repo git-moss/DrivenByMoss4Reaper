@@ -46,7 +46,7 @@ public class RecQuantizationCommand<S extends IControlSurface<C>, C extends Conf
         if (this.surface.isSelectPressed ())
         {
             transport.nextLaunchQuantization ();
-            this.mvHelper.delayDisplay ( () -> transport.getAutomationWriteMode ().getLabel ());
+            this.mvHelper.delayDisplay (() -> transport.getAutomationWriteMode ().getLabel ());
             return;
         }
 

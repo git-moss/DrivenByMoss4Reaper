@@ -97,7 +97,7 @@ public class FireDisplay extends AbstractGraphicDisplay
     {
         synchronized (this.data)
         {
-            image.encode ( (imageBuffer, width, height) -> {
+            image.encode ((imageBuffer, width, height) -> {
 
                 // Unwind 128x64 arrangement into a 1024x8 arrangement of pixels
                 for (int stripe = 0; stripe < 8; stripe++)

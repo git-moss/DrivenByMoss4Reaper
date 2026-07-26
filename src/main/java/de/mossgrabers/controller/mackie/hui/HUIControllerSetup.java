@@ -235,7 +235,7 @@ public class HUIControllerSetup extends AbstractControllerSetup<HUIControlSurfac
                     this.getSurface (j).getModeManager ().addConnectedManagerListener (mm);
             }
 
-            mm.addChangeListener ( (oldMode, newMode) -> this.updateMode (surface, newMode));
+            mm.addChangeListener ((oldMode, newMode) -> this.updateMode (surface, newMode));
 
             this.configuration.addSettingObserver (AbstractConfiguration.VU_METER_TYPE, () -> {
                 final IMode activeMode = surface.getModeManager ().getActive ();
@@ -691,7 +691,7 @@ public class HUIControllerSetup extends AbstractControllerSetup<HUIControlSurfac
     private void sendPing (final HUIControlSurface surface)
     {
         surface.getMidiOutput ().sendNote (0, 0);
-        this.host.scheduleTask ( () -> this.sendPing (surface), 1000);
+        this.host.scheduleTask (() -> this.sendPing (surface), 1000);
     }
 
 

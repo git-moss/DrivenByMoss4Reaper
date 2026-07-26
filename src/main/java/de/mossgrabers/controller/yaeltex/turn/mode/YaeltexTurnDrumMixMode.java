@@ -263,7 +263,7 @@ public class YaeltexTurnDrumMixMode extends AbstractParameterMode<YaeltexTurnCon
     private void setNoteRepeat (final Resolution noteRepeat)
     {
         this.configuration.setNoteRepeatPeriod (noteRepeat);
-        this.mvHelper.delayDisplay ( () -> "Repeat Period: " + noteRepeat.getName ());
+        this.mvHelper.delayDisplay (() -> "Repeat Period: " + noteRepeat.getName ());
     }
 
 

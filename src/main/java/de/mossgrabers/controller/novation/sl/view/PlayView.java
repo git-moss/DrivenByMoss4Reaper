@@ -68,7 +68,7 @@ public class PlayView extends AbstractSequencerView<SLControlSurface, SLConfigur
         this.isPlayMode = true;
 
         final ITrackBank tb = model.getTrackBank ();
-        tb.addSelectionObserver ( (index, isSelected) -> this.clearPressedKeys ());
+        tb.addSelectionObserver ((index, isSelected) -> this.clearPressedKeys ());
         tb.addNoteObserver (this::updateNote);
     }
 

@@ -77,7 +77,7 @@ public class OxiOneDisplay extends AbstractGraphicDisplay
     {
         synchronized (this.displayData)
         {
-            image.encode ( (imageBuffer, width, height) -> {
+            image.encode ((imageBuffer, width, height) -> {
 
                 // Set all 128x64 pixels
                 for (int y = 0; y < height; y++)

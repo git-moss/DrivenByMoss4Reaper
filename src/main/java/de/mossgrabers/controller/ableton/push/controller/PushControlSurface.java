@@ -624,7 +624,7 @@ public class PushControlSurface extends AbstractControlSurface<PushConfiguration
     /**
      * Calculates the slide movement. Filters outlier values which can occur from accidental touches
      * of pads of the row above or below.
-     * 
+     *
      * @param channel The MIDI channel on which the note is played which is slid
      * @param data1 The LSB value byte
      * @param data2 The MSB value byte
@@ -634,7 +634,7 @@ public class PushControlSurface extends AbstractControlSurface<PushConfiguration
     {
         // Range of -10 to 10
         final int bendIndex = data2 - 64;
-        double value = bendIndex * 128.0 + (data1 >= 64 ? data1 - 127 : data1);
+        final double value = bendIndex * 128.0 + (data1 >= 64 ? data1 - 127 : data1);
 
         final int prevValue = this.mpeStatus.getSlideValue (channel);
         final double delta = value - prevValue;

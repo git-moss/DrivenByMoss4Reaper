@@ -78,7 +78,7 @@ public class PlayView extends AbstractPlayView<MaschineJamControlSurface, Maschi
                     this.scales.nextScale ();
                 else
                     this.scales.prevScale ();
-                this.mvHelper.delayDisplay ( () -> "Scale: " + this.scales.getScale ().getName ());
+                this.mvHelper.delayDisplay (() -> "Scale: " + this.scales.getScale ().getName ());
                 break;
 
             case TEMPORARY_NOTES:
@@ -86,12 +86,12 @@ public class PlayView extends AbstractPlayView<MaschineJamControlSurface, Maschi
                     this.scales.nextScaleOffset ();
                 else
                     this.scales.prevScaleOffset ();
-                this.mvHelper.delayDisplay ( () -> "Scale Offset: " + Scales.BASES.get (this.scales.getScaleOffsetIndex ()));
+                this.mvHelper.delayDisplay (() -> "Scale Offset: " + Scales.BASES.get (this.scales.getScaleOffsetIndex ()));
                 break;
 
             case TEMPORARY_LOCK:
                 this.scales.toggleChromatic ();
-                this.mvHelper.delayDisplay ( () -> "Chromatic: " + (this.scales.isChromatic () ? "On" : "Off"));
+                this.mvHelper.delayDisplay (() -> "Chromatic: " + (this.scales.isChromatic () ? "On" : "Off"));
                 break;
 
             case TEMPORARY_TUNE:
@@ -99,7 +99,7 @@ public class PlayView extends AbstractPlayView<MaschineJamControlSurface, Maschi
                     this.scales.incOctave ();
                 else
                     this.scales.decOctave ();
-                this.mvHelper.delayDisplay ( () -> "Octave: " + this.scales.getOctave ());
+                this.mvHelper.delayDisplay (() -> "Octave: " + this.scales.getOctave ());
                 break;
 
             default:
@@ -123,7 +123,7 @@ public class PlayView extends AbstractPlayView<MaschineJamControlSurface, Maschi
                 else
                     this.scales.nextScaleLayout ();
                 this.updateScale ();
-                this.mvHelper.delayDisplay ( () -> "Scale Layout: " + this.scales.getScaleLayout ().getName ());
+                this.mvHelper.delayDisplay (() -> "Scale Layout: " + this.scales.getScaleLayout ().getName ());
                 break;
 
             case ARROW_UP:

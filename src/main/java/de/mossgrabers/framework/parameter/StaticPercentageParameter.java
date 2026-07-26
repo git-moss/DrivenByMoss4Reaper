@@ -21,7 +21,7 @@ public class StaticPercentageParameter extends AbstractStaticParameter
 
     /**
      * Constructor.
-     * 
+     *
      * @param name The name of the parameter
      * @param valueChanger The value changer
      * @param defaultValue The defaultValue in the range of [0..1]
@@ -37,7 +37,7 @@ public class StaticPercentageParameter extends AbstractStaticParameter
 
     /**
      * Get the raw value in the range of [0,1].
-     * 
+     *
      * @return The value
      */
     public double getRawValue ()

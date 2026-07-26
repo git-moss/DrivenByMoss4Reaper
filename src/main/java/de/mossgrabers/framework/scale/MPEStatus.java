@@ -54,7 +54,7 @@ public class MPEStatus
 
     /**
      * Get the current slide value.
-     * 
+     *
      * @param channel The MIDI channel on which the note of the slide is stored
      * @return The value
      */
@@ -66,7 +66,7 @@ public class MPEStatus
 
     /**
      * Stores the current slide value.
-     * 
+     *
      * @param channel The channel of the note which is slid
      * @param slideValue The value
      */

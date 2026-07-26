@@ -506,7 +506,7 @@ public class GenericFlexiControlSurface extends AbstractControlSurface<GenericFl
         }
         commandHandler.handle (command, commandSlot.getKnobMode (), value);
 
-        this.host.scheduleTask ( () -> this.isUpdatingValue = false, 400);
+        this.host.scheduleTask (() -> this.isUpdatingValue = false, 400);
     }
 
 

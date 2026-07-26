@@ -38,7 +38,7 @@ public class DrumSequencerSelectCommand extends AbstractFireViewMultiSelectComma
 
     /**
      * Get the color index for the activation state of the views.
-     * 
+     *
      * @return The color index
      */
     public int getViewActivationColor ()
@@ -99,6 +99,6 @@ public class DrumSequencerSelectCommand extends AbstractFireViewMultiSelectComma
             return;
         final ITransport transport = this.model.getTransport ();
         transport.tapTempo ();
-        this.mvHelper.delayDisplay ( () -> String.format ("Tempo: %.02f", Double.valueOf (transport.getTempo ())));
+        this.mvHelper.delayDisplay (() -> String.format ("Tempo: %.02f", Double.valueOf (transport.getTempo ())));
     }
 }

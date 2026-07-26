@@ -47,7 +47,7 @@ public class FillModeNoteRepeatCommand<S extends IControlSurface<C>, C extends C
                 this.surface.setTriggerConsumed (ButtonID.SELECT);
                 final ITransport transport = this.model.getTransport ();
                 transport.toggleFillModeActive ();
-                this.mvHelper.delayDisplay ( () -> "Fill Mode: " + (transport.isFillModeActive () ? "On" : "Off"));
+                this.mvHelper.delayDisplay (() -> "Fill Mode: " + (transport.isFillModeActive () ? "On" : "Off"));
             }
             return;
         }

@@ -97,7 +97,7 @@ public abstract class AbstractItemBank<T extends IItem> extends AbstractBank<T>
             return;
         final int ps = this.getPageSize ();
         this.scrollTo (position / ps * ps);
-        this.host.scheduleTask ( () -> {
+        this.host.scheduleTask (() -> {
 
             this.getItem (position % ps).select ();
             this.firePageObserver ();

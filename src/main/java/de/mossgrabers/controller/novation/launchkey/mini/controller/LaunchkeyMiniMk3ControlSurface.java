@@ -94,7 +94,7 @@ public class LaunchkeyMiniMk3ControlSurface extends AbstractControlSurface<Launc
             pad.addLight (this.surfaceFactory.createLight (this.surfaceID, null, () -> this.padGrid.getLightInfo (note).getEncoded (), state -> this.padGrid.sendState (note), colorIndex -> this.colorManager.getColor (colorIndex, buttonID), null));
             final int [] translated = LaunchkeyPadGrid.translateToController (Views.DRUM, note);
             pad.bind (input, BindType.NOTE, translated[0], translated[1]);
-            pad.bind ( (event, velocity) -> this.handleGridNote (event, note, velocity));
+            pad.bind ((event, velocity) -> this.handleGridNote (event, note, velocity));
         }
 
         this.pageAdjuster = pageAdjuster;

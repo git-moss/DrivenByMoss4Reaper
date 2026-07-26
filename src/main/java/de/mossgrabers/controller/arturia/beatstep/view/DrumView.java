@@ -42,7 +42,7 @@ public class DrumView extends BaseSequencerView
         super ("Drum", surface, model, 128, DrumView.NUM_DISPLAY_COLS);
 
         final ITrackBank tb = model.getTrackBank ();
-        tb.addSelectionObserver ( (index, isSelected) -> this.keyManager.clearPressedKeys ());
+        tb.addSelectionObserver ((index, isSelected) -> this.keyManager.clearPressedKeys ());
         tb.addNoteObserver (this::updateNote);
     }
 

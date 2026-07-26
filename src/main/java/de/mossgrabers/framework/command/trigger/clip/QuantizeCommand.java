@@ -77,7 +77,7 @@ public class QuantizeCommand<S extends IControlSurface<C>, C extends Configurati
                 cursorTrack.nextRecordQuantization ();
             else
                 cursorTrack.previousRecordQuantization ();
-            this.mvHelper.delayDisplay ( () -> "Record Quantization: " + cursorTrack.getRecordQuantizationGrid ().getName ());
+            this.mvHelper.delayDisplay (() -> "Record Quantization: " + cursorTrack.getRecordQuantizationGrid ().getName ());
         }
     }
 }

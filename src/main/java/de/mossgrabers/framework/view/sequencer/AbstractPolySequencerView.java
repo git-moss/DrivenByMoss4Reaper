@@ -87,7 +87,7 @@ public abstract class AbstractPolySequencerView<S extends IControlSurface<C>, C 
         this.numSequencerRows = numSequencerRows;
 
         final ITrackBank tb = model.getTrackBank ();
-        tb.addSelectionObserver ( (index, isSelected) -> this.keyManager.clearPressedKeys ());
+        tb.addSelectionObserver ((index, isSelected) -> this.keyManager.clearPressedKeys ());
         tb.addNoteObserver (this.keyManager::call);
     }
 

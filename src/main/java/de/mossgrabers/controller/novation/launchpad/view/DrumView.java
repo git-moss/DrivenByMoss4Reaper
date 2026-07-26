@@ -193,13 +193,13 @@ public class DrumView extends AbstractDrumExView<LaunchpadControlSurface, Launch
     private void setPeriod (final int index)
     {
         this.surface.getConfiguration ().setNoteRepeatPeriod (Resolution.values ()[index]);
-        this.surface.scheduleTask ( () -> this.surface.getDisplay ().notify ("Period: " + Resolution.getNameAt (index)), 100);
+        this.surface.scheduleTask (() -> this.surface.getDisplay ().notify ("Period: " + Resolution.getNameAt (index)), 100);
     }
 
 
     private void setNoteLength (final int index)
     {
         this.surface.getConfiguration ().setNoteRepeatLength (Resolution.values ()[index]);
-        this.surface.scheduleTask ( () -> this.surface.getDisplay ().notify ("Note Length: " + Resolution.getNameAt (index)), 100);
+        this.surface.scheduleTask (() -> this.surface.getDisplay ().notify ("Note Length: " + Resolution.getNameAt (index)), 100);
     }
 }

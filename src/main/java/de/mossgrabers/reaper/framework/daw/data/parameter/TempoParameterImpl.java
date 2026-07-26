@@ -20,10 +20,10 @@ import java.text.DecimalFormat;
  */
 public class TempoParameterImpl extends AbstractParameterImpl implements IParameterEx
 {
-    private static final double DEFAULT_TEMPO = 120.0;
+    private static final double   DEFAULT_TEMPO = 120.0;
 
     private final BackendExchange sender;
-    private double              tempo         = DEFAULT_TEMPO;
+    private double                tempo         = DEFAULT_TEMPO;
 
 
     /**

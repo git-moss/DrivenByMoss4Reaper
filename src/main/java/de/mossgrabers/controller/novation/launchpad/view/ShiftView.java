@@ -241,7 +241,7 @@ public class ShiftView extends AbstractShiftView<LaunchpadControlSurface, Launch
 
             case 87:
                 this.configuration.toggleNoteRepeatActive ();
-                this.mvHelper.delayDisplay ( () -> "Note Repeat: " + (this.configuration.isNoteRepeatActive () ? TAG_ACTIVE : "Off"));
+                this.mvHelper.delayDisplay (() -> "Note Repeat: " + (this.configuration.isNoteRepeatActive () ? TAG_ACTIVE : "Off"));
                 break;
 
             case 79:
@@ -339,7 +339,7 @@ public class ShiftView extends AbstractShiftView<LaunchpadControlSurface, Launch
         {
             case 92:
                 this.simulateNormalButtonPress (ButtonID.METRONOME);
-                this.mvHelper.delayDisplay ( () -> "Metronome: " + (this.model.getTransport ().isMetronomeOn () ? "On" : "Off"));
+                this.mvHelper.delayDisplay (() -> "Metronome: " + (this.model.getTransport ().isMetronomeOn () ? "On" : "Off"));
                 break;
             case 93:
                 this.simulateShiftedButtonPress (ButtonID.METRONOME);
@@ -359,7 +359,7 @@ public class ShiftView extends AbstractShiftView<LaunchpadControlSurface, Launch
                 break;
             case 77:
                 this.simulateShiftedButtonPress (ButtonID.DELETE);
-                this.mvHelper.delayDisplay ( () -> "Arrangement Loop: " + (this.model.getTransport ().isLoop () ? "On" : "Off"));
+                this.mvHelper.delayDisplay (() -> "Arrangement Loop: " + (this.model.getTransport ().isLoop () ? "On" : "Off"));
                 break;
             case 69:
                 this.simulateShiftedButtonPress (ButtonID.QUANTIZE);
@@ -440,13 +440,13 @@ public class ShiftView extends AbstractShiftView<LaunchpadControlSurface, Launch
     private void setPeriod (final int index)
     {
         this.configuration.setNoteRepeatPeriod (Resolution.values ()[index]);
-        this.surface.scheduleTask ( () -> this.surface.getDisplay ().notify ("Period: " + Resolution.getNameAt (index)), 100);
+        this.surface.scheduleTask (() -> this.surface.getDisplay ().notify ("Period: " + Resolution.getNameAt (index)), 100);
     }
 
 
     private void setNoteLength (final int index)
     {
         this.configuration.setNoteRepeatLength (Resolution.values ()[index]);
-        this.surface.scheduleTask ( () -> this.surface.getDisplay ().notify ("Note Length: " + Resolution.getNameAt (index)), 100);
+        this.surface.scheduleTask (() -> this.surface.getDisplay ().notify ("Note Length: " + Resolution.getNameAt (index)), 100);
     }
 }

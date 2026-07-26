@@ -82,7 +82,7 @@ public class AddTrackCommand<S extends IControlSurface<C>, C extends Configurati
             this.model.getTrackBank ().addChannel (ChannelType.INSTRUMENT);
 
         final ITrackBank bank = tb;
-        this.surface.scheduleTask ( () -> {
+        this.surface.scheduleTask (() -> {
             final int pos = bank.getItemCount () - 1;
             if (pos < 0)
             {

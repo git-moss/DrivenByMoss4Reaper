@@ -82,7 +82,7 @@ public class ParameterView extends BaseView
         final int selectedParameter = padIndex < 4 ? padIndex + 4 : padIndex - 4;
 
         ((SelectedDeviceMode<?, ?>) this.surface.getModeManager ().get (Modes.DEVICE_PARAMS)).selectParameter (selectedParameter);
-        this.model.getHost ().scheduleTask ( () -> {
+        this.model.getHost ().scheduleTask (() -> {
 
             final IParameterBank parameterBank = cursorDevice.getParameterBank ();
             final StringBuilder message = new StringBuilder ();

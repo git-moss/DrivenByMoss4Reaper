@@ -127,7 +127,7 @@ public class SelectKnobCommand extends AbstractContinuousCommand<FireControlSurf
     {
         final ModeManager modeManager = this.surface.getModeManager ();
         if (modeManager.isActive (Modes.NOTE))
-            this.timeout.delay ( () -> modeManager.get (Modes.NOTE).onKnobTouch (index, false));
+            this.timeout.delay (() -> modeManager.get (Modes.NOTE).onKnobTouch (index, false));
     }
 
 

@@ -58,7 +58,7 @@ public class PlayPositionKnobCommand extends PlayPositionCommand<PushControlSurf
         {
             this.surface.setTriggerConsumed (ButtonID.SELECT);
             if (activate)
-                this.mvHelper.delayDisplay ( () -> "Loop Length: " + this.transport.getLoopLengthBeatText ());
+                this.mvHelper.delayDisplay (() -> "Loop Length: " + this.transport.getLoopLengthBeatText ());
             return;
         }
 
@@ -70,6 +70,6 @@ public class PlayPositionKnobCommand extends PlayPositionCommand<PushControlSurf
 
     protected void displayPosition ()
     {
-        this.mvHelper.delayDisplay ( () -> this.transport.getBeatText () + " - " + this.transport.getPositionText ());
+        this.mvHelper.delayDisplay (() -> this.transport.getBeatText () + " - " + this.transport.getPositionText ());
     }
 }

@@ -152,7 +152,7 @@ public class SLMkIIIControllerSetup extends AbstractControllerSetup<SLMkIIIContr
 
         surface.addPianoKeyboard (61, keyboardInput, true);
 
-        keyboardInput.setMidiCallback ( (status, data1, data2) -> {
+        keyboardInput.setMidiCallback ((status, data1, data2) -> {
             final int code = status & 0xF0;
             if (code == MidiConstants.CMD_NOTE_OFF || code == MidiConstants.CMD_NOTE_ON)
                 lightGuide.updateKeyboardNote (data1, data2);
@@ -590,7 +590,7 @@ public class SLMkIIIControllerSetup extends AbstractControllerSetup<SLMkIIIContr
         final ModeManager modeManager = surface.getModeManager ();
         modeManager.setActive (Modes.TRACK);
 
-        this.host.scheduleTask ( () -> surface.getMidiOutput ().sendSysex (DeviceInquiry.createQuery ()), 1000);
+        this.host.scheduleTask (() -> surface.getMidiOutput ().sendSysex (DeviceInquiry.createQuery ()), 1000);
     }
 
 

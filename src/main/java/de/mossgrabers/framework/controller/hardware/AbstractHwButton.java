@@ -248,10 +248,7 @@ public abstract class AbstractHwButton extends AbstractHwInputControl implements
             this.scheduleCounter--;
             // This prevents that LONG is accidently fired if one quickly switches between 2 buttons
             // and the old scheduler was still running
-            if (this.scheduleCounter > 0)
-                return;
-
-            if (!this.isPressed ())
+            if (this.scheduleCounter > 0 || !this.isPressed ())
                 return;
             this.state = ButtonEvent.LONG;
         }

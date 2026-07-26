@@ -46,7 +46,7 @@ public class RelativeValueChangers
      */
     public static void setSensitivity (final double sensitivity)
     {
-        VALUE_CHANGERS.forEach ( (enc, valueChanger) -> valueChanger.setSensitivity (sensitivity));
+        VALUE_CHANGERS.forEach ((enc, valueChanger) -> valueChanger.setSensitivity (sensitivity));
     }
 
 

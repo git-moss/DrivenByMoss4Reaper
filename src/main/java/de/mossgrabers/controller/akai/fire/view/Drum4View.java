@@ -233,7 +233,7 @@ public class Drum4View extends AbstractDrum4View<FireControlSurface, FireConfigu
     {
         this.blockSelectKnob = true;
         this.changeOctave (ButtonEvent.DOWN, isUp, 4, true, true);
-        this.surface.scheduleTask ( () -> {
+        this.surface.scheduleTask (() -> {
             this.selectDrumPad (selection);
             this.blockSelectKnob = false;
         }, 100);

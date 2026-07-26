@@ -561,7 +561,7 @@ public class LaunchkeyMk3ControllerSetup extends AbstractControllerSetup<Launchk
         surface.setPadMode (LaunchkeyMk3ControlSurface.PAD_MODE_SESSION);
 
         // Switch the Launchkey to DAW mode and wait until it is ready
-        this.host.scheduleTask ( () -> {
+        this.host.scheduleTask (() -> {
 
             surface.setLaunchpadToDAW (true);
             this.waitForConnection ();
@@ -584,7 +584,7 @@ public class LaunchkeyMk3ControllerSetup extends AbstractControllerSetup<Launchk
             midiOutput.sendCCEx (15, LaunchkeyMk3ControlSurface.LAUNCHKEY_FADER_SELECT, LaunchkeyMk3ControlSurface.FADER_MODE_VOLUME);
             midiOutput.sendCCEx (15, LaunchkeyMk3ControlSurface.LAUNCHKEY_VIEW_SELECT, LaunchkeyMk3ControlSurface.PAD_MODE_SESSION);
 
-            this.host.scheduleTask ( () -> this.isReady = true, 200);
+            this.host.scheduleTask (() -> this.isReady = true, 200);
             return;
         }
 

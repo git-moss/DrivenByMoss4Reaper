@@ -66,7 +66,7 @@ public class DrumConfigView extends AbstractView<LaunchkeyMiniMk3ControlSurface,
 
             case 3:
                 this.model.getTransport ().toggleMetronome ();
-                this.surface.scheduleTask ( () -> this.surface.getDisplay ().notify ("Metronome: " + (this.model.getTransport ().isMetronomeOn () ? "On" : "Off")), 100);
+                this.surface.scheduleTask (() -> this.surface.getDisplay ().notify ("Metronome: " + (this.model.getTransport ().isMetronomeOn () ? "On" : "Off")), 100);
                 break;
 
             case 6:

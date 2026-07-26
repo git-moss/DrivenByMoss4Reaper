@@ -132,7 +132,7 @@ public abstract class AbstractBank<T> implements IBank<T>
     protected void notifySelectionObservers (final int itemIndex, final boolean isSelected)
     {
         // Delay notifications to allow cursor objects to update
-        this.host.scheduleTask ( () -> {
+        this.host.scheduleTask (() -> {
             for (final IItemSelectionObserver observer: this.selectionObservers)
                 observer.call (itemIndex, isSelected);
         }, 100);

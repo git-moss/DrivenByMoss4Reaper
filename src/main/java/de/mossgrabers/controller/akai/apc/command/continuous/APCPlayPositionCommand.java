@@ -64,7 +64,7 @@ public class APCPlayPositionCommand extends PlayPositionCommand<APCControlSurfac
         {
             this.surface.setTriggerConsumed (ButtonID.ARROW_LEFT);
             this.transport.changeLoopStart (this.model.getValueChanger ().isIncrease (value), this.surface.isKnobSensitivitySlow ());
-            this.mvHelper.delayDisplay ( () -> "Loop Start: " + this.transport.getLoopStartBeatText ());
+            this.mvHelper.delayDisplay (() -> "Loop Start: " + this.transport.getLoopStartBeatText ());
             return;
         }
 
@@ -72,7 +72,7 @@ public class APCPlayPositionCommand extends PlayPositionCommand<APCControlSurfac
         {
             this.surface.setTriggerConsumed (ButtonID.ARROW_RIGHT);
             this.transport.changeLoopLength (this.model.getValueChanger ().isIncrease (value), this.surface.isKnobSensitivitySlow ());
-            this.mvHelper.delayDisplay ( () -> "Loop Length: " + this.transport.getLoopLengthBeatText ());
+            this.mvHelper.delayDisplay (() -> "Loop Length: " + this.transport.getLoopLengthBeatText ());
             return;
         }
 

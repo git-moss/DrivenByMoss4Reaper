@@ -91,7 +91,7 @@ public class NoteGenerator
         new Builder ().build (level);
 
         // Convert to boolean array
-        boolean [] result = new boolean [length];
+        final boolean [] result = new boolean [length];
         for (int i = 0; i < length; i++)
             result[i] = pattern[i] == 1;
 

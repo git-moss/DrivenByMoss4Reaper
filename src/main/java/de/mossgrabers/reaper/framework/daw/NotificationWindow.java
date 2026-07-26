@@ -59,7 +59,7 @@ public class NotificationWindow
 
         this.popupStage.setContentPane (root);
 
-        this.executor.scheduleAtFixedRate ( () -> {
+        this.executor.scheduleAtFixedRate (() -> {
             final int c = this.counter.get ();
             if (c <= 0)
                 return;

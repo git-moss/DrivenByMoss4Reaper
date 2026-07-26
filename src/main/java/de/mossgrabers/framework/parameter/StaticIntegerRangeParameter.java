@@ -23,7 +23,7 @@ public class StaticIntegerRangeParameter extends AbstractStaticParameter
 
     /**
      * Constructor.
-     * 
+     *
      * @param name The name of the parameter
      * @param valueChanger The value changer
      * @param minValue The minimum value
@@ -43,7 +43,7 @@ public class StaticIntegerRangeParameter extends AbstractStaticParameter
 
     /**
      * Get the raw value inside of the range.
-     * 
+     *
      * @return The value
      */
     public int getRawValue ()

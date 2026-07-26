@@ -190,7 +190,7 @@ public class SLControllerSetup extends AbstractControllerSetup<SLControlSurface,
         this.activateBrowserObserver (Modes.BROWSER);
 
         final SLControlSurface surface = this.getSurface ();
-        surface.getModeManager ().addChangeListener ( (oldMode, newMode) -> surface.getTextDisplay ().forceFlush ());
+        surface.getModeManager ().addChangeListener ((oldMode, newMode) -> surface.getTextDisplay ().forceFlush ());
     }
 
 
@@ -253,7 +253,7 @@ public class SLControllerSetup extends AbstractControllerSetup<SLControlSurface,
             this.addFader (ContinuousID.get (ContinuousID.FADER1, i), "Fader " + (i + 1), null, BindType.CC, SLControlSurface.MKII_SLIDER1 + i);
 
             final IHwRelativeKnob relativeKnob = this.addRelativeKnob (ContinuousID.get (ContinuousID.DEVICE_KNOB1, i), "Device Knob " + (i + 1), null, SLControlSurface.MKII_KNOB_ROW1_1 + i, RelativeEncoding.SIGNED_BIT2);
-            relativeKnob.addOutput ( () -> {
+            relativeKnob.addOutput (() -> {
 
                 final boolean hasDevice = this.model.hasSelectedDevice ();
                 final IParameterBank parameterBank = this.model.getCursorDevice ().getParameterBank ();

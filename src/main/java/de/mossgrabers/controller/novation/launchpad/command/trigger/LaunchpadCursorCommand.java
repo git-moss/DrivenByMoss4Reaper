@@ -406,7 +406,7 @@ public class LaunchpadCursorCommand extends CursorCommand<LaunchpadControlSurfac
             return;
 
         this.transport.setTempo (this.transport.getTempo () + amount);
-        this.surface.scheduleTask ( () -> this.triggerChangeTempo (amount, buttonID), REPEAT_SPEED);
+        this.surface.scheduleTask (() -> this.triggerChangeTempo (amount, buttonID), REPEAT_SPEED);
     }
 
 
@@ -420,7 +420,7 @@ public class LaunchpadCursorCommand extends CursorCommand<LaunchpadControlSurfac
         final int a = (int) Math.round (amount * max / 100.0);
         shuffleParam.setValue (Math.min (max, shuffleParam.getValue () + a));
 
-        this.surface.scheduleTask ( () -> this.triggerChangeShuffle (amount, buttonID), REPEAT_SPEED);
+        this.surface.scheduleTask (() -> this.triggerChangeShuffle (amount, buttonID), REPEAT_SPEED);
     }
 
 
@@ -435,7 +435,7 @@ public class LaunchpadCursorCommand extends CursorCommand<LaunchpadControlSurfac
         else
             application.zoomOut ();
 
-        this.surface.scheduleTask ( () -> this.triggerChangeZoom1 (in), REPEAT_SPEED);
+        this.surface.scheduleTask (() -> this.triggerChangeZoom1 (in), REPEAT_SPEED);
     }
 
 

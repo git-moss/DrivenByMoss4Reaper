@@ -166,10 +166,10 @@ public class Kontrol1ControllerSetup extends AbstractControllerSetup<Kontrol1Con
         this.configuration.addSettingObserver (Kontrol1Configuration.SCALE_IS_ACTIVE, this::updateViewNoteMapping);
 
         final ITrackBank trackBank = this.model.getTrackBank ();
-        trackBank.addSelectionObserver ( (index, isSelected) -> this.handleTrackChange (isSelected));
+        trackBank.addSelectionObserver ((index, isSelected) -> this.handleTrackChange (isSelected));
         final ITrackBank effectTrackBank = this.model.getEffectTrackBank ();
         if (effectTrackBank != null)
-            effectTrackBank.addSelectionObserver ( (index, isSelected) -> this.handleTrackChange (isSelected));
+            effectTrackBank.addSelectionObserver ((index, isSelected) -> this.handleTrackChange (isSelected));
 
         this.configuration.registerDeactivatedItemsHandler (this.model);
 

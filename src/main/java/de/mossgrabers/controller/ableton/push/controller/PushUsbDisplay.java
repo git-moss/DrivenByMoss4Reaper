@@ -98,7 +98,7 @@ public class PushUsbDisplay
         // Copy to the buffer
         synchronized (this.bufferUpdateLock)
         {
-            image.encode ( (imageBuffer, width, height) -> {
+            image.encode ((imageBuffer, width, height) -> {
 
                 int counter = 0;
                 final int padding = (DATA_SZ - height * width * 2) / height;

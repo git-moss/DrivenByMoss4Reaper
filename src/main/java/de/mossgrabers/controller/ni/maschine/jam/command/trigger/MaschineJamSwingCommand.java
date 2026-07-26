@@ -50,7 +50,7 @@ public class MaschineJamSwingCommand extends AbstractTriggerCommand<MaschineJamC
             return;
         final IParameter parameter = this.model.getGroove ().getParameter (GrooveParameterID.SHUFFLE_RATE);
         parameter.setValue (parameter.getValue () == 0 ? this.model.getValueChanger ().getUpperBound () - 1 : 0);
-        this.mvHelper.delayDisplay ( () -> parameter.getName () + ": " + parameter.getDisplayedValue ());
+        this.mvHelper.delayDisplay (() -> parameter.getName () + ": " + parameter.getDisplayedValue ());
         this.surface.setTriggerConsumed (ButtonID.SHIFT);
     }
 
@@ -65,7 +65,7 @@ public class MaschineJamSwingCommand extends AbstractTriggerCommand<MaschineJamC
             {
                 final IParameter parameter = this.model.getGroove ().getParameter (GrooveParameterID.ENABLED);
                 parameter.setValue (parameter.getValue () == 0 ? this.model.getValueChanger ().getUpperBound () - 1 : 0);
-                this.mvHelper.delayDisplay ( () -> parameter.getName () + ": " + parameter.getDisplayedValue ());
+                this.mvHelper.delayDisplay (() -> parameter.getName () + ": " + parameter.getDisplayedValue ());
             }
             return;
         }

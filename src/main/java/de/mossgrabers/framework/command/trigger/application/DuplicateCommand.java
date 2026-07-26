@@ -83,7 +83,7 @@ public class DuplicateCommand<S extends IControlSurface<C>, C extends Configurat
             return;
 
         // Need to wait a bit with starting the duplicated clip until it is selected
-        this.model.getHost ().scheduleTask ( () -> {
+        this.model.getHost ().scheduleTask (() -> {
             final Optional<ISlot> slotNew = slotBank.getSelectedItem ();
             if (slotNew.isPresent ())
             {
@@ -93,7 +93,7 @@ public class DuplicateCommand<S extends IControlSurface<C>, C extends Configurat
 
             // Try to find the clip in the next page...
             slotBank.selectNextPage ();
-            this.model.getHost ().scheduleTask ( () -> {
+            this.model.getHost ().scheduleTask (() -> {
                 final Optional<ISlot> slotNew2 = slotBank.getSelectedItem ();
                 if (slotNew2.isPresent ())
                     slotNew2.get ().launch (true, false);

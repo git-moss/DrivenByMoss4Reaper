@@ -246,7 +246,7 @@ public class ModesHandler extends AbstractHandler
                 if (isButtonPressed)
                 {
                     this.model.getBrowser ().replace (this.model.getCursorDevice ());
-                    this.host.scheduleTask ( () -> this.surface.activateMode (Modes.BROWSER), 500);
+                    this.host.scheduleTask (() -> this.surface.activateMode (Modes.BROWSER), 500);
                 }
                 break;
 

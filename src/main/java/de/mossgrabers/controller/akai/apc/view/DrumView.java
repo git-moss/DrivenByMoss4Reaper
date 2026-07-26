@@ -166,14 +166,14 @@ public class DrumView extends AbstractDrumExView<APCControlSurface, APCConfigura
         if (this.noteRepeatPeriodOn)
         {
             this.configuration.setNoteRepeatPeriod (Resolution.values ()[index]);
-            this.mvHelper.delayDisplay ( () -> "Period: " + Resolution.getNameAt (index));
+            this.mvHelper.delayDisplay (() -> "Period: " + Resolution.getNameAt (index));
             return;
         }
 
         if (this.noteRepeatLengthOn)
         {
             this.configuration.setNoteRepeatLength (Resolution.values ()[index]);
-            this.mvHelper.delayDisplay ( () -> "Note Length: " + Resolution.getNameAt (index));
+            this.mvHelper.delayDisplay (() -> "Note Length: " + Resolution.getNameAt (index));
             return;
         }
 

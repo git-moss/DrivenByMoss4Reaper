@@ -42,7 +42,7 @@ public class LatestTaskExecutor implements ExecutorService
     public void execute (final Runnable command)
     {
         this.lastTask.set (command);
-        this.executor.execute ( () -> {
+        this.executor.execute (() -> {
             final Runnable task = this.lastTask.getAndSet (null);
             if (task != null)
                 task.run ();

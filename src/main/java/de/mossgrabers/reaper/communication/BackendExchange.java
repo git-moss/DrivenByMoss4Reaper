@@ -210,7 +210,7 @@ public interface BackendExchange
     /**
      * Set the MIDI filters to apply to an MIDI input port. MIDI messages which match a filter will
      * be directly forwarded to Reaper.
-     * 
+     *
      * @param deviceID The ID of the MIDI input port
      * @param noteInputIndex The index of the note input of the given device
      * @param backendFilters The filters

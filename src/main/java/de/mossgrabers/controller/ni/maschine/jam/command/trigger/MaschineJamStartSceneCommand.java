@@ -85,7 +85,7 @@ public class MaschineJamStartSceneCommand extends StartSceneCommand<MaschineJamC
             if (SEQUENCER_VIEWS[this.index] != null)
             {
                 this.activatePreferredView (SEQUENCER_VIEWS[this.index]);
-                this.mvHelper.delayDisplay ( () -> viewManager.getActive ().getName ());
+                this.mvHelper.delayDisplay (() -> viewManager.getActive ().getName ());
             }
             return;
         }
@@ -96,7 +96,7 @@ public class MaschineJamStartSceneCommand extends StartSceneCommand<MaschineJamC
             if (PLAY_VIEWS[this.index] != null)
             {
                 this.activatePreferredView (PLAY_VIEWS[this.index]);
-                this.mvHelper.delayDisplay ( () -> viewManager.getActive ().getName ());
+                this.mvHelper.delayDisplay (() -> viewManager.getActive ().getName ());
             }
             return;
         }

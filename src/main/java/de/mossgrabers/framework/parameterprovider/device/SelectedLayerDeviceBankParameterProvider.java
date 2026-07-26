@@ -42,7 +42,7 @@ public class SelectedLayerDeviceBankParameterProvider extends AbstractParameterP
         this.cursorLayer = cursorLayer;
         this.emptyParameterBank = EmptyParameterBank.getInstance (numParams);
 
-        cursorLayer.getLayerBank ().addSelectionObserver ( (index, isSelected) -> {
+        cursorLayer.getLayerBank ().addSelectionObserver ((index, isSelected) -> {
 
             if (isSelected)
                 this.configureCurrentBank ();

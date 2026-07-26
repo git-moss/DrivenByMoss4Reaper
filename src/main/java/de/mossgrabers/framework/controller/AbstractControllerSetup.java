@@ -195,7 +195,7 @@ public abstract class AbstractControllerSetup<S extends IControlSurface<C>, C ex
 
         this.getSurfaces ().forEach (surface -> {
 
-            framework.scheduleFunction ( () -> this.host.println ("Testing controller: " + this.getClass ().getName ()));
+            framework.scheduleFunction (() -> this.host.println ("Testing controller: " + this.getClass ().getName ()));
 
             final ViewManager viewManager = surface.getViewManager ();
             final ModeManager modeManager = surface.getModeManager ();
@@ -211,7 +211,7 @@ public abstract class AbstractControllerSetup<S extends IControlSurface<C>, C ex
                     if (modeManager.get (modeID) == null)
                         continue;
 
-                    framework.scheduleFunction ( () -> {
+                    framework.scheduleFunction (() -> {
 
                         this.host.println ("- View " + viewID + " Mode " + modeID);
 

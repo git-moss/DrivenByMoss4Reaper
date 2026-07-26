@@ -45,7 +45,7 @@ public class ColorPalette
             {
                 // Re-apply the color palette, if necessary
                 if (this.entriesHasUpdate)
-                    this.surface.scheduleTask ( () -> this.surface.sendSysex ("05"), 1000);
+                    this.surface.scheduleTask (() -> this.surface.sendSysex ("05"), 1000);
                 return;
             }
 

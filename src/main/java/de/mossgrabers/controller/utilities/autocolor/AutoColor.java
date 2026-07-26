@@ -139,7 +139,7 @@ public class AutoColor
                 if (!currentColor.equals (newColor))
                 {
                     // Delay the color change and check the name again to allow Undo
-                    this.host.scheduleTask ( () -> {
+                    this.host.scheduleTask (() -> {
                         if (trackName.equals (track.getName ()))
                             track.setColor (newColor);
                     }, 500);

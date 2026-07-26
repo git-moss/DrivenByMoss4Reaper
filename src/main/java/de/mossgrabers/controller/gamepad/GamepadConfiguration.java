@@ -204,7 +204,7 @@ public class GamepadConfiguration extends AbstractConfiguration
     @Override
     public void init (final ISettingsUI globalSettings, final ISettingsUI documentSettings)
     {
-        final IEnumSetting gamepadSetting = globalSettings.getEnumSetting ("Gamepad", CATEGORY_GAMEPAD, this.gamepadNames, this.gamepadNames.get (0));
+        final IEnumSetting gamepadSetting = globalSettings.getEnumSetting (CATEGORY_GAMEPAD, CATEGORY_GAMEPAD, this.gamepadNames, this.gamepadNames.get (0));
 
         // There is an error popping up if a list is created with only one item
         gamepadSetting.setVisible (this.gamepadManager.getNumControllers () > 0);
