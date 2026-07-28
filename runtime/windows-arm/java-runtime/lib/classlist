@@ -3,10 +3,6 @@
 # This file is generated via the -XX:DumpLoadedClassList=<class_list_file> option
 # and is used at CDS archive dump time (see -Xshare:dump).
 #
-com/azul/tooling/in/JarLoadEvent
-com/azul/tooling/in/Tooling
-com/azul/tooling/in/Tooling$1
-com/azul/tooling/in/Tooling$ToolingEvent
 java/io/BufferedInputStream
 java/io/BufferedOutputStream
 java/io/BufferedWriter
@@ -81,13 +77,11 @@ java/lang/Enum
 java/lang/Error
 java/lang/Exception
 java/lang/Float
-java/lang/IllegalAccessException
 java/lang/IllegalArgumentException
 java/lang/IllegalCallerException
 java/lang/IllegalMonitorStateException
 java/lang/IncompatibleClassChangeError
 java/lang/IndexOutOfBoundsException
-java/lang/InstantiationException
 java/lang/Integer
 java/lang/Integer$IntegerCache
 java/lang/InternalError
@@ -421,7 +415,6 @@ java/lang/reflect/Constructor
 java/lang/reflect/Executable
 java/lang/reflect/Field
 java/lang/reflect/GenericDeclaration
-java/lang/reflect/InvocationTargetException
 java/lang/reflect/Member
 java/lang/reflect/Method
 java/lang/reflect/Modifier
@@ -1125,7 +1118,6 @@ jdk/internal/invoke/MhUtil
 jdk/internal/jimage/BasicImageReader
 jdk/internal/jimage/BasicImageReader$1
 jdk/internal/jimage/ImageHeader
-jdk/internal/jimage/ImageLocation
 jdk/internal/jimage/ImageReader
 jdk/internal/jimage/ImageReader$SharedImageReader
 jdk/internal/jimage/ImageReaderFactory
