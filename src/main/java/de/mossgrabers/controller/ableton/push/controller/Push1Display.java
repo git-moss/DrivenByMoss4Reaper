@@ -4,10 +4,6 @@
 
 package de.mossgrabers.controller.ableton.push.controller;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import de.mossgrabers.controller.ableton.push.PushConfiguration;
 import de.mossgrabers.framework.controller.display.AbstractTextDisplay;
 import de.mossgrabers.framework.controller.display.Format;
@@ -16,6 +12,10 @@ import de.mossgrabers.framework.daw.IHost;
 import de.mossgrabers.framework.daw.midi.IMidiOutput;
 import de.mossgrabers.framework.utils.Pair;
 import de.mossgrabers.framework.utils.StringUtils;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 
 /**
@@ -272,7 +272,7 @@ public class Push1Display extends AbstractTextDisplay
     public static List<Pair<String, Boolean>> createMenuList (final int displaySize, final String [] elements, final int selectedIndex)
     {
         final List<Pair<String, Boolean>> menu = new ArrayList<> ();
-        final int startIndex = Math.clamp (selectedIndex, 0, elements.length - displaySize);
+        final int startIndex = Math.clamp (selectedIndex, 0, Math.max (elements.length - displaySize, 0));
         for (int i = 0; i < displaySize; i++)
         {
             final int pos = startIndex + i;

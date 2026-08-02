@@ -216,7 +216,7 @@ public class CursorClipImpl extends BaseImpl implements INoteClip
         final double pageLength = this.numSteps * this.stepLength;
         this.maxPage = (int) Math.ceil (length / pageLength);
         // Make sure the page is inside the new range
-        this.editPage = Math.clamp (this.editPage, 0, this.maxPage - 1);
+        this.editPage = Math.clamp (this.editPage, 0, Math.max (this.maxPage - 1, 0));
     }
 
 

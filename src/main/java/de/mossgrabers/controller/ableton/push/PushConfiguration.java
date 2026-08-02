@@ -4,10 +4,6 @@
 
 package de.mossgrabers.controller.ableton.push;
 
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Set;
-
 import de.mossgrabers.controller.ableton.push.controller.PushControlSurface;
 import de.mossgrabers.framework.configuration.AbstractConfiguration;
 import de.mossgrabers.framework.configuration.IColorSetting;
@@ -22,6 +18,10 @@ import de.mossgrabers.framework.daw.midi.ArpeggiatorMode;
 import de.mossgrabers.framework.graphics.IGraphicsConfiguration;
 import de.mossgrabers.framework.mode.Modes;
 import de.mossgrabers.framework.view.Views;
+
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Set;
 
 
 /**
@@ -724,7 +724,7 @@ public class PushConfiguration extends AbstractConfiguration implements IGraphic
     {
         final int size = PushControlSurface.PUSH_PAD_THRESHOLDS_NAME.size ();
         final int value = this.valueChanger.changeValue (control, this.padThresholdPush1, -100, size);
-        this.padThresholdPush1 = Math.clamp (value, 0, size - 1);
+        this.padThresholdPush1 = Math.clamp (value, 0, Math.max (size - 1, 0));
         this.padThresholdSetting.set (PushControlSurface.PUSH_PAD_THRESHOLDS_NAME.get (this.padThresholdPush1));
     }
 
@@ -738,7 +738,7 @@ public class PushConfiguration extends AbstractConfiguration implements IGraphic
     {
         final int size = PushControlSurface.PUSH_PAD_CURVES_NAME.size ();
         final int value = this.valueChanger.changeValue (control, this.velocityCurvePush1, -100, size);
-        this.velocityCurvePush1 = Math.clamp (value, 0, size - 1);
+        this.velocityCurvePush1 = Math.clamp (value, 0, Math.max (size - 1, 0));
         this.velocityCurveSetting.set (PushControlSurface.PUSH_PAD_CURVES_NAME.get (this.velocityCurvePush1));
     }
 
