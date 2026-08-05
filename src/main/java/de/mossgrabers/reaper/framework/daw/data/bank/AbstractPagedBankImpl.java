@@ -218,7 +218,7 @@ public abstract class AbstractPagedBankImpl<S extends T, T extends IItem> extend
      */
     protected void setBankOffset (final int bankOffset)
     {
-        this.bankOffset = Math.clamp (bankOffset, 0, this.getItemCount () - 1);
+        this.bankOffset = Math.clamp (bankOffset, 0, Math.max (this.getItemCount () - 1, 0));
         this.firePageObserver ();
     }
 }

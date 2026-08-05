@@ -282,7 +282,7 @@ public class ControllerInstanceManager
             }
             catch (final RuntimeException ex)
             {
-                final StringBuilder sb = new StringBuilder ("Could not parse OSC message: ").append (address).append (" ");
+                final StringBuilder sb = new StringBuilder ("Could not parse INTERNAL message: ").append (address).append (" ");
                 if (argument != null)
                     sb.append (argument);
                 this.logModel.error (sb.toString (), ex);

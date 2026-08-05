@@ -106,7 +106,7 @@ public class ParameterBankImpl extends AbstractPagedBankImpl<ParameterImpl, IPar
     @Override
     protected void setBankOffset (final int bankOffset)
     {
-        this.bankOffset = Math.clamp (bankOffset, 0, this.getItemCount () - 1);
+        this.bankOffset = Math.clamp (bankOffset, 0, Math.max (this.getItemCount () - 1, 0));
 
         // Store the offset for switching between devices
         if (this.device != null)

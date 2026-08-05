@@ -473,7 +473,7 @@ public class BrowserImpl extends AbstractBrowser
     public void setSelectedResult (final int index)
     {
         final int length = this.isPresetContentType () ? this.presetModel.getSize () : this.filteredDevices.size ();
-        this.selectedIndex = Math.clamp (index, 0, length - 1);
+        this.selectedIndex = Math.clamp (index, 0, Math.max (length - 1, 0));
         SwingUtilities.invokeLater (() -> this.browserWindow.updateResultSelection (this.selectedIndex));
     }
 

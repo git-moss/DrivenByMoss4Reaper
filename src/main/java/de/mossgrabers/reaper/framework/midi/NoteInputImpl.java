@@ -72,7 +72,7 @@ public class NoteInputImpl extends AbstractNoteInput
                     throw new IllegalArgumentException ("Filter has missing status!");
                 if (data1.isEmpty () && !data2.isEmpty ())
                     throw new IllegalArgumentException ("First data byte filter cannot be empty if second is set!");
-                if (data1.isEmpty () || data2.length () == 1)
+                if (data1.length () == 1 || data2.length () == 1)
                     throw new IllegalArgumentException ("Can only handle 2 byte data byte filters!");
 
                 // Add MIDI channels if necessary
