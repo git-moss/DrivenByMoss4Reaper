@@ -47,6 +47,7 @@ public class MaschineStopCommand extends StopCommand<MaschineControlSurface, Mas
 
             if (event == ButtonEvent.DOWN)
             {
+                this.surface.setKnobSensitivityIsSlow (true);
                 if (!viewManager.isActive (Views.SHIFT))
                     viewManager.setTemporary (Views.SHIFT);
                 return;
@@ -55,6 +56,7 @@ public class MaschineStopCommand extends StopCommand<MaschineControlSurface, Mas
             if (event != ButtonEvent.UP)
                 return;
 
+            this.surface.setKnobSensitivityIsSlow (false);
             if (viewManager.isActive (Views.SHIFT))
                 viewManager.restore ();
 
