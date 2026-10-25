@@ -2,10 +2,10 @@
 // (c) 2017-2026
 // Licensed under LGPLv3 - http://www.gnu.org/licenses/lgpl-3.0.txt
 
-package de.mossgrabers.controller.electra.one.command.trigger;
+package de.mossgrabers.controller.electra.one.normal.command.trigger;
 
-import de.mossgrabers.controller.electra.one.ElectraOneConfiguration;
-import de.mossgrabers.controller.electra.one.controller.ElectraOneControlSurface;
+import de.mossgrabers.controller.electra.one.normal.ElectraOneConfiguration;
+import de.mossgrabers.controller.electra.one.normal.controller.ElectraOneControlSurface;
 import de.mossgrabers.framework.command.trigger.FootswitchCommand;
 import de.mossgrabers.framework.daw.IModel;
 import de.mossgrabers.framework.utils.ButtonEvent;
@@ -16,7 +16,7 @@ import de.mossgrabers.framework.utils.ButtonEvent;
  *
  * @author Jürgen Moßgraber
  */
-public class TouchCombinationCommand extends FootswitchCommand<ElectraOneControlSurface, ElectraOneConfiguration>
+public class ElectraOneTouchCombinationCommand extends FootswitchCommand<ElectraOneControlSurface, ElectraOneConfiguration>
 {
     /**
      * Constructor.
@@ -25,7 +25,7 @@ public class TouchCombinationCommand extends FootswitchCommand<ElectraOneControl
      * @param model The model
      * @param surface The surface
      */
-    public TouchCombinationCommand (final int index, final IModel model, final ElectraOneControlSurface surface)
+    public ElectraOneTouchCombinationCommand (final int index, final IModel model, final ElectraOneControlSurface surface)
     {
         super (model, surface, index);
     }

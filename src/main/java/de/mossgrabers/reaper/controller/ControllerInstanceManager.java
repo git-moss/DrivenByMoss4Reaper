@@ -19,6 +19,7 @@ import de.mossgrabers.reaper.controller.akai.apcmini.APCminiMk2ControllerInstanc
 import de.mossgrabers.reaper.controller.akai.fire.FireControllerInstance;
 import de.mossgrabers.reaper.controller.arturia.beatstep.BeatstepControllerInstance;
 import de.mossgrabers.reaper.controller.electra.one.ElectraOneControllerInstance;
+import de.mossgrabers.reaper.controller.electra.one.ElectraOneMiniControllerInstance;
 import de.mossgrabers.reaper.controller.esi.xjam.XjamControllerInstance;
 import de.mossgrabers.reaper.controller.faderfox.ec4.EC4ControllerInstance;
 import de.mossgrabers.reaper.controller.gamepad.GamepadControllerInstance;
@@ -112,6 +113,7 @@ public class ControllerInstanceManager
         DEF_TO_CLASS.put (APCminiMk2ControllerInstance.CONTROLLER_DEFINITION, APCminiMk2ControllerInstance.class);
         DEF_TO_CLASS.put (BeatstepControllerInstance.CONTROLLER_DEFINITION, BeatstepControllerInstance.class);
         DEF_TO_CLASS.put (ElectraOneControllerInstance.CONTROLLER_DEFINITION, ElectraOneControllerInstance.class);
+        DEF_TO_CLASS.put (ElectraOneMiniControllerInstance.CONTROLLER_DEFINITION, ElectraOneMiniControllerInstance.class);
         DEF_TO_CLASS.put (ExquisControllerInstance.CONTROLLER_DEFINITION, ExquisControllerInstance.class);
         DEF_TO_CLASS.put (FireControllerInstance.CONTROLLER_DEFINITION, FireControllerInstance.class);
         DEF_TO_CLASS.put (EC4ControllerInstance.CONTROLLER_DEFINITION, EC4ControllerInstance.class);

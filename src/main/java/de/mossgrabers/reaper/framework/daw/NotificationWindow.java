@@ -51,7 +51,7 @@ public class NotificationWindow
         this.popupStage.setResizable (false);
         this.popupStage.setMinimumSize (new Dimension (800, 80));
 
-        this.label.setFont (this.label.getFont ().deriveFont ((float) 40.0));
+        this.label.setFont (this.label.getFont ().deriveFont (40f));
 
         final JPanel root = new JPanel (new BorderLayout ());
         root.setBorder (new EmptyBorder (14, 14, 14, 14));

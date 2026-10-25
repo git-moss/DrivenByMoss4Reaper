@@ -4,10 +4,10 @@
 
 package de.mossgrabers.reaper.controller.electra.one;
 
-import de.mossgrabers.controller.electra.one.ElectraOneConfiguration;
-import de.mossgrabers.controller.electra.one.ElectraOneControllerDefinition;
-import de.mossgrabers.controller.electra.one.ElectraOneControllerSetup;
-import de.mossgrabers.controller.electra.one.controller.ElectraOneControlSurface;
+import de.mossgrabers.controller.electra.one.normal.ElectraOneConfiguration;
+import de.mossgrabers.controller.electra.one.normal.ElectraOneControllerDefinition;
+import de.mossgrabers.controller.electra.one.normal.ElectraOneControllerSetup;
+import de.mossgrabers.controller.electra.one.normal.controller.ElectraOneControlSurface;
 import de.mossgrabers.framework.controller.IControllerSetup;
 import de.mossgrabers.reaper.communication.BackendExchange;
 import de.mossgrabers.reaper.controller.AbstractControllerInstance;
