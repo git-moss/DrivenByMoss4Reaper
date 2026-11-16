@@ -32,6 +32,8 @@ import de.mossgrabers.reaper.controller.mackie.mcu.MCU1ControllerInstance;
 import de.mossgrabers.reaper.controller.mackie.mcu.MCU2ControllerInstance;
 import de.mossgrabers.reaper.controller.mackie.mcu.MCU3ControllerInstance;
 import de.mossgrabers.reaper.controller.mackie.mcu.MCU4ControllerInstance;
+import de.mossgrabers.reaper.controller.mackie.mcu.MCU5ControllerInstance;
+import de.mossgrabers.reaper.controller.mackie.mcu.MCU6ControllerInstance;
 import de.mossgrabers.reaper.controller.ni.kontrol.mki.KontrolMkIS25ControllerInstance;
 import de.mossgrabers.reaper.controller.ni.kontrol.mki.KontrolMkIS49ControllerInstance;
 import de.mossgrabers.reaper.controller.ni.kontrol.mki.KontrolMkIS61ControllerInstance;
@@ -148,6 +150,8 @@ public class ControllerInstanceManager
         DEF_TO_CLASS.put (MCU2ControllerInstance.CONTROLLER_DEFINITION, MCU2ControllerInstance.class);
         DEF_TO_CLASS.put (MCU3ControllerInstance.CONTROLLER_DEFINITION, MCU3ControllerInstance.class);
         DEF_TO_CLASS.put (MCU4ControllerInstance.CONTROLLER_DEFINITION, MCU4ControllerInstance.class);
+        DEF_TO_CLASS.put (MCU5ControllerInstance.CONTROLLER_DEFINITION, MCU5ControllerInstance.class);
+        DEF_TO_CLASS.put (MCU6ControllerInstance.CONTROLLER_DEFINITION, MCU6ControllerInstance.class);
         DEF_TO_CLASS.put (ACVSLiveControllerInstance.CONTROLLER_DEFINITION, ACVSLiveControllerInstance.class);
         DEF_TO_CLASS.put (OSCControllerInstance.CONTROLLER_DEFINITION, OSCControllerInstance.class);
         DEF_TO_CLASS.put (OxiOneMk1ControllerInstance.CONTROLLER_DEFINITION, OxiOneMk1ControllerInstance.class);

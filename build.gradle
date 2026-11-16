@@ -1,6 +1,6 @@
 plugins {
-    id 'com.github.jk1.dependency-license-report' version '3.1.4'
-    id 'com.github.ben-manes.versions' version '0.66.0'
+    id 'com.github.jk1.dependency-license-report' version '3.1.5'
+    id 'io.github.ben-manes.versions' version '0.67.0'
     id 'java'
     id 'application'
     id 'eclipse'
@@ -180,7 +180,7 @@ dependencies {
     implementation group: 'net.java.dev.jna', name: 'jna-platform', version: '5.19.1'
     implementation group: 'com.badlogicgames.jamepad', name: 'jamepad', version: '2.30.0.0'
     implementation group: 'com.weblookandfeel', name: 'svg-salamander', version: '1.1.2.2'
-    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.22.4'
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.23.0'
     implementation fileTree(dir: 'libs', include: '**/*.jar')
 }
 
